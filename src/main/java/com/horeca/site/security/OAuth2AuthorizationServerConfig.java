@@ -13,11 +13,15 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
+    private LoginService loginService;
+
+    @Autowired
     private AuthenticationManager manager;
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.authenticationManager(manager);
+        endpoints.tokenGranter(new CustomTokenGranter(manager, endpoints.getTokenServices(), endpoints.getClientDetailsService(),
+                endpoints.getOAuth2RequestFactory(), loginService));
     }
 
     @Override
@@ -26,7 +30,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
                 .inMemory()
                 .withClient("someClient")
                 .secret("someSecret")
-                .authorizedGrantTypes("password")
+                .authorizedGrantTypes("password-like")
                 .scopes("read", "write")
                 .resourceIds("AppResources");
     }
