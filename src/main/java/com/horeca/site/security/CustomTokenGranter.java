@@ -1,19 +1,15 @@
 package com.horeca.site.security;
 
-import com.horeca.site.exceptions.IncorrectProviderRequestException;
-import com.horeca.site.exceptions.UnsupportedSocialProviderException;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
 import java.util.*;
-
 
 public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
 
@@ -47,39 +43,27 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
     @Override
     protected OAuth2Authentication getOAuth2Authentication(ClientDetails client, TokenRequest tokenRequest) {
         Map<String, String> parameters = new LinkedHashMap<String, String>(tokenRequest.getRequestParameters());
-        String provider = parameters.get("provider");
-        if (provider == null) { //standard authentication
-            return super.getOAuth2Authentication(client, tokenRequest);
-        }
-        else {
-            if (!SUPPORTED_PROVIDERS.contains(provider.toUpperCase()))
-                throw new UnsupportedSocialProviderException("Unsupported social provider: " + provider);
-
-            String userId = parameters.get("userid");
-            String token = parameters.get("token");
-
-            if (userId == null || token == null || userId.isEmpty() || token.isEmpty())
-                throw new IncorrectProviderRequestException("Incorrect request for social provider authentication");
-
-            //TODO validate the token at the provider's site
-            //assume the credentials have been verified as being correct
-            Authentication userAuth = getAsAuthenticated(userId, parameters);
+        String pin = parameters.get("pin");
+        if (pin != null) {
+            Authentication userAuth = getAsAuthenticated(pin, parameters);
+            if (userAuth == null)
+                throw new RuntimeException("Invalid pin");
             OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
             return new OAuth2Authentication(storedOAuth2Request, userAuth);
         }
+
+        //TODO add handling authentication via the standard account or social providers
+        throw new RuntimeException("You have not included pin in your request");
     }
 
-    private Authentication getAsAuthenticated(final String userId, Map<String, String> parameters) {
-        if (!loginService.isAlreadyPresent(userId)) {
-            Collection<SimpleGrantedAuthority> authorities = Collections.unmodifiableCollection(Arrays.asList(new SimpleGrantedAuthority("ROLE_SOCIAL")));
-            String randomPassword = UUID.randomUUID().toString();
-            UserDetails userDetails = new User(userId, randomPassword, authorities);
-            loginService.saveUser(userDetails);
-        }
+    private Authentication getAsAuthenticated(final String pin, Map<String, String> parameters) {
 
-        final UserDetails userDetails = loginService.loadUserByUsername(userId);
+        if (!loginService.isAlreadyPresent(pin))
+            return null;
+
+        final UserDetails userDetails = loginService.loadUserByUsername(pin);
         final Authentication userAuth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//        ((AbstractAuthenticationToken) userAuth).setDetails(parameters);
+        ((AbstractAuthenticationToken) userAuth).setDetails(parameters);
 
         return userAuth;
     }
