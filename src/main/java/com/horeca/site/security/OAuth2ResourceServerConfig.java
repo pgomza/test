@@ -1,5 +1,6 @@
 package com.horeca.site.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,9 +21,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
     public void configure(HttpSecurity http) throws Exception {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http
-                .requestMatchers().antMatchers("/restricted/**")
-                .and()
-                .authorizeRequests().antMatchers("/restricted/**").authenticated();
+        http.authorizeRequests().antMatchers("/restricted/**").authenticated();
+        http.authorizeRequests().antMatchers("/api/stays/{\\d+}").authenticated();
     }
 }

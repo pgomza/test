@@ -39,7 +39,7 @@ public class InMemoryLoginService implements LoginService {
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         UserDetails userDetails = database.get(userId);
         if (userDetails == null) {
-            throw new UsernameNotFoundException("User " + userId + " could not be found");
+            throw new UsernameNotFoundException("Person " + userId + " could not be found");
         }
         return new User(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
     }
