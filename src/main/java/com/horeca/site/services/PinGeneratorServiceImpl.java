@@ -1,61 +1,52 @@
 package com.horeca.site.services;
 
-import com.horeca.site.models.AvailablePin;
 import com.horeca.site.models.Stay;
-import com.horeca.site.repositories.AvailablePinRepository;
 import com.horeca.site.repositories.StayRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class PinGeneratorServiceImpl implements PinGeneratorService {
 
-    @Value("${availablePins.checkOnStartup}")
-    private boolean shouldCheckOnStartup;
-
-    @Autowired
-    private AvailablePinRepository pinRepository;
-
     @Autowired
     private StayRepository stayRepository;
 
-    @PostConstruct
-    @Transactional
-    private void checkOnStartup() {
-        if (shouldCheckOnStartup) {
-            Iterable<Stay> allStays = stayRepository.findAll();
-            Set<String> takenPins = new HashSet<>();
-            for (Stay stay : allStays) {
-                takenPins.add(stay.getPin());
-            }
+    private final char[] CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
 
-            pinRepository.deleteAll();
-            List<AvailablePin> availablePins = new ArrayList<>();
-            for (int i = 1000; i < 2000; i++) {
-                String currentPin = String.format("%04d", i);
-                if (!takenPins.contains(currentPin))
-                    availablePins.add(new AvailablePin(currentPin));
-            }
+    private boolean isAvailable(String pin) {
+        Stay stay = stayRepository.findByPin(pin);
+        if (stay == null)
+            return true;
 
-            Collections.shuffle(availablePins);
-            pinRepository.save(availablePins);
-        }
+        return false;
     }
 
+    // Given the fact that the pin consists of 6 alphanumeric, case-sensitive
+    // characters, there are (26*2 + 10)^6 = 56800235584 possible combinations
+    // It's therefore unlikely that the newly generated pin will already be taken
     @Override
     @Transactional
     public String generatePin() {
-        long count = pinRepository.count();
-        AvailablePin availablePin = pinRepository.findOne(count);
-        if (availablePin == null)
-            throw new RuntimeException("Could not generate a new pin");
+        String pin = null;
+        boolean generated = false;
+        char result[] = new char[PIN_LENGTH];
 
-        pinRepository.delete(count);
-        return availablePin.getPin();
+        while (!generated) {
+            for (int i = 0; i < PIN_LENGTH; i++) {
+                int index = ThreadLocalRandom.current().nextInt(CHARSET.length);
+                result[i] = CHARSET[index];
+            }
+
+            pin = new String(result);
+            if (isAvailable(pin))
+                generated = true;
+        }
+
+        return pin;
     }
 }

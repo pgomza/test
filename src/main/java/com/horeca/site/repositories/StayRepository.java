@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface StayRepository extends CrudRepository<Stay, String> {
 
-
+    Stay findByPin(String pin);
 }

@@ -1,5 +1,6 @@
 package com.horeca.site.security;
 
+import com.horeca.site.models.UserInfo;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,7 +46,7 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
         Map<String, String> parameters = new LinkedHashMap<String, String>(tokenRequest.getRequestParameters());
         String pin = parameters.get("pin");
         if (pin != null) {
-            Authentication userAuth = getAsAuthenticated(pin, parameters);
+            Authentication userAuth = getAsAuthenticated(UserInfo.AUTH_PREFIX_PIN + pin, parameters);
             if (userAuth == null)
                 throw new RuntimeException("Invalid pin");
             OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
@@ -61,8 +62,8 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
         if (!loginService.isAlreadyPresent(pin))
             return null;
 
-        final UserDetails userDetails = loginService.loadUserByUsername(pin);
-        final Authentication userAuth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        final UserInfo userInfo = loginService.loadUserByUsername(pin);
+        final Authentication userAuth = new UsernamePasswordAuthenticationToken(userInfo, null, userInfo.getAuthorities());
         ((AbstractAuthenticationToken) userAuth).setDetails(parameters);
 
         return userAuth;
