@@ -16,15 +16,6 @@ public class InMemoryLoginService implements LoginService {
 
     private final Map<String, UserInfo> database = new HashMap<>();
 
-//    @PostConstruct
-//    public void init() {
-//        //add a test user
-//        List<GrantedAuthority> authorities = new ArrayList<>();
-//        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-//        String randomPass = UUID.randomUUID().toString();
-//        saveUser(new UserInfo(, randomPass, authorities));
-//    }
-
     @Override
     public void saveUser(UserInfo user) {
         database.put(user.getUsername(), user);

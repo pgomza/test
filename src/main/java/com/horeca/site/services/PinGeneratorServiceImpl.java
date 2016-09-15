@@ -19,7 +19,7 @@ public class PinGeneratorServiceImpl implements PinGeneratorService {
     private final char[] CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
 
     private boolean isAvailable(String pin) {
-        Stay stay = stayRepository.findByPin(pin);
+        Stay stay = stayRepository.findOne(pin);
         if (stay == null)
             return true;
 

@@ -1,5 +1,6 @@
 package com.horeca.site.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -12,15 +13,15 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Stay {
 
-    public enum Status { ACTIVE, FINISHED }
+    public enum Status { NEW, ACTIVE, FINISHED }
 
     @Id
     private String pin;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @ApiModelProperty(required = true)
-    private Status status;
+    @JsonIgnore
+    private Status status = Status.NEW;
 
     @NotEmpty
     @ApiModelProperty(required = true)

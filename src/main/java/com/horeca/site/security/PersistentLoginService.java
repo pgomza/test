@@ -1,6 +1,5 @@
 package com.horeca.site.security;
 
-
 import com.horeca.site.models.UserInfo;
 import com.horeca.site.repositories.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;

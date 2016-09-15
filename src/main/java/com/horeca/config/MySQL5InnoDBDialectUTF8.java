@@ -6,6 +6,6 @@ public class MySQL5InnoDBDialectUTF8 extends MySQL5InnoDBDialect {
 
     @Override
     public String getTableTypeString() {
-        return " ENGINE=InnoDB DEFAULT CHARSET=utf8";
+        return " ENGINE=InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci";
     }
 }
