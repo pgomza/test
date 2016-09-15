@@ -1,5 +1,6 @@
 package com.horeca.site.security;
 
+import com.horeca.site.exceptions.BadAuthorizationRequestException;
 import com.horeca.site.models.UserInfo;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -54,7 +55,7 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
         }
 
         //TODO add handling authentication via the standard account or social providers
-        throw new RuntimeException("You have not included pin in your request");
+        throw new BadAuthorizationRequestException("You have not included pin in your request");
     }
 
     private Authentication getAsAuthenticated(final String pin, Map<String, String> parameters) {
