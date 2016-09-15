@@ -32,24 +32,22 @@ public class StayController {
         return stayService.get(pin);
     }
 
-    @RequestMapping(value = "/stays/{pin}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/stays/{pin}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Stay update(@PathVariable String pin, @Valid @RequestBody Stay entity) {
         return stayService.update(pin, entity);
     }
 
-    @RequestMapping(value = "/stays/{pin}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/stays/{pin}", method = RequestMethod.DELETE)
     public void delete(@PathVariable String pin) {
         stayService.delete(pin);
     }
 
-    @RequestMapping(value = "/check-in/{pin}", method = RequestMethod.POST,
-            consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/check-in/{pin}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Stay checkIn(@PathVariable String pin) {
         return stayService.checkIn(pin);
     }
 
-    @RequestMapping(value = "/check-out/{pin}", method = RequestMethod.POST,
-            consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/check-out/{pin}", method = RequestMethod.POST)
     public void checkOut(@PathVariable String pin) {
         stayService.checkOut(pin);
     }

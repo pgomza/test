@@ -23,7 +23,7 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
     private final List<Class<? extends Exception>> BAD_REQUEST_EXCEPTIONS = new ArrayList<>();
     private final List<Class<? extends Exception>> NOT_FOUND_EXCEPTIONS = new ArrayList<>();
 //    private final List<Class<? extends Exception>> UNAUTHORIZED_EXCEPTIONS = new ArrayList<>();
-    private final List<Class<? extends Exception>> FORBIDDEN_EXCEPTIONS = new ArrayList<>();
+//    private final List<Class<? extends Exception>> FORBIDDEN_EXCEPTIONS = new ArrayList<>();
 
     public CustomGlobalExceptionHandler() {
         BAD_REQUEST_EXCEPTIONS.add(BusinessRuleViolationException.class);
@@ -32,8 +32,6 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
         BAD_REQUEST_EXCEPTIONS.add(BadAuthorizationRequestException.class);
 
         NOT_FOUND_EXCEPTIONS.add(ResourceNotFoundException.class);
-
-        FORBIDDEN_EXCEPTIONS.add(AccessDeniedException.class);
     }
 
     @Override
@@ -48,9 +46,6 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
         }
         else if (checkIfBelongsToList(ex.getClass(), NOT_FOUND_EXCEPTIONS)) {
             statusCode = HttpServletResponse.SC_NOT_FOUND;
-        }
-        else if (checkIfBelongsToList(ex.getClass(), FORBIDDEN_EXCEPTIONS)) {
-            statusCode = HttpServletResponse.SC_FORBIDDEN;
         }
         else {
             statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;

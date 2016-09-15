@@ -1,5 +1,6 @@
 package com.horeca.site.security;
 
+import com.horeca.site.handlers.CustomOAuth2ExceptionRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,6 +23,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         OAuth2AuthenticationEntryPoint entryPoint = new OAuth2AuthenticationEntryPoint();
         entryPoint.setRealmName("AppResources");
         entryPoint.setTypeName("Bearer");
+        entryPoint.setExceptionRenderer(new CustomOAuth2ExceptionRenderer());
         resources.authenticationEntryPoint(entryPoint);
     }
 
