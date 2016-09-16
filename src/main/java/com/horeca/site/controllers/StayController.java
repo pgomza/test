@@ -1,6 +1,6 @@
 package com.horeca.site.controllers;
 
-import com.horeca.site.models.Stay;
+import com.horeca.site.models.stay.Stay;
 import com.horeca.site.services.StayService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

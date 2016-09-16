@@ -1,8 +1,8 @@
 package com.horeca.site.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
-import com.horeca.site.models.Stay;
-import com.horeca.site.models.UserInfo;
+import com.horeca.site.models.stay.Stay;
+import com.horeca.site.models.user.UserInfo;
 import com.horeca.site.repositories.StayRepository;
 import com.horeca.site.security.LoginService;
 import com.horeca.site.exceptions.ResourceNotFoundException;
@@ -110,7 +110,7 @@ public class StayService {
     private void ensureEntityExists(String pin) {
         boolean exists = stayRepository.exists(pin);
         if (!exists)
-            throw new ResourceNotFoundException("Such Stay does not exist");
+            throw new ResourceNotFoundException();
     }
 
     private void ensureStatusActive(String pin) {

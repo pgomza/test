@@ -1,13 +1,11 @@
 package com.horeca.site.services;
 
-import com.horeca.site.models.Stay;
+import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.StayRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service

@@ -1,12 +1,11 @@
 package com.horeca.site.security;
 
 import com.horeca.site.exceptions.BadAuthorizationRequestException;
-import com.horeca.site.models.UserInfo;
+import com.horeca.site.models.user.UserInfo;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;

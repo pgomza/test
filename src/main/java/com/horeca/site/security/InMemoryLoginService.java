@@ -1,14 +1,8 @@
 package com.horeca.site.security;
 
-import com.horeca.site.models.UserInfo;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.horeca.site.models.user.UserInfo;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 //@Service("inMemoryLoginService")

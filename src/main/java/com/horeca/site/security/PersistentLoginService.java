@@ -1,9 +1,8 @@
 package com.horeca.site.security;
 
-import com.horeca.site.models.UserInfo;
+import com.horeca.site.models.user.UserInfo;
 import com.horeca.site.repositories.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
