@@ -1,4 +1,4 @@
-package com.horeca.site.models;
+package com.horeca.site.models.stay;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
