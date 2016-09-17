@@ -5,10 +5,18 @@ import com.google.appengine.repackaged.org.joda.time.DateTime;
 import com.horeca.site.exceptions.BadAuthorizationRequestException;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindException;
+import org.springframework.web.HttpMediaTypeException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
@@ -19,8 +27,6 @@ import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO disable DefaultHandlerExceptionResolver
-@Component
 public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolver {
 
     private final List<Class<? extends Exception>> BAD_REQUEST_EXCEPTIONS = new ArrayList<>();
@@ -30,11 +36,18 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
 
     public CustomGlobalExceptionHandler() {
         BAD_REQUEST_EXCEPTIONS.add(BusinessRuleViolationException.class);
-        BAD_REQUEST_EXCEPTIONS.add(MethodArgumentNotValidException.class);
-        BAD_REQUEST_EXCEPTIONS.add(HttpMessageNotReadableException.class);
         BAD_REQUEST_EXCEPTIONS.add(BadAuthorizationRequestException.class);
-        BAD_REQUEST_EXCEPTIONS.add(JsonMappingException.class);
         BAD_REQUEST_EXCEPTIONS.add(ConstraintViolationException.class);
+        BAD_REQUEST_EXCEPTIONS.add(JsonMappingException.class);
+        BAD_REQUEST_EXCEPTIONS.add(HttpRequestMethodNotSupportedException.class);
+        BAD_REQUEST_EXCEPTIONS.add(HttpMediaTypeNotSupportedException.class);
+        BAD_REQUEST_EXCEPTIONS.add(MissingServletRequestParameterException.class);
+        BAD_REQUEST_EXCEPTIONS.add(ServletRequestBindingException.class);
+        BAD_REQUEST_EXCEPTIONS.add(TypeMismatchException.class);
+        BAD_REQUEST_EXCEPTIONS.add(HttpMessageNotReadableException.class);
+        BAD_REQUEST_EXCEPTIONS.add(HttpMessageNotWritableException.class);
+        BAD_REQUEST_EXCEPTIONS.add(MethodArgumentNotValidException.class);
+        BAD_REQUEST_EXCEPTIONS.add(BindException.class);
 
         NOT_FOUND_EXCEPTIONS.add(ResourceNotFoundException.class);
 

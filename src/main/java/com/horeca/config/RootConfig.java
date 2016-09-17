@@ -3,6 +3,7 @@ package com.horeca.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.appengine.api.utils.SystemProperty;
+import com.horeca.site.handlers.CustomGlobalExceptionHandler;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -11,11 +12,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.StaticMessageSource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Configuration
-public class RootConfig
+public class RootConfig extends WebMvcConfigurerAdapter
 {
     @Value("${datasource.driverclassname.gae}")
     private String gaeDataSourceDriverClassName;
@@ -66,5 +70,10 @@ public class RootConfig
         ObjectMapper objectMapper = builder.createXmlMapper(false).build();
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         return objectMapper;
+    }
+
+    @Override
+    public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
+        exceptionResolvers.add(new CustomGlobalExceptionHandler());
     }
 }
