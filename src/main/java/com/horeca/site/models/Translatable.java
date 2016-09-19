@@ -8,7 +8,7 @@ import java.util.Set;
 @MappedSuperclass
 public abstract class Translatable<T extends Translation> {
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn
     private Set<T> translations;
 
