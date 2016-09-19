@@ -1,8 +1,12 @@
 package com.horeca.site.models.hotel;
 
 import com.horeca.site.models.hotel.address.AddressView;
+import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.roomdirectory.RoomDirectoryView;
-import com.horeca.site.models.hotel.services.DummyServices;
+import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
+import com.horeca.site.models.hotel.services.AvailableServicesView;
+
+import java.util.List;
 
 public class HotelView {
 	
@@ -11,8 +15,10 @@ public class HotelView {
 	private String name;
 
 	private AddressView address;
+
+	private UsefulInformation usefulInformation;
 	
-	private DummyServices services;
+	private List<AvailableServiceViewSimplified> services;
 
 	private RoomDirectoryView roomDirectory;
 
@@ -40,11 +46,19 @@ public class HotelView {
 		this.address = address;
 	}
 
-	public DummyServices getServices() {
+	public UsefulInformation getUsefulInformation() {
+		return usefulInformation;
+	}
+
+	public void setUsefulInformation(UsefulInformation usefulInformation) {
+		this.usefulInformation = usefulInformation;
+	}
+
+	public List<AvailableServiceViewSimplified> getServices() {
 		return services;
 	}
 
-	public void setServices(DummyServices services) {
+	public void setServices(List<AvailableServiceViewSimplified> services) {
 		this.services = services;
 	}
 
