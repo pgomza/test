@@ -22,10 +22,6 @@ public class HotelService {
 
     @Autowired
     private HotelRepository repository;
-    @Autowired
-    private AddressService addressService;
-    @Autowired
-    private RoomDirectoryService roomDirectoryService;
 
     public Iterable<Hotel> getAll() {
         return repository.findAll();
@@ -73,30 +69,10 @@ public class HotelService {
         List<HotelView> hotelViews = new ArrayList<>();
 
         for (Hotel hotel : hotels) {
-            HotelView hotelView = getView(hotel, preferredLanguage);
+            HotelView hotelView = hotel.toView(preferredLanguage, hotel.getDefaultTranslation());
             hotelViews.add(hotelView);
         }
 
         return hotelViews;
-    }
-
-    public HotelView getView(Hotel hotel, String preferredLanguage) {
-        String defaultLanguage = hotel.getDefaultTranslation();
-        HotelTranslation translation = hotel.getTranslation(preferredLanguage, defaultLanguage);
-
-        HotelView hotelView = new HotelView();
-        hotelView.setId(hotel.getId());
-        hotelView.setName(translation.getName());
-
-        AddressView addressView = addressService.getView(hotel.getAddress(), preferredLanguage, defaultLanguage);
-        hotelView.setAddress(addressView);
-
-        RoomDirectoryView roomDirectoryView =
-                roomDirectoryService.getView(hotel.getRoomDirectory(), preferredLanguage, defaultLanguage);
-        hotelView.setRoomDirectory(roomDirectoryView);
-
-        hotelView.setServices(hotel.getServices());
-
-        return hotelView;
     }
 }

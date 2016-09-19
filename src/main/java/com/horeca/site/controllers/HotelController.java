@@ -42,8 +42,7 @@ public class HotelController {
 	public HotelView get(@PathVariable("id") Long id, HttpServletRequest request) {
         String language = request.getLocale().getLanguage();
         Hotel hotel = service.get(id);
-        HotelView hotelView = service.getView(hotel, language);
-        return hotelView;
+		return hotel.toView(language, hotel.getDefaultTranslation());
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
