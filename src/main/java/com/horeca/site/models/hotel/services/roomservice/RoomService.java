@@ -22,7 +22,7 @@ public class RoomService extends Translatable<RoomServiceTranslation> implements
     @NotNull
     private Price price;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn
     private Set<RoomItem> items;
 

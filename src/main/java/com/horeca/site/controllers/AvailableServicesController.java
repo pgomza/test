@@ -35,6 +35,14 @@ public class AvailableServicesController {
         return view;
     }
 
+    @RequestMapping(value = "/{hotelId}/breakfast", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public BreakfastView getBreakfast(@PathVariable("hotelId") Long hotelId, HttpServletRequest request) {
+        String language = request.getLocale().getLanguage();
+        Hotel hotel = hotelService.get(hotelId);
+        Breakfast breakfast = hotel.getAvailableServices().getBreakfast();
+        return breakfast.toView(language, hotel.getDefaultTranslation());
+    }
+
     @RequestMapping(value = "/{hotelId}/breakfast", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Breakfast updateBreakfast(@PathVariable("hotelId") Long hotelId, @Valid @RequestBody Breakfast newOne, HttpServletRequest request) {
         Hotel hotel = hotelService.get(hotelId);
