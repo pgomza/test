@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.Translatable;
 import com.horeca.site.models.Viewable;
 import com.horeca.site.models.hotel.address.Address;
+import com.horeca.site.models.hotel.gallery.Gallery;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
 import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
@@ -15,6 +16,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
@@ -43,6 +45,10 @@ public class Hotel extends Translatable<HotelTranslation> implements Viewable<Ho
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn
 	private AvailableServices availableServices;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn
+	private Set<Gallery> galleries;
 
 	public Long getId() {
 		return id;
@@ -92,6 +98,14 @@ public class Hotel extends Translatable<HotelTranslation> implements Viewable<Ho
 		this.availableServices = availableServices;
 	}
 
+	public Set<Gallery> getGalleries() {
+		return galleries;
+	}
+
+	public void setGalleries(Set<Gallery> galleries) {
+		this.galleries = galleries;
+	}
+
 	@Override
 	public HotelView toView(String preferredLanguage, String defaultLanguage) {
 		HotelTranslation translation = getTranslation(preferredLanguage, defaultLanguage);
@@ -136,6 +150,8 @@ public class Hotel extends Translatable<HotelTranslation> implements Viewable<Ho
 		}
 
 		hotelView.setServices(simplifiedList);
+
+		hotelView.setGalleries(getGalleries());
 
 		return hotelView;
 	}

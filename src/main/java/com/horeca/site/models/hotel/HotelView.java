@@ -1,12 +1,13 @@
 package com.horeca.site.models.hotel;
 
 import com.horeca.site.models.hotel.address.AddressView;
+import com.horeca.site.models.hotel.gallery.Gallery;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.roomdirectory.RoomDirectoryView;
 import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
-import com.horeca.site.models.hotel.services.AvailableServicesView;
 
 import java.util.List;
+import java.util.Set;
 
 public class HotelView {
 	
@@ -21,6 +22,8 @@ public class HotelView {
 	private List<AvailableServiceViewSimplified> services;
 
 	private RoomDirectoryView roomDirectory;
+
+	private Set<Gallery> galleries;
 
 	public Long getId() {
 		return id;
@@ -68,5 +71,13 @@ public class HotelView {
 
 	public void setRoomDirectory(RoomDirectoryView roomDirectory) {
 		this.roomDirectory = roomDirectory;
+	}
+
+	public Set<Gallery> getGalleries() {
+		return galleries;
+	}
+
+	public void setGalleries(Set<Gallery> galleries) {
+		this.galleries = galleries;
 	}
 }
