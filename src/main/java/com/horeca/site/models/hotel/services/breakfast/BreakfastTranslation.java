@@ -1,17 +1,14 @@
 package com.horeca.site.models.hotel.services.breakfast;
 
 import com.horeca.site.models.Translation;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class BreakfastTranslation extends Translation {
 
-    @NotEmpty
+    @NotNull
     private String description;
 
     public String getDescription() {
