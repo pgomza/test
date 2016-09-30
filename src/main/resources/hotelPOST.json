@@ -1,0 +1,324 @@
+{
+  "address": {
+    "translations": [
+      {
+        "city": "Toruń",
+        "language": "pl",
+        "street": "ul. Toruńska"
+      },
+      {
+        "city": "Torun",
+        "language": "en",
+        "street": "Torunska street"
+      }
+    ]
+  },
+  "availableServices": {
+    "breakfast": {
+      "categories": [
+        {
+          "category": "DRINK",
+          "groups": [
+            {
+              "items": [
+                {
+                  "price": {
+                    "text": "Free"
+                  },
+                  "translations": [
+                    {
+                      "language": "en",
+                      "name": "Black"
+                    },
+                    {
+                      "language": "pl",
+                      "name": "Czarna"
+                    }
+                  ]
+                },
+                {
+                  "price": {
+                    "text": "Free"
+                  },
+                  "translations": [
+                    {
+                      "language": "en",
+                      "name": "Rosehip"
+                    },
+                    {
+                      "language": "pl",
+                      "name": "Z owoców dzikiej róży"
+                    }
+                  ]
+                }
+              ],
+              "translations": [
+                {
+                  "language": "en",
+                  "name": "Tea"
+                },
+                {
+                  "language": "pl",
+                  "name": "Herbata"
+                }
+              ]
+            }
+          ],
+          "items": [
+            {
+              "price": {
+                "currency": "$",
+                "value": "0.5"
+              },
+              "translations": [
+                {
+                  "language": "en",
+                  "name": "Expresso"
+                },
+                {
+                  "language": "pl",
+                  "name": "Expresso"
+                }
+              ]
+            },
+            {
+              "price": {
+                "currency": "$",
+                "value": "3"
+              },
+              "translations": [
+                {
+                  "language": "en",
+                  "name": "Hot chocolate"
+                },
+                {
+                  "language": "pl",
+                  "name": "Gorąca czekolada"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "category": "DISH",
+          "groups": [
+            {
+              "items": [
+                {
+                  "price": {
+                    "currency": "$",
+                    "value": "7"
+                  },
+                  "translations": [
+                    {
+                      "language": "en",
+                      "name": "Chicken fried bacon"
+                    },
+                    {
+                      "language": "pl",
+                      "name": "Chicken friend bacon po polsku"
+                    }
+                  ]
+                },
+                {
+                  "price": {
+                    "currency": "$",
+                    "value": "8.5"
+                  },
+                  "translations": [
+                    {
+                      "language": "en",
+                      "name": "Chocolate covered bacon"
+                    },
+                    {
+                      "language": "pl",
+                      "name": "Bacon pokryty czekoladą"
+                    }
+                  ]
+                }
+              ],
+              "translations": [
+                {
+                  "language": "en",
+                  "name": "Bacon"
+                },
+                {
+                  "language": "pl",
+                  "name": "Bacon"
+                }
+              ]
+            }
+          ],
+          "items": [
+            {
+              "price": {
+                "currency": "$",
+                "value": "2"
+              },
+              "translations": [
+                {
+                  "language": "en",
+                  "name": "Toasts with jam"
+                },
+                {
+                  "language": "pl",
+                  "name": "Tosty z dżemem"
+                }
+              ]
+            },
+            {
+              "price": {
+                "currency": "$",
+                "value": "3.5"
+              },
+              "translations": [
+                {
+                  "language": "en",
+                  "name": "Scrambled eggs"
+                },
+                {
+                  "language": "pl",
+                  "name": "Jajecznica"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "fromHour": "19-09-2016 09:00:00",
+      "price": {
+        "currency": "$",
+        "value": 5
+      },
+      "toHour": "19-09-2016 11:00:00",
+      "translations": [
+        {
+          "description": "breakfast's description goes here",
+          "language": "en"
+        },
+        {
+          "description": "opis śniadania",
+          "language": "pl"
+        }
+      ]
+    },
+    "carPark": {
+      "price": {
+        "currency": "$",
+        "value": 3
+      },
+      "translations": [
+        {
+          "description": "opis usługi Car Park",
+          "language": "pl"
+        },
+        {
+          "description": "Car Park's description",
+          "language": "en"
+        }
+      ]
+    },
+    "roomService": {
+      "items": [
+        {
+          "translations": [
+            {
+              "language": "pl",
+              "text": "ręczniki"
+            },
+            {
+              "language": "en",
+              "text": "towels"
+            }
+          ]
+        }
+      ],
+      "price": {
+        "text": "Free"
+      },
+      "translations": [
+        {
+          "description": "opis usługi room service",
+          "language": "pl"
+        },
+        {
+          "description": "room service's description",
+          "language": "en"
+        }
+      ]
+    },
+    "receptionCall": {
+      "price": {
+        "text": ""
+      },
+      "phoneNumber": "123456789"
+    }
+  },
+  "defaultTranslation": "pl",
+  "usefulInformation": {
+    "wifiPassword": "erir9732f9fwdrel",
+    "items": [
+      {
+        "name": "Check-in",
+        "fromHour": "19-09-2016 09:00:00",
+        "toHour": "19-09-2016 09:00:00"
+      },
+      {
+        "name": "Check-out",
+        "fromHour": "19-09-2016 19:30:00",
+        "toHour": "19-09-2016 19:30:00"
+      }
+    ]
+  },
+  "roomDirectory": {
+    "sections": [
+      {
+        "translations": [
+          {
+            "heading": "Ręczniki",
+            "language": "pl",
+            "text": "coś o ręcznikach"
+          },
+          {
+            "heading": "Towels",
+            "language": "en",
+            "text": "something about the towels"
+          }
+        ]
+      },
+      {
+        "translations": [
+          {
+            "heading": "Papier toaletowy",
+            "language": "pl",
+            "text": "jakaś informacja o papierze toaletowym"
+          },
+          {
+            "heading": "Toilet paper",
+            "language": "en",
+            "text": "some information about the toilet paper "
+          }
+        ]
+      }
+    ]
+  },
+  "translations": [
+    {
+      "language": "pl",
+      "name": "Jakiś hotel"
+    },
+    {
+      "language": "en",
+      "name": "Some hotel"
+    }
+  ],
+  "galleries": [
+    {
+      "type": "MAIN",
+      "links": [
+        "https://a1.cdn-hotels.com/landing/images/2ddeb5d1-8fa5-4d55-b78d-62e5b0d208bf_20130621092935.jpg",
+        "http://static1.squarespace.com/static/512f9596e4b0ed945e3306aa/t/513e39c7e4b0517c723271a8/1363032525439/IMG_4536+copy.JPG"
+      ]
+    }
+  ]
+}
