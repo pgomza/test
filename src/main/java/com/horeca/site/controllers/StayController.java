@@ -1,15 +1,20 @@
 package com.horeca.site.controllers;
 
 import com.horeca.site.models.stay.Stay;
+import com.horeca.site.models.stay.StayPOST;
+import com.horeca.site.models.stay.StayView;
 import com.horeca.site.services.StayService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Api(value = "stays")
+@CrossOrigin(methods = { RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST,
+    RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.OPTIONS })
 @RestController
 @RequestMapping("/api")
 public class StayController {
@@ -18,18 +23,20 @@ public class StayController {
     private StayService stayService;
 
     @RequestMapping(value = "/stays", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Iterable<Stay> getAll() {
-        return stayService.getAll();
+    public Iterable<StayView> getAll(HttpServletRequest request) {
+        String preferredLanguage = request.getLocale().getLanguage();
+        return stayService.getAllViews(preferredLanguage);
     }
 
     @RequestMapping(value = "/stays", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Stay add(@Valid @RequestBody Stay entity) {
+    public Stay add(@Valid @RequestBody StayPOST entity) {
         return stayService.registerNewStay(entity);
     }
 
     @RequestMapping(value = "/stays/{pin}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Stay get(@PathVariable String pin) {
-        return stayService.get(pin);
+    public StayView get(@PathVariable String pin, HttpServletRequest request) {
+        String preferredLanguage = request.getLocale().getLanguage();
+        return stayService.getView(pin, preferredLanguage);
     }
 
     @RequestMapping(value = "/stays/{pin}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -42,9 +49,16 @@ public class StayController {
         stayService.delete(pin);
     }
 
+    @RequestMapping(value = "/stays", method = RequestMethod.DELETE)
+    public void deleteAll() {
+        stayService.deleteAll();
+    }
+
     @RequestMapping(value = "/check-in/{pin}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Stay checkIn(@PathVariable String pin) {
-        return stayService.checkIn(pin);
+    public StayView checkIn(@PathVariable String pin, HttpServletRequest request) {
+        String preferredLanguage = request.getLocale().getLanguage();
+        Stay stay = stayService.checkIn(pin);
+        return stay.toView(preferredLanguage, stay.getHotel().getDefaultTranslation());
     }
 
     @RequestMapping(value = "/check-out/{pin}", method = RequestMethod.POST)

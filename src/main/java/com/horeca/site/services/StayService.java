@@ -2,21 +2,19 @@ package com.horeca.site.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.stay.Stay;
+import com.horeca.site.models.stay.StayPOST;
+import com.horeca.site.models.stay.StayStatus;
+import com.horeca.site.models.stay.StayView;
 import com.horeca.site.models.user.UserInfo;
 import com.horeca.site.repositories.StayRepository;
 import com.horeca.site.security.LoginService;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 @Transactional
@@ -31,66 +29,85 @@ public class StayService {
     @Autowired
     private PinGeneratorService pinGeneratorService;
 
-    @Value("${hardcodedPin}")
-    private String hardcodedPin;
-
-    @PostConstruct
-    public void initStays() {
-        Stay byPin = stayRepository.findOne(hardcodedPin);
-        if (byPin == null) {
-            Stay stay = new Stay();
-            stay.setPin(hardcodedPin);
-            stay.setSomeInfo("Some information about the stay");
-            stayRepository.save(stay);
-            saveUserAssociatedWithPin(hardcodedPin);
-        }
-    }
+    @Autowired
+    private HotelService hotelService;
 
     public Iterable<Stay> getAll() {
         return stayRepository.findAll();
     }
 
-    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
+    public Iterable<StayView> getAllViews(String preferredLanguage) {
+        Set<StayView> views = new HashSet<>();
+        for (Stay stay : getAll()) {
+            views.add(stay.toView(preferredLanguage, stay.getHotel().getDefaultTranslation()));
+        }
+        return views;
+    }
+
+//    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
     public Stay get(String pin) {
         ensureEntityExists(pin);
-        ensureStatusActive(pin);
+        ensureStatusNotNew(pin);
         return stayRepository.findOne(pin);
     }
 
-    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
+    public StayView getView(String pin, String preferredLanguage) {
+        Stay stay = get(pin);
+        return stay.toView(preferredLanguage, stay.getHotel().getDefaultTranslation());
+    }
+
+//    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
     public Stay update(String pin, Stay stay) {
         ensureEntityExists(pin);
-        ensureStatusActive(pin);
+//        ensureStatusNotNew(pin);
         stay.setPin(pin);
         return stayRepository.save(stay);
     }
 
-    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
+//    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
     public void delete(String pin) {
         ensureEntityExists(pin);
         stayRepository.delete(pin);
     }
 
-    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
+    public void deleteAll() {
+        stayRepository.deleteAll();
+    }
+
+//    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
     public Stay checkIn(String pin) {
         ensureEntityExists(pin);
-        ensureStatusNew(pin);
+        ensureStatusNotFinished(pin);
         Stay stay = stayRepository.findOne(pin);
-        stay.setStatus(Stay.Status.ACTIVE);
-        Stay changed = stayRepository.save(stay);
-        return changed;
+        stay.setStatus(StayStatus.ACTIVE);
+        return stayRepository.save(stay);
     }
 
-    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
+//    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
     public void checkOut(String pin) {
         ensureEntityExists(pin);
-        ensureStatusActive(pin);
+        ensureStatusNotNew(pin);
         Stay stay = stayRepository.findOne(pin);
-        stay.setStatus(Stay.Status.FINISHED);
-        Stay changed = stayRepository.save(stay);
+        stay.setStatus(StayStatus.FINISHED);
+        stayRepository.save(stay);
     }
 
-    public Stay registerNewStay(Stay stay) {
+    public Stay registerNewStay(StayPOST stayPOST) {
+        Stay stay = new Stay();
+        stay.setStatus(StayStatus.NEW);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date today = Calendar.getInstance().getTime();
+        stay.setDate(dateFormat.format(today));
+
+        stay.setName(stayPOST.getName());
+        stay.setRoomNumber(stayPOST.getRoomNumber());
+        stay.setHotel(hotelService.get(stayPOST.getHotelId()));
+
+        return registerNewStay(stay);
+    }
+
+    private Stay registerNewStay(Stay stay) {
         String pin = pinGeneratorService.generatePin();
         stay.setPin(pin);
 
@@ -113,19 +130,15 @@ public class StayService {
             throw new ResourceNotFoundException();
     }
 
-    private void ensureStatusActive(String pin) {
+    private void ensureStatusNotNew(String pin) {
         Stay stay = stayRepository.findOne(pin);
-        if (stay.getStatus() == Stay.Status.NEW)
+        if (stay.getStatus() == StayStatus.NEW)
             throw new BusinessRuleViolationException("You have to check in first");
-        else if (stay.getStatus() == Stay.Status.FINISHED)
-            throw new BusinessRuleViolationException("This stay is no longer active");
     }
 
-    private void ensureStatusNew(String pin) {
+    private void ensureStatusNotFinished(String pin) {
         Stay stay = stayRepository.findOne(pin);
-        if (stay.getStatus() == Stay.Status.ACTIVE)
-            throw new BusinessRuleViolationException("You have already checked in");
-        else if (stay.getStatus() == Stay.Status.FINISHED)
+        if (stay.getStatus() == StayStatus.FINISHED)
             throw new BusinessRuleViolationException("This stay is no longer active");
     }
 }
