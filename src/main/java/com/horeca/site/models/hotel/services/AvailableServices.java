@@ -11,6 +11,8 @@ import com.horeca.site.models.hotel.services.carpark.CarParkView;
 import com.horeca.site.models.hotel.services.receptioncall.ReceptionCall;
 import com.horeca.site.models.hotel.services.roomservice.RoomService;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceView;
+import com.horeca.site.models.hotel.services.spa.Spa;
+import com.horeca.site.models.hotel.services.spa.SpaView;
 
 import javax.persistence.*;
 
@@ -38,6 +40,10 @@ public class AvailableServices implements Viewable<AvailableServicesView> {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
     private ReceptionCall receptionCall;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn
+    private Spa spa;
 
     public Long getId() {
         return id;
@@ -79,6 +85,14 @@ public class AvailableServices implements Viewable<AvailableServicesView> {
         this.receptionCall = receptionCall;
     }
 
+    public Spa getSpa() {
+        return spa;
+    }
+
+    public void setSpa(Spa spa) {
+        this.spa = spa;
+    }
+
     @Override
     public AvailableServicesView toView(String preferredLanguage, String defaultLanguage) {
         AvailableServicesView view = new AvailableServicesView();
@@ -92,6 +106,9 @@ public class AvailableServices implements Viewable<AvailableServicesView> {
 
         RoomServiceView roomServiceView = getRoomService().toView(preferredLanguage, defaultLanguage);
         view.setRoomService(roomServiceView);
+
+        SpaView spaView = getSpa().toView(preferredLanguage, defaultLanguage);
+        view.setSpa(spaView);
 
         view.setReceptionCall(getReceptionCall());
 

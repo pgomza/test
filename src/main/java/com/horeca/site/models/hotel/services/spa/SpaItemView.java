@@ -11,8 +11,6 @@ public class SpaItemView {
 
     private Price price;
 
-    private SpaCalendar calendar;
-
     public Long getId() {
         return id;
     }
@@ -35,13 +33,5 @@ public class SpaItemView {
 
     public void setPrice(Price price) {
         this.price = price;
-    }
-
-    public SpaCalendar getCalendar() {
-        return calendar;
-    }
-
-    public void setCalendar(SpaCalendar calendar) {
-        this.calendar = calendar;
     }
 }

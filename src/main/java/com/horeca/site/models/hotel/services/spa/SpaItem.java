@@ -53,7 +53,6 @@ public class SpaItem extends Translatable<SpaItemTranslation>
         view.setId(getId());
         view.setName(getTranslation(preferredLanguage, defaultLanguage).getName());
         view.setPrice(getPrice());
-        view.setCalendar(getCalendar());
         return view;
     }
 }
