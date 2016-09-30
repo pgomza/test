@@ -9,12 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
+@Transactional
 public class PinGeneratorServiceImpl implements PinGeneratorService {
 
     @Autowired
     private StayRepository stayRepository;
 
-    private final char[] CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+    private final char[] CHARSET = "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
 
     private boolean isAvailable(String pin) {
         Stay stay = stayRepository.findOne(pin);
@@ -24,9 +25,9 @@ public class PinGeneratorServiceImpl implements PinGeneratorService {
         return false;
     }
 
-    // Given the fact that the pin consists of 6 alphanumeric, case-sensitive
-    // characters, there are (26*2 + 10)^6 = 56800235584 possible combinations
-    // It's therefore unlikely that the newly generated pin will already be taken
+    // Given the fact that the pin consists of 6 alphanumeric, lowercase
+    // characters, there are (26 + 10)^6 = 2176782336 possible combinations
+    // it's unlikely that the newly generated pin will already be taken
     @Override
     @Transactional
     public String generatePin() {

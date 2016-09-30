@@ -1,7 +1,6 @@
 package com.horeca.site.security;
 
 import com.horeca.site.handlers.CustomOAuth2ExceptionRenderer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -32,8 +31,8 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/restricted/**").authenticated();
-        http.authorizeRequests().antMatchers("/api/stays/{\\d+}").authenticated();
-        http.authorizeRequests().antMatchers("/api/check-in/{\\d+}").authenticated();
-        http.authorizeRequests().antMatchers("/api/check-out/{\\d+}").authenticated();
+//        http.authorizeRequests().antMatchers("/api/stays/{\\d+}").authenticated();
+//        http.authorizeRequests().antMatchers("/api/check-in/{\\d+}").authenticated();
+//        http.authorizeRequests().antMatchers("/api/check-out/{\\d+}").authenticated();
     }
 }
