@@ -5,6 +5,7 @@ import com.horeca.site.models.hotel.services.carpark.CarParkView;
 import com.horeca.site.models.hotel.services.receptioncall.ReceptionCall;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceView;
 import com.horeca.site.models.hotel.services.spa.SpaView;
+import com.horeca.site.models.hotel.services.taxi.Taxi;
 
 public class AvailableServicesView {
 
@@ -19,6 +20,8 @@ public class AvailableServicesView {
     private ReceptionCall receptionCall;
 
     private SpaView spa;
+
+    private Taxi taxi;
 
     public Long getId() {
         return id;
@@ -66,5 +69,13 @@ public class AvailableServicesView {
 
     public void setSpa(SpaView spa) {
         this.spa = spa;
+    }
+
+    public Taxi getTaxi() {
+        return taxi;
+    }
+
+    public void setTaxi(Taxi taxi) {
+        this.taxi = taxi;
     }
 }

@@ -13,6 +13,7 @@ import com.horeca.site.models.hotel.services.roomservice.RoomService;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceView;
 import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spa.SpaView;
+import com.horeca.site.models.hotel.services.taxi.Taxi;
 
 import javax.persistence.*;
 
@@ -44,6 +45,10 @@ public class AvailableServices implements Viewable<AvailableServicesView> {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
     private Spa spa;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn
+    private Taxi taxi;
 
     public Long getId() {
         return id;
@@ -93,6 +98,14 @@ public class AvailableServices implements Viewable<AvailableServicesView> {
         this.spa = spa;
     }
 
+    public Taxi getTaxi() {
+        return taxi;
+    }
+
+    public void setTaxi(Taxi taxi) {
+        this.taxi = taxi;
+    }
+
     @Override
     public AvailableServicesView toView(String preferredLanguage, String defaultLanguage) {
         AvailableServicesView view = new AvailableServicesView();
@@ -109,6 +122,8 @@ public class AvailableServices implements Viewable<AvailableServicesView> {
 
         SpaView spaView = getSpa().toView(preferredLanguage, defaultLanguage);
         view.setSpa(spaView);
+
+        view.setTaxi(getTaxi());
 
         view.setReceptionCall(getReceptionCall());
 

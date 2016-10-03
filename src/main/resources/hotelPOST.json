@@ -295,6 +295,21 @@
           "language": "en"
         }
       ]
+    },
+    "taxi": {
+      "items": [
+        {
+          "name": "Radio Taxi",
+          "number": "390-035-5524"
+        },
+        {
+          "name": "Blue Taxi 24",
+          "number": "328-004-4540"
+        }
+      ],
+      "price": {
+        "text": "Free"
+      }
     }
   },
   "defaultTranslation": "pl",
