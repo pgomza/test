@@ -34,7 +34,7 @@ public class Stay implements Viewable<StayView> {
     @JoinColumn
     private Orders orders = new Orders();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn
     private Hotel hotel;
 

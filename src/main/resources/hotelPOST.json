@@ -252,6 +252,49 @@
         "text": ""
       },
       "phoneNumber": "123456789"
+    },
+    "spa": {
+      "items": [
+        {
+          "calendar": {
+            "days": [
+              {
+                "day": "26-09-2016",
+                "hours": [
+                  {
+                    "available": true,
+                    "hour": "10:00"
+                  },
+                  {
+                    "available": false,
+                    "hour": "11:00"
+                  }
+                ]
+              }
+            ]
+          },
+          "price": {
+            "currency": "$",
+            "value": 3
+          },
+          "translations": [
+            {
+              "language": "en",
+              "name": "Thai massage"
+            }
+          ]
+        }
+      ],
+      "price": {
+        "currency": "$",
+        "value": 5
+      },
+      "translations": [
+        {
+          "description": "spa service's description",
+          "language": "en"
+        }
+      ]
     }
   },
   "defaultTranslation": "pl",

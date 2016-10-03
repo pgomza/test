@@ -2,6 +2,7 @@ package com.horeca.site.controllers;
 
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.models.stay.StayPOST;
+import com.horeca.site.models.stay.StayStatusUPDATE;
 import com.horeca.site.models.stay.StayView;
 import com.horeca.site.services.StayService;
 import io.swagger.annotations.Api;
@@ -42,6 +43,11 @@ public class StayController {
     @RequestMapping(value = "/stays/{pin}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Stay update(@PathVariable String pin, @Valid @RequestBody Stay entity) {
         return stayService.update(pin, entity);
+    }
+
+    @RequestMapping(value = "/stays/{pin}/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public StayStatusUPDATE updateStatus(@PathVariable String pin, @Valid @RequestBody StayStatusUPDATE newStatus) {
+        return stayService.updateStatus(pin, newStatus);
     }
 
     @RequestMapping(value = "/stays/{pin}", method = RequestMethod.DELETE)

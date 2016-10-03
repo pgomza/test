@@ -1,10 +1,7 @@
 package com.horeca.site.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
-import com.horeca.site.models.stay.Stay;
-import com.horeca.site.models.stay.StayPOST;
-import com.horeca.site.models.stay.StayStatus;
-import com.horeca.site.models.stay.StayView;
+import com.horeca.site.models.stay.*;
 import com.horeca.site.models.user.UserInfo;
 import com.horeca.site.repositories.StayRepository;
 import com.horeca.site.security.LoginService;
@@ -62,6 +59,13 @@ public class StayService {
 //        ensureStatusNotNew(pin);
         stay.setPin(pin);
         return stayRepository.save(stay);
+    }
+
+    public StayStatusUPDATE updateStatus(String pin, StayStatusUPDATE newStatus) {
+        Stay stay = stayRepository.findOne(pin);
+        stay.setStatus(newStatus.getStatus());
+        stayRepository.save(stay);
+        return newStatus;
     }
 
 //    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
