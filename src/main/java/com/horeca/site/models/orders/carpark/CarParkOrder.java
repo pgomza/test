@@ -18,7 +18,7 @@ public class CarParkOrder {
     private OrderStatus status;
 
     @NotNull
-    private String licensePlate;
+    private String licenseNumber;
 
     public Long getId() {
         return id;
@@ -36,11 +36,11 @@ public class CarParkOrder {
         this.status = status;
     }
 
-    public String getLicensePlate() {
-        return licensePlate;
+    public String getLicenseNumber() {
+        return licenseNumber;
     }
 
-    public void setLicensePlate(String licensePlate) {
-        this.licensePlate = licensePlate;
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
     }
 }

@@ -5,13 +5,13 @@ import javax.validation.constraints.NotNull;
 public class CarParkOrderPOST {
 
     @NotNull
-    private String licensePlate;
+    private String licenseNumber;
 
-    public String getLicensePlate() {
-        return licensePlate;
+    public String getLicenseNumber() {
+        return licenseNumber;
     }
 
-    public void setLicensePlate(String licensePlate) {
-        this.licensePlate = licensePlate;
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
     }
 }

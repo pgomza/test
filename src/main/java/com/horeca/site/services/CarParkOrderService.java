@@ -2,14 +2,15 @@ package com.horeca.site.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.models.hotel.services.carpark.CarPark;
 import com.horeca.site.models.orders.OrderStatus;
+import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.carpark.CarParkOrderPOST;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.CarParkOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +43,7 @@ public class CarParkOrderService {
         for (CarParkOrder order : carParkOrders) {
             if (order.getStatus() == OrderStatus.NEW || order.getStatus() == OrderStatus.ACCEPTED) {
                 if (activeOrder != null) {
-                    //it should never happen - the orders should be tested against the business rules while being added
+                    //it should never happen - the orders should be tested against that business rule while being added
                     throw new BusinessRuleViolationException("Only one car park order can be active (NEW or ACCEPTED)");
                 }
 
@@ -57,7 +58,7 @@ public class CarParkOrderService {
 
     public CarParkOrder add(String stayPin, CarParkOrderPOST entity) {
         CarParkOrder newOrder = new CarParkOrder();
-        newOrder.setLicensePlate(entity.getLicensePlate());
+        newOrder.setLicenseNumber(entity.getLicenseNumber());
         newOrder.setStatus(OrderStatus.NEW);
         CarParkOrder savedOrder = repository.save(newOrder);
 
@@ -73,5 +74,19 @@ public class CarParkOrderService {
         CarParkOrder active = getActive(stayPin);
         updated.setId(active.getId());
         return repository.save(updated);
+    }
+
+    public OrderStatusPUT getActiveStatus(String pin) {
+        OrderStatus status = getActive(pin).getStatus();
+        OrderStatusPUT statusPUT = new OrderStatusPUT();
+        statusPUT.setStatus(status);
+        return statusPUT;
+    }
+
+    public OrderStatusPUT updateActiveStatus(String stayPin, OrderStatusPUT newStatus) {
+        CarParkOrder active = getActive(stayPin);
+        active.setStatus(newStatus.getStatus());
+        updateActive(stayPin, active);
+        return newStatus;
     }
 }
