@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.Viewable;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.dnd.DndOrder;
+import com.horeca.site.models.orders.spa.SpaOrder;
+import com.horeca.site.models.orders.spa.SpaOrderView;
 import com.horeca.site.models.orders.taxi.TaxiOrder;
 
 import javax.persistence.*;
@@ -31,6 +33,10 @@ public class Orders implements Viewable<OrdersView> {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn
     private Set<TaxiOrder> taxiOrders = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn
+    private Set<SpaOrder> spaOrders = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -64,12 +70,28 @@ public class Orders implements Viewable<OrdersView> {
         this.taxiOrders = taxiOrders;
     }
 
+    public Set<SpaOrder> getSpaOrders() {
+        return spaOrders;
+    }
+
+    public void setSpaOrders(Set<SpaOrder> spaOrders) {
+        this.spaOrders = spaOrders;
+    }
+
     @Override
     public OrdersView toView(String preferredLanguage, String defaultLanguage) {
         OrdersView view = new OrdersView();
         view.setDnd(getDnd());
         view.setCarParkOrders(getCarParkOrders());
         view.setTaxiOrders(getTaxiOrders());
+
+        //spa orders
+        Set<SpaOrderView> spaOrderViews = new HashSet<>();
+        for (SpaOrder spaOrder : getSpaOrders()) {
+            spaOrderViews.add(spaOrder.toView(preferredLanguage, defaultLanguage));
+        }
+        view.setSpaOrders(spaOrderViews);
+
         return view;
     }
 }
