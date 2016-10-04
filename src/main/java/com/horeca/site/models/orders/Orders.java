@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.Viewable;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.dnd.DndOrder;
+import com.horeca.site.models.orders.taxi.TaxiOrder;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -26,6 +27,10 @@ public class Orders implements Viewable<OrdersView> {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn
     private Set<CarParkOrder> carParkOrders = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn
+    private Set<TaxiOrder> taxiOrders = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -51,11 +56,20 @@ public class Orders implements Viewable<OrdersView> {
         this.carParkOrders = carParkOrders;
     }
 
+    public Set<TaxiOrder> getTaxiOrders() {
+        return taxiOrders;
+    }
+
+    public void setTaxiOrders(Set<TaxiOrder> taxiOrders) {
+        this.taxiOrders = taxiOrders;
+    }
+
     @Override
     public OrdersView toView(String preferredLanguage, String defaultLanguage) {
         OrdersView view = new OrdersView();
         view.setDnd(getDnd());
         view.setCarParkOrders(getCarParkOrders());
+        view.setTaxiOrders(getTaxiOrders());
         return view;
     }
 }
