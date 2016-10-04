@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Api(value = "orders")
+@CrossOrigin(methods = { RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST,
+        RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.OPTIONS })
 @RestController
 @RequestMapping("/api/stays")
 public class DndOrderController {

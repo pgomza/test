@@ -1,0 +1,46 @@
+package com.horeca.site.controllers.orders;
+
+import com.horeca.site.models.orders.OrderStatusPUT;
+import com.horeca.site.models.orders.taxi.TaxiOrder;
+import com.horeca.site.models.orders.taxi.TaxiOrderPOST;
+import com.horeca.site.services.TaxiOrderService;
+import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
+@Api(value = "orders")
+@RestController
+@RequestMapping("/api/stays")
+public class TaxiOrderController {
+
+    @Autowired
+    private TaxiOrderService service;
+
+    @RequestMapping(value = "/{pin}/orders/taxi", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public TaxiOrder get(@PathVariable String pin) {
+        return service.getActive(pin);
+    }
+
+    @RequestMapping(value = "/{pin}/orders/taxi", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public TaxiOrder add(@PathVariable String pin, @Valid @RequestBody TaxiOrderPOST newOrder) {
+        return service.add(pin, newOrder);
+    }
+
+    @RequestMapping(value = "/{pin}/orders/taxi", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public TaxiOrder update(@PathVariable String pin, @Valid @RequestBody TaxiOrder updated) {
+        return service.updateActive(pin, updated);
+    }
+
+    @RequestMapping(value = "/{pin}/orders/taxi/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public OrderStatusPUT getStatus(@PathVariable String pin) {
+        return service.getActiveStatus(pin);
+    }
+
+    @RequestMapping(value = "/{pin}/orders/taxi/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public OrderStatusPUT updateStatus(@PathVariable String pin, @Valid @RequestBody OrderStatusPUT newStatus) {
+        return service.updateActiveStatus(pin, newStatus);
+    }
+}
