@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Set;
 
 @Api(value = "orders")
 @RestController
@@ -20,8 +21,13 @@ public class TaxiOrderController {
     private TaxiOrderService service;
 
     @RequestMapping(value = "/{pin}/orders/taxi", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TaxiOrder get(@PathVariable String pin) {
-        return service.getActive(pin);
+    public Set<TaxiOrder> getAll(@PathVariable String pin) {
+        return service.getAll(pin);
+    }
+
+    @RequestMapping(value = "/{pin}/orders/taxi/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public TaxiOrder get(@PathVariable String pin, @PathVariable Long id) {
+        return service.get(pin, id);
     }
 
     @RequestMapping(value = "/{pin}/orders/taxi", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -29,18 +35,18 @@ public class TaxiOrderController {
         return service.add(pin, newOrder);
     }
 
-    @RequestMapping(value = "/{pin}/orders/taxi", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TaxiOrder update(@PathVariable String pin, @Valid @RequestBody TaxiOrder updated) {
-        return service.updateActive(pin, updated);
+    @RequestMapping(value = "/{pin}/orders/taxi/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public TaxiOrder update(@PathVariable String pin, @PathVariable Long id, @Valid @RequestBody TaxiOrder updated) {
+        return service.update(pin, id, updated);
     }
 
-    @RequestMapping(value = "/{pin}/orders/taxi/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public OrderStatusPUT getStatus(@PathVariable String pin) {
-        return service.getActiveStatus(pin);
+    @RequestMapping(value = "/{pin}/orders/taxi/{id}/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public OrderStatusPUT getStatus(@PathVariable String pin, @PathVariable Long id) {
+        return service.getStatus(pin, id);
     }
 
-    @RequestMapping(value = "/{pin}/orders/taxi/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public OrderStatusPUT updateStatus(@PathVariable String pin, @Valid @RequestBody OrderStatusPUT newStatus) {
-        return service.updateActiveStatus(pin, newStatus);
+    @RequestMapping(value = "/{pin}/orders/taxi/{id}/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public OrderStatusPUT updateStatus(@PathVariable String pin, @PathVariable Long id, @Valid @RequestBody OrderStatusPUT newStatus) {
+        return service.updateStatus(pin, id, newStatus);
     }
 }

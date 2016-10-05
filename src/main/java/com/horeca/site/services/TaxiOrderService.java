@@ -10,6 +10,7 @@ import com.horeca.site.models.orders.carpark.CarParkOrderPOST;
 import com.horeca.site.models.orders.taxi.TaxiOrder;
 import com.horeca.site.models.orders.taxi.TaxiOrderPOST;
 import com.horeca.site.models.stay.Stay;
+import com.horeca.site.repositories.CarParkOrderRepository;
 import com.horeca.site.repositories.TaxiOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,31 +31,25 @@ public class TaxiOrderService {
     @Autowired
     private TaxiOrderRepository repository;
 
-    public Set<TaxiOrder> get(String stayPin) {
+    public Set<TaxiOrder> getAll(String stayPin) {
         Orders orders = ordersService.getOrders(stayPin);
         Set<TaxiOrder> taxiOrders = orders.getTaxiOrders();
 
         return taxiOrders;
     }
 
-    public TaxiOrder getActive(String stayPin) {
-        Set<TaxiOrder> taxiOrders = get(stayPin);
-
-        TaxiOrder activeOrder = null;
-        for (TaxiOrder order : taxiOrders) {
-            if (order.getStatus() == OrderStatus.NEW || order.getStatus() == OrderStatus.ACCEPTED) {
-                if (activeOrder != null) {
-                    //it should never happen - the orders should be tested against that business rule while being added
-                    throw new BusinessRuleViolationException("Only one car park order can be active (NEW or ACCEPTED)");
-                }
-
-                activeOrder = order;
+    public TaxiOrder get(String stayPin, Long id) {
+        TaxiOrder found = null;
+        for (TaxiOrder taxiOrder : getAll(stayPin)) {
+            if (taxiOrder.getId().equals(id)) {
+                found = taxiOrder;
+                break;
             }
         }
-        if (activeOrder == null)
+        if (found == null)
             throw new ResourceNotFoundException();
 
-        return activeOrder;
+        return found;
     }
 
     public TaxiOrder add(String stayPin, TaxiOrderPOST entity) {
@@ -71,23 +66,23 @@ public class TaxiOrderService {
         return savedOrder;
     }
 
-    public TaxiOrder updateActive(String stayPin, TaxiOrder updated) {
-        TaxiOrder active = getActive(stayPin);
-        updated.setId(active.getId());
+    public TaxiOrder update(String stayPin, Long id, TaxiOrder updated) {
+        TaxiOrder order = get(stayPin, id);
+        updated.setId(order.getId());
         return repository.save(updated);
     }
 
-    public OrderStatusPUT getActiveStatus(String pin) {
-        OrderStatus status = getActive(pin).getStatus();
+    public OrderStatusPUT getStatus(String pin, Long id) {
+        OrderStatus status = get(pin, id).getStatus();
         OrderStatusPUT statusPUT = new OrderStatusPUT();
         statusPUT.setStatus(status);
         return statusPUT;
     }
 
-    public OrderStatusPUT updateActiveStatus(String stayPin, OrderStatusPUT newStatus) {
-        TaxiOrder active = getActive(stayPin);
-        active.setStatus(newStatus.getStatus());
-        updateActive(stayPin, active);
+    public OrderStatusPUT updateStatus(String stayPin, Long id, OrderStatusPUT newStatus) {
+        TaxiOrder order = get(stayPin, id);
+        order.setStatus(newStatus.getStatus());
+        update(stayPin, order.getId(), order);
         return newStatus;
     }
 }
