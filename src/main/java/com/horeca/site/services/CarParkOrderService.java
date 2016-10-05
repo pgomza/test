@@ -1,6 +1,5 @@
 package com.horeca.site.services;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
@@ -10,7 +9,6 @@ import com.horeca.site.models.orders.carpark.CarParkOrderPOST;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.CarParkOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,31 +27,25 @@ public class CarParkOrderService {
     @Autowired
     private CarParkOrderRepository repository;
 
-    public Set<CarParkOrder> get(String stayPin) {
+    public Set<CarParkOrder> getAll(String stayPin) {
         Orders orders = ordersService.getOrders(stayPin);
         Set<CarParkOrder> carParkOrders = orders.getCarParkOrders();
 
         return carParkOrders;
     }
 
-    public CarParkOrder getActive(String stayPin) {
-        Set<CarParkOrder> carParkOrders = get(stayPin);
-
-        CarParkOrder activeOrder = null;
-        for (CarParkOrder order : carParkOrders) {
-            if (order.getStatus() == OrderStatus.NEW || order.getStatus() == OrderStatus.ACCEPTED) {
-                if (activeOrder != null) {
-                    //it should never happen - the orders should be tested against that business rule while being added
-                    throw new BusinessRuleViolationException("Only one car park order can be active (NEW or ACCEPTED)");
-                }
-
-                activeOrder = order;
+    public CarParkOrder get(String stayPin, Long id) {
+        CarParkOrder found = null;
+        for (CarParkOrder carParkOrder : getAll(stayPin)) {
+            if (carParkOrder.getId().equals(id)) {
+                found = carParkOrder;
+                break;
             }
         }
-        if (activeOrder == null)
+        if (found == null)
             throw new ResourceNotFoundException();
 
-        return activeOrder;
+        return found;
     }
 
     public CarParkOrder add(String stayPin, CarParkOrderPOST entity) {
@@ -70,23 +62,23 @@ public class CarParkOrderService {
         return savedOrder;
     }
 
-    public CarParkOrder updateActive(String stayPin, CarParkOrder updated) {
-        CarParkOrder active = getActive(stayPin);
-        updated.setId(active.getId());
+    public CarParkOrder update(String stayPin, Long id, CarParkOrder updated) {
+        CarParkOrder order = get(stayPin, id);
+        updated.setId(order.getId());
         return repository.save(updated);
     }
 
-    public OrderStatusPUT getActiveStatus(String pin) {
-        OrderStatus status = getActive(pin).getStatus();
+    public OrderStatusPUT getStatus(String pin, Long id) {
+        OrderStatus status = get(pin, id).getStatus();
         OrderStatusPUT statusPUT = new OrderStatusPUT();
         statusPUT.setStatus(status);
         return statusPUT;
     }
 
-    public OrderStatusPUT updateActiveStatus(String stayPin, OrderStatusPUT newStatus) {
-        CarParkOrder active = getActive(stayPin);
-        active.setStatus(newStatus.getStatus());
-        updateActive(stayPin, active);
+    public OrderStatusPUT updateStatus(String stayPin, Long id, OrderStatusPUT newStatus) {
+        CarParkOrder order = get(stayPin, id);
+        order.setStatus(newStatus.getStatus());
+        update(stayPin, order.getId(), order);
         return newStatus;
     }
 }
