@@ -19,7 +19,7 @@ public class DndOrderService {
     private DndOrderRepository repository;
 
     public DndOrder get(String stayPin) {
-        Orders orders = ordersService.getOrders(stayPin);
+        Orders orders = ordersService.get(stayPin);
         DndOrder dndOrder = orders.getDnd();
 
         return dndOrder;

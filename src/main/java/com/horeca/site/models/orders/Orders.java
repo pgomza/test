@@ -81,16 +81,16 @@ public class Orders implements Viewable<OrdersView> {
     @Override
     public OrdersView toView(String preferredLanguage, String defaultLanguage) {
         OrdersView view = new OrdersView();
-        view.setDnd(getDnd());
+        view.setDndOrder(getDnd());
         view.setCarParkOrders(getCarParkOrders());
         view.setTaxiOrders(getTaxiOrders());
 
         //spa orders
-        Set<SpaOrderView> spaOrderViews = new HashSet<>();
-        for (SpaOrder spaOrder : getSpaOrders()) {
-            spaOrderViews.add(spaOrder.toView(preferredLanguage, defaultLanguage));
-        }
-        view.setSpaOrders(spaOrderViews);
+//        Set<SpaOrderView> spaOrderViews = new HashSet<>();
+//        for (SpaOrder spaOrder : getSpaOrders()) {
+//            spaOrderViews.add(spaOrder.toView(preferredLanguage, defaultLanguage));
+//        }
+//        view.setSpaOrders(spaOrderViews);
 
         return view;
     }

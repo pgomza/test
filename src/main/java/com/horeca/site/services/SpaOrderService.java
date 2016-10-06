@@ -9,7 +9,6 @@ import com.horeca.site.models.hotel.services.spa.SpaItem;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
-import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.spa.*;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.SpaOrderRepository;
@@ -39,7 +38,7 @@ public class SpaOrderService {
     private SpaOrderRepository repository;
 
     public Set<SpaOrder> get(String stayPin) {
-        Orders orders = ordersService.getOrders(stayPin);
+        Orders orders = ordersService.get(stayPin);
         return orders.getSpaOrders();
     }
 

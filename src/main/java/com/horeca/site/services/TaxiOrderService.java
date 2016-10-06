@@ -1,16 +1,12 @@
 package com.horeca.site.services;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
-import com.horeca.site.models.orders.carpark.CarParkOrder;
-import com.horeca.site.models.orders.carpark.CarParkOrderPOST;
 import com.horeca.site.models.orders.taxi.TaxiOrder;
 import com.horeca.site.models.orders.taxi.TaxiOrderPOST;
 import com.horeca.site.models.stay.Stay;
-import com.horeca.site.repositories.CarParkOrderRepository;
 import com.horeca.site.repositories.TaxiOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +28,7 @@ public class TaxiOrderService {
     private TaxiOrderRepository repository;
 
     public Set<TaxiOrder> getAll(String stayPin) {
-        Orders orders = ordersService.getOrders(stayPin);
+        Orders orders = ordersService.get(stayPin);
         Set<TaxiOrder> taxiOrders = orders.getTaxiOrders();
 
         return taxiOrders;

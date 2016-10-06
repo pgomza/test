@@ -2,28 +2,26 @@ package com.horeca.site.models.orders;
 
 import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.dnd.DndOrder;
-import com.horeca.site.models.orders.spa.SpaOrder;
-import com.horeca.site.models.orders.spa.SpaOrderView;
 import com.horeca.site.models.orders.taxi.TaxiOrder;
 
 import java.util.Set;
 
 public class OrdersView {
 
-    private DndOrder dnd;
+    private DndOrder dndOrder;
 
     private Set<CarParkOrder> carParkOrders;
 
     private Set<TaxiOrder> taxiOrders;
 
-    private Set<SpaOrderView> spaOrders;
+//    private Set<SpaOrderView> spaOrders;
 
-    public DndOrder getDnd() {
-        return dnd;
+    public DndOrder getDndOrder() {
+        return dndOrder;
     }
 
-    public void setDnd(DndOrder dnd) {
-        this.dnd = dnd;
+    public void setDndOrder(DndOrder dndOrder) {
+        this.dndOrder = dndOrder;
     }
 
     public Set<CarParkOrder> getCarParkOrders() {
@@ -42,11 +40,11 @@ public class OrdersView {
         this.taxiOrders = taxiOrders;
     }
 
-    public Set<SpaOrderView> getSpaOrders() {
-        return spaOrders;
-    }
-
-    public void setSpaOrders(Set<SpaOrderView> spaOrders) {
-        this.spaOrders = spaOrders;
-    }
+//    public Set<SpaOrderView> getSpaOrders() {
+//        return spaOrders;
+//    }
+//
+//    public void setSpaOrders(Set<SpaOrderView> spaOrders) {
+//        this.spaOrders = spaOrders;
+//    }
 }

@@ -28,7 +28,7 @@ public class CarParkOrderService {
     private CarParkOrderRepository repository;
 
     public Set<CarParkOrder> getAll(String stayPin) {
-        Orders orders = ordersService.getOrders(stayPin);
+        Orders orders = ordersService.get(stayPin);
         Set<CarParkOrder> carParkOrders = orders.getCarParkOrders();
 
         return carParkOrders;
