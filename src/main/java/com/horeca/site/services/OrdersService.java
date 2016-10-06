@@ -1,6 +1,7 @@
 package com.horeca.site.services;
 
 import com.horeca.site.models.orders.Orders;
+import com.horeca.site.models.orders.OrdersView;
 import com.horeca.site.models.stay.Stay;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,17 @@ public class OrdersService {
     @Autowired
     private StayService stayService;
 
-    public Orders getOrders(String stayPin) {
+    public Orders get(String stayPin) {
         Stay stay = stayService.get(stayPin);
         Orders orders = stay.getOrders();
 
         return orders;
+    }
+
+    public OrdersView getView(String stayPin, String preferredLanguage) {
+        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
+        OrdersView ordersView = get(stayPin).toView(preferredLanguage, defaultLanguage);
+
+        return ordersView;
     }
 }
