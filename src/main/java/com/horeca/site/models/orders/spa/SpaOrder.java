@@ -1,13 +1,11 @@
 package com.horeca.site.models.orders.spa;
 
-import com.horeca.site.models.Price;
 import com.horeca.site.models.Viewable;
+import com.horeca.site.models.hotel.services.spa.SpaItem;
 import com.horeca.site.models.orders.OrderStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 public class SpaOrder implements Viewable<SpaOrderView> {
@@ -19,12 +17,12 @@ public class SpaOrder implements Viewable<SpaOrderView> {
     @NotNull
     private OrderStatus status = OrderStatus.NEW;
 
-    @NotNull
-    private Price total;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn
-    private Set<SpaOrderEntry> items;
+    private SpaItem item;
+
+    @NotNull
+    private String time;
 
     public Long getId() {
         return id;
@@ -42,20 +40,20 @@ public class SpaOrder implements Viewable<SpaOrderView> {
         this.status = status;
     }
 
-    public Price getTotal() {
-        return total;
+    public SpaItem getItem() {
+        return item;
     }
 
-    public void setTotal(Price total) {
-        this.total = total;
+    public void setItem(SpaItem item) {
+        this.item = item;
     }
 
-    public Set<SpaOrderEntry> getItems() {
-        return items;
+    public String getTime() {
+        return time;
     }
 
-    public void setItems(Set<SpaOrderEntry> items) {
-        this.items = items;
+    public void setTime(String time) {
+        this.time = time;
     }
 
     @Override
@@ -63,14 +61,9 @@ public class SpaOrder implements Viewable<SpaOrderView> {
         SpaOrderView view = new SpaOrderView();
         view.setId(getId());
         view.setStatus(getStatus());
-        view.setTotal(getTotal());
-
-        Set<SpaOrderEntryView> entryViews = new HashSet<>();
-        for (SpaOrderEntry entry : getItems()) {
-            SpaOrderEntryView entryView = entry.toView(preferredLanguage, defaultLanguage);
-            entryViews.add(entryView);
-        }
-        view.setItems(entryViews);
+        view.setItem(getItem().toView(preferredLanguage, defaultLanguage));
+//        view.setTime(getTime().toString("dd-MM-yyyy HH:mm"));
+        view.setTime(getTime());
 
         return view;
     }

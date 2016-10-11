@@ -1,9 +1,7 @@
 package com.horeca.site.models.orders.spa;
 
-import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.services.spa.SpaItemView;
 import com.horeca.site.models.orders.OrderStatus;
-
-import java.util.Set;
 
 public class SpaOrderView {
 
@@ -11,9 +9,9 @@ public class SpaOrderView {
 
     private OrderStatus status;
 
-    private Price total;
+    private SpaItemView item;
 
-    private Set<SpaOrderEntryView> items;
+    private String time;
 
     public Long getId() {
         return id;
@@ -31,19 +29,19 @@ public class SpaOrderView {
         this.status = status;
     }
 
-    public Price getTotal() {
-        return total;
+    public SpaItemView getItem() {
+        return item;
     }
 
-    public void setTotal(Price total) {
-        this.total = total;
+    public void setItem(SpaItemView item) {
+        this.item = item;
     }
 
-    public Set<SpaOrderEntryView> getItems() {
-        return items;
+    public String getTime() {
+        return time;
     }
 
-    public void setItems(Set<SpaOrderEntryView> items) {
-        this.items = items;
+    public void setTime(String time) {
+        this.time = time;
     }
 }
