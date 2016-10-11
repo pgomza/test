@@ -1,23 +1,22 @@
 package com.horeca.site.services;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
+import com.google.appengine.repackaged.org.joda.time.format.DateTimeFormat;
+import com.google.appengine.repackaged.org.joda.time.format.DateTimeFormatter;
 import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.models.Currency;
-import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spa.SpaItem;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
-import com.horeca.site.models.orders.spa.*;
+import com.horeca.site.models.orders.spa.SpaOrder;
+import com.horeca.site.models.orders.spa.SpaOrderPOST;
+import com.horeca.site.models.orders.spa.SpaOrderView;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.SpaOrderRepository;
-import com.horeca.site.repositories.StayRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,59 +31,51 @@ public class SpaOrderService {
     private StayService stayService;
 
     @Autowired
-    private StayRepository stayRepository;
-
-    @Autowired
     private SpaOrderRepository repository;
 
-    public Set<SpaOrder> get(String stayPin) {
+    private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
+
+    public Set<SpaOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
-        return orders.getSpaOrders();
+        Set<SpaOrder> spaOrders = orders.getSpaOrders();
+
+        return spaOrders;
     }
 
-    public SpaOrder getActive(String stayPin) {
-        Set<SpaOrder> spaOrders = get(stayPin);
+    public Set<SpaOrderView> getAllViews(String stayPin, String preferredLanguage) {
+        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
+        Set<SpaOrderView> views = new HashSet<>();
+        for (SpaOrder spaOrder : getAll(stayPin)) {
+            views.add(spaOrder.toView(preferredLanguage, defaultLanguage));
+        }
+        return views;
+    }
 
-        SpaOrder activeOrder = null;
-        for (SpaOrder order : spaOrders) {
-            if (order.getStatus() == OrderStatus.NEW || order.getStatus() == OrderStatus.ACCEPTED) {
-                if (activeOrder != null) {
-                    //it should never happen - the orders should be tested against that business rule while being added
-                    throw new BusinessRuleViolationException("Only one car park order can be active (NEW or ACCEPTED)");
-                }
-
-                activeOrder = order;
+    public SpaOrder get(String stayPin, Long id) {
+        SpaOrder found = null;
+        for (SpaOrder spaOrder : getAll(stayPin)) {
+            if (spaOrder.getId().equals(id)) {
+                found = spaOrder;
+                break;
             }
         }
-        if (activeOrder == null)
+        if (found == null)
             throw new ResourceNotFoundException();
 
-        return activeOrder;
+        return found;
     }
 
-    public SpaOrderView getActiveView(String stayPin, String preferredLanguage) {
-        SpaOrder spaOrder = getActive(stayPin);
+    public SpaOrderView getView(String stayPin, Long id, String preferredLanguage) {
         String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
-        return spaOrder.toView(preferredLanguage, defaultLanguage);
+        return get(stayPin, id).toView(preferredLanguage, defaultLanguage);
     }
 
     public SpaOrder add(String stayPin, SpaOrderPOST entity) {
         SpaOrder newOrder = new SpaOrder();
+        newOrder.setItem(resolveItemIdToEntity(stayPin, entity.getItemId()));
         newOrder.setStatus(OrderStatus.NEW);
-
-        Set<SpaOrderEntry> entries = new HashSet<>();
-        for (SpaOrderEntryPOST entryPOST : entity.getItems()) {
-            SpaOrderEntry entry = new SpaOrderEntry();
-
-            SpaItem item = resolveItemIdToEntity(stayPin, entryPOST.getId());
-            entry.setItem(item);
-            entry.setDay(entryPOST.getDay());
-            entry.setHour(entryPOST.getHour());
-
-            entries.add(entry);
-        }
-        newOrder.setItems(entries);
-        newOrder.setTotal(computeTotal(stayPin, newOrder.getItems()));
+//        newOrder.setTime(formatter.parseDateTime(entity.getTime()));
+        newOrder.setTime(entity.getTime());
         SpaOrder savedOrder = repository.save(newOrder);
 
         Stay stay = stayService.get(stayPin);
@@ -95,40 +86,33 @@ public class SpaOrderService {
         return savedOrder;
     }
 
+    public SpaOrder update(String stayPin, Long id, SpaOrder updated) {
+        SpaOrder order = get(stayPin, id);
+        updated.setId(order.getId());
+        return repository.save(updated);
+    }
+
+    public OrderStatusPUT getStatus(String pin, Long id) {
+        OrderStatus status = get(pin, id).getStatus();
+        OrderStatusPUT statusPUT = new OrderStatusPUT();
+        statusPUT.setStatus(status);
+        return statusPUT;
+    }
+
+    public OrderStatusPUT updateStatus(String stayPin, Long id, OrderStatusPUT newStatus) {
+        SpaOrder order = get(stayPin, id);
+        order.setStatus(newStatus.getStatus());
+        update(stayPin, order.getId(), order);
+        return newStatus;
+    }
+
     private SpaItem resolveItemIdToEntity(String stayPin, Long id) {
         Spa spa = stayService.get(stayPin).getHotel().getAvailableServices().getSpa();
         for (SpaItem item : spa.getItems()) {
             if (item.getId().equals(id))
                 return item;
         }
+
         throw new ResourceNotFoundException();
-    }
-
-    private Price computeTotal(String stayPin, Set<SpaOrderEntry> entries) {
-        Price totalPrice = new Price();
-        totalPrice.setValue(BigDecimal.ZERO);
-        totalPrice.setCurrency(Currency.DOLLAR);
-
-        return totalPrice; //return 0.0 for now
-    }
-
-    public SpaOrder updateActive(String stayPin, SpaOrder updated) {
-        SpaOrder active = getActive(stayPin);
-        updated.setId(active.getId());
-        return repository.save(updated);
-    }
-
-    public OrderStatusPUT getActiveStatus(String pin) {
-        OrderStatus status = getActive(pin).getStatus();
-        OrderStatusPUT statusPUT = new OrderStatusPUT();
-        statusPUT.setStatus(status);
-        return statusPUT;
-    }
-
-    public OrderStatusPUT updateActiveStatus(String stayPin, OrderStatusPUT newStatus) {
-        SpaOrder active = getActive(stayPin);
-        active.setStatus(newStatus.getStatus());
-        updateActive(stayPin, active);
-        return newStatus;
     }
 }
