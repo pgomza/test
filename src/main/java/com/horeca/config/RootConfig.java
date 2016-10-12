@@ -2,6 +2,7 @@ package com.horeca.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.appengine.api.utils.SystemProperty;
 import com.horeca.site.handlers.CustomGlobalExceptionHandler;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -68,6 +69,7 @@ public class RootConfig extends WebMvcConfigurerAdapter
     @Primary
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JodaModule());
 //        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         objectMapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss"));
         return objectMapper;

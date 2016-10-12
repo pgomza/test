@@ -28,7 +28,7 @@ public class SpaController {
     @RequestMapping(value = "/{hotelId}/services/spa/items/{itemId}/calendar", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<SpaCalendarHour> getHours(@PathVariable("hotelId") Long hotelId,
                                           @PathVariable("itemId") Long itemId,
-                                          @RequestParam("date") String date) {
+                                          @RequestParam("date") String date) { //TODO change the type to LocalDate
         return spaService.getCalendarHours(hotelId, itemId, date);
     }
 }

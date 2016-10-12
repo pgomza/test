@@ -1,6 +1,8 @@
 package com.horeca.site.models.hotel.services.spa.calendar;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.joda.time.LocalDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,7 +17,8 @@ public class SpaCalendarDay {
     private Long id;
 
     @NotNull
-    private String day; //TODO change the type
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate day;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn
@@ -29,11 +32,11 @@ public class SpaCalendarDay {
         this.id = id;
     }
 
-    public String getDay() {
+    public LocalDate getDay() {
         return day;
     }
 
-    public void setDay(String day) {
+    public void setDay(LocalDate day) {
         this.day = day;
     }
 
