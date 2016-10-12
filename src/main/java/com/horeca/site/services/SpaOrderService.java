@@ -1,7 +1,5 @@
 package com.horeca.site.services;
 
-import com.google.appengine.repackaged.org.joda.time.format.DateTimeFormat;
-import com.google.appengine.repackaged.org.joda.time.format.DateTimeFormatter;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spa.SpaItem;
@@ -13,6 +11,8 @@ import com.horeca.site.models.orders.spa.SpaOrderPOST;
 import com.horeca.site.models.orders.spa.SpaOrderView;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.SpaOrderRepository;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,8 +74,7 @@ public class SpaOrderService {
         SpaOrder newOrder = new SpaOrder();
         newOrder.setItem(resolveItemIdToEntity(stayPin, entity.getItemId()));
         newOrder.setStatus(OrderStatus.NEW);
-//        newOrder.setTime(formatter.parseDateTime(entity.getTime()));
-        newOrder.setTime(entity.getTime());
+        newOrder.setTime(formatter.parseDateTime(entity.getTime()));
         SpaOrder savedOrder = repository.save(newOrder);
 
         Stay stay = stayService.get(stayPin);
