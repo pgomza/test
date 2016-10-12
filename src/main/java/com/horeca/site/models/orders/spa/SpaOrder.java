@@ -1,15 +1,12 @@
 package com.horeca.site.models.orders.spa;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Viewable;
 import com.horeca.site.models.hotel.services.spa.SpaItem;
 import com.horeca.site.models.orders.OrderStatus;
-import org.hibernate.annotations.*;
-import org.hibernate.annotations.Parameter;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -27,12 +24,8 @@ public class SpaOrder implements Viewable<SpaOrderView> {
     private SpaItem item;
 
     @NotNull
-    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime",
-    parameters = { @Parameter(name = "databaseZone", value = "UTC"),
-                    @Parameter(name = "javaZone", value = "UTC")})
-    //given the parameters it could be as well just LocalDateTime (no time zone stored)
-    //the params are subject to change though
-    private DateTime time;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+    private LocalDateTime time;
 
     public Long getId() {
         return id;
@@ -58,11 +51,11 @@ public class SpaOrder implements Viewable<SpaOrderView> {
         this.item = item;
     }
 
-    public DateTime getTime() {
+    public LocalDateTime getTime() {
         return time;
     }
 
-    public void setTime(DateTime time) {
+    public void setTime(LocalDateTime time) {
         this.time = time;
     }
 

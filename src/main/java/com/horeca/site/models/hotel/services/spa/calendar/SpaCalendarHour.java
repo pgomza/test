@@ -40,7 +40,7 @@ public class SpaCalendarHour {
         this.hour = hour;
     }
 
-    public Boolean getAvailable() {
+    public Boolean isAvailable() {
         return available;
     }
 

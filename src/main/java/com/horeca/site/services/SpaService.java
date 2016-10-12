@@ -4,8 +4,10 @@ import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spa.SpaItem;
 import com.horeca.site.models.hotel.services.spa.SpaView;
+import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendar;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarDay;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
+import com.horeca.site.repositories.SpaCalendarHourRepository;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -24,13 +26,20 @@ public class SpaService {
     @Autowired
     private HotelService hotelService;
 
+    @Autowired
+    private SpaCalendarHourRepository calendarHourRepository;
+
     //TODO ultimately it won't be needed because the sent date will be already resolved to the LocalDate type
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy");
+    
+    public Spa get(Long hotelId) {
+        Hotel hotel = hotelService.get(hotelId);
+        return hotel.getAvailableServices().getSpa();
+    }
 
     public SpaView getView(Long hotelId, String preferredLanguage) {
-        Hotel hotel = hotelService.get(hotelId);
-        Spa spa = hotel.getAvailableServices().getSpa();
-        return spa.toView(preferredLanguage, hotel.getDefaultTranslation());
+        Spa spa = get(hotelId);
+        return spa.toView(preferredLanguage, hotelService.get(hotelId).getDefaultTranslation());
     }
 
     public List<SpaCalendarHour> getCalendarHours(Long hotelId, Long itemId, String date) {
@@ -51,5 +60,9 @@ public class SpaService {
         }
 
         return hours;
+    }
+    
+    public SpaCalendarHour updateCalendarHour(SpaCalendarHour calendarHour) {
+       return calendarHourRepository.save(calendarHour);
     }
 }

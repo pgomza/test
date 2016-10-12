@@ -1,8 +1,11 @@
 package com.horeca.site.services;
 
+import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spa.SpaItem;
+import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarDay;
+import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
@@ -11,6 +14,7 @@ import com.horeca.site.models.orders.spa.SpaOrderPOST;
 import com.horeca.site.models.orders.spa.SpaOrderView;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.SpaOrderRepository;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +33,9 @@ public class SpaOrderService {
 
     @Autowired
     private StayService stayService;
+
+    @Autowired
+    private SpaService spaService;
 
     @Autowired
     private SpaOrderRepository repository;
@@ -72,9 +79,14 @@ public class SpaOrderService {
 
     public SpaOrder add(String stayPin, SpaOrderPOST entity) {
         SpaOrder newOrder = new SpaOrder();
-        newOrder.setItem(resolveItemIdToEntity(stayPin, entity.getItemId()));
+
+        SpaItem resolvedItem = resolveItemIdToEntity(stayPin, entity.getItemId());
+        LocalDateTime reservationTime = formatter.parseLocalDateTime(entity.getTime());
+        makeReservation(resolvedItem, reservationTime);
+
         newOrder.setStatus(OrderStatus.NEW);
-        newOrder.setTime(formatter.parseDateTime(entity.getTime()));
+        newOrder.setTime(reservationTime);
+        newOrder.setItem(resolvedItem);
         SpaOrder savedOrder = repository.save(newOrder);
 
         Stay stay = stayService.get(stayPin);
@@ -84,6 +96,7 @@ public class SpaOrderService {
 
         return savedOrder;
     }
+
 
     public SpaOrder update(String stayPin, Long id, SpaOrder updated) {
         SpaOrder order = get(stayPin, id);
@@ -113,5 +126,28 @@ public class SpaOrderService {
         }
 
         throw new ResourceNotFoundException();
+    }
+
+    private void makeReservation(SpaItem resolvedItem, LocalDateTime reservationTime) {
+        Set<SpaCalendarDay> availableDays = resolvedItem.getCalendar().getDays();
+        for (SpaCalendarDay day : availableDays) {
+            if (day.getDay().equals(reservationTime.toLocalDate())) {
+
+                Set<SpaCalendarHour> availableHours = day.getHours();
+                for (SpaCalendarHour hour : availableHours) {
+                    if (hour.getHour().equals(reservationTime.toLocalTime())) {
+                        if (hour.isAvailable()) {
+                            hour.setAvailable(false);
+                            spaService.updateCalendarHour(hour);
+                            return;
+                        }
+                        else
+                            throw new BusinessRuleViolationException("The service is not available at the specified reservation time");
+                    }
+                }
+            }
+        }
+
+        throw new BusinessRuleViolationException("The service is not available at the specified reservation time");
     }
 }
