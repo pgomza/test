@@ -10,8 +10,6 @@ public class BreakfastCategoryView {
 
     private Set<BreakfastItemView> items;
 
-    private Set<BreakfastGroupView> groups;
-
     public Long getId() {
         return id;
     }
@@ -34,13 +32,5 @@ public class BreakfastCategoryView {
 
     public void setItems(Set<BreakfastItemView> items) {
         this.items = items;
-    }
-
-    public Set<BreakfastGroupView> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(Set<BreakfastGroupView> groups) {
-        this.groups = groups;
     }
 }

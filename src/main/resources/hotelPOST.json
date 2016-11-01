@@ -18,52 +18,6 @@
       "categories": [
         {
           "category": "DRINK",
-          "groups": [
-            {
-              "items": [
-                {
-                  "price": {
-                    "text": "Free"
-                  },
-                  "translations": [
-                    {
-                      "language": "en",
-                      "name": "Black"
-                    },
-                    {
-                      "language": "pl",
-                      "name": "Czarna"
-                    }
-                  ]
-                },
-                {
-                  "price": {
-                    "text": "Free"
-                  },
-                  "translations": [
-                    {
-                      "language": "en",
-                      "name": "Rosehip"
-                    },
-                    {
-                      "language": "pl",
-                      "name": "Z owoców dzikiej róży"
-                    }
-                  ]
-                }
-              ],
-              "translations": [
-                {
-                  "language": "en",
-                  "name": "Tea"
-                },
-                {
-                  "language": "pl",
-                  "name": "Herbata"
-                }
-              ]
-            }
-          ],
           "items": [
             {
               "price": {
@@ -101,54 +55,6 @@
         },
         {
           "category": "DISH",
-          "groups": [
-            {
-              "items": [
-                {
-                  "price": {
-                    "currency": "$",
-                    "value": "7"
-                  },
-                  "translations": [
-                    {
-                      "language": "en",
-                      "name": "Chicken fried bacon"
-                    },
-                    {
-                      "language": "pl",
-                      "name": "Chicken friend bacon po polsku"
-                    }
-                  ]
-                },
-                {
-                  "price": {
-                    "currency": "$",
-                    "value": "8.5"
-                  },
-                  "translations": [
-                    {
-                      "language": "en",
-                      "name": "Chocolate covered bacon"
-                    },
-                    {
-                      "language": "pl",
-                      "name": "Bacon pokryty czekoladą"
-                    }
-                  ]
-                }
-              ],
-              "translations": [
-                {
-                  "language": "en",
-                  "name": "Bacon"
-                },
-                {
-                  "language": "pl",
-                  "name": "Bacon"
-                }
-              ]
-            }
-          ],
           "items": [
             {
               "price": {

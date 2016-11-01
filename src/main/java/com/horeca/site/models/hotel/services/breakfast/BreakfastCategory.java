@@ -1,6 +1,5 @@
 package com.horeca.site.models.hotel.services.breakfast;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.horeca.site.models.Viewable;
 
 import javax.persistence.*;
@@ -22,10 +21,6 @@ public class BreakfastCategory implements Viewable<BreakfastCategoryView> {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "category_items")
     private Set<BreakfastItem> items;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_groups")
-    private Set<BreakfastGroup> groups;
 
     public Long getId() {
         return id;
@@ -51,14 +46,6 @@ public class BreakfastCategory implements Viewable<BreakfastCategoryView> {
         this.items = items;
     }
 
-    public Set<BreakfastGroup> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(Set<BreakfastGroup> groups) {
-        this.groups = groups;
-    }
-
     @Override
     public BreakfastCategoryView toView(String preferredLanguage, String defaultLanguage) {
         BreakfastCategoryView view = new BreakfastCategoryView();
@@ -70,12 +57,6 @@ public class BreakfastCategory implements Viewable<BreakfastCategoryView> {
             itemViews.add(item.toView(preferredLanguage, defaultLanguage));
         }
         view.setItems(itemViews);
-
-        Set<BreakfastGroupView> groupViews = new HashSet<>();
-        for (BreakfastGroup group : groups) {
-            groupViews.add(group.toView(preferredLanguage, defaultLanguage));
-        }
-        view.setGroups(groupViews);
 
         return view;
     }
