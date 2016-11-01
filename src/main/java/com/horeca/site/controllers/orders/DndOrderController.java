@@ -1,5 +1,6 @@
 package com.horeca.site.controllers.orders;
 
+import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.orders.dnd.DndOrder;
 import com.horeca.site.models.orders.dnd.DndOrderUPDATE;
 import com.horeca.site.services.DndOrderService;
@@ -11,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Api(value = "orders")
-@CrossOrigin(methods = { RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST,
-        RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.OPTIONS })
+@AllowCORS
 @RestController
 @RequestMapping("/api/stays")
 public class DndOrderController {

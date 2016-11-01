@@ -1,5 +1,6 @@
 package com.horeca.site.controllers.services;
 
+import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.hotel.services.taxi.Taxi;
 import com.horeca.site.models.hotel.services.taxi.TaxiItem;
 import com.horeca.site.services.TaxiService;
@@ -11,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Api(value = "hotels")
-@CrossOrigin(methods = { RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST,
-        RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.OPTIONS })
+@AllowCORS
 @RestController
 @RequestMapping("/api/hotels")
 public class TaxiController {

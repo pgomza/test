@@ -1,11 +1,10 @@
 package com.horeca.site.controllers;
 
+import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.services.HotelService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,8 +16,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Api(value = "hotels")
-@CrossOrigin(methods = { RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST,
-		RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.OPTIONS })
+@AllowCORS
 @RestController
 @RequestMapping("/api/hotels")
 public class HotelController {

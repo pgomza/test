@@ -1,5 +1,6 @@
 package com.horeca.site.controllers.services;
 
+import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.hotel.services.AvailableServicesView;
 import com.horeca.site.services.AvailableServicesService;
 import com.horeca.site.services.HotelService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 @Api(value = "hotels")
+@AllowCORS
 @RestController
 @RequestMapping("/api/hotels")
 public class AvailableServicesController {

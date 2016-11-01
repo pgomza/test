@@ -1,5 +1,6 @@
 package com.horeca.site.controllers.orders;
 
+import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.taxi.TaxiOrder;
 import com.horeca.site.models.orders.taxi.TaxiOrderPOST;
@@ -13,8 +14,7 @@ import javax.validation.Valid;
 import java.util.Set;
 
 @Api(value = "orders")
-@CrossOrigin(methods = { RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST,
-        RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.OPTIONS })
+@AllowCORS
 @RestController
 @RequestMapping("/api/stays")
 public class TaxiOrderController {

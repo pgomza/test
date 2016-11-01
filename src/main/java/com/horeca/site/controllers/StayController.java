@@ -1,5 +1,6 @@
 package com.horeca.site.controllers;
 
+import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.models.stay.StayPOST;
 import com.horeca.site.models.stay.StayStatusUPDATE;
@@ -14,8 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Api(value = "stays")
-@CrossOrigin(methods = { RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST,
-    RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.OPTIONS })
+@AllowCORS
 @RestController
 @RequestMapping("/api")
 public class StayController {

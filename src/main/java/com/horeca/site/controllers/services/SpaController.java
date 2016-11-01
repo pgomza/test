@@ -1,5 +1,6 @@
 package com.horeca.site.controllers.services;
 
+import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.hotel.services.spa.SpaView;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
 import com.horeca.site.services.SpaService;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 @Api(value = "hotels")
+@AllowCORS
 @RestController
 @RequestMapping("/api/hotels")
 public class SpaController {
