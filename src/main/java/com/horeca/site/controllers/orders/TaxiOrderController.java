@@ -13,6 +13,8 @@ import javax.validation.Valid;
 import java.util.Set;
 
 @Api(value = "orders")
+@CrossOrigin(methods = { RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST,
+        RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.OPTIONS })
 @RestController
 @RequestMapping("/api/stays")
 public class TaxiOrderController {

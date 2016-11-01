@@ -156,6 +156,13 @@ public class Hotel extends Translatable<HotelTranslation> implements Viewable<Ho
 			simplifiedList.add(simplified);
 		}
 
+		if (servicesView.getTaxi() != null) {
+			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+			simplified.setType(AvailableServiceViewSimplified.Type.TAXI);
+			simplified.setPrice(servicesView.getTaxi().getPrice());
+			simplifiedList.add(simplified);
+		}
+
 		hotelView.setServices(simplifiedList);
 
 		hotelView.setGalleries(getGalleries());

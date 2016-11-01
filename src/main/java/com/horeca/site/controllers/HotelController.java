@@ -17,6 +17,8 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Api(value = "hotels")
+@CrossOrigin(methods = { RequestMethod.GET, RequestMethod.PUT, RequestMethod.POST,
+		RequestMethod.DELETE, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.OPTIONS })
 @RestController
 @RequestMapping("/api/hotels")
 public class HotelController {

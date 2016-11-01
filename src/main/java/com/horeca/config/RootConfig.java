@@ -1,7 +1,6 @@
 package com.horeca.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.appengine.api.utils.SystemProperty;
 import com.horeca.site.handlers.CustomGlobalExceptionHandler;
@@ -12,11 +11,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.StaticMessageSource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.resource.ResourceResolver;
+import org.springframework.web.servlet.resource.ResourceResolverChain;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -78,5 +86,88 @@ public class RootConfig extends WebMvcConfigurerAdapter
     @Override
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
         exceptionResolvers.add(new CustomGlobalExceptionHandler());
+    }
+
+//    @Bean
+//    static ViewResolver internalResourceViewResolver() {
+//        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+//        resolver.setPrefix("/static/");
+//        resolver.setSuffix(".html");
+//        return resolver;
+//    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/")
+                .resourceChain(false)
+                .addResolver(new PushStateResourceResolver());
+    }
+
+    private class PushStateResourceResolver implements ResourceResolver {
+        private Resource index = new ClassPathResource("/static/index.html");
+        private List<String> handledExtensions = Arrays.asList("html", "js", "json", "csv", "css", "png", "svg", "eot", "ttf", "woff", "appcache", "jpg", "jpeg", "gif", "ico");
+        private List<String> ignoredPaths = Arrays.asList("api");
+
+        @Override
+        public Resource resolveResource(HttpServletRequest request, String requestPath, List<? extends Resource> locations, ResourceResolverChain chain) {
+            return resolve(requestPath, locations);
+        }
+
+        @Override
+        public String resolveUrlPath(String resourcePath, List<? extends Resource> locations, ResourceResolverChain chain) {
+            Resource resolvedResource = resolve(resourcePath, locations);
+            if (resolvedResource == null) {
+                return null;
+            }
+            try {
+                return resolvedResource.getURL().toString();
+            } catch (IOException e) {
+                return resolvedResource.getFilename();
+            }
+        }
+
+        private Resource resolve(String requestPath, List<? extends Resource> locations) {
+            if (isIgnored(requestPath)) {
+                return null;
+            }
+            if (isHandled(requestPath)) {
+//                return locations.stream()
+//                        .map(loc -> createRelative(loc, requestPath))
+//                        .filter(resource -> resource != null && resource.exists())
+//                        .findFirst()
+//                        .orElseGet(null);
+                for (Resource location : locations) {
+                    Resource relative = createRelative(location, requestPath);
+                    if (relative != null && relative.exists())
+                        return relative;
+                    else
+                        return null;
+                }
+            }
+            return index;
+        }
+
+        private Resource createRelative(Resource resource, String relativePath) {
+            try {
+                return resource.createRelative(relativePath);
+            } catch (IOException e) {
+                return null;
+            }
+        }
+
+        private boolean isIgnored(String path) {
+            return ignoredPaths.contains(path);
+        }
+
+        private boolean isHandled(String path) {
+            String extension = StringUtils.getFilenameExtension(path);
+//            return handledExtensions.stream().anyMatch(ext -> ext.equals(extension));
+            for (String handleExtension : handledExtensions) {
+                if (handleExtension.equals(extension))
+                    return true;
+            }
+            return false;
+        }
     }
 }
