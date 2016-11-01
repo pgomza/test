@@ -1,9 +1,10 @@
-package com.horeca.site.services;
+package com.horeca.site.services.services;
 
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.taxi.Taxi;
 import com.horeca.site.models.hotel.services.taxi.TaxiItem;
-import com.horeca.site.repositories.TaxiRepository;
+import com.horeca.site.repositories.services.TaxiRepository;
+import com.horeca.site.services.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

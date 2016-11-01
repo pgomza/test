@@ -4,7 +4,7 @@ import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.taxi.TaxiOrder;
 import com.horeca.site.models.orders.taxi.TaxiOrderPOST;
-import com.horeca.site.services.TaxiOrderService;
+import com.horeca.site.services.orders.TaxiOrderService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

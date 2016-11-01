@@ -5,7 +5,7 @@ import com.horeca.site.models.stay.Stay;
 import com.horeca.site.models.stay.StayPOST;
 import com.horeca.site.models.stay.StayStatusUPDATE;
 import com.horeca.site.models.stay.StayView;
-import com.horeca.site.services.StayService;
+import com.horeca.site.services.services.StayService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

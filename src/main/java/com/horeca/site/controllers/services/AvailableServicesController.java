@@ -2,7 +2,7 @@ package com.horeca.site.controllers.services;
 
 import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.hotel.services.AvailableServicesView;
-import com.horeca.site.services.AvailableServicesService;
+import com.horeca.site.services.services.AvailableServicesService;
 import com.horeca.site.services.HotelService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

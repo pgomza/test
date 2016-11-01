@@ -1,4 +1,4 @@
-package com.horeca.site.repositories;
+package com.horeca.site.repositories.services;
 
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
 import org.springframework.data.repository.CrudRepository;

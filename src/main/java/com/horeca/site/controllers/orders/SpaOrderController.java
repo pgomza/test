@@ -5,7 +5,7 @@ import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.spa.SpaOrder;
 import com.horeca.site.models.orders.spa.SpaOrderPOST;
 import com.horeca.site.models.orders.spa.SpaOrderView;
-import com.horeca.site.services.SpaOrderService;
+import com.horeca.site.services.orders.SpaOrderService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

@@ -1,13 +1,14 @@
-package com.horeca.site.services;
+package com.horeca.site.services.orders;
 
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
-import com.horeca.site.models.orders.carpark.CarParkOrder;
-import com.horeca.site.models.orders.carpark.CarParkOrderPOST;
+import com.horeca.site.models.orders.taxi.TaxiOrder;
+import com.horeca.site.models.orders.taxi.TaxiOrderPOST;
 import com.horeca.site.models.stay.Stay;
-import com.horeca.site.repositories.CarParkOrderRepository;
+import com.horeca.site.repositories.orders.TaxiOrderRepository;
+import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,7 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class CarParkOrderService {
+public class TaxiOrderService {
 
     @Autowired
     private OrdersService ordersService;
@@ -25,20 +26,20 @@ public class CarParkOrderService {
     private StayService stayService;
 
     @Autowired
-    private CarParkOrderRepository repository;
+    private TaxiOrderRepository repository;
 
-    public Set<CarParkOrder> getAll(String stayPin) {
+    public Set<TaxiOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
-        Set<CarParkOrder> carParkOrders = orders.getCarParkOrders();
+        Set<TaxiOrder> taxiOrders = orders.getTaxiOrders();
 
-        return carParkOrders;
+        return taxiOrders;
     }
 
-    public CarParkOrder get(String stayPin, Long id) {
-        CarParkOrder found = null;
-        for (CarParkOrder carParkOrder : getAll(stayPin)) {
-            if (carParkOrder.getId().equals(id)) {
-                found = carParkOrder;
+    public TaxiOrder get(String stayPin, Long id) {
+        TaxiOrder found = null;
+        for (TaxiOrder taxiOrder : getAll(stayPin)) {
+            if (taxiOrder.getId().equals(id)) {
+                found = taxiOrder;
                 break;
             }
         }
@@ -48,22 +49,22 @@ public class CarParkOrderService {
         return found;
     }
 
-    public CarParkOrder add(String stayPin, CarParkOrderPOST entity) {
-        CarParkOrder newOrder = new CarParkOrder();
-        newOrder.setLicenseNumber(entity.getLicenseNumber());
+    public TaxiOrder add(String stayPin, TaxiOrderPOST entity) {
+        TaxiOrder newOrder = new TaxiOrder();
+        newOrder.setTime(entity.getTime());
         newOrder.setStatus(OrderStatus.NEW);
-        CarParkOrder savedOrder = repository.save(newOrder);
+        TaxiOrder savedOrder = repository.save(newOrder);
 
         Stay stay = stayService.get(stayPin);
-        Set<CarParkOrder> carParkOrders = stay.getOrders().getCarParkOrders();
-        carParkOrders.add(savedOrder);
+        Set<TaxiOrder> taxiOrders = stay.getOrders().getTaxiOrders();
+        taxiOrders.add(savedOrder);
         stayService.update(stayPin, stay);
 
         return savedOrder;
     }
 
-    public CarParkOrder update(String stayPin, Long id, CarParkOrder updated) {
-        CarParkOrder order = get(stayPin, id);
+    public TaxiOrder update(String stayPin, Long id, TaxiOrder updated) {
+        TaxiOrder order = get(stayPin, id);
         updated.setId(order.getId());
         return repository.save(updated);
     }
@@ -76,7 +77,7 @@ public class CarParkOrderService {
     }
 
     public OrderStatusPUT updateStatus(String stayPin, Long id, OrderStatusPUT newStatus) {
-        CarParkOrder order = get(stayPin, id);
+        TaxiOrder order = get(stayPin, id);
         order.setStatus(newStatus.getStatus());
         update(stayPin, order.getId(), order);
         return newStatus;

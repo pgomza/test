@@ -3,7 +3,7 @@ package com.horeca.site.controllers.services;
 import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.hotel.services.spa.SpaView;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
-import com.horeca.site.services.SpaService;
+import com.horeca.site.services.services.SpaService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Set;
 
 @Api(value = "hotels")

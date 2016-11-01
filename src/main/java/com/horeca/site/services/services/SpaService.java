@@ -1,15 +1,14 @@
-package com.horeca.site.services;
+package com.horeca.site.services.services;
 
-import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spa.SpaItem;
 import com.horeca.site.models.hotel.services.spa.SpaView;
-import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendar;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarDay;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
-import com.horeca.site.repositories.SpaCalendarHourRepository;
-import com.horeca.site.repositories.SpaRepository;
+import com.horeca.site.repositories.services.SpaCalendarHourRepository;
+import com.horeca.site.repositories.services.SpaRepository;
+import com.horeca.site.services.HotelService;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -17,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service

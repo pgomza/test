@@ -3,7 +3,7 @@ package com.horeca.site.controllers.orders;
 import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.orders.dnd.DndOrder;
 import com.horeca.site.models.orders.dnd.DndOrderUPDATE;
-import com.horeca.site.services.DndOrderService;
+import com.horeca.site.services.orders.DndOrderService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

@@ -1,11 +1,13 @@
-package com.horeca.site.services;
+package com.horeca.site.services.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.stay.*;
 import com.horeca.site.models.user.UserInfo;
-import com.horeca.site.repositories.StayRepository;
+import com.horeca.site.repositories.services.StayRepository;
 import com.horeca.site.security.LoginService;
 import com.horeca.site.exceptions.ResourceNotFoundException;
+import com.horeca.site.services.HotelService;
+import com.horeca.site.services.PinGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

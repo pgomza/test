@@ -1,4 +1,4 @@
-package com.horeca.site.services;
+package com.horeca.site.services.orders;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
@@ -13,7 +13,9 @@ import com.horeca.site.models.orders.spa.SpaOrder;
 import com.horeca.site.models.orders.spa.SpaOrderPOST;
 import com.horeca.site.models.orders.spa.SpaOrderView;
 import com.horeca.site.models.stay.Stay;
-import com.horeca.site.repositories.SpaOrderRepository;
+import com.horeca.site.repositories.orders.SpaOrderRepository;
+import com.horeca.site.services.services.SpaService;
+import com.horeca.site.services.services.StayService;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -21,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.Set;
 

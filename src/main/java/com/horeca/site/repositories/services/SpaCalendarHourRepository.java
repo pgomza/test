@@ -1,4 +1,4 @@
-package com.horeca.site.repositories;
+package com.horeca.site.repositories.services;
 
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
 import org.springframework.data.repository.CrudRepository;
