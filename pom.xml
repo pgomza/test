@@ -16,7 +16,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.7</java.version>
         <m2eclipse.wtp.contextRoot>/</m2eclipse.wtp.contextRoot>
-        <appengine.app.appId>yetanotherone-143410</appengine.app.appId>
+        <appengine.app.appId>horeca-club-backend</appengine.app.appId>
         <appengine.app.version>1</appengine.app.version>
         <appengine.target.version>1.9.42</appengine.target.version>
     </properties>
