@@ -7,7 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class BreakfastOrderEntry implements Viewable<BreakfastOrderEntryView> {
+public class BreakfastOrderItem implements Viewable<BreakfastOrderItemView> {
 
     @Id
     @GeneratedValue
@@ -45,8 +45,8 @@ public class BreakfastOrderEntry implements Viewable<BreakfastOrderEntryView> {
     }
 
     @Override
-    public BreakfastOrderEntryView toView(String preferredLanguage, String defaultLanguage) {
-        BreakfastOrderEntryView view = new BreakfastOrderEntryView();
+    public BreakfastOrderItemView toView(String preferredLanguage, String defaultLanguage) {
+        BreakfastOrderItemView view = new BreakfastOrderItemView();
         view.setItem(getItem().toView(preferredLanguage, defaultLanguage));
         view.setCount(getCount());
         return view;

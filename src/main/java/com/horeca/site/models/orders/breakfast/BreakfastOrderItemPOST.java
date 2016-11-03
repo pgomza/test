@@ -2,7 +2,7 @@ package com.horeca.site.models.orders.breakfast;
 
 import javax.validation.constraints.NotNull;
 
-public class BreakfastOrderEntryPOST {
+public class BreakfastOrderItemPOST {
 
     @NotNull
     private Long itemId;

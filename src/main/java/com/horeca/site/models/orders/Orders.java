@@ -3,6 +3,7 @@ package com.horeca.site.models.orders;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.Viewable;
+import com.horeca.site.models.orders.breakfast.BreakfastOrder;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.dnd.DndOrder;
 import com.horeca.site.models.orders.spa.SpaOrder;
@@ -37,6 +38,10 @@ public class Orders implements Viewable<OrdersView> {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn
     private Set<SpaOrder> spaOrders = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn
+    private Set<BreakfastOrder> breakfastOrders = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -76,6 +81,14 @@ public class Orders implements Viewable<OrdersView> {
 
     public void setSpaOrders(Set<SpaOrder> spaOrders) {
         this.spaOrders = spaOrders;
+    }
+
+    public Set<BreakfastOrder> getBreakfastOrders() {
+        return breakfastOrders;
+    }
+
+    public void setBreakfastOrders(Set<BreakfastOrder> breakfastOrders) {
+        this.breakfastOrders = breakfastOrders;
     }
 
     @Override

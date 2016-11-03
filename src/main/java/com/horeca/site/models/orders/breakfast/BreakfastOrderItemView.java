@@ -2,7 +2,7 @@ package com.horeca.site.models.orders.breakfast;
 
 import com.horeca.site.models.hotel.services.breakfast.BreakfastItemView;
 
-public class BreakfastOrderEntryView {
+public class BreakfastOrderItemView {
 
     private BreakfastItemView item;
 

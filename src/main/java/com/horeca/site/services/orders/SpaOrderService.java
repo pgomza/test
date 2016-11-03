@@ -44,22 +44,6 @@ public class SpaOrderService {
 
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
 
-    public Set<SpaOrder> getAll(String stayPin) {
-        Orders orders = ordersService.get(stayPin);
-        Set<SpaOrder> spaOrders = orders.getSpaOrders();
-
-        return spaOrders;
-    }
-
-    public Set<SpaOrderView> getAllViews(String stayPin, String preferredLanguage) {
-        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
-        Set<SpaOrderView> views = new HashSet<>();
-        for (SpaOrder spaOrder : getAll(stayPin)) {
-            views.add(spaOrder.toView(preferredLanguage, defaultLanguage));
-        }
-        return views;
-    }
-
     public SpaOrder get(String stayPin, Long id) {
         SpaOrder found = null;
         for (SpaOrder spaOrder : getAll(stayPin)) {
@@ -74,9 +58,25 @@ public class SpaOrderService {
         return found;
     }
 
+    public Set<SpaOrder> getAll(String stayPin) {
+        Orders orders = ordersService.get(stayPin);
+        Set<SpaOrder> spaOrders = orders.getSpaOrders();
+
+        return spaOrders;
+    }
+
     public SpaOrderView getView(String stayPin, Long id, String preferredLanguage) {
         String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
         return get(stayPin, id).toView(preferredLanguage, defaultLanguage);
+    }
+
+    public Set<SpaOrderView> getAllViews(String stayPin, String preferredLanguage) {
+        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
+        Set<SpaOrderView> views = new HashSet<>();
+        for (SpaOrder spaOrder : getAll(stayPin)) {
+            views.add(spaOrder.toView(preferredLanguage, defaultLanguage));
+        }
+        return views;
     }
 
     public SpaOrder add(String stayPin, SpaOrderPOST entity) {
@@ -127,7 +127,7 @@ public class SpaOrderService {
                 return item;
         }
 
-        throw new ResourceNotFoundException();
+        throw new ResourceNotFoundException("Could not find an item with such an id");
     }
 
     private void makeReservation(SpaItem resolvedItem, LocalDateTime reservationTime) {

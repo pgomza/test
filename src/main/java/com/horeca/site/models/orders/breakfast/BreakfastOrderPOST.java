@@ -6,13 +6,24 @@ import java.util.Set;
 public class BreakfastOrderPOST {
 
     @NotNull
-    private Set<BreakfastOrderEntryPOST> entries;
+    private String time; //TODO change the type
 
-    public Set<BreakfastOrderEntryPOST> getEntries() {
-        return entries;
+    @NotNull
+    private Set<BreakfastOrderItemPOST> items;
+
+    public String getTime() {
+        return time;
     }
 
-    public void setEntries(Set<BreakfastOrderEntryPOST> entries) {
-        this.entries = entries;
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public Set<BreakfastOrderItemPOST> getItems() {
+        return items;
+    }
+
+    public void setItems(Set<BreakfastOrderItemPOST> items) {
+        this.items = items;
     }
 }
