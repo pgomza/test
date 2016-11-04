@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -88,37 +89,34 @@ public class RootConfig extends WebMvcConfigurerAdapter
         exceptionResolvers.add(new CustomGlobalExceptionHandler());
     }
 
-//    @Bean
-//    static ViewResolver internalResourceViewResolver() {
-//        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-//        resolver.setPrefix("/static/");
-//        resolver.setSuffix(".html");
-//        return resolver;
-//    }
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/")
-                .resourceChain(false)
+                .resourceChain(true)
                 .addResolver(new PushStateResourceResolver());
     }
 
     private class PushStateResourceResolver implements ResourceResolver {
         private Resource index = new ClassPathResource("/static/index.html");
         private List<String> handledExtensions = Arrays.asList("html", "js", "json", "csv", "css", "png", "svg", "eot", "ttf", "woff", "appcache", "jpg", "jpeg", "gif", "ico");
-        private List<String> ignoredPaths = Arrays.asList("api");
+        private List<String> ignoredPaths = Arrays.asList("api", "swagger-ui.html");
+        private List<Resource> swaggerResources = Arrays.asList(new Resource[] { new ClassPathResource("/META-INF/resources/") });
 
         @Override
         public Resource resolveResource(HttpServletRequest request, String requestPath, List<? extends Resource> locations, ResourceResolverChain chain) {
-            return resolve(requestPath, locations);
+            Resource resource = resolve(requestPath, locations);
+            if (resource == null) {
+                return chain.resolveResource(request, requestPath, swaggerResources);
+            }
+            return resource;
         }
 
         @Override
         public String resolveUrlPath(String resourcePath, List<? extends Resource> locations, ResourceResolverChain chain) {
             Resource resolvedResource = resolve(resourcePath, locations);
             if (resolvedResource == null) {
-                return null;
+                return chain.resolveUrlPath(resourcePath, swaggerResources);
             }
             try {
                 return resolvedResource.getURL().toString();
@@ -132,11 +130,6 @@ public class RootConfig extends WebMvcConfigurerAdapter
                 return null;
             }
             if (isHandled(requestPath)) {
-//                return locations.stream()
-//                        .map(loc -> createRelative(loc, requestPath))
-//                        .filter(resource -> resource != null && resource.exists())
-//                        .findFirst()
-//                        .orElseGet(null);
                 for (Resource location : locations) {
                     Resource relative = createRelative(location, requestPath);
                     if (relative != null && relative.exists())
@@ -162,7 +155,6 @@ public class RootConfig extends WebMvcConfigurerAdapter
 
         private boolean isHandled(String path) {
             String extension = StringUtils.getFilenameExtension(path);
-//            return handledExtensions.stream().anyMatch(ext -> ext.equals(extension));
             for (String handleExtension : handledExtensions) {
                 if (handleExtension.equals(extension))
                     return true;
