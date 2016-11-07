@@ -50,7 +50,7 @@ public class BreakfastCategory implements Viewable<BreakfastCategoryView> {
     public BreakfastCategoryView toView(String preferredLanguage, String defaultLanguage) {
         BreakfastCategoryView view = new BreakfastCategoryView();
         view.setId(getId());
-        view.setCategory(getCategory());
+        view.setName(getCategory());
 
         Set<BreakfastItemView> itemViews = new HashSet<>();
         for (BreakfastItem item : items) {

@@ -6,7 +6,7 @@ public class BreakfastCategoryView {
 
     private Long id;
 
-    private BreakfastCategory.Category category;
+    private BreakfastCategory.Category name;
 
     private Set<BreakfastItemView> items;
 
@@ -18,12 +18,12 @@ public class BreakfastCategoryView {
         this.id = id;
     }
 
-    public BreakfastCategory.Category getCategory() {
-        return category;
+    public BreakfastCategory.Category getName() {
+        return name;
     }
 
-    public void setCategory(BreakfastCategory.Category category) {
-        this.category = category;
+    public void setName(BreakfastCategory.Category name) {
+        this.name = name;
     }
 
     public Set<BreakfastItemView> getItems() {

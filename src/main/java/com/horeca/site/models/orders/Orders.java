@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.Viewable;
 import com.horeca.site.models.orders.breakfast.BreakfastOrder;
+import com.horeca.site.models.orders.breakfast.BreakfastOrderView;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.dnd.DndOrder;
 import com.horeca.site.models.orders.spa.SpaOrder;
@@ -103,6 +104,12 @@ public class Orders implements Viewable<OrdersView> {
             spaOrderViews.add(spaOrder.toView(preferredLanguage, defaultLanguage));
         }
         view.setSpaOrders(spaOrderViews);
+
+        Set<BreakfastOrderView> breakfastOrderViews = new HashSet<>();
+        for (BreakfastOrder breakfastOrder : getBreakfastOrders()) {
+            breakfastOrderViews.add(breakfastOrder.toView(preferredLanguage, defaultLanguage));
+        }
+        view.setBreakfastOrders(breakfastOrderViews);
 
         return view;
     }
