@@ -5,20 +5,32 @@ import javax.validation.constraints.NotNull;
 public class StayPOST {
 
     @NotNull
-    private String name;
+    private Long hotelId;
+
+    @NotNull
+    private Long guestId;
 
     @NotNull
     private String roomNumber;
 
-    @NotNull
-    private Long hotelId;
+    private String fromDate; //TODO change the type
 
-    public String getName() {
-        return name;
+    private String toDate; //TODO change the type
+
+    public Long getHotelId() {
+        return hotelId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setHotelId(Long hotelId) {
+        this.hotelId = hotelId;
+    }
+
+    public Long getGuestId() {
+        return guestId;
+    }
+
+    public void setGuestId(Long guestId) {
+        this.guestId = guestId;
     }
 
     public String getRoomNumber() {
@@ -29,11 +41,19 @@ public class StayPOST {
         this.roomNumber = roomNumber;
     }
 
-    public Long getHotelId() {
-        return hotelId;
+    public String getFromDate() {
+        return fromDate;
     }
 
-    public void setHotelId(Long hotelId) {
-        this.hotelId = hotelId;
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
     }
 }

@@ -1,7 +1,7 @@
 package com.horeca.site.services;
 
-import com.horeca.site.models.user.User;
-import com.horeca.site.repositories.UserRepository;
+import com.horeca.site.models.guest.Guest;
+import com.horeca.site.repositories.GuestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,24 +12,24 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class UserService {
+public class GuestService {
 
     @Autowired
-    private UserRepository repository;
+    private GuestRepository repository;
 
-    public Set<User> getAll() {
-        Set<User> users = new HashSet<>();
-        for (User user : repository.findAll()) {
-            users.add(user);
+    public Set<Guest> getAll() {
+        Set<Guest> guests = new HashSet<>();
+        for (Guest guest : repository.findAll()) {
+            guests.add(guest);
         }
-        return users;
+        return guests;
     }
 
-    public User get(Long id) {
+    public Guest get(Long id) {
         return repository.findOne(id);
     }
 
-    public User save(@Valid User entity) {
+    public Guest save(@Valid Guest entity) {
         return repository.save(entity);
     }
 

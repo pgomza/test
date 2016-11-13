@@ -1,10 +1,10 @@
 package com.horeca.site.models.stay;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.Viewable;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.orders.Orders;
+import com.horeca.site.models.guest.Guest;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,12 +16,9 @@ public class Stay implements Viewable<StayView> {
     @Id
     private String pin;
 
-    @NotNull
-    private String name;
+    private String fromDate; //TODO change the type
 
-    @NotNull
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String date; //TODO change to the proper type
+    private String toDate; //TODO change the type
 
     @NotNull
     private String roomNumber;
@@ -38,36 +35,32 @@ public class Stay implements Viewable<StayView> {
     @JoinColumn
     private Hotel hotel;
 
-    public void setPin(String pin) {
-        this.pin = pin;
-    }
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn
+    private Guest guest;
 
     public String getPin() {
         return pin;
     }
 
-    public StayStatus getStatus() {
-        return status;
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 
-    public void setStatus(StayStatus status) {
-        this.status = status;
+    public String getFromDate() {
+        return fromDate;
     }
 
-    public String getName() {
-        return name;
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getToDate() {
+        return toDate;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
     }
 
     public String getRoomNumber() {
@@ -76,6 +69,14 @@ public class Stay implements Viewable<StayView> {
 
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
+    }
+
+    public StayStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(StayStatus status) {
+        this.status = status;
     }
 
     public Orders getOrders() {
@@ -94,16 +95,25 @@ public class Stay implements Viewable<StayView> {
         this.hotel = hotel;
     }
 
+    public Guest getGuest() {
+        return guest;
+    }
+
+    public void setGuest(Guest guest) {
+        this.guest = guest;
+    }
+
     @Override
     public StayView toView(String preferredLanguage, String defaultLanguage) {
         StayView view = new StayView();
         view.setPin(getPin());
-        view.setName(getName());
-        view.setDate(getDate());
         view.setRoomNumber(getRoomNumber());
+        view.setFromDate(getFromDate());
+        view.setToDate(getToDate());
         view.setStatus(getStatus());
         view.setOrders(getOrders().toView(preferredLanguage, defaultLanguage));
         view.setHotel(getHotel().toView(preferredLanguage, defaultLanguage));
+        view.setGuest(getGuest());
         return view;
     }
 }

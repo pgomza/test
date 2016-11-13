@@ -1,4 +1,4 @@
-package com.horeca.site.models.user;
+package com.horeca.site.models.guest;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class User {
+public class Guest {
 
     @Id
     @GeneratedValue

@@ -2,14 +2,15 @@ package com.horeca.site.models.stay;
 
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.orders.OrdersView;
+import com.horeca.site.models.guest.Guest;
 
 public class StayView {
 
     private String pin;
 
-    private String name;
+    private String fromDate;
 
-    private String date;
+    private String toDate;
 
     private String roomNumber;
 
@@ -19,6 +20,8 @@ public class StayView {
 
     private HotelView hotel;
 
+    private Guest guest;
+
     public String getPin() {
         return pin;
     }
@@ -27,20 +30,20 @@ public class StayView {
         this.pin = pin;
     }
 
-    public String getName() {
-        return name;
+    public String getFromDate() {
+        return fromDate;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
     }
 
-    public String getDate() {
-        return date;
+    public String getToDate() {
+        return toDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
     }
 
     public String getRoomNumber() {
@@ -73,5 +76,13 @@ public class StayView {
 
     public void setHotel(HotelView hotel) {
         this.hotel = hotel;
+    }
+
+    public Guest getGuest() {
+        return guest;
+    }
+
+    public void setGuest(Guest guest) {
+        this.guest = guest;
     }
 }

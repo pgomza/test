@@ -1,18 +1,20 @@
 package com.horeca.site.services.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
+import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.stay.*;
+import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.user.UserInfo;
 import com.horeca.site.repositories.services.StayRepository;
 import com.horeca.site.security.LoginService;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.services.HotelService;
 import com.horeca.site.services.PinGeneratorService;
+import com.horeca.site.services.GuestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -30,6 +32,9 @@ public class StayService {
 
     @Autowired
     private HotelService hotelService;
+
+    @Autowired
+    private GuestService userService;
 
     public Iterable<Stay> getAll() {
         return stayRepository.findAll();
@@ -101,14 +106,18 @@ public class StayService {
     public Stay registerNewStay(StayPOST stayPOST) {
         Stay stay = new Stay();
         stay.setStatus(StayStatus.NEW);
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date today = Calendar.getInstance().getTime();
-        stay.setDate(dateFormat.format(today));
-
-        stay.setName(stayPOST.getName());
         stay.setRoomNumber(stayPOST.getRoomNumber());
-        stay.setHotel(hotelService.get(stayPOST.getHotelId()));
+        stay.setFromDate(stayPOST.getFromDate());
+        stay.setToDate(stayPOST.getToDate());
+
+        Hotel hotel = hotelService.get(stayPOST.getHotelId());
+        Guest guest = userService.get(stayPOST.getGuestId());
+
+        if (hotel == null || guest == null)
+            throw new ResourceNotFoundException();
+
+        stay.setHotel(hotel);
+        stay.setGuest(guest);
 
         return registerNewStay(stay);
     }
