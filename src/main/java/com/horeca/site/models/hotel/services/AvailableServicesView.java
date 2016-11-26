@@ -2,6 +2,7 @@ package com.horeca.site.models.hotel.services;
 
 import com.horeca.site.models.hotel.services.breakfast.BreakfastView;
 import com.horeca.site.models.hotel.services.carpark.CarParkView;
+import com.horeca.site.models.hotel.services.petcare.PetCareView;
 import com.horeca.site.models.hotel.services.receptioncall.ReceptionCall;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceView;
 import com.horeca.site.models.hotel.services.spa.SpaView;
@@ -20,6 +21,8 @@ public class AvailableServicesView {
     private ReceptionCall receptionCall;
 
     private SpaView spa;
+
+    private PetCareView petCare;
 
     private Taxi taxi;
 
@@ -69,6 +72,14 @@ public class AvailableServicesView {
 
     public void setSpa(SpaView spa) {
         this.spa = spa;
+    }
+
+    public PetCareView getPetCare() {
+        return petCare;
+    }
+
+    public void setPetCare(PetCareView petCare) {
+        this.petCare = petCare;
     }
 
     public Taxi getTaxi() {

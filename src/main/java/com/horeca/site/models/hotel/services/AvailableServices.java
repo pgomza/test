@@ -8,6 +8,8 @@ import com.horeca.site.models.hotel.services.breakfast.Breakfast;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastView;
 import com.horeca.site.models.hotel.services.carpark.CarPark;
 import com.horeca.site.models.hotel.services.carpark.CarParkView;
+import com.horeca.site.models.hotel.services.petcare.PetCare;
+import com.horeca.site.models.hotel.services.petcare.PetCareView;
 import com.horeca.site.models.hotel.services.receptioncall.ReceptionCall;
 import com.horeca.site.models.hotel.services.roomservice.RoomService;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceView;
@@ -45,6 +47,10 @@ public class AvailableServices implements Viewable<AvailableServicesView> {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
     private Spa spa;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn
+    private PetCare petCare;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
@@ -98,6 +104,14 @@ public class AvailableServices implements Viewable<AvailableServicesView> {
         this.spa = spa;
     }
 
+    public PetCare getPetCare() {
+        return petCare;
+    }
+
+    public void setPetCare(PetCare petCare) {
+        this.petCare = petCare;
+    }
+
     public Taxi getTaxi() {
         return taxi;
     }
@@ -122,6 +136,9 @@ public class AvailableServices implements Viewable<AvailableServicesView> {
 
         SpaView spaView = getSpa().toView(preferredLanguage, defaultLanguage);
         view.setSpa(spaView);
+
+        PetCareView petCareView = getPetCare().toView(preferredLanguage, defaultLanguage);
+        view.setPetCare(petCareView);
 
         view.setTaxi(getTaxi());
 
