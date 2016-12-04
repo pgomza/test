@@ -3,6 +3,7 @@ package com.horeca.site.models.orders;
 import com.horeca.site.models.orders.breakfast.BreakfastOrderView;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.dnd.DndOrder;
+import com.horeca.site.models.orders.petcare.PetCareOrderView;
 import com.horeca.site.models.orders.spa.SpaOrderView;
 import com.horeca.site.models.orders.taxi.TaxiOrder;
 
@@ -17,6 +18,8 @@ public class OrdersView {
     private Set<TaxiOrder> taxiOrders;
 
     private Set<SpaOrderView> spaOrders;
+
+    private Set<PetCareOrderView> petCareOrders;
 
     private Set<BreakfastOrderView> breakfastOrders;
 
@@ -50,6 +53,14 @@ public class OrdersView {
 
     public void setSpaOrders(Set<SpaOrderView> spaOrders) {
         this.spaOrders = spaOrders;
+    }
+
+    public Set<PetCareOrderView> getPetCareOrders() {
+        return petCareOrders;
+    }
+
+    public void setPetCareOrders(Set<PetCareOrderView> petCareOrders) {
+        this.petCareOrders = petCareOrders;
     }
 
     public Set<BreakfastOrderView> getBreakfastOrders() {

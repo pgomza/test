@@ -3,10 +3,13 @@ package com.horeca.site.models.orders;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.Viewable;
+import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.orders.breakfast.BreakfastOrder;
 import com.horeca.site.models.orders.breakfast.BreakfastOrderView;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.dnd.DndOrder;
+import com.horeca.site.models.orders.petcare.PetCareOrder;
+import com.horeca.site.models.orders.petcare.PetCareOrderView;
 import com.horeca.site.models.orders.spa.SpaOrder;
 import com.horeca.site.models.orders.spa.SpaOrderView;
 import com.horeca.site.models.orders.taxi.TaxiOrder;
@@ -39,6 +42,10 @@ public class Orders implements Viewable<OrdersView> {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn
     private Set<SpaOrder> spaOrders = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn
+    private Set<PetCareOrder> petCareOrders = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn
@@ -84,6 +91,14 @@ public class Orders implements Viewable<OrdersView> {
         this.spaOrders = spaOrders;
     }
 
+    public Set<PetCareOrder> getPetCareOrders() {
+        return petCareOrders;
+    }
+
+    public void setPetCareOrders(Set<PetCareOrder> petCareOrders) {
+        this.petCareOrders = petCareOrders;
+    }
+
     public Set<BreakfastOrder> getBreakfastOrders() {
         return breakfastOrders;
     }
@@ -104,6 +119,12 @@ public class Orders implements Viewable<OrdersView> {
             spaOrderViews.add(spaOrder.toView(preferredLanguage, defaultLanguage));
         }
         view.setSpaOrders(spaOrderViews);
+
+        Set<PetCareOrderView> petCareOrderViews = new HashSet<>();
+        for (PetCareOrder petCareOrder : getPetCareOrders()) {
+            petCareOrderViews.add(petCareOrder.toView(preferredLanguage, defaultLanguage));
+        }
+        view.setPetCareOrders(petCareOrderViews);
 
         Set<BreakfastOrderView> breakfastOrderViews = new HashSet<>();
         for (BreakfastOrder breakfastOrder : getBreakfastOrders()) {
