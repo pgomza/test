@@ -6,7 +6,7 @@ import com.horeca.site.models.Price;
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class AvailableServiceViewSimplified {
 
-    public enum Type { BREAKFAST, CARPARK, ROOMSERVICE, RECEPTIONCALL, SPA, TAXI }
+    public enum Type { BREAKFAST, CARPARK, ROOMSERVICE, RECEPTIONCALL, SPA, PETCARE, TAXI }
 
     private Type type;
 

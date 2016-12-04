@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.petcare;
 
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendar;
 
 public class PetCareItemView {
 
@@ -9,6 +10,8 @@ public class PetCareItemView {
     private String name;
 
     private Price price;
+
+    private PetCareCalendar calendar;
 
     public Long getId() {
         return id;
@@ -32,5 +35,13 @@ public class PetCareItemView {
 
     public void setPrice(Price price) {
         this.price = price;
+    }
+
+    public PetCareCalendar getCalendar() {
+        return calendar;
+    }
+
+    public void setCalendar(PetCareCalendar calendar) {
+        this.calendar = calendar;
     }
 }

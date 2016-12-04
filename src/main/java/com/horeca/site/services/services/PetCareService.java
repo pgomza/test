@@ -7,6 +7,7 @@ import com.horeca.site.models.hotel.services.petcare.PetCareView;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarDay;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarHour;
 import com.horeca.site.repositories.services.PetCareCalendarHourRepository;
+import com.horeca.site.repositories.services.PetCareItemRepository;
 import com.horeca.site.repositories.services.PetCareRepository;
 import com.horeca.site.services.HotelService;
 import org.joda.time.LocalDate;
@@ -30,6 +31,9 @@ public class PetCareService {
     private PetCareRepository repository;
 
     @Autowired
+    private PetCareItemRepository itemRepository;
+
+    @Autowired
     private PetCareCalendarHourRepository calendarHourRepository;
 
     //TODO ultimately it won't be needed because the sent date will be already resolved to the LocalDate type
@@ -43,6 +47,22 @@ public class PetCareService {
     public PetCareView getView(Long hotelId, String preferredLanguage) {
         PetCare petCare = get(hotelId);
         return petCare.toView(preferredLanguage, hotelService.get(hotelId).getDefaultTranslation());
+    }
+
+    public PetCareItem addItem(Long hotelId, PetCareItem item) {
+        PetCare petCare = get(hotelId);
+        PetCareItem savedItem = itemRepository.save(item);
+        petCare.getItems().add(item);
+        repository.save(petCare);
+        return savedItem;
+    }
+
+    public PetCareItem updateItem(PetCareItem item) {
+        return itemRepository.save(item);
+    }
+
+    public void deleteItem(Long itemId) {
+        itemRepository.delete(itemId);
     }
 
     public Set<PetCareCalendarHour> getCalendarHours(Long hotelId, Long itemId, String date) {

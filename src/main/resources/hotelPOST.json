@@ -891,6 +891,19 @@
         }
       ]
     },
+    "petcare": {
+      "items": [],
+      "price": {
+        "currency": "$",
+        "value": 7
+      },
+      "translations": [
+        {
+          "description": "petcare service's description",
+          "language": "en"
+        }
+      ]
+    },
     "taxi": {
       "items": [
         {
