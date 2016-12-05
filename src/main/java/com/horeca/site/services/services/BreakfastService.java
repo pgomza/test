@@ -62,6 +62,7 @@ public class BreakfastService {
         if (category != null) {
             BreakfastItem itemNew = new BreakfastItem();
             itemNew.setPrice(item.getPrice());
+            itemNew.setAvailable(item.isAvailable());
             itemNew.setTranslations(getDefaultTranslationSet(item.getName()));
             category.getItems().add(itemNew);
             breakfastCategoryRepository.save(category);
@@ -92,6 +93,7 @@ public class BreakfastService {
 
         BreakfastCategory category = getCategory(hotelId, item.getType());
         foundItem.setPrice(item.getPrice());
+        foundItem.setAvailable(item.isAvailable());
         foundItem.setTranslations(getDefaultTranslationSet(item.getName()));
         category.getItems().add(foundItem);
         breakfastCategoryRepository.save(category);

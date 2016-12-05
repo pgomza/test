@@ -20,6 +20,9 @@ public class BreakfastItem extends Translatable<BreakfastItemTranslation>
     @NotNull
     private Price price;
 
+    @NotNull
+    private boolean available = true;
+
     public Long getId() {
         return id;
     }
@@ -36,12 +39,21 @@ public class BreakfastItem extends Translatable<BreakfastItemTranslation>
         this.price = price;
     }
 
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
     @Override
     public BreakfastItemView toView(String preferredLanguage, String defaultLanguage) {
         BreakfastItemView view = new BreakfastItemView();
         view.setId(getId());
         view.setPrice(getPrice());
         view.setName(getTranslation(preferredLanguage, defaultLanguage).getName());
+        view.setAvailable(isAvailable());
 
         return view;
     }

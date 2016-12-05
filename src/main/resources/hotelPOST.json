@@ -24,6 +24,7 @@
                 "currency": "$",
                 "value": "0.5"
               },
+              "available": true,
               "translations": [
                 {
                   "language": "en",
@@ -40,6 +41,7 @@
                 "currency": "$",
                 "value": "3"
               },
+              "available": true,
               "translations": [
                 {
                   "language": "en",
@@ -61,6 +63,7 @@
                 "currency": "$",
                 "value": "2"
               },
+              "available": true,
               "translations": [
                 {
                   "language": "en",
@@ -77,6 +80,7 @@
                 "currency": "$",
                 "value": "3.5"
               },
+              "available": true,
               "translations": [
                 {
                   "language": "en",
@@ -891,7 +895,7 @@
         }
       ]
     },
-    "petcare": {
+    "petCare": {
       "items": [],
       "price": {
         "currency": "$",
@@ -899,7 +903,7 @@
       },
       "translations": [
         {
-          "description": "petcare service's description",
+          "description": "petCare service's description",
           "language": "en"
         }
       ]

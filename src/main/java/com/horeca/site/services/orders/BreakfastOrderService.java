@@ -1,5 +1,6 @@
 package com.horeca.site.services.orders;
 
+import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
@@ -121,8 +122,13 @@ public class BreakfastOrderService {
         Breakfast breakfast = stayService.get(stayPin).getHotel().getAvailableServices().getBreakfast();
         for (BreakfastCategory category : breakfast.getCategories()) {
             for (BreakfastItem item : category.getItems()) {
-                if (item.getId().equals(id))
-                    return item;
+                if (item.getId().equals(id)) {
+                    // check if an order for this item can be placed
+                    if (item.isAvailable())
+                        return item;
+                    else
+                        throw new BusinessRuleViolationException("Item id == " + id + " is no longer available");
+                }
             }
         }
         throw new ResourceNotFoundException("Could not find an item with such an id");

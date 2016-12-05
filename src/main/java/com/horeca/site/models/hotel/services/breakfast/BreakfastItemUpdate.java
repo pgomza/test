@@ -7,6 +7,7 @@ public class BreakfastItemUpdate {
     private Long id;
     private String name;
     private Price price;
+    private boolean available;
     private BreakfastCategory.Category type;
 
     public Long getId() {
@@ -31,6 +32,14 @@ public class BreakfastItemUpdate {
 
     public void setPrice(Price price) {
         this.price = price;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 
     public BreakfastCategory.Category getType() {
