@@ -3,3 +3,4 @@
 src/main/resources/static
 target
 spring-boot-sample-secure-legacy.iml
+src/main/webapp
