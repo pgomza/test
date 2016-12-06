@@ -31,43 +31,6 @@ import java.util.List;
 @Configuration
 public class RootConfig extends WebMvcConfigurerAdapter
 {
-    @Value("${datasource.driverclassname.gae}")
-    private String gaeDataSourceDriverClassName;
-
-    @Value("${datasource.driverclassname.local}")
-    private String localDataSourceDriverClassName;
-
-    @Value("${datasource.connectionurl.gae}")
-    private String gaeDataSourceConnectionUrl;
-
-    @Value("${datasource.connectionurl.local}")
-    private String localDataSourceConnectionUrl;
-
-    @Value("${datasource.username}")
-    private String dataSourceUsername;
-
-    @Value("${datasource.password}")
-    private String dataSourcePassword;
-
-    //TODO change datasource's implementation to some more efficient one
-    @Bean(destroyMethod="close")
-    public DataSource basicDataSource() {
-        BasicDataSource dataSource = new BasicDataSource();
-
-        if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
-            dataSource.setDriverClassName(gaeDataSourceDriverClassName);
-            dataSource.setUrl(gaeDataSourceConnectionUrl);
-        }
-        else {
-            dataSource.setDriverClassName(localDataSourceDriverClassName);
-            dataSource.setUrl(localDataSourceConnectionUrl);
-        }
-        dataSource.setUsername(dataSourceUsername);
-        dataSource.setPassword(dataSourcePassword);
-
-        return dataSource;
-    }
-
     @Bean(name = "messageSource")
     public MessageSource messageSource() {
         StaticMessageSource messageSource = new StaticMessageSource();
