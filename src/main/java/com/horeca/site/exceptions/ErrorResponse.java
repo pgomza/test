@@ -1,7 +1,5 @@
 package com.horeca.site.exceptions;
 
-import com.google.appengine.repackaged.org.joda.time.DateTime;
-
 public class ErrorResponse {
 
     private String message;

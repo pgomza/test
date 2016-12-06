@@ -1,17 +1,15 @@
 package com.horeca.site.handlers;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.appengine.repackaged.org.joda.time.DateTime;
 import com.horeca.site.exceptions.BadAuthorizationRequestException;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
+import org.joda.time.DateTime;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.BindException;
-import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
