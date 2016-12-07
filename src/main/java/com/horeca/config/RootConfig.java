@@ -64,6 +64,10 @@ public class RootConfig extends WebMvcConfigurerAdapter
         }
         dataSource.setUsername(dataSourceUsername);
         dataSource.setPassword(dataSourcePassword);
+        dataSource.setMaxActive(10);
+        dataSource.setMaxIdle(100);
+        dataSource.setMaxWait(-1);
+        dataSource.setInitialSize(8);
 
         return dataSource;
     }
