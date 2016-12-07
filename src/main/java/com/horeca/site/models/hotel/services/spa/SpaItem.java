@@ -13,7 +13,7 @@ public class SpaItem extends Translatable<SpaItemTranslation>
         implements Viewable<SpaItemView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull

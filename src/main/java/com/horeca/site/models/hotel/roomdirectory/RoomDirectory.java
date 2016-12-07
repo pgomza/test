@@ -12,7 +12,7 @@ import java.util.Set;
 public class RoomDirectory implements Viewable<RoomDirectoryView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 

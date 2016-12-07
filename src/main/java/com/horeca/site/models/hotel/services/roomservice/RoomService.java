@@ -15,7 +15,7 @@ import java.util.Set;
 public class RoomService extends Translatable<RoomServiceTranslation> implements Viewable<RoomServiceView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 

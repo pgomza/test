@@ -24,7 +24,7 @@ import javax.persistence.*;
 public class AvailableServices implements Viewable<AvailableServicesView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 

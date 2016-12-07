@@ -23,7 +23,7 @@ import java.util.Set;
 public class Orders implements Viewable<OrdersView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 

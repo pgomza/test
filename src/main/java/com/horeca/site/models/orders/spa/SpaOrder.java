@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 public class SpaOrder implements Viewable<SpaOrderView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull

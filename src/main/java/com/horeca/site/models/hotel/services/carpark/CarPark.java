@@ -5,10 +5,7 @@ import com.horeca.site.models.Price;
 import com.horeca.site.models.Translatable;
 import com.horeca.site.models.Viewable;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
@@ -16,7 +13,7 @@ import java.math.BigDecimal;
 public class CarPark extends Translatable<CarParkTranslation> implements Viewable<CarParkView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 

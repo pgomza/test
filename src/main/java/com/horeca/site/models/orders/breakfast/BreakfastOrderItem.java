@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 public class BreakfastOrderItem implements Viewable<BreakfastOrderItemView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)

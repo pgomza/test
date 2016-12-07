@@ -12,7 +12,7 @@ import java.util.Set;
 public class PetCareCalendarDay {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 

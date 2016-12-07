@@ -12,7 +12,7 @@ public class BreakfastCategory implements Viewable<BreakfastCategoryView> {
     public enum Category { DISH, DRINK }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)

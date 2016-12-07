@@ -13,7 +13,7 @@ public class PetCareItem extends Translatable<PetCareItemTranslation>
         implements Viewable<PetCareItemView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull

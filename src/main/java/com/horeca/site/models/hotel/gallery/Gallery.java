@@ -12,7 +12,7 @@ public class Gallery {
     public enum Type { MAIN, SPA }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 

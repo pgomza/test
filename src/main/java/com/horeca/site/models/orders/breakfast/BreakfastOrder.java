@@ -15,7 +15,7 @@ import java.util.Set;
 public class BreakfastOrder implements Viewable<BreakfastOrderView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull

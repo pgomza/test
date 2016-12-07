@@ -10,6 +10,8 @@ import com.horeca.site.repositories.HotelRepository;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-@Transactional
+@Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.SUPPORTS)
 public class HotelService {
 
     @Autowired

@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 public class PetCareOrder implements Viewable<PetCareOrderView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull

@@ -13,7 +13,7 @@ import java.util.Set;
 public class PetCare extends Translatable<PetCareTranslation> implements Viewable<PetCareView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull

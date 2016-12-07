@@ -11,7 +11,7 @@ import java.util.*;
 public class Breakfast extends Translatable<BreakfastTranslation> implements Viewable<BreakfastView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 

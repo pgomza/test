@@ -23,7 +23,7 @@ import java.util.Set;
 public class Hotel extends Translatable<HotelTranslation> implements Viewable<HotelView> {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private Long id;
 

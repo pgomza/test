@@ -10,7 +10,7 @@ import java.util.Set;
 public class UsefulInformation {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 

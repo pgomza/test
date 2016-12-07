@@ -14,7 +14,7 @@ import java.util.Set;
 public class Section extends Translatable<SectionTranslation> implements Viewable<SectionView> {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 
