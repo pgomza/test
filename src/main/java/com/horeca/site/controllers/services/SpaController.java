@@ -1,6 +1,7 @@
 package com.horeca.site.controllers.services;
 
 import com.horeca.annotations.AllowCORS;
+import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
 import com.horeca.site.services.services.SpaService;
 import io.swagger.annotations.Api;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Set;
 
@@ -22,9 +22,8 @@ public class SpaController {
     private SpaService spaService;
 
     @RequestMapping(value = "/{hotelId}/services/spa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public SpaView get(@PathVariable("hotelId") Long hotelId, HttpServletRequest request) {
-        String language = request.getLocale().getLanguage();
-        return spaService.getView(hotelId, language);
+    public Spa get(@PathVariable("hotelId") Long hotelId) {
+        return spaService.get(hotelId);
     }
 
     @RequestMapping(value = "/{hotelId}/services/spa/items/{itemId}/calendar",

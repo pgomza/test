@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Set;
 
@@ -24,15 +23,13 @@ public class PetCareOrderController {
     private PetCareOrderService service;
 
     @RequestMapping(value = "/{pin}/orders/petcare", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<PetCareOrderView> getAll(@PathVariable String pin, HttpServletRequest request) {
-        String preferredLanguage = request.getLocale().getLanguage();
-        return service.getAllViews(pin, preferredLanguage);
+    public Set<PetCareOrder> getAll(@PathVariable String pin) {
+        return service.getAll(pin);
     }
 
     @RequestMapping(value = "/{pin}/orders/petcare/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public PetCareOrderView get(@PathVariable String pin, @PathVariable Long id, HttpServletRequest request) {
-        String preferredLanguage = request.getLocale().getLanguage();
-        return service.getView(pin, id, preferredLanguage);
+    public PetCareOrder get(@PathVariable String pin, @PathVariable Long id) {
+        return service.get(pin, id);
     }
 
     @RequestMapping(value = "/{pin}/orders/petcare", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
