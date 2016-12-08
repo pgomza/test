@@ -15,7 +15,7 @@ public class SpaItem {
     private Long id;
 
     @NotEmpty
-    private String text;
+    private String name;
 
     @NotNull
     private Price price;
@@ -32,12 +32,12 @@ public class SpaItem {
         this.id = id;
     }
 
-    public String getText() {
-        return text;
+    public String getName() {
+        return name;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Price getPrice() {

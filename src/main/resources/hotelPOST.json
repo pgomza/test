@@ -2,7 +2,6 @@
   "name": "Some hotel",
   "address": {
     "city": "Torun",
-    "language": "en",
     "street": "Torunska street"
   },
   "availableServices": {
@@ -798,7 +797,7 @@
         "currency": "$",
         "value": 5
       },
-      "description": "spa service's description",
+      "description": "spa service's description"
     },
     "petCare": {
       "items": [],
@@ -806,7 +805,7 @@
         "currency": "$",
         "value": 7
       },
-      "description": "petCare service's description",
+      "description": "petCare service's description"
     },
     "taxi": {
       "items": [
