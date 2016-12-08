@@ -1,20 +1,21 @@
 package com.horeca.site.models.hotel.services.spa;
 
 import com.horeca.site.models.Price;
-import com.horeca.site.models.Translatable;
-import com.horeca.site.models.Viewable;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class Spa extends Translatable<SpaTranslation> implements Viewable<SpaView> {
+public class Spa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotEmpty
+    private String description;
 
     @NotNull
     private Price price;
@@ -31,6 +32,14 @@ public class Spa extends Translatable<SpaTranslation> implements Viewable<SpaVie
         this.id = id;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Price getPrice() {
         return price;
     }
@@ -45,20 +54,5 @@ public class Spa extends Translatable<SpaTranslation> implements Viewable<SpaVie
 
     public void setItems(Set<SpaItem> items) {
         this.items = items;
-    }
-
-    @Override
-    public SpaView toView(String preferredLanguage, String defaultLanguage) {
-        SpaView view = new SpaView();
-        view.setPrice(getPrice());
-        view.setDescription(getTranslation(preferredLanguage, defaultLanguage).getDescription());
-
-        Set<SpaItemView> itemViews = new HashSet<>();
-        for (SpaItem item : getItems()) {
-            itemViews.add(item.toView(preferredLanguage, defaultLanguage));
-        }
-        view.setItems(itemViews);
-
-        return view;
     }
 }

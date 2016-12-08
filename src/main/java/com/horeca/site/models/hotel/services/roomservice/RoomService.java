@@ -2,22 +2,22 @@ package com.horeca.site.models.hotel.services.roomservice;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.horeca.site.models.Price;
-import com.horeca.site.models.Translatable;
-import com.horeca.site.models.Viewable;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @Entity
-public class RoomService extends Translatable<RoomServiceTranslation> implements Viewable<RoomServiceView> {
+public class RoomService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
+
+    @NotEmpty
+    private String description;
 
     @NotNull
     private Price price;
@@ -34,6 +34,14 @@ public class RoomService extends Translatable<RoomServiceTranslation> implements
         this.id = id;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Price getPrice() {
         return price;
     }
@@ -48,21 +56,5 @@ public class RoomService extends Translatable<RoomServiceTranslation> implements
 
     public void setItems(Set<RoomItem> items) {
         this.items = items;
-    }
-
-    @Override
-    public RoomServiceView toView(String preferredLanguage, String defaultLanguage) {
-        RoomServiceTranslation translation = getTranslation(preferredLanguage, defaultLanguage);
-        RoomServiceView view = new RoomServiceView();
-        view.setPrice(getPrice());
-        view.setDescription(translation.getDescription());
-
-        List<RoomItemView> itemViews = new ArrayList<>();
-        for (RoomItem item : items)
-            itemViews.add(item.toView(preferredLanguage, defaultLanguage));
-
-        view.setItems(itemViews);
-
-        return view;
     }
 }

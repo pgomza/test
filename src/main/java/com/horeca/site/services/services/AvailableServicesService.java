@@ -2,7 +2,6 @@ package com.horeca.site.services.services;
 
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.AvailableServices;
-import com.horeca.site.models.hotel.services.AvailableServicesView;
 import com.horeca.site.repositories.services.BreakfastRepository;
 import com.horeca.site.services.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;

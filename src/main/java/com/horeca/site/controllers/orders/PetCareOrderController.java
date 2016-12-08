@@ -4,7 +4,6 @@ import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.petcare.PetCareOrder;
 import com.horeca.site.models.orders.petcare.PetCareOrderPOST;
-import com.horeca.site.models.orders.petcare.PetCareOrderView;
 import com.horeca.site.services.orders.PetCareOrderService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

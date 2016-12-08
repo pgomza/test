@@ -1,20 +1,21 @@
 package com.horeca.site.models.hotel.services.petcare;
 
 import com.horeca.site.models.Price;
-import com.horeca.site.models.Translatable;
-import com.horeca.site.models.Viewable;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendar;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class PetCareItem extends Translatable<PetCareItemTranslation>
-        implements Viewable<PetCareItemView> {
+public class PetCareItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotEmpty
+    private String name;
 
     @NotNull
     private Price price;
@@ -31,6 +32,14 @@ public class PetCareItem extends Translatable<PetCareItemTranslation>
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Price getPrice() {
         return price;
     }
@@ -45,15 +54,5 @@ public class PetCareItem extends Translatable<PetCareItemTranslation>
 
     public void setCalendar(PetCareCalendar calendar) {
         this.calendar = calendar;
-    }
-
-    @Override
-    public PetCareItemView toView(String preferredLanguage, String defaultLanguage) {
-        PetCareItemView view = new PetCareItemView();
-        view.setId(getId());
-        view.setName(getTranslation(preferredLanguage, defaultLanguage).getName());
-        view.setPrice(getPrice());
-        view.setCalendar(getCalendar());
-        return view;
     }
 }

@@ -1,22 +1,26 @@
 package com.horeca.site.models.hotel.roomdirectory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.horeca.site.models.Translatable;
-import com.horeca.site.models.Viewable;
+import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
-public class Section extends Translatable<SectionTranslation> implements Viewable<SectionView> {
+public class Section {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
+
+    @NotEmpty
+    private String heading;
+
+    @NotEmpty
+    private String text;
 
     public Long getId() {
         return id;
@@ -26,13 +30,19 @@ public class Section extends Translatable<SectionTranslation> implements Viewabl
         this.id = id;
     }
 
-    @Override
-    public SectionView toView(String preferredLanguage, String defaultLanguage) {
-        SectionView sectionView = new SectionView();
-        SectionTranslation translation = getTranslation(preferredLanguage, defaultLanguage);
-        sectionView.setHeading(translation.getHeading());
-        sectionView.setText(translation.getText());
+    public String getHeading() {
+        return heading;
+    }
 
-        return sectionView;
+    public void setHeading(String heading) {
+        this.heading = heading;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

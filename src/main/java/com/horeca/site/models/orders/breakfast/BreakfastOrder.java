@@ -2,17 +2,15 @@ package com.horeca.site.models.orders.breakfast;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Price;
-import com.horeca.site.models.Viewable;
 import com.horeca.site.models.orders.OrderStatus;
 import org.joda.time.LocalTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class BreakfastOrder implements Viewable<BreakfastOrderView> {
+public class BreakfastOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,22 +68,5 @@ public class BreakfastOrder implements Viewable<BreakfastOrderView> {
 
     public void setItems(Set<BreakfastOrderItem> items) {
         this.items = items;
-    }
-
-    @Override
-    public BreakfastOrderView toView(String preferredLanguage, String defaultLanguage) {
-        BreakfastOrderView view = new BreakfastOrderView();
-        view.setId(getId());
-        view.setStatus(getStatus());
-        view.setTotal(getTotal());
-        view.setTime(getTime().toString("HH:mm"));
-
-        Set<BreakfastOrderItemView> entryViews = new HashSet<>();
-        for (BreakfastOrderItem entry : getItems()) {
-            entryViews.add(entry.toView(preferredLanguage, defaultLanguage));
-        }
-        view.setEntries(entryViews);
-
-        return view;
     }
 }

@@ -1,7 +1,6 @@
 package com.horeca.site.controllers.orders;
 
 import com.horeca.annotations.AllowCORS;
-import com.horeca.site.models.orders.OrdersView;
 import com.horeca.site.services.orders.OrdersService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

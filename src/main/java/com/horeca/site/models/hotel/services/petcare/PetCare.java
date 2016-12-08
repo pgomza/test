@@ -1,20 +1,21 @@
 package com.horeca.site.models.hotel.services.petcare;
 
 import com.horeca.site.models.Price;
-import com.horeca.site.models.Translatable;
-import com.horeca.site.models.Viewable;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class PetCare extends Translatable<PetCareTranslation> implements Viewable<PetCareView> {
+public class PetCare {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotEmpty
+    private String description;
 
     @NotNull
     private Price price;
@@ -31,6 +32,14 @@ public class PetCare extends Translatable<PetCareTranslation> implements Viewabl
         this.id = id;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Price getPrice() {
         return price;
     }
@@ -45,20 +54,5 @@ public class PetCare extends Translatable<PetCareTranslation> implements Viewabl
 
     public void setItems(Set<PetCareItem> items) {
         this.items = items;
-    }
-
-    @Override
-    public PetCareView toView(String preferredLanguage, String defaultLanguage) {
-        PetCareView view = new PetCareView();
-        view.setPrice(getPrice());
-        view.setDescription(getTranslation(preferredLanguage, defaultLanguage).getDescription());
-
-        Set<PetCareItemView> itemViews = new HashSet<>();
-        for (PetCareItem item : getItems()) {
-            itemViews.add(item.toView(preferredLanguage, defaultLanguage));
-        }
-        view.setItems(itemViews);
-
-        return view;
     }
 }

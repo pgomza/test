@@ -2,15 +2,12 @@ package com.horeca.site.models.hotel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.horeca.site.models.Translatable;
-import com.horeca.site.models.Viewable;
 import com.horeca.site.models.hotel.address.Address;
 import com.horeca.site.models.hotel.gallery.Gallery;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
 import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
 import com.horeca.site.models.hotel.services.AvailableServices;
-import com.horeca.site.models.hotel.services.AvailableServicesView;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -20,12 +17,15 @@ import java.util.Set;
 
 @Entity
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-public class Hotel extends Translatable<HotelTranslation> implements Viewable<HotelView> {
+public class Hotel {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private Long id;
+
+	@NotEmpty
+	private String name;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn
@@ -38,9 +38,6 @@ public class Hotel extends Translatable<HotelTranslation> implements Viewable<Ho
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn
 	private RoomDirectory roomDirectory;
-
-    @NotEmpty
-	private String defaultTranslation;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn
@@ -56,6 +53,14 @@ public class Hotel extends Translatable<HotelTranslation> implements Viewable<Ho
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Address getAddress() {
@@ -82,14 +87,6 @@ public class Hotel extends Translatable<HotelTranslation> implements Viewable<Ho
 		this.roomDirectory = roomDirectory;
 	}
 
-	public String getDefaultTranslation() {
-		return defaultTranslation;
-	}
-
-	public void setDefaultTranslation(String defaultTranslation) {
-		this.defaultTranslation = defaultTranslation;
-	}
-
 	public AvailableServices getAvailableServices() {
 		return availableServices;
 	}
@@ -106,72 +103,68 @@ public class Hotel extends Translatable<HotelTranslation> implements Viewable<Ho
 		this.galleries = galleries;
 	}
 
-	@Override
-	public HotelView toView(String preferredLanguage, String defaultLanguage) {
-		HotelTranslation translation = getTranslation(preferredLanguage, defaultLanguage);
-
+	public HotelView toView() {
 		HotelView hotelView = new HotelView();
 		hotelView.setId(getId());
-		hotelView.setName(translation.getName());
-		hotelView.setAddress(getAddress().toView(preferredLanguage, defaultLanguage));
+		hotelView.setName(getName());
+		hotelView.setAddress(getAddress());
 		hotelView.setUsefulInformation(getUsefulInformation());
-		hotelView.setRoomDirectory(getRoomDirectory().toView(preferredLanguage, defaultLanguage));
+		hotelView.setRoomDirectory(getRoomDirectory());
 
-		AvailableServicesView servicesView = getAvailableServices().toView(preferredLanguage, defaultLanguage);
+		AvailableServices availableServices = getAvailableServices();
 
 		List<AvailableServiceViewSimplified> simplifiedList = new ArrayList<>();
-		if (servicesView.getBreakfast() != null) {
+		if (availableServices.getBreakfast() != null) {
 			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 			simplified.setType(AvailableServiceViewSimplified.Type.BREAKFAST);
-			simplified.setPrice(servicesView.getBreakfast().getPrice());
+			simplified.setPrice(availableServices.getBreakfast().getPrice());
 			simplifiedList.add(simplified);
 		}
 
-		if (servicesView.getCarPark() != null) {
+		if (availableServices.getCarPark() != null) {
 			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 			simplified.setType(AvailableServiceViewSimplified.Type.CARPARK);
-			simplified.setPrice(servicesView.getCarPark().getPrice());
+			simplified.setPrice(availableServices.getCarPark().getPrice());
 			simplifiedList.add(simplified);
 		}
 
-		if (servicesView.getRoomService() != null) {
+		if (availableServices.getRoomService() != null) {
 			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 			simplified.setType(AvailableServiceViewSimplified.Type.ROOMSERVICE);
-			simplified.setPrice(servicesView.getRoomService().getPrice());
+			simplified.setPrice(availableServices.getRoomService().getPrice());
 			simplifiedList.add(simplified);
 		}
 
-		if (servicesView.getReceptionCall() != null) {
+		if (availableServices.getReceptionCall() != null) {
 			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 			simplified.setType(AvailableServiceViewSimplified.Type.RECEPTIONCALL);
-			simplified.setPrice(servicesView.getReceptionCall().getPrice());
-			simplified.setAdditionalInfo(servicesView.getReceptionCall().getPhoneNumber());
+			simplified.setPrice(availableServices.getReceptionCall().getPrice());
+			simplified.setAdditionalInfo(availableServices.getReceptionCall().getPhoneNumber());
 			simplifiedList.add(simplified);
 		}
 
-		if (servicesView.getSpa() != null) {
+		if (availableServices.getSpa() != null) {
 			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 			simplified.setType(AvailableServiceViewSimplified.Type.SPA);
-			simplified.setPrice(servicesView.getSpa().getPrice());
+			simplified.setPrice(availableServices.getSpa().getPrice());
 			simplifiedList.add(simplified);
 		}
 
-		if (servicesView.getPetCare() != null) {
+		if (availableServices.getPetCare() != null) {
 			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 			simplified.setType(AvailableServiceViewSimplified.Type.PETCARE);
-			simplified.setPrice(servicesView.getSpa().getPrice());
+			simplified.setPrice(availableServices.getSpa().getPrice());
 			simplifiedList.add(simplified);
 		}
 
-		if (servicesView.getTaxi() != null) {
+		if (availableServices.getTaxi() != null) {
 			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 			simplified.setType(AvailableServiceViewSimplified.Type.TAXI);
-			simplified.setPrice(servicesView.getTaxi().getPrice());
+			simplified.setPrice(availableServices.getTaxi().getPrice());
 			simplifiedList.add(simplified);
 		}
 
 		hotelView.setServices(simplifiedList);
-
 		hotelView.setGalleries(getGalleries());
 
 		return hotelView;

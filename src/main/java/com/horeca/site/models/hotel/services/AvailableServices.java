@@ -2,26 +2,19 @@ package com.horeca.site.models.hotel.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.horeca.site.models.Translatable;
-import com.horeca.site.models.Viewable;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
-import com.horeca.site.models.hotel.services.breakfast.BreakfastView;
 import com.horeca.site.models.hotel.services.carpark.CarPark;
-import com.horeca.site.models.hotel.services.carpark.CarParkView;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
-import com.horeca.site.models.hotel.services.petcare.PetCareView;
 import com.horeca.site.models.hotel.services.receptioncall.ReceptionCall;
 import com.horeca.site.models.hotel.services.roomservice.RoomService;
-import com.horeca.site.models.hotel.services.roomservice.RoomServiceView;
 import com.horeca.site.models.hotel.services.spa.Spa;
-import com.horeca.site.models.hotel.services.spa.SpaView;
 import com.horeca.site.models.hotel.services.taxi.Taxi;
 
 import javax.persistence.*;
 
 @Entity
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-public class AvailableServices implements Viewable<AvailableServicesView> {
+public class AvailableServices {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -118,32 +111,5 @@ public class AvailableServices implements Viewable<AvailableServicesView> {
 
     public void setTaxi(Taxi taxi) {
         this.taxi = taxi;
-    }
-
-    @Override
-    public AvailableServicesView toView(String preferredLanguage, String defaultLanguage) {
-        AvailableServicesView view = new AvailableServicesView();
-        view.setId(getId());
-
-        BreakfastView breakfastView = getBreakfast().toView(preferredLanguage, defaultLanguage);
-        view.setBreakfast(breakfastView);
-
-        CarParkView carParkView = getCarPark().toView(preferredLanguage, defaultLanguage);
-        view.setCarPark(carParkView);
-
-        RoomServiceView roomServiceView = getRoomService().toView(preferredLanguage, defaultLanguage);
-        view.setRoomService(roomServiceView);
-
-        SpaView spaView = getSpa().toView(preferredLanguage, defaultLanguage);
-        view.setSpa(spaView);
-
-        PetCareView petCareView = getPetCare().toView(preferredLanguage, defaultLanguage);
-        view.setPetCare(petCareView);
-
-        view.setTaxi(getTaxi());
-
-        view.setReceptionCall(getReceptionCall());
-
-        return view;
     }
 }

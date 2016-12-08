@@ -2,10 +2,7 @@ package com.horeca.site.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.hotel.Hotel;
-import com.horeca.site.models.hotel.HotelTranslation;
 import com.horeca.site.models.hotel.HotelView;
-import com.horeca.site.models.hotel.address.AddressView;
-import com.horeca.site.models.hotel.roomdirectory.RoomDirectoryView;
 import com.horeca.site.repositories.HotelRepository;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

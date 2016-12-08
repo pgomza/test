@@ -1,13 +1,11 @@
 package com.horeca.site.models.hotel.services.breakfast;
 
-import com.horeca.site.models.Viewable;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class BreakfastCategory implements Viewable<BreakfastCategoryView> {
+public class BreakfastCategory {
 
     public enum Category { DISH, DRINK }
 
@@ -44,20 +42,5 @@ public class BreakfastCategory implements Viewable<BreakfastCategoryView> {
 
     public void setItems(Set<BreakfastItem> items) {
         this.items = items;
-    }
-
-    @Override
-    public BreakfastCategoryView toView(String preferredLanguage, String defaultLanguage) {
-        BreakfastCategoryView view = new BreakfastCategoryView();
-        view.setId(getId());
-        view.setName(getCategory());
-
-        Set<BreakfastItemView> itemViews = new HashSet<>();
-        for (BreakfastItem item : items) {
-            itemViews.add(item.toView(preferredLanguage, defaultLanguage));
-        }
-        view.setItems(itemViews);
-
-        return view;
     }
 }

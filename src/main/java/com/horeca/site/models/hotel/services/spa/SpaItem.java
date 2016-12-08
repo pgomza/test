@@ -1,20 +1,21 @@
 package com.horeca.site.models.hotel.services.spa;
 
 import com.horeca.site.models.Price;
-import com.horeca.site.models.Translatable;
-import com.horeca.site.models.Viewable;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendar;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class SpaItem extends Translatable<SpaItemTranslation>
-        implements Viewable<SpaItemView> {
+public class SpaItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotEmpty
+    private String text;
 
     @NotNull
     private Price price;
@@ -31,6 +32,14 @@ public class SpaItem extends Translatable<SpaItemTranslation>
         this.id = id;
     }
 
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
     public Price getPrice() {
         return price;
     }
@@ -45,14 +54,5 @@ public class SpaItem extends Translatable<SpaItemTranslation>
 
     public void setCalendar(SpaCalendar calendar) {
         this.calendar = calendar;
-    }
-
-    @Override
-    public SpaItemView toView(String preferredLanguage, String defaultLanguage) {
-        SpaItemView view = new SpaItemView();
-        view.setId(getId());
-        view.setName(getTranslation(preferredLanguage, defaultLanguage).getName());
-        view.setPrice(getPrice());
-        return view;
     }
 }

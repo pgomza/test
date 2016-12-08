@@ -3,7 +3,6 @@ package com.horeca.site.services.services;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
-import com.horeca.site.models.hotel.services.petcare.PetCareView;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarDay;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarHour;
 import com.horeca.site.repositories.services.PetCareCalendarHourRepository;

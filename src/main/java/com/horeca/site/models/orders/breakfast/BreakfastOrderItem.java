@@ -1,13 +1,12 @@
 package com.horeca.site.models.orders.breakfast;
 
-import com.horeca.site.models.Viewable;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastItem;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class BreakfastOrderItem implements Viewable<BreakfastOrderItemView> {
+public class BreakfastOrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,13 +41,5 @@ public class BreakfastOrderItem implements Viewable<BreakfastOrderItemView> {
 
     public void setCount(Integer count) {
         this.count = count;
-    }
-
-    @Override
-    public BreakfastOrderItemView toView(String preferredLanguage, String defaultLanguage) {
-        BreakfastOrderItemView view = new BreakfastOrderItemView();
-        view.setItem(getItem().toView(preferredLanguage, defaultLanguage));
-        view.setCount(getCount());
-        return view;
     }
 }

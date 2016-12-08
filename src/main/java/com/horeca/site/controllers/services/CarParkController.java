@@ -1,7 +1,6 @@
 package com.horeca.site.controllers.services;
 
 import com.horeca.annotations.AllowCORS;
-import com.horeca.site.models.hotel.services.carpark.CarParkView;
 import com.horeca.site.services.services.CarParkService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

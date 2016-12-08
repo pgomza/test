@@ -1,7 +1,6 @@
 package com.horeca.site.controllers.services;
 
 import com.horeca.annotations.AllowCORS;
-import com.horeca.site.models.hotel.services.spa.SpaView;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
 import com.horeca.site.services.services.SpaService;
 import io.swagger.annotations.Api;

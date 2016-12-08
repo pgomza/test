@@ -1,7 +1,6 @@
 package com.horeca.site.models.orders.spa;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.horeca.site.models.Viewable;
 import com.horeca.site.models.hotel.services.spa.SpaItem;
 import com.horeca.site.models.orders.OrderStatus;
 import org.joda.time.LocalDateTime;
@@ -10,7 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class SpaOrder implements Viewable<SpaOrderView> {
+public class SpaOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,16 +56,5 @@ public class SpaOrder implements Viewable<SpaOrderView> {
 
     public void setTime(LocalDateTime time) {
         this.time = time;
-    }
-
-    @Override
-    public SpaOrderView toView(String preferredLanguage, String defaultLanguage) {
-        SpaOrderView view = new SpaOrderView();
-        view.setId(getId());
-        view.setStatus(getStatus());
-        view.setItem(getItem().toView(preferredLanguage, defaultLanguage));
-        view.setTime(getTime().toString("dd-MM-yyyy HH:mm"));
-
-        return view;
     }
 }

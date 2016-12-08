@@ -3,7 +3,6 @@ package com.horeca.site.services.services;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spa.SpaItem;
-import com.horeca.site.models.hotel.services.spa.SpaView;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarDay;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
 import com.horeca.site.repositories.services.SpaCalendarHourRepository;

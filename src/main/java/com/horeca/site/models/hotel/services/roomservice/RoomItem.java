@@ -1,7 +1,6 @@
 package com.horeca.site.models.hotel.services.roomservice;
 
-import com.horeca.site.models.Translatable;
-import com.horeca.site.models.Viewable;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,11 +8,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class RoomItem extends Translatable<RoomItemTranslation> implements Viewable<RoomItemView> {
+public class RoomItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotEmpty
+    private String text;
 
     public Long getId() {
         return id;
@@ -23,13 +25,11 @@ public class RoomItem extends Translatable<RoomItemTranslation> implements Viewa
         this.id = id;
     }
 
-    @Override
-    public RoomItemView toView(String preferredLanguage, String defaultLanguage) {
-        RoomItemTranslation translation = getTranslation(preferredLanguage, defaultLanguage);
-        RoomItemView view = new RoomItemView();
-        view.setId(getId());
-        view.setText(translation.getText());
+    public String getText() {
+        return text;
+    }
 
-        return view;
+    public void setText(String text) {
+        this.text = text;
     }
 }

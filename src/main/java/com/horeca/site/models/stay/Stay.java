@@ -1,17 +1,16 @@
 package com.horeca.site.models.stay;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.horeca.site.models.Viewable;
+import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.orders.Orders;
-import com.horeca.site.models.guest.Guest;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-public class Stay implements Viewable<StayView> {
+public class Stay {
 
     @Id
     private String pin;
@@ -101,19 +100,5 @@ public class Stay implements Viewable<StayView> {
 
     public void setGuest(Guest guest) {
         this.guest = guest;
-    }
-
-    @Override
-    public StayView toView(String preferredLanguage, String defaultLanguage) {
-        StayView view = new StayView();
-        view.setPin(getPin());
-        view.setRoomNumber(getRoomNumber());
-        view.setFromDate(getFromDate());
-        view.setToDate(getToDate());
-        view.setStatus(getStatus());
-        view.setOrders(getOrders().toView(preferredLanguage, defaultLanguage));
-        view.setHotel(getHotel().toView(preferredLanguage, defaultLanguage));
-        view.setGuest(getGuest());
-        return view;
     }
 }

@@ -1,11 +1,7 @@
 package com.horeca.site.controllers.services;
 
 import com.horeca.annotations.AllowCORS;
-import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.models.hotel.services.breakfast.BreakfastCategory;
-import com.horeca.site.models.hotel.services.breakfast.BreakfastItem;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastItemUpdate;
-import com.horeca.site.models.hotel.services.breakfast.BreakfastView;
 import com.horeca.site.services.services.BreakfastService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,7 +2,6 @@ package com.horeca.site.controllers.services;
 
 import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
-import com.horeca.site.models.hotel.services.petcare.PetCareView;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarHour;
 import com.horeca.site.services.services.PetCareService;
 import io.swagger.annotations.Api;
