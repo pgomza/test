@@ -20,11 +20,4 @@ public class OrdersService {
 
         return orders;
     }
-
-    public OrdersView getView(String stayPin, String preferredLanguage) {
-        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
-        OrdersView ordersView = get(stayPin).toView(preferredLanguage, defaultLanguage);
-
-        return ordersView;
-    }
 }

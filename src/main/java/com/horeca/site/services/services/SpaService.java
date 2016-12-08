@@ -39,11 +39,6 @@ public class SpaService {
         return hotel.getAvailableServices().getSpa();
     }
 
-    public SpaView getView(Long hotelId, String preferredLanguage) {
-        Spa spa = get(hotelId);
-        return spa.toView(preferredLanguage, hotelService.get(hotelId).getDefaultTranslation());
-    }
-
     public Set<SpaCalendarHour> getCalendarHours(Long hotelId, Long itemId, String date) {
         //TODO ultimately it won't be needed because the sent date will be already resolved to the LocalDate type
         LocalDate resolvedDate = formatter.parseLocalDate(date);

@@ -14,9 +14,9 @@ public class CarParkService {
     @Autowired
     private HotelService hotelService;
 
-    public CarParkView getView(Long hotelId, String preferredLanguage) {
+    public CarPark get(Long hotelId) {
         Hotel hotel = hotelService.get(hotelId);
         CarPark carPark = hotel.getAvailableServices().getCarPark();
-        return carPark.toView(preferredLanguage, hotel.getDefaultTranslation());
+        return carPark;
     }
 }

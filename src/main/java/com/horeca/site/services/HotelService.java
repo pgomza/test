@@ -1,22 +1,14 @@
 package com.horeca.site.services;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
-import com.horeca.site.models.hotel.Hotel;
-import com.horeca.site.models.hotel.HotelView;
-import com.horeca.site.repositories.HotelRepository;
 import com.horeca.site.exceptions.ResourceNotFoundException;
+import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.repositories.HotelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 @Service
-@Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.SUPPORTS)
+@Transactional
 public class HotelService {
 
     @Autowired
@@ -35,19 +27,6 @@ public class HotelService {
     }
 
     public Hotel add(Hotel hotel) {
-        String defaultTranslation = hotel.getDefaultTranslation();
-        Set<HotelTranslation> translations = hotel.getTranslations();
-
-        boolean exists = false;
-        for (HotelTranslation translation : translations) {
-            if (translation.getLanguage().equals(defaultTranslation)) {
-                exists = true;
-                break;
-            }
-        }
-        if (!exists)
-            throw new BusinessRuleViolationException("The default language has been specified but the corresponding translation has not been provided");
-
         return repository.save(hotel);
     }
 
@@ -62,16 +41,5 @@ public class HotelService {
     public void delete(Long id) {
         Hotel toDelete = get(id);
         repository.delete(toDelete);
-    }
-
-    public List<HotelView> getAllViews(Iterable<Hotel> hotels, String preferredLanguage) {
-        List<HotelView> hotelViews = new ArrayList<>();
-
-        for (Hotel hotel : hotels) {
-            HotelView hotelView = hotel.toView(preferredLanguage, hotel.getDefaultTranslation());
-            hotelViews.add(hotelView);
-        }
-
-        return hotelViews;
     }
 }

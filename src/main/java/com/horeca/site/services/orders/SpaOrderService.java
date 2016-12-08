@@ -64,20 +64,6 @@ public class SpaOrderService {
         return spaOrders;
     }
 
-    public SpaOrderView getView(String stayPin, Long id, String preferredLanguage) {
-        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
-        return get(stayPin, id).toView(preferredLanguage, defaultLanguage);
-    }
-
-    public Set<SpaOrderView> getAllViews(String stayPin, String preferredLanguage) {
-        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
-        Set<SpaOrderView> views = new HashSet<>();
-        for (SpaOrder spaOrder : getAll(stayPin)) {
-            views.add(spaOrder.toView(preferredLanguage, defaultLanguage));
-        }
-        return views;
-    }
-
     public SpaOrder add(String stayPin, SpaOrderPOST entity) {
         SpaOrder newOrder = new SpaOrder();
 

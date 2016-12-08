@@ -22,9 +22,4 @@ public class AvailableServicesService {
         Hotel hotel = hotelService.get(hotelId);
         return hotel.getAvailableServices();
     }
-
-    public AvailableServicesView getView(Long hotelId, String preferredLanguage) {
-        AvailableServices availableServices = get(hotelId);
-        return availableServices.toView(preferredLanguage, hotelService.get(hotelId).getDefaultTranslation());
-    }
 }

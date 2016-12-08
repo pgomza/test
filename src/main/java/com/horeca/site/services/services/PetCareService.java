@@ -43,11 +43,6 @@ public class PetCareService {
         return hotel.getAvailableServices().getPetCare();
     }
 
-    public PetCareView getView(Long hotelId, String preferredLanguage) {
-        PetCare petCare = get(hotelId);
-        return petCare.toView(preferredLanguage, hotelService.get(hotelId).getDefaultTranslation());
-    }
-
     public PetCareItem addItem(Long hotelId, PetCareItem item) {
         PetCare petCare = get(hotelId);
         PetCareItem savedItem = itemRepository.save(item);

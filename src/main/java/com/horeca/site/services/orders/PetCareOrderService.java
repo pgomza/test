@@ -64,20 +64,6 @@ public class PetCareOrderService {
         return petCareOrders;
     }
 
-    public PetCareOrderView getView(String stayPin, Long id, String preferredLanguage) {
-        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
-        return get(stayPin, id).toView(preferredLanguage, defaultLanguage);
-    }
-
-    public Set<PetCareOrderView> getAllViews(String stayPin, String preferredLanguage) {
-        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
-        Set<PetCareOrderView> views = new HashSet<>();
-        for (PetCareOrder petCareOrder : getAll(stayPin)) {
-            views.add(petCareOrder.toView(preferredLanguage, defaultLanguage));
-        }
-        return views;
-    }
-
     public PetCareOrder add(String stayPin, PetCareOrderPOST entity) {
         PetCareOrder newOrder = new PetCareOrder();
 

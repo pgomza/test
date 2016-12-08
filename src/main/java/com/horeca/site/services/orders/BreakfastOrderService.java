@@ -59,20 +59,6 @@ public class BreakfastOrderService {
         return found;
     }
 
-    public BreakfastOrderView getView(String stayPin, Long id, String preferredLanguage) {
-        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
-        return get(stayPin, id).toView(preferredLanguage, defaultLanguage);
-    }
-
-    public Set<BreakfastOrderView> getAllViews(String stayPin, String preferredLanguage) {
-        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
-        Set<BreakfastOrderView> views = new HashSet<>();
-        for (BreakfastOrder spaOrder : getAll(stayPin)) {
-            views.add(spaOrder.toView(preferredLanguage, defaultLanguage));
-        }
-        return views;
-    }
-
     public BreakfastOrder add(String stayPin, BreakfastOrderPOST entity) {
         BreakfastOrder breakfastOrder = new BreakfastOrder();
 
