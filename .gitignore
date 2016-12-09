@@ -1,5 +1,4 @@
 .idea
 .settings
+*.iml
 target
-spring-boot-sample-secure-legacy.iml
-src/main/webapp
