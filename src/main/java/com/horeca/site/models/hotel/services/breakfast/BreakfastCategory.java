@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Table(indexes = @Index(name = "breakfast_id", columnList = "breakfast_id"))
 public class BreakfastCategory {
 
     public enum Category { DISH, DRINK }
@@ -17,7 +18,7 @@ public class BreakfastCategory {
     private Category category;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_items")
+    @JoinColumn(name = "breakfast_category_id")
     private Set<BreakfastItem> items;
 
     public Long getId() {

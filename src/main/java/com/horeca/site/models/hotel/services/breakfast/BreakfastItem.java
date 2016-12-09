@@ -3,13 +3,11 @@ package com.horeca.site.models.hotel.services.breakfast;
 import com.horeca.site.models.Price;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Table(indexes = @Index(name = "breakfast_category_id", columnList = "breakfast_category_id"))
 public class BreakfastItem {
 
     @Id

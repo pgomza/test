@@ -2,9 +2,12 @@ package com.horeca.site.models.hotel.services.breakfast;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.horeca.site.models.*;
+import org.hibernate.annotations.*;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
@@ -28,7 +31,7 @@ public class Breakfast {
     private Date toHour;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @JoinColumn(name = "breakfast_id")
     private Set<BreakfastCategory> categories;
 
     public Long getId() {

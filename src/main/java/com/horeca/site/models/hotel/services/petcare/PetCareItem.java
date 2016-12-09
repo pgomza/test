@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Table(indexes = @Index(name = "pet_care_id", columnList = "pet_care_id"))
 public class PetCareItem {
 
     @Id

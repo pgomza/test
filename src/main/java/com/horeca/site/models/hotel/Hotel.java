@@ -27,24 +27,24 @@ public class Hotel {
 	@NotEmpty
 	private String name;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn
 	private Address address;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn
 	private UsefulInformation usefulInformation;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn
 	private RoomDirectory roomDirectory;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn
 	private AvailableServices availableServices;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "hotel_gallery")
 	private Set<Gallery> galleries;
 
 	public Long getId() {

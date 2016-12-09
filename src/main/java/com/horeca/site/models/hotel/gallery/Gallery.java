@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
+@Table(indexes = @Index(name = "hotel_gallery", columnList = "hotel_gallery"))
 public class Gallery {
 
     public enum Type { MAIN, SPA }

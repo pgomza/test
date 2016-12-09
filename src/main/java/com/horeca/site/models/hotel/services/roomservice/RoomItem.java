@@ -2,12 +2,10 @@ package com.horeca.site.models.hotel.services.roomservice;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(indexes = @Index(name = "room_service_id", columnList = "room_service_id"))
 public class RoomItem {
 
     @Id

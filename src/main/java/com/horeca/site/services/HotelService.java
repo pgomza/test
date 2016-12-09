@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class HotelService {
 
     @Autowired
@@ -18,6 +17,7 @@ public class HotelService {
         return repository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Hotel get(Long id) {
         Hotel hotel = repository.findOne(id);
         if (hotel == null)

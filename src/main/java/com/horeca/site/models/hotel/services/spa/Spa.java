@@ -21,7 +21,7 @@ public class Spa {
     private Price price;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @JoinColumn(name = "spa_id")
     private Set<SpaItem> items;
 
     public Long getId() {

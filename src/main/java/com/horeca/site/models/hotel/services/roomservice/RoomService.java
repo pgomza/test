@@ -23,7 +23,7 @@ public class RoomService {
     private Price price;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @JoinColumn(name = "room_service_id")
     private Set<RoomItem> items;
 
     public Long getId() {

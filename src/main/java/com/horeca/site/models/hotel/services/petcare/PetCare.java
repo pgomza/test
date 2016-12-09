@@ -21,7 +21,7 @@ public class PetCare {
     private Price price;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @JoinColumn(name = "pet_care_id")
     private Set<PetCareItem> items;
 
     public Long getId() {

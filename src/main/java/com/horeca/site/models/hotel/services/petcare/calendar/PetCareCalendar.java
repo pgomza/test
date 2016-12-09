@@ -11,7 +11,7 @@ public class PetCareCalendar {
     private Long id;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @JoinColumn(name = "pet_care_calendar_id")
     private Set<PetCareCalendarDay> days;
 
     public Long getId() {

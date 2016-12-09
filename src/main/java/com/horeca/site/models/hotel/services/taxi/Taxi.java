@@ -19,7 +19,7 @@ public class Taxi {
     private Price price;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @JoinColumn(name = "taxi_id")
     private Set<TaxiItem> items;
 
     public Long getId() {
