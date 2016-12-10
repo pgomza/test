@@ -60,22 +60,19 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients
                 .inMemory()
-                .withClient(mobileClientId)
-                .secret(mobileSecret)
-                .authorizedGrantTypes("password-like")
-                .scopes("read", "write")
-                .resourceIds("mobileResources")
-                .accessTokenValiditySeconds(mobileTokenValiditySeconds)
-
+                    .withClient(mobileClientId)
+                    .secret(mobileSecret)
+                    .authorizedGrantTypes("password-like")
+                    .scopes("read", "write")
+                    .resourceIds("mobileResources")
+                    .accessTokenValiditySeconds(mobileTokenValiditySeconds)
                 .and()
-
-                .inMemory()
-                .withClient(panelClientId)
-                .secret(panelSecret)
-                .authorizedGrantTypes("password-like")
-                .scopes("read", "write")
-                .resourceIds("panelResources")
-                .accessTokenValiditySeconds(panelTokenValiditySeconds);
+                    .withClient(panelClientId)
+                    .secret(panelSecret)
+                    .authorizedGrantTypes("password-like")
+                    .scopes("read", "write")
+                    .resourceIds("panelResources")
+                    .accessTokenValiditySeconds(panelTokenValiditySeconds);
     }
 
     @Bean
