@@ -60,7 +60,7 @@ public class SwaggerConfiguration {
 
     private ApiInfo metadata() {
         return new ApiInfoBuilder()
-                .title("Horeca Club's backend API")
+                .title("THRODI's backend API")
                 .build();
     }
 }

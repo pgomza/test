@@ -6,22 +6,13 @@ import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarDay;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarHour;
-import com.horeca.site.models.hotel.services.spa.Spa;
-import com.horeca.site.models.hotel.services.spa.SpaItem;
-import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarDay;
-import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.petcare.PetCareOrder;
 import com.horeca.site.models.orders.petcare.PetCareOrderPOST;
-import com.horeca.site.models.orders.petcare.PetCareOrderView;
-import com.horeca.site.models.orders.spa.SpaOrder;
-import com.horeca.site.models.orders.spa.SpaOrderPOST;
-import com.horeca.site.models.orders.spa.SpaOrderView;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.PetCareOrderRepository;
-import com.horeca.site.repositories.orders.SpaOrderRepository;
 import com.horeca.site.services.services.PetCareService;
 import com.horeca.site.services.services.StayService;
 import org.joda.time.LocalDateTime;
@@ -71,20 +62,6 @@ public class PetCareOrderService {
         Set<PetCareOrder> petCareOrders = orders.getPetCareOrders();
 
         return petCareOrders;
-    }
-
-    public PetCareOrderView getView(String stayPin, Long id, String preferredLanguage) {
-        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
-        return get(stayPin, id).toView(preferredLanguage, defaultLanguage);
-    }
-
-    public Set<PetCareOrderView> getAllViews(String stayPin, String preferredLanguage) {
-        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
-        Set<PetCareOrderView> views = new HashSet<>();
-        for (PetCareOrder petCareOrder : getAll(stayPin)) {
-            views.add(petCareOrder.toView(preferredLanguage, defaultLanguage));
-        }
-        return views;
     }
 
     public PetCareOrder add(String stayPin, PetCareOrderPOST entity) {

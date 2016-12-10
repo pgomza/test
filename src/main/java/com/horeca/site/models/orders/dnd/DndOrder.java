@@ -11,7 +11,7 @@ public class DndOrder {
     public enum Status { ENABLED, DISABLED }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 

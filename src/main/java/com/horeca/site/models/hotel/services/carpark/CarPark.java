@@ -2,23 +2,21 @@ package com.horeca.site.models.hotel.services.carpark;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.horeca.site.models.Price;
-import com.horeca.site.models.Translatable;
-import com.horeca.site.models.Viewable;
+import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 
 @Entity
-public class CarPark extends Translatable<CarParkTranslation> implements Viewable<CarParkView> {
+public class CarPark {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
+
+    @NotEmpty
+    private String description;
 
     @NotNull
     @Embedded
@@ -32,21 +30,19 @@ public class CarPark extends Translatable<CarParkTranslation> implements Viewabl
         this.id = id;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Price getPrice() {
         return price;
     }
 
     public void setPrice(Price price) {
         this.price = price;
-    }
-
-    @Override
-    public CarParkView toView(String preferredLanguage, String defaultLanguage) {
-        CarParkTranslation translation = getTranslation(preferredLanguage, defaultLanguage);
-        CarParkView view = new CarParkView();
-        view.setPrice(getPrice());
-        view.setDescription(translation.getDescription());
-
-        return view;
     }
 }

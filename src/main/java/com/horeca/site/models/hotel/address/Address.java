@@ -1,20 +1,26 @@
 package com.horeca.site.models.hotel.address;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.horeca.site.models.Translatable;
-import com.horeca.site.models.Viewable;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Address extends Translatable<AddressTranslation> implements Viewable<AddressView> {
+public class Address {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonIgnore
 	private Long id;
+
+	@NotEmpty
+	private String city;
+
+	@NotEmpty
+	private String street;
 
 	public Long getId() {
 		return id;
@@ -24,14 +30,19 @@ public class Address extends Translatable<AddressTranslation> implements Viewabl
 		this.id = id;
 	}
 
-	@Override
-	public AddressView toView(String preferredLanguage, String defaultLanguage) {
-		AddressTranslation translation = getTranslation(preferredLanguage, defaultLanguage);
+	public String getCity() {
+		return city;
+	}
 
-		AddressView view = new AddressView();
-		view.setCity(translation.getCity());
-		view.setStreet(translation.getStreet());
+	public void setCity(String city) {
+		this.city = city;
+	}
 
-		return view;
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
 	}
 }

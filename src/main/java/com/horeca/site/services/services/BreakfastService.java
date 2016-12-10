@@ -35,11 +35,6 @@ public class BreakfastService {
         return hotel.getAvailableServices().getBreakfast();
     }
 
-    public BreakfastView getView(Long hotelId, String preferredLanguage) {
-        Breakfast breakfast = get(hotelId);
-        return breakfast.toView(preferredLanguage, hotelService.get(hotelId).getDefaultTranslation());
-    }
-
     public BreakfastCategory getCategory(Long hotelId, BreakfastCategory.Category category) {
         Breakfast breakfast = get(hotelId);
         Set<BreakfastCategory> categories = breakfast.getCategories();
@@ -50,20 +45,13 @@ public class BreakfastService {
         throw new ResourceNotFoundException("There is no such category");
     }
 
-    public BreakfastCategoryView getCategoryView(Long hotelId, BreakfastCategory.Category category,
-                                                 String preferredLanguage) {
-        String defaultLanguage = hotelService.get(hotelId).getDefaultTranslation();
-        BreakfastCategory breakfastCategory = getCategory(hotelId, category);
-        return breakfastCategory.toView(preferredLanguage, defaultLanguage);
-    }
-
     public void addItem(Long hotelId, BreakfastItemUpdate item) {
         BreakfastCategory category = getCategory(hotelId, item.getType());
         if (category != null) {
             BreakfastItem itemNew = new BreakfastItem();
             itemNew.setPrice(item.getPrice());
             itemNew.setAvailable(item.isAvailable());
-            itemNew.setTranslations(getDefaultTranslationSet(item.getName()));
+            itemNew.setName(item.getName());
             category.getItems().add(itemNew);
             breakfastCategoryRepository.save(category);
         }
@@ -94,7 +82,7 @@ public class BreakfastService {
         BreakfastCategory category = getCategory(hotelId, item.getType());
         foundItem.setPrice(item.getPrice());
         foundItem.setAvailable(item.isAvailable());
-        foundItem.setTranslations(getDefaultTranslationSet(item.getName()));
+        foundItem.setName(item.getName());
         category.getItems().add(foundItem);
         breakfastCategoryRepository.save(category);
     }
@@ -106,14 +94,5 @@ public class BreakfastService {
         }
         else
             throw new ResourceNotFoundException("Could not find an item with such an id");
-    }
-
-    private Set<BreakfastItemTranslation> getDefaultTranslationSet(String name) {
-        BreakfastItemTranslation translation = new BreakfastItemTranslation();
-        translation.setLanguage("en");
-        translation.setName(name);
-        Set<BreakfastItemTranslation> translationSet = new HashSet<>();
-        translationSet.add(translation);
-        return translationSet;
     }
 }

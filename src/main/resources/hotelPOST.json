@@ -1,17 +1,8 @@
 {
+  "name": "Some hotel",
   "address": {
-    "translations": [
-      {
-        "city": "Toruń",
-        "language": "pl",
-        "street": "ul. Toruńska"
-      },
-      {
-        "city": "Torun",
-        "language": "en",
-        "street": "Torunska street"
-      }
-    ]
+    "city": "Torun",
+    "street": "Torunska street"
   },
   "availableServices": {
     "breakfast": {
@@ -25,16 +16,7 @@
                 "value": "0.5"
               },
               "available": true,
-              "translations": [
-                {
-                  "language": "en",
-                  "name": "Expresso"
-                },
-                {
-                  "language": "pl",
-                  "name": "Expresso"
-                }
-              ]
+              "name": "Expresso"
             },
             {
               "price": {
@@ -42,16 +24,7 @@
                 "value": "3"
               },
               "available": true,
-              "translations": [
-                {
-                  "language": "en",
-                  "name": "Hot chocolate"
-                },
-                {
-                  "language": "pl",
-                  "name": "Gorąca czekolada"
-                }
-              ]
+              "name": "Hot chocolate"
             }
           ]
         },
@@ -64,16 +37,7 @@
                 "value": "2"
               },
               "available": true,
-              "translations": [
-                {
-                  "language": "en",
-                  "name": "Toasts with jam"
-                },
-                {
-                  "language": "pl",
-                  "name": "Tosty z dżemem"
-                }
-              ]
+              "name": "Toasts with jam"
             },
             {
               "price": {
@@ -81,16 +45,7 @@
                 "value": "3.5"
               },
               "available": true,
-              "translations": [
-                {
-                  "language": "en",
-                  "name": "Scrambled eggs"
-                },
-                {
-                  "language": "pl",
-                  "name": "Jajecznica"
-                }
-              ]
+              "name": "Scrambled eggs"
             }
           ]
         }
@@ -101,61 +56,25 @@
         "value": 5
       },
       "toHour": "19-09-2016 11:00:00",
-      "translations": [
-        {
-          "description": "breakfast's description goes here",
-          "language": "en"
-        },
-        {
-          "description": "opis śniadania",
-          "language": "pl"
-        }
-      ]
+      "description": "breakfast's description goes here"
     },
     "carPark": {
       "price": {
         "currency": "$",
         "value": 3
       },
-      "translations": [
-        {
-          "description": "opis usługi Car Park",
-          "language": "pl"
-        },
-        {
-          "description": "Car Park's description",
-          "language": "en"
-        }
-      ]
+      "description": "Car Park's description"
     },
     "roomService": {
       "items": [
         {
-          "translations": [
-            {
-              "language": "pl",
-              "text": "ręczniki"
-            },
-            {
-              "language": "en",
-              "text": "towels"
-            }
-          ]
+          "text": "towels"
         }
       ],
       "price": {
         "text": "Free"
       },
-      "translations": [
-        {
-          "description": "opis usługi room service",
-          "language": "pl"
-        },
-        {
-          "description": "room service's description",
-          "language": "en"
-        }
-      ]
+      "description": "room service's description"
     },
     "receptionCall": {
       "price": {
@@ -517,12 +436,7 @@
             "currency": "$",
             "value": 3
           },
-          "translations": [
-            {
-              "language": "en",
-              "name": "Thai massage"
-            }
-          ]
+          "name": "Thai massage"
         },
         {
           "calendar": {
@@ -876,24 +790,14 @@
             "currency": "$",
             "value": 5
           },
-          "translations": [
-            {
-              "language": "en",
-              "name": "Manicure"
-            }
-          ]
+          "name": "Manicure"
         }
       ],
       "price": {
         "currency": "$",
         "value": 5
       },
-      "translations": [
-        {
-          "description": "spa service's description",
-          "language": "en"
-        }
-      ]
+      "description": "spa service's description"
     },
     "petCare": {
       "items": [],
@@ -901,12 +805,7 @@
         "currency": "$",
         "value": 7
       },
-      "translations": [
-        {
-          "description": "petCare service's description",
-          "language": "en"
-        }
-      ]
+      "description": "petCare service's description"
     },
     "taxi": {
       "items": [
@@ -924,7 +823,6 @@
       }
     }
   },
-  "defaultTranslation": "en",
   "usefulInformation": {
     "wifiPassword": "erir9732f9fwdres",
     "items": [
@@ -943,45 +841,15 @@
   "roomDirectory": {
     "sections": [
       {
-        "translations": [
-          {
-            "heading": "Ręczniki",
-            "language": "pl",
-            "text": "coś o ręcznikach"
-          },
-          {
-            "heading": "Towels",
-            "language": "en",
-            "text": "something about the towels"
-          }
-        ]
+          "heading": "Towels",
+          "text": "something about the towels"
       },
       {
-        "translations": [
-          {
-            "heading": "Papier toaletowy",
-            "language": "pl",
-            "text": "jakaś informacja o papierze toaletowym"
-          },
-          {
-            "heading": "Toilet paper",
-            "language": "en",
-            "text": "some information about the toilet paper "
-          }
-        ]
+          "heading": "Toilet paper",
+          "text": "some information about the toilet paper"
       }
     ]
   },
-  "translations": [
-    {
-      "language": "pl",
-      "name": "Jakiś hotel"
-    },
-    {
-      "language": "en",
-      "name": "Some hotel"
-    }
-  ],
   "galleries": [
     {
       "type": "MAIN",

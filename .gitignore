@@ -1,5 +1,4 @@
 .idea
 .settings
-src/main/resources/static
+*.iml
 target
-spring-boot-sample-secure-legacy.iml

@@ -1,21 +1,21 @@
 package com.horeca.site.models.hotel.services.breakfast;
 
 import com.horeca.site.models.Price;
-import com.horeca.site.models.Translatable;
-import com.horeca.site.models.Viewable;
+import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class BreakfastItem extends Translatable<BreakfastItemTranslation>
-        implements Viewable<BreakfastItemView> {
+@Table(indexes = @Index(name = "breakfast_category_id", columnList = "breakfast_category_id"))
+public class BreakfastItem {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotEmpty
+    private String name;
 
     @NotNull
     private Price price;
@@ -29,6 +29,14 @@ public class BreakfastItem extends Translatable<BreakfastItemTranslation>
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Price getPrice() {
@@ -45,16 +53,5 @@ public class BreakfastItem extends Translatable<BreakfastItemTranslation>
 
     public void setAvailable(boolean available) {
         this.available = available;
-    }
-
-    @Override
-    public BreakfastItemView toView(String preferredLanguage, String defaultLanguage) {
-        BreakfastItemView view = new BreakfastItemView();
-        view.setId(getId());
-        view.setPrice(getPrice());
-        view.setName(getTranslation(preferredLanguage, defaultLanguage).getName());
-        view.setAvailable(isAvailable());
-
-        return view;
     }
 }

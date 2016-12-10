@@ -12,7 +12,6 @@ import com.horeca.site.services.HotelService;
 import com.horeca.site.services.PinGeneratorService;
 import com.horeca.site.services.GuestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,26 +40,11 @@ public class StayService {
         return stayRepository.findAll();
     }
 
-    public Iterable<StayView> getAllViews(String preferredLanguage) {
-        Set<StayView> views = new HashSet<>();
-        for (Stay stay : getAll()) {
-            views.add(stay.toView(preferredLanguage, stay.getHotel().getDefaultTranslation()));
-        }
-        return views;
-    }
-
-    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
-//    @PreAuthorize("@authOnMethodChecker.isGuestAuthorized(authentication, #pin)")
+//    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
     public Stay get(String pin) {
         ensureEntityExists(pin);
         ensureStatusNotNew(pin);
         return stayRepository.findOne(pin);
-    }
-
-    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
-    public StayView getView(String pin, String preferredLanguage) {
-        Stay stay = get(pin);
-        return stay.toView(preferredLanguage, stay.getHotel().getDefaultTranslation());
     }
 
 //    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")

@@ -9,10 +9,11 @@ import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
+@Table(indexes = @Index(name = "pet_care_calendar_id", columnList = "pet_care_calendar_id"))
 public class PetCareCalendarDay {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 
@@ -21,7 +22,7 @@ public class PetCareCalendarDay {
     private LocalDate day;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @JoinColumn(name = "pet_care_calendar_day_id")
     private Set<PetCareCalendarHour> hours;
 
     public Long getId() {

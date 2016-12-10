@@ -11,7 +11,6 @@ import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.spa.SpaOrder;
 import com.horeca.site.models.orders.spa.SpaOrderPOST;
-import com.horeca.site.models.orders.spa.SpaOrderView;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.SpaOrderRepository;
 import com.horeca.site.services.services.SpaService;
@@ -63,20 +62,6 @@ public class SpaOrderService {
         Set<SpaOrder> spaOrders = orders.getSpaOrders();
 
         return spaOrders;
-    }
-
-    public SpaOrderView getView(String stayPin, Long id, String preferredLanguage) {
-        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
-        return get(stayPin, id).toView(preferredLanguage, defaultLanguage);
-    }
-
-    public Set<SpaOrderView> getAllViews(String stayPin, String preferredLanguage) {
-        String defaultLanguage = stayService.get(stayPin).getHotel().getDefaultTranslation();
-        Set<SpaOrderView> views = new HashSet<>();
-        for (SpaOrder spaOrder : getAll(stayPin)) {
-            views.add(spaOrder.toView(preferredLanguage, defaultLanguage));
-        }
-        return views;
     }
 
     public SpaOrder add(String stayPin, SpaOrderPOST entity) {

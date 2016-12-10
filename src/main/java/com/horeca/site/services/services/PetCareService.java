@@ -3,7 +3,6 @@ package com.horeca.site.services.services;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
-import com.horeca.site.models.hotel.services.petcare.PetCareView;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarDay;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarHour;
 import com.horeca.site.repositories.services.PetCareCalendarHourRepository;
@@ -42,11 +41,6 @@ public class PetCareService {
     public PetCare get(Long hotelId) {
         Hotel hotel = hotelService.get(hotelId);
         return hotel.getAvailableServices().getPetCare();
-    }
-
-    public PetCareView getView(Long hotelId, String preferredLanguage) {
-        PetCare petCare = get(hotelId);
-        return petCare.toView(preferredLanguage, hotelService.get(hotelId).getDefaultTranslation());
     }
 
     public PetCareItem addItem(Long hotelId, PetCareItem item) {

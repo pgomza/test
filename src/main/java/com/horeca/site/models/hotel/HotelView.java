@@ -1,9 +1,9 @@
 package com.horeca.site.models.hotel;
 
-import com.horeca.site.models.hotel.address.AddressView;
+import com.horeca.site.models.hotel.address.Address;
 import com.horeca.site.models.hotel.gallery.Gallery;
 import com.horeca.site.models.hotel.information.UsefulInformation;
-import com.horeca.site.models.hotel.roomdirectory.RoomDirectoryView;
+import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
 import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
 
 import java.util.List;
@@ -12,17 +12,11 @@ import java.util.Set;
 public class HotelView {
 	
 	private Long id;
-
 	private String name;
-
-	private AddressView address;
-
+	private Address address;
 	private UsefulInformation usefulInformation;
-	
 	private List<AvailableServiceViewSimplified> services;
-
-	private RoomDirectoryView roomDirectory;
-
+	private RoomDirectory roomDirectory;
 	private Set<Gallery> galleries;
 
 	public Long getId() {
@@ -41,11 +35,11 @@ public class HotelView {
 		this.name = name;
 	}
 
-	public AddressView getAddress() {
+	public Address getAddress() {
 		return address;
 	}
 
-	public void setAddress(AddressView address) {
+	public void setAddress(Address address) {
 		this.address = address;
 	}
 
@@ -65,11 +59,11 @@ public class HotelView {
 		this.services = services;
 	}
 
-	public RoomDirectoryView getRoomDirectory() {
+	public RoomDirectory getRoomDirectory() {
 		return roomDirectory;
 	}
 
-	public void setRoomDirectory(RoomDirectoryView roomDirectory) {
+	public void setRoomDirectory(RoomDirectory roomDirectory) {
 		this.roomDirectory = roomDirectory;
 	}
 

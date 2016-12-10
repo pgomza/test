@@ -1,8 +1,8 @@
 package com.horeca.site.controllers.services;
 
 import com.horeca.annotations.AllowCORS;
+import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
-import com.horeca.site.models.hotel.services.petcare.PetCareView;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarHour;
 import com.horeca.site.services.services.PetCareService;
 import io.swagger.annotations.Api;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Set;
 
@@ -24,9 +23,8 @@ public class PetCareController {
     private PetCareService petCareService;
 
     @RequestMapping(value = "/{hotelId}/services/petcare", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public PetCareView get(@PathVariable("hotelId") Long hotelId, HttpServletRequest request) {
-        String language = request.getLocale().getLanguage();
-        return petCareService.getView(hotelId, language);
+    public PetCare get(@PathVariable("hotelId") Long hotelId) {
+        return petCareService.get(hotelId);
     }
 
     @RequestMapping(value = "/{hotelId}/services/petcare/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

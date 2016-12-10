@@ -7,11 +7,11 @@ import java.util.Set;
 public class SpaCalendar {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @JoinColumn(name = "spa_calendar_id")
     private Set<SpaCalendarDay> days;
 
     public Long getId() {

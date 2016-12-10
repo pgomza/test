@@ -3,7 +3,6 @@ package com.horeca.site.services.services;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spa.SpaItem;
-import com.horeca.site.models.hotel.services.spa.SpaView;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarDay;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
 import com.horeca.site.repositories.services.SpaCalendarHourRepository;
@@ -38,11 +37,6 @@ public class SpaService {
     public Spa get(Long hotelId) {
         Hotel hotel = hotelService.get(hotelId);
         return hotel.getAvailableServices().getSpa();
-    }
-
-    public SpaView getView(Long hotelId, String preferredLanguage) {
-        Spa spa = get(hotelId);
-        return spa.toView(preferredLanguage, hotelService.get(hotelId).getDefaultTranslation());
     }
 
     public Set<SpaCalendarHour> getCalendarHours(Long hotelId, Long itemId, String date) {

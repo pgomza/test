@@ -1,15 +1,14 @@
 package com.horeca.site.models.hotel.services.taxi;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Table(indexes = @Index(name = "taxi_id", columnList = "taxi_id"))
 public class TaxiItem {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
