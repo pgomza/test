@@ -26,8 +26,17 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     @Value("${oauth2.mobile.secret}")
     private String mobileSecret;
 
-    @Value("${oauth2.tokenValidationPeriod}")
-    private Integer tokenValidationPeriod;
+    @Value("${oauth2.mobile.tokenValiditySeconds}")
+    private Integer mobileTokenValiditySeconds;
+
+    @Value("${oauth2.panel.clientId}")
+    private String panelClientId;
+
+    @Value("${oauth2.panel.secret}")
+    private String panelSecret;
+
+    @Value("${oauth2.panel.tokenValiditySeconds}")
+    private Integer panelTokenValiditySeconds;
 
     @Autowired
     private LoginService loginService;
@@ -55,8 +64,18 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
                 .secret(mobileSecret)
                 .authorizedGrantTypes("password-like")
                 .scopes("read", "write")
-                .resourceIds("AppResources")
-                .accessTokenValiditySeconds(tokenValidationPeriod);
+                .resourceIds("mobileResources")
+                .accessTokenValiditySeconds(mobileTokenValiditySeconds)
+
+                .and()
+
+                .inMemory()
+                .withClient(panelClientId)
+                .secret(panelSecret)
+                .authorizedGrantTypes("password-like")
+                .scopes("read", "write")
+                .resourceIds("panelResources")
+                .accessTokenValiditySeconds(panelTokenValiditySeconds);
     }
 
     @Bean
