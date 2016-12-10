@@ -20,23 +20,15 @@ import javax.sql.DataSource;
 @EnableAuthorizationServer
 public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Value("${oauth2.mobile.clientId}")
-    private String mobileClientId;
-
+    private final static String mobileClientId = "throdiMobile";
     @Value("${oauth2.mobile.secret}")
     private String mobileSecret;
+    private final static Integer mobileTokenValiditySeconds = 900;
 
-    @Value("${oauth2.mobile.tokenValiditySeconds}")
-    private Integer mobileTokenValiditySeconds;
-
-    @Value("${oauth2.panel.clientId}")
-    private String panelClientId;
-
+    private final static String panelClientId = "throdiPanel";
     @Value("${oauth2.panel.secret}")
     private String panelSecret;
-
-    @Value("${oauth2.panel.tokenValiditySeconds}")
-    private Integer panelTokenValiditySeconds;
+    private final static Integer panelTokenValiditySeconds = 900;
 
     @Autowired
     private LoginService loginService;

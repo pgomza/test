@@ -16,9 +16,9 @@ import java.util.*;
 
 public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
 
-    // TODO the values should be passed somehow, not hardcoded
-    private final static String mobileClientId = "horecaMobile";
-    private final static String panelClientId = "horecaPanel";
+    // TODO the values should be passed, not hardcoded
+    private final static String mobileClientId = "throdiMobile";
+    private final static String panelClientId = "throdiPanel";
 
     private static final String GRANT_TYPE = "password-like";
     private final LoginService loginService;
