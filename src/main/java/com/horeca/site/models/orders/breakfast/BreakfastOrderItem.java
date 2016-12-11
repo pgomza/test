@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Table(indexes = @Index(name = "breakfast_order_id", columnList = "breakfast_order_id"))
 public class BreakfastOrderItem {
 
     @Id

@@ -27,23 +27,23 @@ public class Orders {
     private DndOrder dnd = new DndOrder();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @JoinColumn(name = "orders_id")
     private Set<CarParkOrder> carParkOrders = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @JoinColumn(name = "orders_id")
     private Set<TaxiOrder> taxiOrders = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @JoinColumn(name = "orders_id")
     private Set<SpaOrder> spaOrders = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @JoinColumn(name = "orders_id")
     private Set<PetCareOrder> petCareOrders = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
+    @JoinColumn(name = "orders_id")
     private Set<BreakfastOrder> breakfastOrders = new HashSet<>();
 
     public Long getId() {

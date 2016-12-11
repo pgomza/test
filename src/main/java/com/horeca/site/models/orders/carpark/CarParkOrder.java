@@ -2,13 +2,11 @@ package com.horeca.site.models.orders.carpark;
 
 import com.horeca.site.models.orders.OrderStatus;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Table(indexes = @Index(name = "orders_id", columnList = "orders_id"))
 public class CarParkOrder {
 
     @Id

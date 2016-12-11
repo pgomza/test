@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
+@Table(indexes = @Index(name = "orders_id", columnList = "orders_id"))
 public class BreakfastOrder {
 
     @Id
@@ -27,7 +28,7 @@ public class BreakfastOrder {
     private LocalTime time;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn
+    @JoinColumn(name = "breakfast_order_id")
     private Set<BreakfastOrderItem> items;
 
     public Long getId() {
