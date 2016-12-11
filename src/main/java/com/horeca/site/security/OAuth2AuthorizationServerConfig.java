@@ -20,14 +20,15 @@ import javax.sql.DataSource;
 @EnableAuthorizationServer
 public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    @Value("${oauth2.mobile.clientId}")
-    private String mobileClientId;
-
+    private final static String mobileClientId = "throdiMobile";
     @Value("${oauth2.mobile.secret}")
     private String mobileSecret;
+    private final static Integer mobileTokenValiditySeconds = 900;
 
-    @Value("${oauth2.tokenValidationPeriod}")
-    private Integer tokenValidationPeriod;
+    private final static String panelClientId = "throdiPanel";
+    @Value("${oauth2.panel.secret}")
+    private String panelSecret;
+    private final static Integer panelTokenValiditySeconds = 900;
 
     @Autowired
     private LoginService loginService;
@@ -51,12 +52,19 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients
                 .inMemory()
-                .withClient(mobileClientId)
-                .secret(mobileSecret)
-                .authorizedGrantTypes("password-like")
-                .scopes("read", "write")
-                .resourceIds("AppResources")
-                .accessTokenValiditySeconds(tokenValidationPeriod);
+                    .withClient(mobileClientId)
+                    .secret(mobileSecret)
+                    .authorizedGrantTypes("password-like")
+                    .scopes("read", "write")
+                    .resourceIds("throdiResources")
+                    .accessTokenValiditySeconds(mobileTokenValiditySeconds)
+                .and()
+                    .withClient(panelClientId)
+                    .secret(panelSecret)
+                    .authorizedGrantTypes("password-like")
+                    .scopes("read", "write")
+                    .resourceIds("throdiResources")
+                    .accessTokenValiditySeconds(panelTokenValiditySeconds);
     }
 
     @Bean

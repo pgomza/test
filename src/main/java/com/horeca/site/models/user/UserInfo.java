@@ -18,10 +18,7 @@ import java.util.List;
 public class UserInfo implements UserDetails {
 
     public static final String AUTH_PREFIX_PIN = "pin_";
-    public static final String AUTH_PREFIX_CUSTOM = "custom_";
-    public static final String AUTH_PREFIX_FACEBOOK = "facebook_";
-    public static final String AUTH_PREFIX_GOOGLE = "google_";
-    public static final String AUTH_PREFIX_TWITTER = "twitter_";
+    public static final String AUTH_PREFIX_LOGIN = "login_";
 
     @Id
     private String username;

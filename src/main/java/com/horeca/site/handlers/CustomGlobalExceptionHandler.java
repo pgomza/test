@@ -9,6 +9,8 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.oauth2.common.exceptions.BadClientCredentialsException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -29,7 +31,7 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
 
     private final List<Class<? extends Exception>> BAD_REQUEST_EXCEPTIONS = new ArrayList<>();
     private final List<Class<? extends Exception>> NOT_FOUND_EXCEPTIONS = new ArrayList<>();
-//    private final List<Class<? extends Exception>> UNAUTHORIZED_EXCEPTIONS = new ArrayList<>();
+    private final List<Class<? extends Exception>> UNAUTHORIZED_EXCEPTIONS = new ArrayList<>();
     private final List<Class<? extends Exception>> FORBIDDEN_EXCEPTIONS = new ArrayList<>();
 
     public CustomGlobalExceptionHandler() {
@@ -49,6 +51,8 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
 
         NOT_FOUND_EXCEPTIONS.add(ResourceNotFoundException.class);
 
+        UNAUTHORIZED_EXCEPTIONS.add(BadCredentialsException.class);
+
         FORBIDDEN_EXCEPTIONS.add(AccessDeniedException.class);
     }
 
@@ -64,6 +68,9 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
         }
         else if (checkIfBelongsToList(ex.getClass(), NOT_FOUND_EXCEPTIONS)) {
             statusCode = HttpServletResponse.SC_NOT_FOUND;
+        }
+        else if (checkIfBelongsToList(ex.getClass(), UNAUTHORIZED_EXCEPTIONS)) {
+            statusCode = HttpServletResponse.SC_UNAUTHORIZED;
         }
         else if (checkIfBelongsToList(ex.getClass(), FORBIDDEN_EXCEPTIONS)) {
             statusCode = HttpServletResponse.SC_FORBIDDEN;
