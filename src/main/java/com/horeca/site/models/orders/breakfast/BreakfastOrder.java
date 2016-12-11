@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
-@Table(indexes = @Index(name = "orders_id", columnList = "orders_id"))
+@Table(indexes = @Index(name = "orders_id_breakfast", columnList = "orders_id_breakfast"))
 public class BreakfastOrder {
 
     @Id

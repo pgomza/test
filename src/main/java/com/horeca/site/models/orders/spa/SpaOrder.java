@@ -9,7 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(indexes = @Index(name = "orders_id", columnList = "orders_id"))
+@Table(indexes = @Index(name = "orders_id_spa", columnList = "orders_id_spa"))
 public class SpaOrder {
 
     @Id
