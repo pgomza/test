@@ -1,6 +1,5 @@
 package com.horeca.site.controllers.services;
 
-import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarHour;
@@ -14,7 +13,6 @@ import javax.validation.Valid;
 import java.util.Set;
 
 @Api(value = "hotels")
-@AllowCORS
 @RestController
 @RequestMapping("/api/hotels")
 public class PetCareController {

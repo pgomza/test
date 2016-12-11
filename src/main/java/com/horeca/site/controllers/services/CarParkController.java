@@ -1,6 +1,5 @@
 package com.horeca.site.controllers.services;
 
-import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.hotel.services.carpark.CarPark;
 import com.horeca.site.services.services.CarParkService;
 import io.swagger.annotations.Api;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @Api(value = "hotels")
-@AllowCORS
 @RestController
 @RequestMapping("/api/hotels")
 public class CarParkController {

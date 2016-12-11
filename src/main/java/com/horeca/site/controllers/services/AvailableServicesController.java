@@ -1,9 +1,8 @@
 package com.horeca.site.controllers.services;
 
-import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.hotel.services.AvailableServices;
-import com.horeca.site.services.services.AvailableServicesService;
 import com.horeca.site.services.HotelService;
+import com.horeca.site.services.services.AvailableServicesService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @Api(value = "hotels")
-@AllowCORS
 @RestController
 @RequestMapping("/api/hotels")
 public class AvailableServicesController {

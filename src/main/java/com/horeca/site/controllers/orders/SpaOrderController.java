@@ -1,6 +1,5 @@
 package com.horeca.site.controllers.orders;
 
-import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.spa.SpaOrder;
 import com.horeca.site.models.orders.spa.SpaOrderPOST;
@@ -14,7 +13,6 @@ import javax.validation.Valid;
 import java.util.Set;
 
 @Api(value = "orders")
-@AllowCORS
 @RestController
 @RequestMapping("/api/stays")
 public class SpaOrderController {

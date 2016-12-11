@@ -1,6 +1,5 @@
 package com.horeca.site.controllers;
 
-import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.services.HotelService;
 import io.swagger.annotations.Api;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Api(value = "hotels")
-@AllowCORS
 @RestController
 @RequestMapping("/api/hotels")
 public class HotelController {

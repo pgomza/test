@@ -1,6 +1,5 @@
 package com.horeca.site.controllers;
 
-import com.horeca.annotations.AllowCORS;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.models.stay.StayPOST;
 import com.horeca.site.models.stay.StayStatusUPDATE;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Api(value = "stays")
-@AllowCORS
 @RestController
 @RequestMapping("/api")
 public class StayController {
