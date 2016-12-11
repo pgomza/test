@@ -15,12 +15,12 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) {
-        resources.resourceId("AppResources");
+        resources.resourceId("throdiResources");
 
         // add a custom entry point to handle oauth exceptions the same way
         // the rest of the exceptions are handled (rendered as a custom json message)
         OAuth2AuthenticationEntryPoint entryPoint = new OAuth2AuthenticationEntryPoint();
-        entryPoint.setRealmName("AppResources");
+        entryPoint.setRealmName("throdiResources");
         entryPoint.setTypeName("Bearer");
         entryPoint.setExceptionRenderer(new CustomOAuth2ExceptionRenderer());
         resources.authenticationEntryPoint(entryPoint);

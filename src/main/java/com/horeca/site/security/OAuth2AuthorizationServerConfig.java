@@ -56,14 +56,14 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
                     .secret(mobileSecret)
                     .authorizedGrantTypes("password-like")
                     .scopes("read", "write")
-                    .resourceIds("mobileResources")
+                    .resourceIds("throdiResources")
                     .accessTokenValiditySeconds(mobileTokenValiditySeconds)
                 .and()
                     .withClient(panelClientId)
                     .secret(panelSecret)
                     .authorizedGrantTypes("password-like")
                     .scopes("read", "write")
-                    .resourceIds("panelResources")
+                    .resourceIds("throdiResources")
                     .accessTokenValiditySeconds(panelTokenValiditySeconds);
     }
 
