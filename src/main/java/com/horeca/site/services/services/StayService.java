@@ -40,14 +40,12 @@ public class StayService {
         return stayRepository.findAll();
     }
 
-//    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
     public Stay get(String pin) {
         ensureEntityExists(pin);
         ensureStatusNotNew(pin);
         return stayRepository.findOne(pin);
     }
 
-//    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
     public Stay update(String pin, Stay stay) {
         ensureEntityExists(pin);
 //        ensureStatusNotNew(pin);
@@ -62,7 +60,6 @@ public class StayService {
         return newStatus;
     }
 
-//    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
     public void delete(String pin) {
         ensureEntityExists(pin);
         stayRepository.delete(pin);
@@ -72,7 +69,6 @@ public class StayService {
         stayRepository.deleteAll();
     }
 
-//    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
     public Stay checkIn(String pin) {
         ensureEntityExists(pin);
         ensureStatusNotFinished(pin);
@@ -81,7 +77,6 @@ public class StayService {
         return stayRepository.save(stay);
     }
 
-//    @PreAuthorize("authentication.userAuthentication.details['pin'] == #pin")
     public void checkOut(String pin) {
         ensureEntityExists(pin);
         ensureStatusNotNew(pin);
