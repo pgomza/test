@@ -23,12 +23,12 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     private final static String mobileClientId = "throdiMobile";
     @Value("${oauth2.mobile.secret}")
     private String mobileSecret;
-    private final static Integer mobileTokenValiditySeconds = 900;
+    private final static Integer mobileTokenValiditySeconds = 900; // 15 minutes
 
     private final static String panelClientId = "throdiPanel";
     @Value("${oauth2.panel.secret}")
     private String panelSecret;
-    private final static Integer panelTokenValiditySeconds = 900;
+    private final static Integer panelTokenValiditySeconds = 2678400; // 31 days
 
     @Autowired
     private LoginService loginService;
