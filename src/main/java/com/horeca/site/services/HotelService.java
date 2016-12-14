@@ -3,6 +3,7 @@ package com.horeca.site.services;
 import com.google.common.hash.Hashing;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.user.UserInfo;
 import com.horeca.site.repositories.HotelRepository;
 import com.horeca.site.security.LoginService;
@@ -15,9 +16,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @Service
+@Transactional
 public class HotelService {
 
     @Autowired
@@ -41,13 +42,27 @@ public class HotelService {
         return repository.findAll();
     }
 
-    @Transactional(readOnly = true)
+    public List<HotelView> getAllViews() {
+        Iterable<Hotel> hotels = getAll();
+        List<HotelView> hotelViews = new ArrayList<>();
+        for (Hotel hotel : hotels) {
+            hotelViews.add(hotel.toView());
+        }
+
+        return hotelViews;
+    }
+
     public Hotel get(Long id) {
         Hotel hotel = repository.findOne(id);
         if (hotel == null)
             throw new ResourceNotFoundException();
 
         return hotel;
+    }
+
+    public HotelView getView(Long id) {
+        Hotel hotel = get(id);
+        return hotel.toView();
     }
 
     public Hotel add(Hotel hotel) {
