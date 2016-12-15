@@ -2,6 +2,7 @@ package com.horeca.site.models.hotel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.address.Address;
 import com.horeca.site.models.hotel.gallery.Gallery;
 import com.horeca.site.models.hotel.information.UsefulInformation;
@@ -128,25 +129,11 @@ public class Hotel {
 			simplifiedList.add(simplified);
 		}
 
-		if (availableServices.getRoomService() != null) {
-			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-			simplified.setType(AvailableServiceViewSimplified.Type.ROOMSERVICE);
-			simplified.setPrice(availableServices.getRoomService().getPrice());
-			simplifiedList.add(simplified);
-		}
-
 		if (availableServices.getReceptionCall() != null) {
 			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 			simplified.setType(AvailableServiceViewSimplified.Type.RECEPTIONCALL);
 			simplified.setPrice(availableServices.getReceptionCall().getPrice());
 			simplified.setAdditionalInfo(availableServices.getReceptionCall().getPhoneNumber());
-			simplifiedList.add(simplified);
-		}
-
-		if (availableServices.getSpa() != null) {
-			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-			simplified.setType(AvailableServiceViewSimplified.Type.SPA);
-			simplified.setPrice(availableServices.getSpa().getPrice());
 			simplifiedList.add(simplified);
 		}
 
@@ -163,6 +150,13 @@ public class Hotel {
 			simplified.setPrice(availableServices.getTaxi().getPrice());
 			simplifiedList.add(simplified);
 		}
+
+		AvailableServiceViewSimplified simplifiedHousekeeping = new AvailableServiceViewSimplified();
+		simplifiedHousekeeping.setType(AvailableServiceViewSimplified.Type.HOUSEKEEPING);
+		Price housekeepingPrice = new Price();
+		housekeepingPrice.setText("Free");
+		simplifiedHousekeeping.setPrice(housekeepingPrice);
+		simplifiedList.add(simplifiedHousekeeping);
 
 		hotelView.setServices(simplifiedList);
 		hotelView.setGalleries(getGalleries());
