@@ -1,8 +1,8 @@
 {
-  "name": "Some hotel",
+  "name": "Hotel Les Arcades",
   "address": {
-    "city": "Torun",
-    "street": "Torunska street"
+    "city": "Knokke-Zoute",
+    "street": "Elizabetlaan 50"
   },
   "availableServices": {
     "breakfast": {
@@ -12,7 +12,7 @@
           "items": [
             {
               "price": {
-                "currency": "$",
+                "currency": "€",
                 "value": "0.5"
               },
               "available": true,
@@ -20,7 +20,7 @@
             },
             {
               "price": {
-                "currency": "$",
+                "currency": "€",
                 "value": "3"
               },
               "available": true,
@@ -33,7 +33,7 @@
           "items": [
             {
               "price": {
-                "currency": "$",
+                "currency": "€",
                 "value": "2"
               },
               "available": true,
@@ -41,7 +41,7 @@
             },
             {
               "price": {
-                "currency": "$",
+                "currency": "€",
                 "value": "3.5"
               },
               "available": true,
@@ -50,762 +50,74 @@
           ]
         }
       ],
-      "fromHour": "19-09-2016 09:00:00",
+      "fromHour": "16-12-2016 09:00:00",
       "price": {
-        "currency": "$",
+        "currency": "€",
         "value": 5
       },
-      "toHour": "19-09-2016 11:00:00",
-      "description": "breakfast's description goes here"
+      "toHour": "16-09-2016 11:00:00",
+      "description": ""
     },
     "carPark": {
       "price": {
-        "currency": "$",
+        "currency": "€",
         "value": 3
       },
-      "description": "Car Park's description"
+      "description": ""
     },
     "roomService": {
       "items": [
         {
-          "text": "towels"
+          "text": "Towels"
         }
       ],
       "price": {
         "text": "Free"
       },
-      "description": "room service's description"
+      "description": ""
     },
     "receptionCall": {
       "price": {
         "text": ""
       },
-      "phoneNumber": "123456789"
+      "phoneNumber": "+32 50 60 10 73"
     },
     "spa": {
       "items": [
         {
           "calendar": {
-            "days": [
-              {
-                "day": "01-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              },
-              {
-                "day": "02-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              },
-              {
-                "day": "03-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              },
-              {
-                "day": "04-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              },
-              {
-                "day": "05-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              },
-              {
-                "day": "06-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              },
-              {
-                "day": "07-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              }
-            ]
+            "days": []
           },
           "price": {
-            "currency": "$",
+            "currency": "€",
             "value": 3
           },
           "name": "Thai massage"
         },
         {
           "calendar": {
-            "days": [
-              {
-                "day": "01-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              },
-              {
-                "day": "02-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              },
-              {
-                "day": "03-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              },
-              {
-                "day": "04-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              },
-              {
-                "day": "05-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              },
-              {
-                "day": "06-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              },
-              {
-                "day": "07-10-2016",
-                "hours": [
-                  {
-                    "available": true,
-                    "hour": "10:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "11:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "12:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "13:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "14:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "15:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "16:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "17:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "18:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "19:00"
-                  },
-                  {
-                    "available": true,
-                    "hour": "20:00"
-                  }
-                ]
-              }
-            ]
+            "days": []
           },
           "price": {
-            "currency": "$",
+            "currency": "€",
             "value": 5
           },
           "name": "Manicure"
         }
       ],
       "price": {
-        "currency": "$",
+        "currency": "€",
         "value": 5
       },
-      "description": "spa service's description"
+      "description": ""
     },
     "petCare": {
       "items": [],
       "price": {
-        "currency": "$",
+        "currency": "€",
         "value": 7
       },
-      "description": "petCare service's description"
+      "description": ""
     },
     "taxi": {
       "items": [
@@ -828,13 +140,13 @@
     "items": [
       {
         "name": "Check-in",
-        "fromHour": "19-09-2016 09:00:00",
-        "toHour": "19-09-2016 09:00:00"
+        "fromHour": "16-12-2016 08:00:00",
+        "toHour": "16-12-2016 08:00:00"
       },
       {
         "name": "Check-out",
-        "fromHour": "19-09-2016 19:30:00",
-        "toHour": "19-09-2016 19:30:00"
+        "fromHour": "16-12-2016 20:00:00",
+        "toHour": "16-12-2016 20:00:00"
       }
     ]
   },
@@ -842,11 +154,11 @@
     "sections": [
       {
           "heading": "Towels",
-          "text": "something about the towels"
+          "text": "Some information about the towels"
       },
       {
           "heading": "Toilet paper",
-          "text": "some information about the toilet paper"
+          "text": "Some information about the toilet paper"
       }
     ]
   },
