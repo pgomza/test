@@ -15,7 +15,6 @@ public class CarPark {
     @JsonIgnore
     private Long id;
 
-    @NotEmpty
     private String description;
 
     @NotNull

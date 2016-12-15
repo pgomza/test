@@ -14,7 +14,6 @@ public class Spa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
     private String description;
 
     @NotNull
