@@ -1600,7 +1600,7 @@ webpackJsonp([5],{
 
 /***/ },
 
-/***/ 433:
+/***/ 435:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1639,7 +1639,7 @@ webpackJsonp([5],{
 
 	var _StandardInput2 = _interopRequireDefault(_StandardInput);
 
-	var _ComboBoxInput = __webpack_require__(434);
+	var _ComboBoxInput = __webpack_require__(436);
 
 	var _ComboBoxInput2 = _interopRequireDefault(_ComboBoxInput);
 
@@ -1647,7 +1647,7 @@ webpackJsonp([5],{
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	__webpack_require__(435);
+	__webpack_require__(437);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1660,11 +1660,23 @@ webpackJsonp([5],{
 	    var _this = (0, _possibleConstructorReturn3.default)(this, (GuestsPopup.__proto__ || (0, _getPrototypeOf2.default)(GuestsPopup)).call(this, props));
 
 	    _this.nationalities = [{
-	      name: 'PL',
-	      value: 'PL'
+	      name: 'BE',
+	      value: 'BE'
+	    }, {
+	      name: 'DE',
+	      value: 'DE'
+	    }, {
+	      name: 'FR',
+	      value: 'FR'
 	    }, {
 	      name: 'GB',
 	      value: 'GB'
+	    }, {
+	      name: 'LU',
+	      value: 'LU'
+	    }, {
+	      name: 'NL',
+	      value: 'NL'
 	    }];
 	    return _this;
 	  }
@@ -1763,15 +1775,14 @@ webpackJsonp([5],{
 	                  _react2.default.createElement(
 	                    'label',
 	                    { htmlFor: 'identification' },
-	                    'ID *'
+	                    'ID'
 	                  ),
 	                  _react2.default.createElement(_StandardInput2.default, { value: model.identification,
 	                    name: 'identification',
 	                    title: 'ID',
 	                    placeholder: 'min. 5 letters/numbers',
 	                    validations: 'isAlphanumeric,minLength:5',
-	                    validationError: 'This is not a valid ID',
-	                    required: true
+	                    validationError: 'This is not a valid ID'
 	                  })
 	                ),
 	                _react2.default.createElement(
@@ -1842,7 +1853,7 @@ webpackJsonp([5],{
 
 /***/ },
 
-/***/ 434:
+/***/ 436:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1938,80 +1949,7 @@ webpackJsonp([5],{
 
 /***/ },
 
-/***/ 435:
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ },
-
-/***/ 549:
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _getPrototypeOf = __webpack_require__(316);
-
-	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
-
-	var _classCallCheck2 = __webpack_require__(321);
-
-	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-	var _createClass2 = __webpack_require__(322);
-
-	var _createClass3 = _interopRequireDefault(_createClass2);
-
-	var _possibleConstructorReturn2 = __webpack_require__(326);
-
-	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-	var _inherits2 = __webpack_require__(360);
-
-	var _inherits3 = _interopRequireDefault(_inherits2);
-
-	var _react = __webpack_require__(24);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	__webpack_require__(550);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var SectionHeader = function (_Component) {
-	  (0, _inherits3.default)(SectionHeader, _Component);
-
-	  function SectionHeader() {
-	    (0, _classCallCheck3.default)(this, SectionHeader);
-	    return (0, _possibleConstructorReturn3.default)(this, (SectionHeader.__proto__ || (0, _getPrototypeOf2.default)(SectionHeader)).apply(this, arguments));
-	  }
-
-	  (0, _createClass3.default)(SectionHeader, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'section-header' },
-	        this.props.children
-	      );
-	    }
-	  }]);
-	  return SectionHeader;
-	}(_react.Component);
-
-	SectionHeader.propTypes = {
-	  children: _react.PropTypes.object.isRequired
-	};
-
-	exports.default = SectionHeader;
-
-/***/ },
-
-/***/ 550:
+/***/ 437:
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
@@ -2052,6 +1990,79 @@ webpackJsonp([5],{
 	var _react2 = _interopRequireDefault(_react);
 
 	__webpack_require__(552);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var SectionHeader = function (_Component) {
+	  (0, _inherits3.default)(SectionHeader, _Component);
+
+	  function SectionHeader() {
+	    (0, _classCallCheck3.default)(this, SectionHeader);
+	    return (0, _possibleConstructorReturn3.default)(this, (SectionHeader.__proto__ || (0, _getPrototypeOf2.default)(SectionHeader)).apply(this, arguments));
+	  }
+
+	  (0, _createClass3.default)(SectionHeader, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'section-header' },
+	        this.props.children
+	      );
+	    }
+	  }]);
+	  return SectionHeader;
+	}(_react.Component);
+
+	SectionHeader.propTypes = {
+	  children: _react.PropTypes.object.isRequired
+	};
+
+	exports.default = SectionHeader;
+
+/***/ },
+
+/***/ 552:
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
+
+/***/ 553:
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _getPrototypeOf = __webpack_require__(316);
+
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(321);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(322);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(326);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(360);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _react = __webpack_require__(24);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	__webpack_require__(554);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2108,14 +2119,14 @@ webpackJsonp([5],{
 
 /***/ },
 
-/***/ 552:
+/***/ 554:
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
 
-/***/ 611:
+/***/ 613:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2162,15 +2173,15 @@ webpackJsonp([5],{
 
 	var _reactRedux = __webpack_require__(368);
 
-	var _Guests = __webpack_require__(612);
+	var _Guests = __webpack_require__(614);
 
 	var _Guests2 = _interopRequireDefault(_Guests);
 
-	var _actions = __webpack_require__(555);
+	var _actions = __webpack_require__(557);
 
 	var types = _interopRequireWildcard(_actions);
 
-	var _guestActions = __webpack_require__(556);
+	var _guestActions = __webpack_require__(558);
 
 	var guestTypes = _interopRequireWildcard(_guestActions);
 
@@ -2282,7 +2293,7 @@ webpackJsonp([5],{
 
 /***/ },
 
-/***/ 612:
+/***/ 614:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2319,23 +2330,23 @@ webpackJsonp([5],{
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SectionHeader = __webpack_require__(549);
+	var _SectionHeader = __webpack_require__(551);
 
 	var _SectionHeader2 = _interopRequireDefault(_SectionHeader);
 
-	var _SectionContent = __webpack_require__(551);
+	var _SectionContent = __webpack_require__(553);
 
 	var _SectionContent2 = _interopRequireDefault(_SectionContent);
 
-	var _GuestsEntry = __webpack_require__(613);
+	var _GuestsEntry = __webpack_require__(615);
 
 	var _GuestsEntry2 = _interopRequireDefault(_GuestsEntry);
 
-	var _GuestsModal = __webpack_require__(433);
+	var _GuestsModal = __webpack_require__(435);
 
 	var _GuestsModal2 = _interopRequireDefault(_GuestsModal);
 
-	__webpack_require__(614);
+	__webpack_require__(616);
 
 	var _jquery = __webpack_require__(389);
 
@@ -2362,7 +2373,7 @@ webpackJsonp([5],{
 	      id: -1,
 	      firstName: '',
 	      lastName: '',
-	      nationality: 'PL',
+	      nationality: 'BE',
 	      identification: '',
 	      email: ''
 	    };
@@ -2562,7 +2573,7 @@ webpackJsonp([5],{
 
 /***/ },
 
-/***/ 613:
+/***/ 615:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2703,7 +2714,7 @@ webpackJsonp([5],{
 
 /***/ },
 
-/***/ 614:
+/***/ 616:
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin

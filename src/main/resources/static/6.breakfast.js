@@ -1600,7 +1600,7 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 434:
+/***/ 436:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1696,79 +1696,6 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 549:
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _getPrototypeOf = __webpack_require__(316);
-
-	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
-
-	var _classCallCheck2 = __webpack_require__(321);
-
-	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-	var _createClass2 = __webpack_require__(322);
-
-	var _createClass3 = _interopRequireDefault(_createClass2);
-
-	var _possibleConstructorReturn2 = __webpack_require__(326);
-
-	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-	var _inherits2 = __webpack_require__(360);
-
-	var _inherits3 = _interopRequireDefault(_inherits2);
-
-	var _react = __webpack_require__(24);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	__webpack_require__(550);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var SectionHeader = function (_Component) {
-	  (0, _inherits3.default)(SectionHeader, _Component);
-
-	  function SectionHeader() {
-	    (0, _classCallCheck3.default)(this, SectionHeader);
-	    return (0, _possibleConstructorReturn3.default)(this, (SectionHeader.__proto__ || (0, _getPrototypeOf2.default)(SectionHeader)).apply(this, arguments));
-	  }
-
-	  (0, _createClass3.default)(SectionHeader, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        { className: 'section-header' },
-	        this.props.children
-	      );
-	    }
-	  }]);
-	  return SectionHeader;
-	}(_react.Component);
-
-	SectionHeader.propTypes = {
-	  children: _react.PropTypes.object.isRequired
-	};
-
-	exports.default = SectionHeader;
-
-/***/ },
-
-/***/ 550:
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ },
-
 /***/ 551:
 /***/ function(module, exports, __webpack_require__) {
 
@@ -1803,6 +1730,79 @@ webpackJsonp([6],{
 	var _react2 = _interopRequireDefault(_react);
 
 	__webpack_require__(552);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var SectionHeader = function (_Component) {
+	  (0, _inherits3.default)(SectionHeader, _Component);
+
+	  function SectionHeader() {
+	    (0, _classCallCheck3.default)(this, SectionHeader);
+	    return (0, _possibleConstructorReturn3.default)(this, (SectionHeader.__proto__ || (0, _getPrototypeOf2.default)(SectionHeader)).apply(this, arguments));
+	  }
+
+	  (0, _createClass3.default)(SectionHeader, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'section-header' },
+	        this.props.children
+	      );
+	    }
+	  }]);
+	  return SectionHeader;
+	}(_react.Component);
+
+	SectionHeader.propTypes = {
+	  children: _react.PropTypes.object.isRequired
+	};
+
+	exports.default = SectionHeader;
+
+/***/ },
+
+/***/ 552:
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
+
+/***/ 553:
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _getPrototypeOf = __webpack_require__(316);
+
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(321);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(322);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(326);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(360);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _react = __webpack_require__(24);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	__webpack_require__(554);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1859,14 +1859,14 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 552:
+/***/ 554:
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
 
-/***/ 587:
+/***/ 589:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1899,7 +1899,7 @@ webpackJsonp([6],{
 
 	var _react2 = _interopRequireDefault(_react);
 
-	__webpack_require__(588);
+	__webpack_require__(590);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1998,14 +1998,14 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 588:
+/***/ 590:
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
 
-/***/ 593:
+/***/ 595:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2038,7 +2038,7 @@ webpackJsonp([6],{
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _orderStates = __webpack_require__(594);
+	var _orderStates = __webpack_require__(596);
 
 	var states = _interopRequireWildcard(_orderStates);
 
@@ -2153,7 +2153,7 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 594:
+/***/ 596:
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2169,7 +2169,7 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 618:
+/***/ 620:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2202,23 +2202,23 @@ webpackJsonp([6],{
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SectionHeader = __webpack_require__(549);
+	var _SectionHeader = __webpack_require__(551);
 
 	var _SectionHeader2 = _interopRequireDefault(_SectionHeader);
 
-	var _TabSwitcher = __webpack_require__(587);
+	var _TabSwitcher = __webpack_require__(589);
 
 	var _TabSwitcher2 = _interopRequireDefault(_TabSwitcher);
 
-	var _BreakfastOrdersContainer = __webpack_require__(619);
+	var _BreakfastOrdersContainer = __webpack_require__(621);
 
 	var _BreakfastOrdersContainer2 = _interopRequireDefault(_BreakfastOrdersContainer);
 
-	var _BreakfastMenuContainer = __webpack_require__(623);
+	var _BreakfastMenuContainer = __webpack_require__(625);
 
 	var _BreakfastMenuContainer2 = _interopRequireDefault(_BreakfastMenuContainer);
 
-	__webpack_require__(634);
+	__webpack_require__(636);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2286,7 +2286,7 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 619:
+/***/ 621:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2329,13 +2329,13 @@ webpackJsonp([6],{
 
 	var _reactRedux = __webpack_require__(368);
 
-	var _BreakfastOrders = __webpack_require__(620);
+	var _BreakfastOrders = __webpack_require__(622);
 
 	var _BreakfastOrders2 = _interopRequireDefault(_BreakfastOrders);
 
-	var _actions = __webpack_require__(617);
+	var _actions = __webpack_require__(619);
 
-	var _actions2 = __webpack_require__(555);
+	var _actions2 = __webpack_require__(557);
 
 	var types = _interopRequireWildcard(_actions2);
 
@@ -2405,7 +2405,7 @@ webpackJsonp([6],{
 	          var orderData = {
 	            id: order.id,
 	            roomNumber: stay.roomNumber,
-	            items: _this3.entriesToStr(order.entries),
+	            items: _this3.entriesToStr(order.items),
 	            total: order.total.value + order.total.currency,
 	            time: order.time,
 	            status: order.status
@@ -2451,7 +2451,7 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 620:
+/***/ 622:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2484,15 +2484,15 @@ webpackJsonp([6],{
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _BreakfastOrdersEntry = __webpack_require__(621);
+	var _BreakfastOrdersEntry = __webpack_require__(623);
 
 	var _BreakfastOrdersEntry2 = _interopRequireDefault(_BreakfastOrdersEntry);
 
-	var _SectionContent = __webpack_require__(551);
+	var _SectionContent = __webpack_require__(553);
 
 	var _SectionContent2 = _interopRequireDefault(_SectionContent);
 
-	__webpack_require__(622);
+	__webpack_require__(624);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2596,7 +2596,7 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 621:
+/***/ 623:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2629,7 +2629,7 @@ webpackJsonp([6],{
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _OrderStatusChanger = __webpack_require__(593);
+	var _OrderStatusChanger = __webpack_require__(595);
 
 	var _OrderStatusChanger2 = _interopRequireDefault(_OrderStatusChanger);
 
@@ -2709,14 +2709,14 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 622:
+/***/ 624:
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
 
-/***/ 623:
+/***/ 625:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2737,7 +2737,7 @@ webpackJsonp([6],{
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
-	var _toConsumableArray2 = __webpack_require__(624);
+	var _toConsumableArray2 = __webpack_require__(626);
 
 	var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 
@@ -2771,15 +2771,15 @@ webpackJsonp([6],{
 
 	var _reactRedux = __webpack_require__(368);
 
-	var _BreakfastMenu = __webpack_require__(630);
+	var _BreakfastMenu = __webpack_require__(632);
 
 	var _BreakfastMenu2 = _interopRequireDefault(_BreakfastMenu);
 
-	var _actions = __webpack_require__(555);
+	var _actions = __webpack_require__(557);
 
 	var types = _interopRequireWildcard(_actions);
 
-	var _actions2 = __webpack_require__(617);
+	var _actions2 = __webpack_require__(619);
 
 	var breakfastTypes = _interopRequireWildcard(_actions2);
 
@@ -2840,9 +2840,9 @@ webpackJsonp([6],{
 	    key: 'extractItemsFromMenu',
 	    value: function extractItemsFromMenu(breakfastMenu) {
 	      var items = [];
-	      breakfastMenu.menu.map(function (type) {
+	      breakfastMenu.categories.map(function (type) {
 	        var itemsSpecificType = type.items.map(function (item) {
-	          return (0, _assign2.default)({}, { type: type.name }, item);
+	          return (0, _assign2.default)({}, { type: type.category }, item);
 	        });
 	        items.push.apply(items, (0, _toConsumableArray3.default)(itemsSpecificType));
 	      });
@@ -2855,7 +2855,7 @@ webpackJsonp([6],{
 	        var isModificationAllowed = true;
 
 	        orders.forEach(function (order) {
-	          order.entries.forEach(function (entry) {
+	          order.items.forEach(function (entry) {
 	            var item = entry.item;
 	            if (item.id === itemData.id) isModificationAllowed = false;
 	          });
@@ -2929,14 +2929,14 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 624:
+/***/ 626:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	exports.__esModule = true;
 
-	var _from = __webpack_require__(625);
+	var _from = __webpack_require__(627);
 
 	var _from2 = _interopRequireDefault(_from);
 
@@ -2956,23 +2956,23 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 625:
+/***/ 627:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(626), __esModule: true };
+	module.exports = { "default": __webpack_require__(628), __esModule: true };
 
 /***/ },
 
-/***/ 626:
+/***/ 628:
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(330);
-	__webpack_require__(627);
+	__webpack_require__(629);
 	module.exports = __webpack_require__(7).Array.from;
 
 /***/ },
 
-/***/ 627:
+/***/ 629:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2982,10 +2982,10 @@ webpackJsonp([6],{
 	  , call           = __webpack_require__(400)
 	  , isArrayIter    = __webpack_require__(401)
 	  , toLength       = __webpack_require__(287)
-	  , createProperty = __webpack_require__(628)
+	  , createProperty = __webpack_require__(630)
 	  , getIterFn      = __webpack_require__(402);
 
-	$export($export.S + $export.F * !__webpack_require__(629)(function(iter){ Array.from(iter); }), 'Array', {
+	$export($export.S + $export.F * !__webpack_require__(631)(function(iter){ Array.from(iter); }), 'Array', {
 	  // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
 	  from: function from(arrayLike/*, mapfn = undefined, thisArg = undefined*/){
 	    var O       = toObject(arrayLike)
@@ -3016,7 +3016,7 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 628:
+/***/ 630:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3030,7 +3030,7 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 629:
+/***/ 631:
 /***/ function(module, exports, __webpack_require__) {
 
 	var ITERATOR     = __webpack_require__(340)('iterator')
@@ -3057,7 +3057,7 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 630:
+/***/ 632:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3094,15 +3094,15 @@ webpackJsonp([6],{
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SectionContent = __webpack_require__(551);
+	var _SectionContent = __webpack_require__(553);
 
 	var _SectionContent2 = _interopRequireDefault(_SectionContent);
 
-	var _BreakfastMenuEntry = __webpack_require__(631);
+	var _BreakfastMenuEntry = __webpack_require__(633);
 
 	var _BreakfastMenuEntry2 = _interopRequireDefault(_BreakfastMenuEntry);
 
-	var _BreakfastMenuModal = __webpack_require__(632);
+	var _BreakfastMenuModal = __webpack_require__(634);
 
 	var _BreakfastMenuModal2 = _interopRequireDefault(_BreakfastMenuModal);
 
@@ -3110,7 +3110,7 @@ webpackJsonp([6],{
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	__webpack_require__(633);
+	__webpack_require__(635);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3134,7 +3134,7 @@ webpackJsonp([6],{
 	      name: '',
 	      type: 'DRINK',
 	      price: '',
-	      currency: '$',
+	      currency: '€',
 	      available: true
 	    };
 	    _this.state = {
@@ -3195,6 +3195,8 @@ webpackJsonp([6],{
 	  }, {
 	    key: 'handleSaveBreakfastItem',
 	    value: function handleSaveBreakfastItem(model) {
+	      model.available = true;
+
 	      var currentId = this.state.modal.model.id;
 	      if (currentId === -1) this.props.handleAddBreakfastItem(model);else this.props.handleUpdateBreakfastItem((0, _extends3.default)({}, model, { id: currentId }));
 
@@ -3323,7 +3325,7 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 631:
+/***/ 633:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3454,7 +3456,7 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 632:
+/***/ 634:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3497,7 +3499,7 @@ webpackJsonp([6],{
 
 	var _StandardInput2 = _interopRequireDefault(_StandardInput);
 
-	var _ComboBoxInput = __webpack_require__(434);
+	var _ComboBoxInput = __webpack_require__(436);
 
 	var _ComboBoxInput2 = _interopRequireDefault(_ComboBoxInput);
 
@@ -3505,7 +3507,7 @@ webpackJsonp([6],{
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	__webpack_require__(633);
+	__webpack_require__(635);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3528,11 +3530,8 @@ webpackJsonp([6],{
 	    }];
 
 	    _this.currencies = [{
-	      name: 'DOLLAR',
-	      value: '$'
-	    }, {
-	      name: 'ZLOTY',
-	      value: 'PLN'
+	      name: 'EURO',
+	      value: '€'
 	    }];
 
 	    _this.state = {
@@ -3686,21 +3685,21 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 633:
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ },
-
-/***/ 634:
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ },
-
 /***/ 635:
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
+
+/***/ 636:
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
+
+/***/ 637:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3713,7 +3712,7 @@ webpackJsonp([6],{
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
-	var _actions = __webpack_require__(617);
+	var _actions = __webpack_require__(619);
 
 	var types = _interopRequireWildcard(_actions);
 
@@ -3722,7 +3721,7 @@ webpackJsonp([6],{
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var breakfastMenuReducer = function breakfastMenuReducer() {
-	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { menu: [], status: types.FETCH_BREAKFAST_MENU_NEW };
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { categories: [], status: types.FETCH_BREAKFAST_MENU_NEW };
 	  var action = arguments[1];
 
 	  switch (action.type) {

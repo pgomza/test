@@ -20094,23 +20094,23 @@ webpackJsonp([0],[
 
 	var _Stays2 = _interopRequireDefault(_Stays);
 
-	var _Taxi = __webpack_require__(557);
+	var _Taxi = __webpack_require__(559);
 
 	var _Taxi2 = _interopRequireDefault(_Taxi);
 
-	var _CarPark = __webpack_require__(604);
+	var _CarPark = __webpack_require__(606);
 
 	var _CarPark2 = _interopRequireDefault(_CarPark);
 
-	var _Guest = __webpack_require__(610);
+	var _Guest = __webpack_require__(612);
 
 	var _Guest2 = _interopRequireDefault(_Guest);
 
-	var _Breakfast = __webpack_require__(615);
+	var _Breakfast = __webpack_require__(617);
 
 	var _Breakfast2 = _interopRequireDefault(_Breakfast);
 
-	var _PetCare = __webpack_require__(636);
+	var _PetCare = __webpack_require__(638);
 
 	var _PetCare2 = _interopRequireDefault(_PetCare);
 
@@ -20126,7 +20126,7 @@ webpackJsonp([0],[
 
 	var _genericSagas2 = _interopRequireDefault(_genericSagas);
 
-	var _Taxi3 = __webpack_require__(557);
+	var _Taxi3 = __webpack_require__(559);
 
 	var _guestsSagas = __webpack_require__(669);
 
@@ -22382,7 +22382,7 @@ webpackJsonp([0],[
 
 	exports.default = {
 	  baseUrl: 'https://horeca-club-backend.appspot.com/api/',
-	  hotelUrl: 'https://horeca-club-backend.appspot.com/api/hotels/1/',
+	  hotelUrl: "https://horeca-club-backend.appspot.com/api/hotels/1/",
 	  // baseUrl: 'http://localhost:8000/api/',
 	  // hotelUrl: 'http://localhost:8000/api/hotels/1/',
 	  axiosHeaders: axiosHeaders,
@@ -32397,7 +32397,9 @@ webpackJsonp([0],[
 /* 552 */,
 /* 553 */,
 /* 554 */,
-/* 555 */
+/* 555 */,
+/* 556 */,
+/* 557 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32462,7 +32464,7 @@ webpackJsonp([0],[
 	};
 
 /***/ },
-/* 556 */
+/* 558 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32472,7 +32474,7 @@ webpackJsonp([0],[
 	});
 	exports.deleteGuest = exports.updateGuest = exports.addGuest = exports.fetchGuests = exports.FETCH_GUESTS_ERROR = exports.FETCH_GUESTS_COMPLETED = exports.FETCH_GUESTS_PENDING = exports.FETCH_GUESTS_NEW = undefined;
 
-	var _actions = __webpack_require__(555);
+	var _actions = __webpack_require__(557);
 
 	var _config = __webpack_require__(388);
 
@@ -32504,7 +32506,7 @@ webpackJsonp([0],[
 	};
 
 /***/ },
-/* 557 */
+/* 559 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32521,7 +32523,7 @@ webpackJsonp([0],[
 
 	var _reducers = __webpack_require__(274);
 
-	var _taxiNumbersSagas = __webpack_require__(558);
+	var _taxiNumbersSagas = __webpack_require__(560);
 
 	var _taxiNumbersSagas2 = _interopRequireDefault(_taxiNumbersSagas);
 
@@ -32534,8 +32536,8 @@ webpackJsonp([0],[
 	    path: "taxi",
 	    getComponent: function getComponent(nextState, cb) {
 	      __webpack_require__.e/* nsure */(3, function (require) {
-	        var Taxi = __webpack_require__(586).default;
-	        var taxiNumbersReducer = __webpack_require__(603).default;
+	        var Taxi = __webpack_require__(588).default;
+	        var taxiNumbersReducer = __webpack_require__(605).default;
 
 	        (0, _reducers.injectReducer)(store, { key: 'taxiNumbers', reducer: taxiNumbersReducer });
 	        cb(null, Taxi);
@@ -32561,7 +32563,7 @@ webpackJsonp([0],[
 	}
 
 /***/ },
-/* 558 */
+/* 560 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32574,9 +32576,9 @@ webpackJsonp([0],[
 
 	var _regenerator2 = _interopRequireDefault(_regenerator);
 
-	var _effects = __webpack_require__(559);
+	var _effects = __webpack_require__(561);
 
-	var _actions = __webpack_require__(560);
+	var _actions = __webpack_require__(562);
 
 	var types = _interopRequireWildcard(_actions);
 
@@ -32584,7 +32586,7 @@ webpackJsonp([0],[
 
 	var _config2 = _interopRequireDefault(_config);
 
-	var _axios = __webpack_require__(561);
+	var _axios = __webpack_require__(563);
 
 	var _axios2 = _interopRequireDefault(_axios);
 
@@ -32708,13 +32710,13 @@ webpackJsonp([0],[
 	exports.default = taxiNumbersSaga;
 
 /***/ },
-/* 559 */
+/* 561 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__(308)
 
 /***/ },
-/* 560 */
+/* 562 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32724,7 +32726,7 @@ webpackJsonp([0],[
 	});
 	exports.deleteTaxiNumber = exports.updateTaxiNumber = exports.addTaxiNumber = exports.changeTaxiOrderStatus = exports.fetchTaxiNumbers = exports.FETCH_TAXI_NUMBERS_RESTART = exports.FETCH_TAXI_NUMBERS_CANCEL = exports.FETCH_TAXI_NUMBERS_ERROR = exports.FETCH_TAXI_NUMBERS_COMPLETED = exports.FETCH_TAXI_NUMBERS_PENDING = exports.FETCH_TAXI_NUMBERS_NEW = undefined;
 
-	var _actions = __webpack_require__(555);
+	var _actions = __webpack_require__(557);
 
 	var _config = __webpack_require__(388);
 
@@ -32763,20 +32765,20 @@ webpackJsonp([0],[
 	};
 
 /***/ },
-/* 561 */
+/* 563 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(562);
+	module.exports = __webpack_require__(564);
 
 /***/ },
-/* 562 */
+/* 564 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(563);
-	var bind = __webpack_require__(564);
-	var Axios = __webpack_require__(565);
+	var utils = __webpack_require__(565);
+	var bind = __webpack_require__(566);
+	var Axios = __webpack_require__(567);
 
 	/**
 	 * Create an instance of Axios
@@ -32809,15 +32811,15 @@ webpackJsonp([0],[
 	};
 
 	// Expose Cancel & CancelToken
-	axios.Cancel = __webpack_require__(583);
-	axios.CancelToken = __webpack_require__(584);
-	axios.isCancel = __webpack_require__(580);
+	axios.Cancel = __webpack_require__(585);
+	axios.CancelToken = __webpack_require__(586);
+	axios.isCancel = __webpack_require__(582);
 
 	// Expose all/spread
 	axios.all = function all(promises) {
 	  return Promise.all(promises);
 	};
-	axios.spread = __webpack_require__(585);
+	axios.spread = __webpack_require__(587);
 
 	module.exports = axios;
 
@@ -32826,12 +32828,12 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 563 */
+/* 565 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var bind = __webpack_require__(564);
+	var bind = __webpack_require__(566);
 
 	/*global toString:true*/
 
@@ -33131,7 +33133,7 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 564 */
+/* 566 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -33148,17 +33150,17 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 565 */
+/* 567 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var defaults = __webpack_require__(566);
-	var utils = __webpack_require__(563);
-	var InterceptorManager = __webpack_require__(577);
-	var dispatchRequest = __webpack_require__(578);
-	var isAbsoluteURL = __webpack_require__(581);
-	var combineURLs = __webpack_require__(582);
+	var defaults = __webpack_require__(568);
+	var utils = __webpack_require__(565);
+	var InterceptorManager = __webpack_require__(579);
+	var dispatchRequest = __webpack_require__(580);
+	var isAbsoluteURL = __webpack_require__(583);
+	var combineURLs = __webpack_require__(584);
 
 	/**
 	 * Create a new instance of Axios
@@ -33239,13 +33241,13 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 566 */
+/* 568 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
-	var utils = __webpack_require__(563);
-	var normalizeHeaderName = __webpack_require__(567);
+	var utils = __webpack_require__(565);
+	var normalizeHeaderName = __webpack_require__(569);
 
 	var PROTECTION_PREFIX = /^\)\]\}',?\n/;
 	var DEFAULT_CONTENT_TYPE = {
@@ -33262,10 +33264,10 @@ webpackJsonp([0],[
 	  var adapter;
 	  if (typeof XMLHttpRequest !== 'undefined') {
 	    // For browsers use XHR adapter
-	    adapter = __webpack_require__(568);
+	    adapter = __webpack_require__(570);
 	  } else if (typeof process !== 'undefined') {
 	    // For node use HTTP adapter
-	    adapter = __webpack_require__(568);
+	    adapter = __webpack_require__(570);
 	  }
 	  return adapter;
 	}
@@ -33332,12 +33334,12 @@ webpackJsonp([0],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(132)))
 
 /***/ },
-/* 567 */
+/* 569 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(563);
+	var utils = __webpack_require__(565);
 
 	module.exports = function normalizeHeaderName(headers, normalizedName) {
 	  utils.forEach(headers, function processHeader(value, name) {
@@ -33350,18 +33352,18 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 568 */
+/* 570 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(563);
-	var settle = __webpack_require__(569);
-	var buildURL = __webpack_require__(572);
-	var parseHeaders = __webpack_require__(573);
-	var isURLSameOrigin = __webpack_require__(574);
-	var createError = __webpack_require__(570);
-	var btoa = (typeof window !== 'undefined' && window.btoa) || __webpack_require__(575);
+	var utils = __webpack_require__(565);
+	var settle = __webpack_require__(571);
+	var buildURL = __webpack_require__(574);
+	var parseHeaders = __webpack_require__(575);
+	var isURLSameOrigin = __webpack_require__(576);
+	var createError = __webpack_require__(572);
+	var btoa = (typeof window !== 'undefined' && window.btoa) || __webpack_require__(577);
 
 	module.exports = function xhrAdapter(config) {
 	  return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -33457,7 +33459,7 @@ webpackJsonp([0],[
 	    // This is only done if running in a standard browser environment.
 	    // Specifically not if we're in a web worker, or react-native.
 	    if (utils.isStandardBrowserEnv()) {
-	      var cookies = __webpack_require__(576);
+	      var cookies = __webpack_require__(578);
 
 	      // Add xsrf header
 	      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -33533,12 +33535,12 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 569 */
+/* 571 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var createError = __webpack_require__(570);
+	var createError = __webpack_require__(572);
 
 	/**
 	 * Resolve or reject a Promise based on response status.
@@ -33564,12 +33566,12 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 570 */
+/* 572 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var enhanceError = __webpack_require__(571);
+	var enhanceError = __webpack_require__(573);
 
 	/**
 	 * Create an Error with the specified message, config, error code, and response.
@@ -33587,7 +33589,7 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 571 */
+/* 573 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -33612,12 +33614,12 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 572 */
+/* 574 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(563);
+	var utils = __webpack_require__(565);
 
 	function encode(val) {
 	  return encodeURIComponent(val).
@@ -33686,12 +33688,12 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 573 */
+/* 575 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(563);
+	var utils = __webpack_require__(565);
 
 	/**
 	 * Parse headers into an object
@@ -33729,12 +33731,12 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 574 */
+/* 576 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(563);
+	var utils = __webpack_require__(565);
 
 	module.exports = (
 	  utils.isStandardBrowserEnv() ?
@@ -33803,7 +33805,7 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 575 */
+/* 577 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -33845,12 +33847,12 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 576 */
+/* 578 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(563);
+	var utils = __webpack_require__(565);
 
 	module.exports = (
 	  utils.isStandardBrowserEnv() ?
@@ -33904,12 +33906,12 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 577 */
+/* 579 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(563);
+	var utils = __webpack_require__(565);
 
 	function InterceptorManager() {
 	  this.handlers = [];
@@ -33962,15 +33964,15 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 578 */
+/* 580 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(563);
-	var transformData = __webpack_require__(579);
-	var isCancel = __webpack_require__(580);
-	var defaults = __webpack_require__(566);
+	var utils = __webpack_require__(565);
+	var transformData = __webpack_require__(581);
+	var isCancel = __webpack_require__(582);
+	var defaults = __webpack_require__(568);
 
 	/**
 	 * Throws a `Cancel` if cancellation has been requested.
@@ -34047,12 +34049,12 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 579 */
+/* 581 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var utils = __webpack_require__(563);
+	var utils = __webpack_require__(565);
 
 	/**
 	 * Transform the data for a request or a response
@@ -34073,7 +34075,7 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 580 */
+/* 582 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -34084,7 +34086,7 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 581 */
+/* 583 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -34104,7 +34106,7 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 582 */
+/* 584 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -34122,7 +34124,7 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 583 */
+/* 585 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -34147,12 +34149,12 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 584 */
+/* 586 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Cancel = __webpack_require__(583);
+	var Cancel = __webpack_require__(585);
 
 	/**
 	 * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -34210,7 +34212,7 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 585 */
+/* 587 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -34243,8 +34245,6 @@ webpackJsonp([0],[
 
 
 /***/ },
-/* 586 */,
-/* 587 */,
 /* 588 */,
 /* 589 */,
 /* 590 */,
@@ -34261,7 +34261,9 @@ webpackJsonp([0],[
 /* 601 */,
 /* 602 */,
 /* 603 */,
-/* 604 */
+/* 604 */,
+/* 605 */,
+/* 606 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34275,7 +34277,7 @@ webpackJsonp([0],[
 	    path: 'carpark',
 	    getComponent: function getComponent(nextState, cb) {
 	      __webpack_require__.e/* nsure */(4, function (require) {
-	        var CarParkOrdersContainer = __webpack_require__(605).default;
+	        var CarParkOrdersContainer = __webpack_require__(607).default;
 
 	        cb(null, CarParkOrdersContainer);
 	      });
@@ -34284,12 +34286,12 @@ webpackJsonp([0],[
 	};
 
 /***/ },
-/* 605 */,
-/* 606 */,
 /* 607 */,
 /* 608 */,
 /* 609 */,
-/* 610 */
+/* 610 */,
+/* 611 */,
+/* 612 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34303,7 +34305,7 @@ webpackJsonp([0],[
 	    path: "/guests",
 	    getComponent: function getComponent(nextState, cb) {
 	      __webpack_require__.e/* nsure */(5, function (require) {
-	        var GuestsContainer = __webpack_require__(611).default;
+	        var GuestsContainer = __webpack_require__(613).default;
 
 	        cb(null, GuestsContainer);
 	      });
@@ -34312,11 +34314,11 @@ webpackJsonp([0],[
 	};
 
 /***/ },
-/* 611 */,
-/* 612 */,
 /* 613 */,
 /* 614 */,
-/* 615 */
+/* 615 */,
+/* 616 */,
+/* 617 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34333,7 +34335,7 @@ webpackJsonp([0],[
 
 	var _reducers = __webpack_require__(274);
 
-	var _breakfastMenuSagas = __webpack_require__(616);
+	var _breakfastMenuSagas = __webpack_require__(618);
 
 	var _breakfastMenuSagas2 = _interopRequireDefault(_breakfastMenuSagas);
 
@@ -34346,8 +34348,8 @@ webpackJsonp([0],[
 	    path: "breakfast",
 	    getComponent: function getComponent(nextState, cb) {
 	      __webpack_require__.e/* nsure */(6, function (require) {
-	        var Breakfast = __webpack_require__(618).default;
-	        var breakfastMenuReducer = __webpack_require__(635).default;
+	        var Breakfast = __webpack_require__(620).default;
+	        var breakfastMenuReducer = __webpack_require__(637).default;
 
 	        (0, _reducers.injectReducer)(store, { key: 'breakfastMenu', reducer: breakfastMenuReducer });
 
@@ -34374,7 +34376,7 @@ webpackJsonp([0],[
 	}
 
 /***/ },
-/* 616 */
+/* 618 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34387,9 +34389,9 @@ webpackJsonp([0],[
 
 	var _regenerator2 = _interopRequireDefault(_regenerator);
 
-	var _effects = __webpack_require__(559);
+	var _effects = __webpack_require__(561);
 
-	var _actions = __webpack_require__(617);
+	var _actions = __webpack_require__(619);
 
 	var types = _interopRequireWildcard(_actions);
 
@@ -34397,7 +34399,7 @@ webpackJsonp([0],[
 
 	var _config2 = _interopRequireDefault(_config);
 
-	var _axios = __webpack_require__(561);
+	var _axios = __webpack_require__(563);
 
 	var _axios2 = _interopRequireDefault(_axios);
 
@@ -34505,7 +34507,7 @@ webpackJsonp([0],[
 	exports.default = breakfastMenuSaga;
 
 /***/ },
-/* 617 */
+/* 619 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34515,7 +34517,7 @@ webpackJsonp([0],[
 	});
 	exports.setBreakfastItemAsUnavailable = exports.updateBreakfastItem = exports.addBreakfastItem = exports.fetchBreakfastMenu = exports.changeBreakfastOrderStatus = exports.FETCH_BREAKFAST_MENU_RESTART = exports.FETCH_BREAKFAST_MENU_CANCEL = exports.FETCH_BREAKFAST_MENU_ERROR = exports.FETCH_BREAKFAST_MENU_COMPLETED = exports.FETCH_BREAKFAST_MENU_PENDING = exports.FETCH_BREAKFAST_MENU_NEW = undefined;
 
-	var _actions = __webpack_require__(555);
+	var _actions = __webpack_require__(557);
 
 	var _config = __webpack_require__(388);
 
@@ -34571,8 +34573,6 @@ webpackJsonp([0],[
 	};
 
 /***/ },
-/* 618 */,
-/* 619 */,
 /* 620 */,
 /* 621 */,
 /* 622 */,
@@ -34589,7 +34589,9 @@ webpackJsonp([0],[
 /* 633 */,
 /* 634 */,
 /* 635 */,
-/* 636 */
+/* 636 */,
+/* 637 */,
+/* 638 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34606,7 +34608,7 @@ webpackJsonp([0],[
 
 	var _reducers = __webpack_require__(274);
 
-	var _petCareSagas = __webpack_require__(637);
+	var _petCareSagas = __webpack_require__(639);
 
 	var _petCareSagas2 = _interopRequireDefault(_petCareSagas);
 
@@ -34619,7 +34621,7 @@ webpackJsonp([0],[
 	    path: 'petcare',
 	    getComponent: function getComponent(nextState, cb) {
 	      __webpack_require__.e/* nsure */(7, function (require) {
-	        var PetCare = __webpack_require__(639).default;
+	        var PetCare = __webpack_require__(641).default;
 	        var petCareReducer = __webpack_require__(662).default;
 
 	        (0, _reducers.injectReducer)(store, { key: 'petCare', reducer: petCareReducer });
@@ -34647,7 +34649,7 @@ webpackJsonp([0],[
 	}
 
 /***/ },
-/* 637 */
+/* 639 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34660,9 +34662,9 @@ webpackJsonp([0],[
 
 	var _regenerator2 = _interopRequireDefault(_regenerator);
 
-	var _effects = __webpack_require__(559);
+	var _effects = __webpack_require__(561);
 
-	var _actions = __webpack_require__(638);
+	var _actions = __webpack_require__(640);
 
 	var types = _interopRequireWildcard(_actions);
 
@@ -34670,7 +34672,7 @@ webpackJsonp([0],[
 
 	var _config2 = _interopRequireDefault(_config);
 
-	var _axios = __webpack_require__(561);
+	var _axios = __webpack_require__(563);
 
 	var _axios2 = _interopRequireDefault(_axios);
 
@@ -34777,7 +34779,7 @@ webpackJsonp([0],[
 	exports.default = petCareSaga;
 
 /***/ },
-/* 638 */
+/* 640 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34787,7 +34789,7 @@ webpackJsonp([0],[
 	});
 	exports.changePetCareOrderStatus = exports.deletePetCareItem = exports.updatePetCareItem = exports.addPetCareItem = exports.fetchPetcare = exports.FETCH_PETCARE_ERROR = exports.FETCH_PETCARE_COMPLETED = exports.FETCH_PETCARE_PENDING = exports.FETCH_PETCARE_NEW = undefined;
 
-	var _actions = __webpack_require__(555);
+	var _actions = __webpack_require__(557);
 
 	var _config = __webpack_require__(388);
 
@@ -34823,8 +34825,6 @@ webpackJsonp([0],[
 	};
 
 /***/ },
-/* 639 */,
-/* 640 */,
 /* 641 */,
 /* 642 */,
 /* 643 */,
@@ -34862,13 +34862,13 @@ webpackJsonp([0],[
 
 	var _reduxSaga = __webpack_require__(298);
 
-	var _effects = __webpack_require__(559);
+	var _effects = __webpack_require__(561);
 
 	var _querystring = __webpack_require__(664);
 
 	var _querystring2 = _interopRequireDefault(_querystring);
 
-	var _axios = __webpack_require__(561);
+	var _axios = __webpack_require__(563);
 
 	var _axios2 = _interopRequireDefault(_axios);
 
@@ -34885,6 +34885,7 @@ webpackJsonp([0],[
 	var requestToken = function requestToken(clientCredentials, userCredentials) {
 	  return _axios2.default.request({
 	    url: 'https://horeca-club-backend.appspot.com/oauth/token', // TODO get that data from external config instead,
+	    // url: 'http://localhost:8000/oauth/token',
 	    method: 'POST',
 	    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 	    auth: {
@@ -35151,9 +35152,9 @@ webpackJsonp([0],[
 
 	var _regenerator2 = _interopRequireDefault(_regenerator);
 
-	var _effects = __webpack_require__(559);
+	var _effects = __webpack_require__(561);
 
-	var _axios = __webpack_require__(561);
+	var _axios = __webpack_require__(563);
 
 	var _axios2 = _interopRequireDefault(_axios);
 
@@ -35161,7 +35162,7 @@ webpackJsonp([0],[
 
 	var _config2 = _interopRequireDefault(_config);
 
-	var _actions = __webpack_require__(555);
+	var _actions = __webpack_require__(557);
 
 	var types = _interopRequireWildcard(_actions);
 
@@ -35311,17 +35312,17 @@ webpackJsonp([0],[
 
 	var _reduxSaga = __webpack_require__(298);
 
-	var _effects = __webpack_require__(559);
+	var _effects = __webpack_require__(561);
 
-	var _axios = __webpack_require__(561);
+	var _axios = __webpack_require__(563);
 
 	var _axios2 = _interopRequireDefault(_axios);
 
-	var _actions = __webpack_require__(555);
+	var _actions = __webpack_require__(557);
 
 	var types = _interopRequireWildcard(_actions);
 
-	var _actions2 = __webpack_require__(560);
+	var _actions2 = __webpack_require__(562);
 
 	var taxiTypes = _interopRequireWildcard(_actions2);
 
@@ -35571,13 +35572,13 @@ webpackJsonp([0],[
 
 	var _regenerator2 = _interopRequireDefault(_regenerator);
 
-	var _effects = __webpack_require__(559);
+	var _effects = __webpack_require__(561);
 
-	var _axios = __webpack_require__(561);
+	var _axios = __webpack_require__(563);
 
 	var _axios2 = _interopRequireDefault(_axios);
 
-	var _guestActions = __webpack_require__(556);
+	var _guestActions = __webpack_require__(558);
 
 	var types = _interopRequireWildcard(_guestActions);
 
