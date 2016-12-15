@@ -19,7 +19,6 @@ public class Breakfast {
     @JsonIgnore
     private Long id;
 
-    @NotEmpty
     private String description;
 
     @NotNull

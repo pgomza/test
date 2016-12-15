@@ -16,7 +16,6 @@ public class RoomService {
     @JsonIgnore
     private Long id;
 
-    @NotEmpty
     private String description;
 
     @NotNull
