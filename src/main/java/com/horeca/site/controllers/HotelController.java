@@ -37,6 +37,11 @@ public class HotelController {
         return service.getView(id);
 	}
 
+	@RequestMapping(value = "/{id}/original", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Hotel getOriginalVersion(@PathVariable("id") Long id) {
+		return service.get(id);
+	}
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Hotel> update(@PathVariable("id") Long id, @Valid @RequestBody Hotel hotel) {
         Hotel changed = service.update(id, hotel);
