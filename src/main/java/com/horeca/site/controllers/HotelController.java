@@ -1,6 +1,7 @@
 package com.horeca.site.controllers;
 
 import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.services.HotelService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Api(value = "hotels")
 @RestController
@@ -20,8 +22,8 @@ public class HotelController {
 	private HotelService service;
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Iterable<Hotel> getAll() {
-        return service.getAll();
+	public List<HotelView> getAll() {
+        return service.getAllViews();
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -31,8 +33,8 @@ public class HotelController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Hotel get(@PathVariable("id") Long id) {
-        return service.get(id);
+	public HotelView get(@PathVariable("id") Long id) {
+        return service.getView(id);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
