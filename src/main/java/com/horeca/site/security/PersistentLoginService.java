@@ -5,8 +5,10 @@ import com.horeca.site.repositories.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("persistentLoginService")
+@Transactional
 public class PersistentLoginService implements LoginService {
 
     @Autowired
@@ -26,8 +28,17 @@ public class PersistentLoginService implements LoginService {
     public UserInfo loadUserByUsername(String username) throws UsernameNotFoundException {
         UserInfo userInfo = repository.findOne(username);
         if (userInfo == null)
-            throw new UsernameNotFoundException("Person " + username + " could not be found");
+            throw new UsernameNotFoundException("User " + username + " could not be found");
 
         return userInfo;
+    }
+
+    @Override
+    public void deleteUser(String username) throws UsernameNotFoundException {
+        boolean exists = repository.exists(username);
+        if (!exists)
+            throw new UsernameNotFoundException("User " + username + " could not be found");
+
+        repository.delete(username);
     }
 }

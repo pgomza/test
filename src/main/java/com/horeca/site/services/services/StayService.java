@@ -12,6 +12,7 @@ import com.horeca.site.services.HotelService;
 import com.horeca.site.services.PinGeneratorService;
 import com.horeca.site.services.GuestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,6 +63,7 @@ public class StayService {
 
     public void delete(String pin) {
         ensureEntityExists(pin);
+        deregisterStay(pin);
         stayRepository.delete(pin);
     }
 
@@ -112,6 +114,15 @@ public class StayService {
         saveUserAssociatedWithPin(pin);
 
         return added;
+    }
+
+    private void deregisterStay(String pin) {
+        try {
+            loginService.deleteUser(UserInfo.AUTH_PREFIX_PIN + pin);
+        }
+        catch (UsernameNotFoundException ex) {
+            throw new RuntimeException("No corresponding token has been found for this stay in the database");
+        }
     }
 
     private void saveUserAssociatedWithPin(String pin) {

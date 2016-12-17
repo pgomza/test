@@ -12,4 +12,6 @@ public interface LoginService extends UserDetailsService {
 
     @Override
     UserInfo loadUserByUsername(String username) throws UsernameNotFoundException;
+
+    void deleteUser(String username) throws UsernameNotFoundException;
 }
