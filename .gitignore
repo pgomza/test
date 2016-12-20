@@ -2,3 +2,4 @@
 .settings
 *.iml
 target
+src/main/resources/static
