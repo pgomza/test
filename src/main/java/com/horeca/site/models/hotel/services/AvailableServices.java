@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
 import com.horeca.site.models.hotel.services.carpark.CarPark;
+import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.receptioncall.ReceptionCall;
-import com.horeca.site.models.hotel.services.roomservice.RoomService;
 import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.taxi.Taxi;
 
@@ -31,7 +31,7 @@ public class AvailableServices {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
-    private RoomService roomService;
+    private Housekeeping housekeeping;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
@@ -73,12 +73,12 @@ public class AvailableServices {
         this.carPark = carPark;
     }
 
-    public RoomService getRoomService() {
-        return roomService;
+    public Housekeeping getHousekeeping() {
+        return housekeeping;
     }
 
-    public void setRoomService(RoomService roomService) {
-        this.roomService = roomService;
+    public void setHousekeeping(Housekeeping housekeeping) {
+        this.housekeeping = housekeeping;
     }
 
     public ReceptionCall getReceptionCall() {

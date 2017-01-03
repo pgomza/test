@@ -1,15 +1,14 @@
-package com.horeca.site.models.hotel.services.roomservice;
+package com.horeca.site.models.hotel.services.housekeeping;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.horeca.site.models.Price;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
-public class RoomService {
+public class Housekeeping {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +22,7 @@ public class RoomService {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "room_service_id")
-    private Set<RoomItem> items;
+    private Set<HousekeepingItem> items;
 
     public Long getId() {
         return id;
@@ -49,11 +48,11 @@ public class RoomService {
         this.price = price;
     }
 
-    public Set<RoomItem> getItems() {
+    public Set<HousekeepingItem> getItems() {
         return items;
     }
 
-    public void setItems(Set<RoomItem> items) {
+    public void setItems(Set<HousekeepingItem> items) {
         this.items = items;
     }
 }
