@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.orders.breakfast.BreakfastOrder;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.dnd.DndOrder;
+import com.horeca.site.models.orders.housekeeping.HousekeepingOrder;
 import com.horeca.site.models.orders.petcare.PetCareOrder;
 import com.horeca.site.models.orders.spa.SpaOrder;
 import com.horeca.site.models.orders.taxi.TaxiOrder;
@@ -45,6 +46,10 @@ public class Orders {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "orders_id_breakfast")
     private Set<BreakfastOrder> breakfastOrders = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "orders_id_housekeeping")
+    private Set<HousekeepingOrder> housekeepingOrders = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -100,5 +105,13 @@ public class Orders {
 
     public void setBreakfastOrders(Set<BreakfastOrder> breakfastOrders) {
         this.breakfastOrders = breakfastOrders;
+    }
+
+    public Set<HousekeepingOrder> getHousekeepingOrders() {
+        return housekeepingOrders;
+    }
+
+    public void setHousekeepingOrders(Set<HousekeepingOrder> housekeepingOrders) {
+        this.housekeepingOrders = housekeepingOrders;
     }
 }
