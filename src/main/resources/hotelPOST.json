@@ -65,10 +65,13 @@
       },
       "description": ""
     },
-    "roomService": {
+    "housekeeping": {
       "items": [
         {
-          "text": "Towels"
+          "name": "Towels"
+        },
+        {
+          "name": "Toilet paper"
         }
       ],
       "price": {

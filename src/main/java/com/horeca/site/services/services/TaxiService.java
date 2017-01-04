@@ -35,7 +35,7 @@ public class TaxiService {
 
     public Taxi updateItem(Long hotelId, TaxiItem item) {
         Taxi taxi = get(hotelId);
-        // TODO improve the solution
+        // TODO improve the solution; account for the possibility that there's no such item
         for (TaxiItem taxiItem : taxi.getItems()) {
             if (taxiItem.getId().equals(item.getId())) {
                 taxiItem.setName(item.getName());

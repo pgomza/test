@@ -1,4 +1,4 @@
-package com.horeca.site.models.hotel.services.roomservice;
+package com.horeca.site.models.hotel.services.housekeeping;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -6,14 +6,14 @@ import javax.persistence.*;
 
 @Entity
 @Table(indexes = @Index(name = "room_service_id", columnList = "room_service_id"))
-public class RoomItem {
+public class HousekeepingItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotEmpty
-    private String text;
+    private String name;
 
     public Long getId() {
         return id;
@@ -23,11 +23,11 @@ public class RoomItem {
         this.id = id;
     }
 
-    public String getText() {
-        return text;
+    public String getName() {
+        return name;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setName(String name) {
+        this.name = name;
     }
 }
