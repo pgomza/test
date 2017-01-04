@@ -1,22 +1,25 @@
 package com.horeca.site.services.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
+import com.horeca.site.exceptions.ResourceNotFoundException;
+import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.stay.*;
-import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.user.UserInfo;
 import com.horeca.site.repositories.services.StayRepository;
 import com.horeca.site.security.LoginService;
-import com.horeca.site.exceptions.ResourceNotFoundException;
+import com.horeca.site.services.GuestService;
 import com.horeca.site.services.HotelService;
 import com.horeca.site.services.PinGeneratorService;
-import com.horeca.site.services.GuestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -37,14 +40,27 @@ public class StayService {
     @Autowired
     private GuestService userService;
 
-    public Iterable<Stay> getAll() {
-        return stayRepository.findAll();
-    }
-
     public Stay get(String pin) {
         ensureEntityExists(pin);
         ensureStatusNotNew(pin);
         return stayRepository.findOne(pin);
+    }
+
+    public StayView getView(String pin) {
+        return get(pin).toView();
+    }
+
+    public Iterable<Stay> getAll() {
+        return stayRepository.findAll();
+    }
+
+    public Iterable<StayView> getAllViews() {
+        Iterable<Stay> stays = getAll();
+        List<StayView> views = new ArrayList<>();
+        for (Stay stay : stays) {
+            views.add(stay.toView());
+        }
+        return views;
     }
 
     public Stay update(String pin, Stay stay) {
@@ -71,12 +87,14 @@ public class StayService {
         stayRepository.deleteAll();
     }
 
-    public Stay checkIn(String pin) {
+    public StayView checkIn(String pin) {
         ensureEntityExists(pin);
         ensureStatusNotFinished(pin);
         Stay stay = stayRepository.findOne(pin);
         stay.setStatus(StayStatus.ACTIVE);
-        return stayRepository.save(stay);
+
+        Stay savedStay = stayRepository.save(stay);
+        return savedStay.toView();
     }
 
     public void checkOut(String pin) {
