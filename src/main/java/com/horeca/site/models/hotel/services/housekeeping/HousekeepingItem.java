@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 
 @Entity
-@Table(indexes = @Index(name = "room_service_id", columnList = "room_service_id"))
+@Table(indexes = @Index(name = "housekeeping_id", columnList = "housekeeping_id"))
 public class HousekeepingItem {
 
     @Id

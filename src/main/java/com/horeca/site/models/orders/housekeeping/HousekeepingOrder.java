@@ -19,7 +19,10 @@ public class HousekeepingOrder {
 
     private String message;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name="housekeeping_order_housekeeping_item",
+            joinColumns=@JoinColumn(name="housekeeping_order_id"),
+            inverseJoinColumns=@JoinColumn(name="housekeeping_item_id"))
     private Set<HousekeepingItem> items;
 
     public Long getId() {

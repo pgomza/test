@@ -21,7 +21,7 @@ public class Housekeeping {
     private Price price;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "room_service_id")
+    @JoinColumn(name = "housekeeping_id")
     private Set<HousekeepingItem> items;
 
     public Long getId() {

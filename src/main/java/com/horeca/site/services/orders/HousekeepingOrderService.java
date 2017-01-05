@@ -62,6 +62,7 @@ public class HousekeepingOrderService {
         }
 
         housekeepingOrder.setItems(orderedItems);
+        housekeepingOrder.setMessage(entity.getMessage());
         housekeepingOrder.setStatus(OrderStatus.NEW);
         HousekeepingOrder savedOrder = repository.save(housekeepingOrder);
 
