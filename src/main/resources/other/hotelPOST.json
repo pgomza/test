@@ -58,6 +58,41 @@
       "toHour": "16-09-2016 11:00:00",
       "description": ""
     },
+    "roomService": {
+      "categories": [
+        {
+          "category": "DRINK",
+          "items": [
+            {
+              "price": {
+                "currency": "€",
+                "value": "2"
+              },
+              "available": true,
+              "name": "Beer"
+            }
+          ]
+        },
+        {
+          "category": "SNACK",
+          "items": [
+            {
+              "price": {
+                "currency": "€",
+                "value": "1.5"
+              },
+              "available": true,
+              "name": "Ice cream"
+            }
+          ]
+        }
+      ],
+      "price": {
+        "currency": "€",
+        "value": 4
+      },
+      "description": ""
+    },
     "carPark": {
       "price": {
         "currency": "€",
