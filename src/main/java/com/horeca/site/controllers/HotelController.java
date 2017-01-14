@@ -21,25 +21,30 @@ public class HotelController {
 	@Autowired
 	private HotelService service;
 
+	@RequestMapping(value = "/raw-version", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Hotel> getAll() {
+		return service.getAll();
+	}
+
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<HotelView> getAll() {
+	public List<HotelView> getAllViews() {
         return service.getAllViews();
+	}
+
+	@RequestMapping(value = "/{id}/raw-version", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Hotel get(@PathVariable("id") Long id) {
+		return service.get(id);
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public HotelView getView(@PathVariable("id") Long id) {
+		return service.getView(id);
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Hotel> add(@Valid @RequestBody Hotel hotel) {
 		Hotel added = service.add(hotel);
         return new ResponseEntity<Hotel>(added, HttpStatus.CREATED);
-	}
-
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public HotelView get(@PathVariable("id") Long id) {
-        return service.getView(id);
-	}
-
-	@RequestMapping(value = "/{id}/original", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Hotel getOriginalVersion(@PathVariable("id") Long id) {
-		return service.get(id);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -38,14 +38,19 @@ public class HotelService {
         }
     }
 
-    public Iterable<Hotel> getAll() {
-        return repository.findAll();
+    public List<Hotel> getAll() {
+        Iterable<Hotel> hotels = repository.findAll();
+        List<Hotel> hotelList = new ArrayList<>();
+        for (Hotel hotel : hotels) {
+            hotelList.add(hotel);
+        }
+
+        return hotelList;
     }
 
     public List<HotelView> getAllViews() {
-        Iterable<Hotel> hotels = getAll();
         List<HotelView> hotelViews = new ArrayList<>();
-        for (Hotel hotel : hotels) {
+        for (Hotel hotel : getAll()) {
             hotelViews.add(hotel.toView());
         }
 
