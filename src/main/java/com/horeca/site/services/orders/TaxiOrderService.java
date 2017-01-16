@@ -9,6 +9,9 @@ import com.horeca.site.models.orders.taxi.TaxiOrderPOST;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.TaxiOrderRepository;
 import com.horeca.site.services.services.StayService;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,8 @@ public class TaxiOrderService {
 
     @Autowired
     private TaxiOrderRepository repository;
+
+    private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
 
     public Set<TaxiOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
@@ -51,8 +56,13 @@ public class TaxiOrderService {
 
     public TaxiOrder add(String stayPin, TaxiOrderPOST entity) {
         TaxiOrder newOrder = new TaxiOrder();
-        newOrder.setTime(entity.getTime());
+
+        LocalDateTime reservationTime = formatter.parseLocalDateTime(entity.getTime());
+        newOrder.setTime(reservationTime);
+        newOrder.setDestination(entity.getDestination());
+        newOrder.setNumberOfPeople(entity.getNumberOfPeople());
         newOrder.setStatus(OrderStatus.NEW);
+
         TaxiOrder savedOrder = repository.save(newOrder);
 
         Stay stay = stayService.get(stayPin);
