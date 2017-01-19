@@ -1,6 +1,5 @@
 package com.horeca.site.models.hotel;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.hotel.address.Address;
 import com.horeca.site.models.hotel.gallery.Gallery;
@@ -21,7 +20,6 @@ public class Hotel {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private Long id;
 
 	@NotEmpty

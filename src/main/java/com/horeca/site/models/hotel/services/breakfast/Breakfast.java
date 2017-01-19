@@ -1,15 +1,13 @@
 package com.horeca.site.models.hotel.services.breakfast;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.horeca.site.models.*;
-import org.hibernate.annotations.*;
-import org.hibernate.validator.constraints.NotEmpty;
+import com.horeca.site.models.Price;
+import org.joda.time.LocalTime;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.Set;
 
 @Entity
 public class Breakfast {
@@ -25,9 +23,11 @@ public class Breakfast {
     @Embedded
     private Price price;
 
-    private Date fromHour;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    private LocalTime fromHour;
 
-    private Date toHour;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    private LocalTime toHour;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "breakfast_id")
@@ -57,19 +57,19 @@ public class Breakfast {
         this.price = price;
     }
 
-    public Date getFromHour() {
+    public LocalTime getFromHour() {
         return fromHour;
     }
 
-    public void setFromHour(Date fromHour) {
+    public void setFromHour(LocalTime fromHour) {
         this.fromHour = fromHour;
     }
 
-    public Date getToHour() {
+    public LocalTime getToHour() {
         return toHour;
     }
 
-    public void setToHour(Date toHour) {
+    public void setToHour(LocalTime toHour) {
         this.toHour = toHour;
     }
 

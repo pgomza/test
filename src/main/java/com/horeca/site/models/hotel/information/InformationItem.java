@@ -1,15 +1,15 @@
 package com.horeca.site.models.hotel.information;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.horeca.site.models.CustomDateSerializer;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.LocalTime;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.Date;
 
 @Entity
 public class InformationItem {
@@ -22,11 +22,13 @@ public class InformationItem {
     @NotEmpty
     private String name;
 
-    @JsonSerialize(using = CustomDateSerializer.class)
-    private Date fromHour;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    @ApiModelProperty(required = true, dataType = "org.joda.time.LocalDate")
+    private LocalTime fromHour;
 
-    @JsonSerialize(using = CustomDateSerializer.class)
-    private Date toHour;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    @ApiModelProperty(required = true, dataType = "org.joda.time.LocalDate")
+    private LocalTime toHour;
 
     public Long getId() {
         return id;
@@ -44,19 +46,19 @@ public class InformationItem {
         this.name = name;
     }
 
-    public Date getFromHour() {
+    public LocalTime getFromHour() {
         return fromHour;
     }
 
-    public void setFromHour(Date fromHour) {
+    public void setFromHour(LocalTime fromHour) {
         this.fromHour = fromHour;
     }
 
-    public Date getToHour() {
+    public LocalTime getToHour() {
         return toHour;
     }
 
-    public void setToHour(Date toHour) {
+    public void setToHour(LocalTime toHour) {
         this.toHour = toHour;
     }
 }
