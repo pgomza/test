@@ -1,7 +1,6 @@
 package com.horeca.site.models.hotel.information;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -14,12 +13,13 @@ public class UsefulInformation {
     @JsonIgnore
     private Long id;
 
-    @NotEmpty
-    private String wifiPassword;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn
+    private Set<UsefulInformationHourItem> hours;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
-    private Set<InformationItem> items;
+    private Set<UsefulInformationOtherItem> other;
 
     public Long getId() {
         return id;
@@ -29,19 +29,19 @@ public class UsefulInformation {
         this.id = id;
     }
 
-    public String getWifiPassword() {
-        return wifiPassword;
+    public Set<UsefulInformationHourItem> getHours() {
+        return hours;
     }
 
-    public void setWifiPassword(String wifiPassword) {
-        this.wifiPassword = wifiPassword;
+    public void setHours(Set<UsefulInformationHourItem> hours) {
+        this.hours = hours;
     }
 
-    public Set<InformationItem> getItems() {
-        return items;
+    public Set<UsefulInformationOtherItem> getOther() {
+        return other;
     }
 
-    public void setItems(Set<InformationItem> items) {
-        this.items = items;
+    public void setOther(Set<UsefulInformationOtherItem> other) {
+        this.other = other;
     }
 }

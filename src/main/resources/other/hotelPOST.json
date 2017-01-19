@@ -4,27 +4,75 @@
     "city": "Knokke-Zoute",
     "street": "Elizabetlaan 50"
   },
+  "usefulInformation": {
+    "hours": [
+      {
+        "name": "Check-out",
+        "fromHour": "11:00",
+        "toHour": "11:00"
+      },
+      {
+        "name": "Reception",
+        "fromHour": "7:00",
+        "toHour": "22:00"
+      },
+      {
+        "name": "Breakfast",
+        "fromHour": "7:00",
+        "toHour": "11:00"
+      }
+    ],
+    "other": [
+      {
+        "name": "Wi-Fi password",
+        "value": "qwerty123"
+      },
+      {
+        "name": "Door code",
+        "value": "1234"
+      }
+    ]
+  },
+  "roomDirectory": {
+    "sections": [
+      {
+        "heading": "Toilet paper",
+        "text": "Some information about the toilet paper"
+      },
+      {
+        "heading": "Towels",
+        "text": "Some information about the towels"
+      }
+    ]
+  },
   "availableServices": {
     "breakfast": {
+      "description": "",
+      "price": {
+        "value": 5,
+        "currency": "€"
+      },
+      "fromHour": "10:00",
+      "toHour": "13:00",
       "categories": [
         {
           "category": "DRINK",
           "items": [
             {
+              "name": "Hot chocolate",
               "price": {
-                "currency": "€",
-                "value": "0.5"
+                "value": 3,
+                "currency": "€"
               },
-              "available": true,
-              "name": "Expresso"
+              "available": true
             },
             {
+              "name": "Expresso",
               "price": {
-                "currency": "€",
-                "value": "3"
+                "value": 0.5,
+                "currency": "€"
               },
-              "available": true,
-              "name": "Hot chocolate"
+              "available": true
             }
           ]
         },
@@ -32,75 +80,37 @@
           "category": "DISH",
           "items": [
             {
+              "name": "Scrambled eggs",
               "price": {
-                "currency": "€",
-                "value": "2"
+                "value": 3.5,
+                "currency": "€"
               },
-              "available": true,
-              "name": "Toasts with jam"
+              "available": true
             },
             {
+              "name": "Toasts with jam",
               "price": {
-                "currency": "€",
-                "value": "3.5"
+                "value": 2,
+                "currency": "€"
               },
-              "available": true,
-              "name": "Scrambled eggs"
+              "available": true
             }
           ]
         }
-      ],
-      "fromHour": "16-12-2016 09:00:00",
-      "price": {
-        "currency": "€",
-        "value": 5
-      },
-      "toHour": "16-09-2016 11:00:00",
-      "description": ""
-    },
-    "roomService": {
-      "categories": [
-        {
-          "category": "DRINK",
-          "items": [
-            {
-              "price": {
-                "currency": "€",
-                "value": "2"
-              },
-              "available": true,
-              "name": "Beer"
-            }
-          ]
-        },
-        {
-          "category": "SNACK",
-          "items": [
-            {
-              "price": {
-                "currency": "€",
-                "value": "1.5"
-              },
-              "available": true,
-              "name": "Ice cream"
-            }
-          ]
-        }
-      ],
-      "price": {
-        "currency": "€",
-        "value": 4
-      },
-      "description": ""
+      ]
     },
     "carPark": {
+      "description": "",
       "price": {
-        "currency": "€",
-        "value": 3
-      },
-      "description": ""
+        "value": 3,
+        "currency": "€"
+      }
     },
     "housekeeping": {
+      "description": "",
+      "price": {
+        "text": "Free"
+      },
       "items": [
         {
           "name": "Towels"
@@ -108,11 +118,7 @@
         {
           "name": "Toilet paper"
         }
-      ],
-      "price": {
-        "text": "Free"
-      },
-      "description": ""
+      ]
     },
     "receptionCall": {
       "price": {
@@ -121,84 +127,100 @@
       "phoneNumber": "+32 50 60 10 73"
     },
     "spa": {
+      "description": "",
+      "price": {
+        "value": 5,
+        "currency": "€"
+      },
       "items": [
         {
+          "name": "Manicure",
+          "price": {
+            "value": 5,
+            "currency": "€"
+          },
           "calendar": {
             "days": []
-          },
-          "price": {
-            "currency": "€",
-            "value": 3
-          },
-          "name": "Thai massage"
+          }
         },
         {
+          "name": "Thai massage",
+          "price": {
+            "value": 3,
+            "currency": "€"
+          },
           "calendar": {
             "days": []
-          },
-          "price": {
-            "currency": "€",
-            "value": 5
-          },
-          "name": "Manicure"
+          }
         }
-      ],
-      "price": {
-        "currency": "€",
-        "value": 5
-      },
-      "description": ""
+      ]
     },
     "petCare": {
-      "items": [],
+      "description": "",
       "price": {
-        "currency": "€",
-        "value": 7
+        "value": 7,
+        "currency": "€"
       },
-      "description": ""
+      "items": []
     },
     "taxi": {
+      "price": {
+        "text": "Free"
+      },
       "items": [
-        {
-          "name": "Radio Taxi",
-          "number": "390-035-5524"
-        },
         {
           "name": "Blue Taxi 24",
           "number": "328-004-4540"
+        },
+        {
+          "name": "Radio Taxi",
+          "number": "390-035-5524"
         }
-      ],
+      ]
+    },
+    "roomService": {
+      "description": "Here you can choose what do you want to order to your room. If you want to order many times the same position, just click few time on the name.",
       "price": {
-        "text": "Free"
-      }
+        "value": 4,
+        "currency": "€"
+      },
+      "categories": [
+        {
+          "category": "DRINK",
+          "items": [
+            {
+              "name": "Heineken 0.33l",
+              "price": {
+                "value": 4,
+                "currency": "€"
+              },
+              "available": true
+            },
+            {
+              "name": "Orange juice",
+              "price": {
+                "value": 3,
+                "currency": "€"
+              },
+              "available": true
+            }
+          ]
+        },
+        {
+          "category": "SNACK",
+          "items": [
+            {
+              "name": "Ice cream",
+              "price": {
+                "value": 1.5,
+                "currency": "€"
+              },
+              "available": true
+            }
+          ]
+        }
+      ]
     }
-  },
-  "usefulInformation": {
-    "wifiPassword": "erir9732f9fwdres",
-    "items": [
-      {
-        "name": "Check-in",
-        "fromHour": "16-12-2016 08:00:00",
-        "toHour": "16-12-2016 08:00:00"
-      },
-      {
-        "name": "Check-out",
-        "fromHour": "16-12-2016 20:00:00",
-        "toHour": "16-12-2016 20:00:00"
-      }
-    ]
-  },
-  "roomDirectory": {
-    "sections": [
-      {
-          "heading": "Towels",
-          "text": "Some information about the towels"
-      },
-      {
-          "heading": "Toilet paper",
-          "text": "Some information about the toilet paper"
-      }
-    ]
   },
   "galleries": [
     {
