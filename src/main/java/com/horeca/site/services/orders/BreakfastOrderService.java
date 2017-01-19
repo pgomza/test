@@ -9,7 +9,10 @@ import com.horeca.site.models.hotel.services.breakfast.BreakfastItem;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
-import com.horeca.site.models.orders.breakfast.*;
+import com.horeca.site.models.orders.breakfast.BreakfastOrder;
+import com.horeca.site.models.orders.breakfast.BreakfastOrderItem;
+import com.horeca.site.models.orders.breakfast.BreakfastOrderItemPOST;
+import com.horeca.site.models.orders.breakfast.BreakfastOrderPOST;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.BreakfastOrderRepository;
 import com.horeca.site.services.services.StayService;
@@ -36,7 +39,7 @@ public class BreakfastOrderService {
     @Autowired
     private BreakfastOrderRepository repository;
 
-    private DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
+    private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
 
     public Set<BreakfastOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
@@ -72,7 +75,7 @@ public class BreakfastOrderService {
         }
         breakfastOrder.setItems(entries);
         breakfastOrder.setTotal(computeTotal(stayPin, entries));
-        breakfastOrder.setTime(formatter.parseLocalTime(entity.getTime()));
+        breakfastOrder.setTime(formatter.parseLocalDateTime(entity.getTime()));
         breakfastOrder.setStatus(OrderStatus.NEW);
         BreakfastOrder savedOrder = repository.save(breakfastOrder);
 

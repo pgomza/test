@@ -3,7 +3,7 @@ package com.horeca.site.models.orders.breakfast;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.orders.OrderStatus;
-import org.joda.time.LocalTime;
+import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -24,8 +24,8 @@ public class BreakfastOrder {
     private Price total;
 
     @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-    private LocalTime time;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
+    private LocalDateTime time;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "breakfast_order_id")
@@ -55,11 +55,11 @@ public class BreakfastOrder {
         this.total = total;
     }
 
-    public LocalTime getTime() {
+    public LocalDateTime getTime() {
         return time;
     }
 
-    public void setTime(LocalTime time) {
+    public void setTime(LocalDateTime time) {
         this.time = time;
     }
 
