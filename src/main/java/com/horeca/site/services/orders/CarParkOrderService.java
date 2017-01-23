@@ -9,6 +9,8 @@ import com.horeca.site.models.orders.carpark.CarParkOrderPOST;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.CarParkOrderRepository;
 import com.horeca.site.services.services.StayService;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,8 @@ public class CarParkOrderService {
 
     @Autowired
     private CarParkOrderRepository repository;
+
+    private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
 
     public Set<CarParkOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
@@ -52,6 +56,8 @@ public class CarParkOrderService {
     public CarParkOrder add(String stayPin, CarParkOrderPOST entity) {
         CarParkOrder newOrder = new CarParkOrder();
         newOrder.setLicenseNumber(entity.getLicenseNumber());
+        newOrder.setFromDate(formatter.parseLocalDateTime(entity.getFromDate()));
+        newOrder.setToDate(formatter.parseLocalDateTime(entity.getToDate()));
         newOrder.setStatus(OrderStatus.NEW);
         CarParkOrder savedOrder = repository.save(newOrder);
 
