@@ -3,6 +3,7 @@ package com.horeca.site.models.hotel;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.hotel.address.Address;
 import com.horeca.site.models.hotel.gallery.Gallery;
+import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
 import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
@@ -44,6 +45,10 @@ public class Hotel {
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "hotel_gallery")
 	private Set<Gallery> galleries;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "hotel_images")
+	private Set<FileLink> images;
 
 	public Long getId() {
 		return id;
@@ -99,6 +104,14 @@ public class Hotel {
 
 	public void setGalleries(Set<Gallery> galleries) {
 		this.galleries = galleries;
+	}
+
+	public Set<FileLink> getImages() {
+		return images;
+	}
+
+	public void setImages(Set<FileLink> images) {
+		this.images = images;
 	}
 
 	public HotelView toView() {
