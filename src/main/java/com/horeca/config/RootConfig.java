@@ -13,8 +13,10 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.StaticMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.resource.ResourceResolver;
@@ -161,5 +163,14 @@ public class RootConfig extends WebMvcConfigurerAdapter
             }
             return false;
         }
+    }
+
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.defaultContentType(MediaType.APPLICATION_JSON);
+        configurer.favorPathExtension(false);
+        configurer.favorParameter(false);
+        configurer.ignoreAcceptHeader(false);
+        configurer.useJaf(false);
     }
 }
