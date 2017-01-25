@@ -10,6 +10,7 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
 @Api(value = "hotels")
 @RestController
@@ -27,10 +29,27 @@ public class HotelImagesController {
     @Autowired
     private HotelImagesService service;
 
-    @RequestMapping(value = "/{id}/images/{filename:.+}", method = RequestMethod.PUT)
-    public FileLink upload(@PathVariable("id") Long id, @PathVariable("filename") String filename, HttpServletRequest req)
-            throws IOException, FileUploadException {
+    @RequestMapping(value = "/{id}/images/{filename:.+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public FileLink get(@PathVariable("id") Long id, @PathVariable("filename") String filename) {
+        if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+            return service.get(id, filename);
+        }
+        else
+            throw new BusinessRuleViolationException("Getting images is not available on localhost");
+    }
 
+    @RequestMapping(value = "/{id}/images", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Set<FileLink> getAll(@PathVariable("id") Long id) {
+        if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+            return service.getAll(id);
+        }
+        else
+            throw new BusinessRuleViolationException("Getting images is not available on localhost");
+    }
+
+    @RequestMapping(value = "/{id}/images/{filename:.+}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public FileLink save(@PathVariable("id") Long id, @PathVariable("filename") String filename, HttpServletRequest req)
+            throws IOException, FileUploadException {
         if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
             ServletFileUpload upload = new ServletFileUpload();
             FileItemIterator iter = upload.getItemIterator(req);
@@ -43,8 +62,16 @@ public class HotelImagesController {
                 throw new RuntimeException("There was an error while processing the request");
             }
         }
-        throw new BusinessRuleViolationException("Image uploading not available locally");
+        else
+            throw new BusinessRuleViolationException("Uploading images is not available on localhost");
     }
 
-
+    @RequestMapping(value = "/{id}/images/{filename:.+}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@PathVariable("id") Long id, @PathVariable("filename") String filename) {
+        if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+            service.delete(id, filename);
+        }
+        else
+            throw new BusinessRuleViolationException("Deleting images is not available on localhost");
+    }
 }
