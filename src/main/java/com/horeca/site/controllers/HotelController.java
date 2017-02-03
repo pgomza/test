@@ -21,7 +21,7 @@ public class HotelController {
 	@Autowired
 	private HotelService service;
 
-	@RequestMapping(value = "", params = "raw", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "", params = "full-version", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Hotel> getAll() {
 		return service.getAll();
 	}
@@ -31,7 +31,7 @@ public class HotelController {
         return service.getAllViews();
 	}
 
-	@RequestMapping(value = "/{id}", params = "raw", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{id}", params = "full-version", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Hotel get(@PathVariable("id") Long id) {
 		return service.get(id);
 	}

@@ -23,11 +23,10 @@ public class UsefulInformationHourItem {
     private String name;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-    @ApiModelProperty(required = true, dataType = "org.joda.time.LocalDate")
     private LocalTime fromHour;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-    @ApiModelProperty(required = true, dataType = "org.joda.time.LocalDate")
+    @ApiModelProperty()
     private LocalTime toHour;
 
     public Long getId() {

@@ -5,6 +5,8 @@ import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.services.HotelImagesService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
@@ -47,7 +49,9 @@ public class HotelImagesController {
             throw new BusinessRuleViolationException("Getting images is not available on localhost");
     }
 
-    @RequestMapping(value = "/{id}/images/{filename:.+}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}/images/{filename:.+}", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ApiImplicitParams(@ApiImplicitParam(dataType = "file", name = "file", paramType = "body"))
     public FileLink save(@PathVariable("id") Long id, @PathVariable("filename") String filename, HttpServletRequest req)
             throws IOException, FileUploadException {
         if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
