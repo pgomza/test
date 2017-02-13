@@ -64,12 +64,9 @@ public class HotelData {
     @JoinColumn
     private HotelReviews reviews;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "HotelData_HotelFeature",
-            joinColumns = @JoinColumn(name = "HotelData_id"),
-            inverseJoinColumns = @JoinColumn(name = "HotelFeature_id")
-    )
-    private List<HotelFeature> features;
+    @ElementCollection
+    @Column(columnDefinition = "TEXT")
+    private List<String> features;
 
     public Long getId() {
         return id;
@@ -223,11 +220,11 @@ public class HotelData {
         this.reviews = reviews;
     }
 
-    public List<HotelFeature> getFeatures() {
+    public List<String> getFeatures() {
         return features;
     }
 
-    public void setFeatures(List<HotelFeature> features) {
+    public void setFeatures(List<String> features) {
         this.features = features;
     }
 }
