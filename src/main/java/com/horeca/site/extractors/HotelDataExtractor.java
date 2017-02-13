@@ -1,9 +1,16 @@
 package com.horeca.site.extractors;
 
+import com.horeca.site.models.hoteldata.HotelData;
+import com.horeca.site.models.hoteldata.HotelFeature;
+import com.horeca.site.models.hoteldata.HotelRatings;
+import com.horeca.site.models.hoteldata.HotelReviews;
+import com.horeca.site.repositories.hoteldata.HotelDataRepository;
+import com.horeca.site.repositories.hoteldata.HotelFeatureRepository;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -12,12 +19,15 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
 public class HotelDataExtractor {
+
+    private Pattern reviewsPattern = Pattern.compile("<li>([^<]+)</li>");
 
     private BasicDataSource dataSource = null;
     private JdbcTemplate jdbcTemplate = null;
@@ -32,6 +42,12 @@ public class HotelDataExtractor {
     @Value("${datasource.password}")
     private String dataSourcePassword;
 
+    @Autowired
+    private HotelFeatureRepository hotelFeatureRepository;
+
+    @Autowired
+    private HotelDataRepository hotelDataRepository;
+
     @PostConstruct
     private void initDataSource() {
         dataSource = new BasicDataSource();
@@ -43,6 +59,15 @@ public class HotelDataExtractor {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    public void saveHotelFeatures() {
+        List<HotelFeature> hotelFeatureList = jdbcTemplate.query(
+                "select * from hotel_feature",
+                new HotelFeatureMapper()
+        );
+
+        hotelFeatureRepository.save(hotelFeatureList);
+    }
+
     public void extract(int limit) {
         List<Hotel> hotelList = jdbcTemplate.query(
                 "select * from hotel h, property_type p, chain c " +
@@ -51,6 +76,7 @@ public class HotelDataExtractor {
                 new HotelMapper()
         );
 
+        int i = 1;
         for (Hotel hotel : hotelList) {
             List<HotelFeature> hotelFeatureList = jdbcTemplate.query(
                     "select h.id, hf.type, hf.title from hotel h, hotel_feature_to_hotel hfh, hotel_feature hf " +
@@ -62,11 +88,96 @@ public class HotelDataExtractor {
             );
 
             convertAndSave(hotel, hotelFeatureList);
+
+            System.out.println("i: " + i);
+            i++;
         }
     }
 
     private void convertAndSave(Hotel hotel, List<HotelFeature> hotelFeatures) {
-        // TODO
+        HotelData hotelData = new HotelData();
+        hotelData.setName(hotel.title);
+        hotelData.setDescription(hotel.description);
+        hotelData.setAddress(hotel.addressFull);
+        hotelData.setLongitude(hotel.longitude);
+        hotelData.setLatitude(hotel.latitude);
+        hotelData.setEmail(hotel.email);
+        hotelData.setEmail(hotel.email);
+        hotelData.setWebsite(hotel.website);
+        hotelData.setPhone(hotel.phone);
+        hotelData.setFax(hotel.fax);
+        hotelData.setStarRating(hotel.starRating);
+        hotelData.setRooms(hotel.rooms);
+        hotelData.setLowestPriceUSD(hotel.priceUSD);
+        hotelData.setCheckIn(hotel.checkIn);
+        hotelData.setCheckOut(hotel.checkOut);
+        hotelData.setPropertyType(hotel.propertyType);
+        hotelData.setChain(hotel.chain);
+
+        if (hotel.ratingOverall != null) {
+            HotelRatings hotelRatings = new HotelRatings();
+            hotelRatings.setOverall(hotel.ratingOverall);
+            hotelRatings.setOverallText(hotel.ratingOverallText);
+            hotelRatings.setCleanliness(hotel.ratingCleanliness);
+            hotelRatings.setDining(hotel.ratingDining);
+            hotelRatings.setFacilities(hotel.ratingFacilities);
+            hotelRatings.setLocation(hotel.ratingLocation);
+            hotelRatings.setRooms(hotel.ratingRooms);
+            hotelRatings.setService(hotel.ratingService);
+
+            if (hotel.ratingPoints != null) {
+                List<String> mainPoints = new ArrayList<>();
+                String splitPoints[] = hotel.ratingPoints.split(";\\s?");
+                for (String splitPoint : splitPoints) {
+                    if (!splitPoint.isEmpty())
+                        mainPoints.add(splitPoint);
+                }
+                if (!mainPoints.isEmpty())
+                    hotelRatings.setMainPoints(mainPoints);
+            }
+
+            hotelData.setRatings(hotelRatings);
+        }
+
+        if (hotel.reviewsCount != null) {
+            HotelReviews hotelReviews = new HotelReviews();
+            hotelReviews.setCount(hotel.reviewsCount);
+
+            if (hotel.reviewsSummaryPositive != null) {
+                List<String> positive = new ArrayList<>();
+                Matcher matcher = reviewsPattern.matcher(hotel.reviewsSummaryPositive);
+                while (matcher.find()) {
+                    positive.add(matcher.group(1));
+                }
+                if (!positive.isEmpty())
+                    hotelReviews.setPositive(positive);
+            }
+
+            if (hotel.reviewsSummaryNegative != null) {
+                List<String> negative = new ArrayList<>();
+                Matcher matcher = reviewsPattern.matcher(hotel.reviewsSummaryNegative);
+                while (matcher.find()) {
+                    negative.add(matcher.group(1));
+                }
+                if (!negative.isEmpty())
+                    hotelReviews.setNegative(negative);
+            }
+
+            hotelData.setReviews(hotelReviews);
+        }
+
+        if (!hotelFeatures.isEmpty()) {
+            List<HotelFeature> toSave = new ArrayList<>();
+            for (HotelFeature hotelFeature : hotelFeatures) {
+                HotelFeature alreadyPresent = hotelFeatureRepository.findByName(hotelFeature.getName());
+                if (alreadyPresent != null) // it should always be true
+                    toSave.add(alreadyPresent);
+            }
+
+            hotelData.setFeatures(toSave);
+        }
+
+        hotelDataRepository.save(hotelData);
     }
 
     private static String getNullIfEmpty(String text) {
@@ -142,12 +253,6 @@ public class HotelDataExtractor {
         public String chain;
     }
 
-    private static class HotelFeature {
-        public Long id;
-        public String type;
-        public String title;
-    }
-
     private static class HotelMapper implements RowMapper<Hotel> {
 
         private DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm a");
@@ -213,9 +318,8 @@ public class HotelDataExtractor {
         @Override
         public HotelFeature mapRow(ResultSet rs, int rowNum) throws SQLException {
             HotelFeature hotelFeature = new HotelFeature();
-            hotelFeature.id = rs.getLong("h.id");
-            hotelFeature.title = rs.getString("hf.title");
-            hotelFeature.type = rs.getString("hf.type");
+            hotelFeature.setName(rs.getString("title"));
+            hotelFeature.setType(rs.getString("type"));
             return hotelFeature;
         }
     }

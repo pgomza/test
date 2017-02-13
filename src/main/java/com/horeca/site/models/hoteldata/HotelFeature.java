@@ -2,12 +2,12 @@ package com.horeca.site.models.hoteldata;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(indexes = {  @Index(name = "type", columnList = "type"),
+                    @Index(name = "name", columnList = "name")
+})
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class HotelFeature {
 

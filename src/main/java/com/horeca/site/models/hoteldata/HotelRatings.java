@@ -30,6 +30,7 @@ public class HotelRatings {
     private Float service;
 
     @ElementCollection
+    @Column(columnDefinition = "TEXT")
     private List<String> mainPoints;
 
     public Long getId() {

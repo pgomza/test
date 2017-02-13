@@ -20,6 +20,7 @@ public class HotelData {
     @NotEmpty
     private String name;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @NotEmpty
@@ -63,8 +64,11 @@ public class HotelData {
     @JoinColumn
     private HotelReviews reviews;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "hotel_data_id")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "HotelData_HotelFeature",
+            joinColumns = @JoinColumn(name = "HotelData_id"),
+            inverseJoinColumns = @JoinColumn(name = "HotelFeature_id")
+    )
     private List<HotelFeature> features;
 
     public Long getId() {

@@ -16,9 +16,11 @@ public class HotelReviews {
     private Integer count;
 
     @ElementCollection
+    @Column(columnDefinition = "TEXT")
     private List<String> positive;
 
     @ElementCollection
+    @Column(columnDefinition = "TEXT")
     private List<String> negative;
 
     public Long getId() {
