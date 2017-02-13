@@ -270,7 +270,13 @@ public class HotelDataExtractor {
             if (checkIn != null) {
                 Matcher checkInMatcher = timePattern.matcher(checkIn);
                 if (checkInMatcher.find()) {
-                    hotel.checkIn = formatter.parseLocalTime(checkInMatcher.group());
+                    String time = checkInMatcher.group();
+                    if (time.equals("0:00 AM"))
+                        time = "12:00 AM";
+                    else if (time.equals("0:00 PM"))
+                        time = "12:00 PM";
+
+                    hotel.checkIn = formatter.parseLocalTime(time);
                 }
             }
 
@@ -278,7 +284,13 @@ public class HotelDataExtractor {
             if (checkOut != null) {
                 Matcher checkOutMatcher = timePattern.matcher(checkOut);
                 if (checkOutMatcher.find()) {
-                    hotel.checkOut = formatter.parseLocalTime(checkOutMatcher.group());
+                    String time = checkOutMatcher.group();
+                    if (time.equals("0:00 AM"))
+                        time = "12:00 AM";
+                    else if (time.equals("0:00 PM"))
+                        time = "12:00 PM";
+
+                    hotel.checkOut = formatter.parseLocalTime(time);
                 }
             }
 
