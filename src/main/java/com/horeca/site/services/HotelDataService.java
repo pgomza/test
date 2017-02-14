@@ -2,9 +2,11 @@ package com.horeca.site.services;
 
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hoteldata.HotelData;
+import com.horeca.site.models.hoteldata.HotelDataView;
 import com.horeca.site.repositories.hoteldata.HotelDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,23 +23,29 @@ public class HotelDataService {
     @Autowired
     private HotelDataRepository repository;
 
-    public HotelData get(Long id) {
+    public HotelDataView get(Long id) {
         HotelData hotelData = repository.findOne(id);
         if (hotelData == null)
             throw new ResourceNotFoundException();
 
-        return hotelData;
+        return hotelData.toView();
     }
 
-    public HotelData getByName(String name) {
+    public HotelDataView getByName(String name) {
         // TODO implement the actual functionality; for now return a random Hotel from the first 100
         Page<HotelData> firstPage = repository.findAll(new PageRequest(0, 100));
         List<HotelData> batch = new ArrayList<>(firstPage.getContent());
         Collections.shuffle(batch);
-        return batch.get(0);
+        return batch.get(0).toView();
     }
 
-    public Page<HotelData> getBatch(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Page<HotelDataView> getBatch(Pageable pageable) {
+        Page<HotelData> all = repository.findAll(pageable);
+        List<HotelDataView> views = new ArrayList<>();
+        for (HotelData hotelData : all.getContent()) {
+            views.add(hotelData.toView());
+        }
+        PageImpl<HotelDataView> result = new PageImpl<HotelDataView>(views);
+        return result;
     }
 }
