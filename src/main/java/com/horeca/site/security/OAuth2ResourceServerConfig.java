@@ -30,6 +30,8 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
     public void configure(HttpSecurity http) throws Exception {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.authorizeRequests().antMatchers("/api/hoteldata").permitAll();
+        http.authorizeRequests().antMatchers("/api/hoteldata/**").permitAll();
         http.authorizeRequests().antMatchers("/api/**").authenticated();
     }
 }
