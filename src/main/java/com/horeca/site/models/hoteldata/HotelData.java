@@ -1,21 +1,24 @@
 package com.horeca.site.models.hoteldata;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class HotelData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    /*
+        general info
+     */
 
     @NotEmpty
     private String name;
@@ -56,17 +59,114 @@ public class HotelData {
 
     private String chain;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
-    private HotelRatings ratings;
+    /*
+        ratings
+     */
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
-    private HotelReviews reviews;
+    private Float ratingOverall;
 
-    @ElementCollection
+    private String ratingOverallText;
+
+    private Float ratingCleanliness;
+
+    private Float ratingDining;
+
+    private Float ratingFacilities;
+
+    private Float ratingLocation;
+
+    private Float ratingRooms;
+
+    private Float ratingService;
+
     @Column(columnDefinition = "TEXT")
-    private List<String> features;
+    private String ratingMainPoints;
+
+    /*
+        reviews
+     */
+
+    private Integer reviewsCount;
+
+    @Column(columnDefinition = "TEXT")
+    private String reviewsPositive;
+
+    @Column(columnDefinition = "TEXT")
+    private String reviewsNegative;
+
+    /*
+        features
+     */
+
+    @Column(columnDefinition = "TEXT")
+    private String features;
+
+    public HotelDataView toView() {
+        HotelDataView hotelView = new HotelDataView();
+
+        /*
+            general info
+         */
+
+        hotelView.setId(getId());
+        hotelView.setName(getName());
+        hotelView.setDescription(getDescription());
+        hotelView.setAddress(getAddress());
+        hotelView.setLongitude(getLongitude());
+        hotelView.setLatitude(getLatitude());
+        hotelView.setEmail(getEmail());
+        hotelView.setWebsite(getWebsite());
+        hotelView.setPhone(getPhone());
+        hotelView.setFax(getFax());
+        hotelView.setStarRating(getStarRating());
+        hotelView.setRooms(getRooms());
+        hotelView.setLowestPriceUSD(getLowestPriceUSD());
+        hotelView.setCheckIn(getCheckIn());
+        hotelView.setCheckOut(getCheckOut());
+        hotelView.setPropertyType(getPropertyType());
+        hotelView.setChain(getChain());
+
+        /*
+            ratings
+         */
+
+        HotelRatings hotelRatings = new HotelRatings();
+        hotelRatings.setOverall(getRatingOverall());
+        hotelRatings.setOverallText(getRatingOverallText());
+        hotelRatings.setCleanliness(getRatingCleanliness());
+        hotelRatings.setDining(getRatingDining());
+        hotelRatings.setFacilities(getRatingFacilities());
+        hotelRatings.setLocation(getRatingLocation());
+        hotelRatings.setRooms(getRatingRooms());
+        hotelRatings.setService(getRatingService());
+
+        if (getRatingMainPoints() != null) {
+            List<String> mainPoints = Arrays.asList(getRatingMainPoints().split(";"));
+            hotelRatings.setMainPoints(mainPoints);
+        }
+        hotelView.setRatings(hotelRatings);
+
+        /*
+            reviews
+         */
+
+        HotelReviews hotelReviews = new HotelReviews();
+        hotelReviews.setCount(getReviewsCount());
+        hotelReviews.setPositive(getReviewsPositive());
+        hotelReviews.setNegative(getReviewsNegative());
+        hotelView.setReviews(hotelReviews);
+
+        /*
+            features
+         */
+
+        if (getFeatures() != null) {
+            List<String> features = Arrays.asList(getFeatures().split(";"));
+            hotelView.setFeatures(features);
+        }
+
+        return hotelView;
+    }
 
     public Long getId() {
         return id;
@@ -204,27 +304,107 @@ public class HotelData {
         this.chain = chain;
     }
 
-    public HotelRatings getRatings() {
-        return ratings;
+    public Float getRatingOverall() {
+        return ratingOverall;
     }
 
-    public void setRatings(HotelRatings ratings) {
-        this.ratings = ratings;
+    public void setRatingOverall(Float ratingOverall) {
+        this.ratingOverall = ratingOverall;
     }
 
-    public HotelReviews getReviews() {
-        return reviews;
+    public String getRatingOverallText() {
+        return ratingOverallText;
     }
 
-    public void setReviews(HotelReviews reviews) {
-        this.reviews = reviews;
+    public void setRatingOverallText(String ratingOverallText) {
+        this.ratingOverallText = ratingOverallText;
     }
 
-    public List<String> getFeatures() {
+    public Float getRatingCleanliness() {
+        return ratingCleanliness;
+    }
+
+    public void setRatingCleanliness(Float ratingCleanliness) {
+        this.ratingCleanliness = ratingCleanliness;
+    }
+
+    public Float getRatingDining() {
+        return ratingDining;
+    }
+
+    public void setRatingDining(Float ratingDining) {
+        this.ratingDining = ratingDining;
+    }
+
+    public Float getRatingFacilities() {
+        return ratingFacilities;
+    }
+
+    public void setRatingFacilities(Float ratingFacilities) {
+        this.ratingFacilities = ratingFacilities;
+    }
+
+    public Float getRatingLocation() {
+        return ratingLocation;
+    }
+
+    public void setRatingLocation(Float ratingLocation) {
+        this.ratingLocation = ratingLocation;
+    }
+
+    public Float getRatingRooms() {
+        return ratingRooms;
+    }
+
+    public void setRatingRooms(Float ratingRooms) {
+        this.ratingRooms = ratingRooms;
+    }
+
+    public Float getRatingService() {
+        return ratingService;
+    }
+
+    public void setRatingService(Float ratingService) {
+        this.ratingService = ratingService;
+    }
+
+    public String getRatingMainPoints() {
+        return ratingMainPoints;
+    }
+
+    public void setRatingMainPoints(String ratingMainPoints) {
+        this.ratingMainPoints = ratingMainPoints;
+    }
+
+    public Integer getReviewsCount() {
+        return reviewsCount;
+    }
+
+    public void setReviewsCount(Integer reviewsCount) {
+        this.reviewsCount = reviewsCount;
+    }
+
+    public String getReviewsPositive() {
+        return reviewsPositive;
+    }
+
+    public void setReviewsPositive(String reviewsPositive) {
+        this.reviewsPositive = reviewsPositive;
+    }
+
+    public String getReviewsNegative() {
+        return reviewsNegative;
+    }
+
+    public void setReviewsNegative(String reviewsNegative) {
+        this.reviewsNegative = reviewsNegative;
+    }
+
+    public String getFeatures() {
         return features;
     }
 
-    public void setFeatures(List<String> features) {
+    public void setFeatures(String features) {
         this.features = features;
     }
 }

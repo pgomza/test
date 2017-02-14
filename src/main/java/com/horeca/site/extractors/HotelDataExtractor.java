@@ -1,10 +1,9 @@
 package com.horeca.site.extractors;
 
 import com.horeca.site.models.hoteldata.HotelData;
-import com.horeca.site.models.hoteldata.HotelRatings;
-import com.horeca.site.models.hoteldata.HotelReviews;
 import com.horeca.site.repositories.hoteldata.HotelDataRepository;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -92,7 +91,6 @@ public class HotelDataExtractor {
         hotelData.setLongitude(hotel.longitude);
         hotelData.setLatitude(hotel.latitude);
         hotelData.setEmail(hotel.email);
-        hotelData.setEmail(hotel.email);
         hotelData.setWebsite(hotel.website);
         hotelData.setPhone(hotel.phone);
         hotelData.setFax(hotel.fax);
@@ -105,33 +103,19 @@ public class HotelDataExtractor {
         hotelData.setChain(hotel.chain);
 
         if (hotel.ratingOverall != null) {
-            HotelRatings hotelRatings = new HotelRatings();
-            hotelRatings.setOverall(hotel.ratingOverall);
-            hotelRatings.setOverallText(hotel.ratingOverallText);
-            hotelRatings.setCleanliness(hotel.ratingCleanliness);
-            hotelRatings.setDining(hotel.ratingDining);
-            hotelRatings.setFacilities(hotel.ratingFacilities);
-            hotelRatings.setLocation(hotel.ratingLocation);
-            hotelRatings.setRooms(hotel.ratingRooms);
-            hotelRatings.setService(hotel.ratingService);
-
-            if (hotel.ratingPoints != null) {
-                List<String> mainPoints = new ArrayList<>();
-                String splitPoints[] = hotel.ratingPoints.split(";\\s?");
-                for (String splitPoint : splitPoints) {
-                    if (!splitPoint.isEmpty())
-                        mainPoints.add(splitPoint);
-                }
-                if (!mainPoints.isEmpty())
-                    hotelRatings.setMainPoints(mainPoints);
-            }
-
-            hotelData.setRatings(hotelRatings);
+            hotelData.setRatingOverall(hotel.ratingOverall);
+            hotelData.setRatingOverallText(hotel.ratingOverallText);
+            hotelData.setRatingCleanliness(hotel.ratingCleanliness);
+            hotelData.setRatingDining(hotel.ratingDining);
+            hotelData.setRatingFacilities(hotel.ratingFacilities);
+            hotelData.setRatingLocation(hotel.ratingLocation);
+            hotelData.setRatingRooms(hotel.ratingRooms);
+            hotelData.setRatingService(hotel.ratingService);
+            hotelData.setRatingMainPoints(hotel.ratingPoints);
         }
 
         if (hotel.reviewsCount != null) {
-            HotelReviews hotelReviews = new HotelReviews();
-            hotelReviews.setCount(hotel.reviewsCount);
+            hotelData.setReviewsCount(hotel.reviewsCount);
 
             if (hotel.reviewsSummaryPositive != null) {
                 List<String> positive = new ArrayList<>();
@@ -140,7 +124,7 @@ public class HotelDataExtractor {
                     positive.add(matcher.group(1));
                 }
                 if (!positive.isEmpty())
-                    hotelReviews.setPositive(positive);
+                    hotelData.setReviewsPositive(StringUtils.join(positive, ";"));
             }
 
             if (hotel.reviewsSummaryNegative != null) {
@@ -150,10 +134,8 @@ public class HotelDataExtractor {
                     negative.add(matcher.group(1));
                 }
                 if (!negative.isEmpty())
-                    hotelReviews.setNegative(negative);
+                    hotelData.setReviewsNegative(StringUtils.join(negative, ";"));
             }
-
-            hotelData.setReviews(hotelReviews);
         }
 
         if (!hotelFeatureList.isEmpty()) {
@@ -162,7 +144,7 @@ public class HotelDataExtractor {
                 features.add(hotelFeature.name);
             }
 
-            hotelData.setFeatures(features);
+            hotelData.setFeatures(StringUtils.join(features, ";"));
         }
 
         return hotelData;
@@ -256,10 +238,10 @@ public class HotelDataExtractor {
             hotel.id = rs.getLong("h.id");
             hotel.title = rs.getString("h.title");
             hotel.addressFull = getNullIfEmpty(rs.getString("h.address_full"));
-            String email = getNullIfEmpty(rs.getString("h.email"));
-            String website = getNullIfEmpty(rs.getString("h.website"));
-            String phone = getNullIfEmpty(rs.getString("h.phone"));
-            String fax = getNullIfEmpty(rs.getString("h.fax"));
+            hotel.email = getNullIfEmpty(rs.getString("h.email"));
+            hotel.website = getNullIfEmpty(rs.getString("h.website"));
+            hotel.phone = getNullIfEmpty(rs.getString("h.phone"));
+            hotel.fax = getNullIfEmpty(rs.getString("h.fax"));
             hotel.longitude = getNullIfZero(rs.getDouble("h.longitude"));
             hotel.latitude = getNullIfZero(rs.getDouble("h.latitude"));
             hotel.starRating = getNullIfZero(rs.getFloat("h.star_rating"));
