@@ -39,13 +39,18 @@ public class HotelDataService {
         return batch.get(0).toView();
     }
 
+    public Page<HotelDataView> getByCity(String city) {
+        return null;
+    }
+
     public Page<HotelDataView> getBatch(Pageable pageable) {
-        Page<HotelData> all = repository.findAll(pageable);
+        Iterable<HotelData> batch = repository.findAll(pageable);
         List<HotelDataView> views = new ArrayList<>();
-        for (HotelData hotelData : all.getContent()) {
+        for (HotelData hotelData : batch) {
             views.add(hotelData.toView());
         }
-        PageImpl<HotelDataView> result = new PageImpl<HotelDataView>(views);
+
+        PageImpl<HotelDataView> result = new PageImpl<HotelDataView>(views, pageable, repository.getTotalCount());
         return result;
     }
 }
