@@ -4,6 +4,7 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hoteldata.HotelData;
 import com.horeca.site.models.hoteldata.HotelDataView;
 import com.horeca.site.repositories.hoteldata.HotelDataRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -39,8 +40,36 @@ public class HotelDataService {
         return batch.get(0).toView();
     }
 
-    public Page<HotelDataView> getByCity(String city) {
-        return null;
+    public Page<HotelDataView> getByCity(String city, Pageable pageable) {
+        String lowercaseCity = StringUtils.lowerCase(city);
+        List<HotelData> candidates = repository.getByCity(lowercaseCity);
+        List<HotelDataView> found = new ArrayList<>();
+        for (HotelData hotelData : candidates) {
+            // assume that the city is the penultimate element in the 'address' field
+            // each element is separated by a comma
+            String address = hotelData.getAddress();
+            String elements[] = address.split(",");
+            String extractedCity = elements[elements.length - 2].trim();
+            String extractedCityLowercase = StringUtils.lowerCase(extractedCity);
+
+            // for now simply compare both strings
+            // TODO implement an algorithm that measures the similarity between two words (e.g. Levenshtein distance)
+            if (lowercaseCity.equals(extractedCityLowercase))
+                found.add(hotelData.toView());
+        }
+
+        // prepare the response
+        int totalCount = found.size();
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+        int fromIndex = Math.max(pageNumber * pageSize, 0);
+        int toIndex = Math.max(Math.min(fromIndex + pageSize, totalCount), 0);
+
+        List<HotelDataView> result = new ArrayList<>();
+        if (fromIndex < totalCount)
+            result = found.subList(fromIndex, toIndex);
+
+        return new PageImpl<>(result, pageable, totalCount);
     }
 
     public Page<HotelDataView> getBatch(Pageable pageable) {

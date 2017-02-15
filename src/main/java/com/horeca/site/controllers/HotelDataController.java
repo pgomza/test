@@ -20,9 +20,15 @@ public class HotelDataController {
         return service.get(id);
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/search", params = "name", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public HotelDataView getByName(@RequestParam(value = "name", required = false) String name) {
         return service.getByName(name);
+    }
+
+    @RequestMapping(value = "/search", params = "city", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Page<HotelDataView> getByCity(@RequestParam(value = "city", required = false) String city,
+                                         Pageable pageable) {
+        return service.getByCity(city, pageable);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
