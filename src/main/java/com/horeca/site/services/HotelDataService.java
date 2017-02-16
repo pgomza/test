@@ -8,14 +8,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+// TODO the methods that are used to filter hotel data should implement an algorithm that measures the similarity
+// between two words (e.g. Levenshtein distance)
 
 @Service
 @Transactional
@@ -32,18 +33,21 @@ public class HotelDataService {
         return hotelData.toView();
     }
 
-    public HotelDataView getByName(String name) {
-        // TODO implement the actual functionality; for now return a random Hotel from the first 100
-        Page<HotelData> firstPage = repository.findAll(new PageRequest(0, 100));
-        List<HotelData> batch = new ArrayList<>(firstPage.getContent());
-        Collections.shuffle(batch);
-        return batch.get(0).toView();
+    public Page<HotelDataView> getByName(String name, Pageable pageable) {
+        String lowercaseName = StringUtils.lowerCase(name);
+        List<HotelData> found = repository.getByName(lowercaseName);
+        List<HotelDataView> views = new ArrayList<>();
+        for (HotelData hotelData : found) {
+            views.add(hotelData.toView());
+        }
+
+        return getPageForContent(views, pageable);
     }
 
     public Page<HotelDataView> getByCity(String city, Pageable pageable) {
         String lowercaseCity = StringUtils.lowerCase(city);
         List<HotelData> candidates = repository.getByCity(lowercaseCity);
-        List<HotelDataView> found = new ArrayList<>();
+        List<HotelDataView> foundViews = new ArrayList<>();
         for (HotelData hotelData : candidates) {
             // assume that the city is the penultimate element in the 'address' field
             // each element is separated by a comma
@@ -52,24 +56,11 @@ public class HotelDataService {
             String extractedCity = elements[elements.length - 2].trim();
             String extractedCityLowercase = StringUtils.lowerCase(extractedCity);
 
-            // for now simply compare both strings
-            // TODO implement an algorithm that measures the similarity between two words (e.g. Levenshtein distance)
             if (lowercaseCity.equals(extractedCityLowercase))
-                found.add(hotelData.toView());
+                foundViews.add(hotelData.toView());
         }
 
-        // prepare the response
-        int totalCount = found.size();
-        int pageNumber = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
-        int fromIndex = Math.max(pageNumber * pageSize, 0);
-        int toIndex = Math.max(Math.min(fromIndex + pageSize, totalCount), 0);
-
-        List<HotelDataView> result = new ArrayList<>();
-        if (fromIndex < totalCount)
-            result = found.subList(fromIndex, toIndex);
-
-        return new PageImpl<>(result, pageable, totalCount);
+        return getPageForContent(foundViews, pageable);
     }
 
     public Page<HotelDataView> getBatch(Pageable pageable) {
@@ -81,5 +72,19 @@ public class HotelDataService {
 
         PageImpl<HotelDataView> result = new PageImpl<HotelDataView>(views, pageable, repository.getTotalCount());
         return result;
+    }
+
+    private static <T> Page<T> getPageForContent(List<T> content, Pageable pageable) {
+        int totalCount = content.size();
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+        int fromIndex = Math.max(pageNumber * pageSize, 0);
+        int toIndex = Math.max(Math.min(fromIndex + pageSize, totalCount), 0);
+
+        List<T> result = new ArrayList<>();
+        if (fromIndex < totalCount)
+            result = content.subList(fromIndex, toIndex);
+
+        return new PageImpl<>(result, pageable, totalCount);
     }
 }

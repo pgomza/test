@@ -14,4 +14,7 @@ public interface HotelDataRepository extends PagingAndSortingRepository<HotelDat
 
     @Query("select h from HotelData h where lower(h.address) like %:city%)")
     List<HotelData> getByCity(@Param("city") String city);
+
+    @Query("select h from HotelData h where lower(h.name) like %:name%")
+    List<HotelData> getByName(@Param("name") String name);
 }

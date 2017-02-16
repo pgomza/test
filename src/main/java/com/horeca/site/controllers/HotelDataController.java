@@ -21,13 +21,12 @@ public class HotelDataController {
     }
 
     @RequestMapping(value = "/search", params = "name", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public HotelDataView getByName(@RequestParam(value = "name", required = false) String name) {
-        return service.getByName(name);
+    public Page<HotelDataView> getByName(@RequestParam(value = "name", required = false) String name, Pageable pageable) {
+        return service.getByName(name, pageable);
     }
 
     @RequestMapping(value = "/search", params = "city", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<HotelDataView> getByCity(@RequestParam(value = "city", required = false) String city,
-                                         Pageable pageable) {
+    public Page<HotelDataView> getByCity(@RequestParam(value = "city", required = false) String city, Pageable pageable) {
         return service.getByCity(city, pageable);
     }
 
