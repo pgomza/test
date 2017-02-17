@@ -46,8 +46,12 @@ public class Hotel {
 	@JoinColumn(name = "hotel_gallery")
 	private Set<Gallery> galleries;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "hotel_images")
+	@ManyToMany
+	@JoinTable(
+			name = "Hotel_FileLink",
+			joinColumns = @JoinColumn(name = "Hotel_id"),
+			inverseJoinColumns = @JoinColumn(name = "FileLink_id")
+	)
 	private Set<FileLink> images;
 
 	public Long getId() {

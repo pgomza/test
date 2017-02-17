@@ -1,6 +1,7 @@
 package com.horeca.site.models.hoteldata;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.horeca.site.models.hotel.images.FileLink;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalTime;
 
@@ -101,6 +102,14 @@ public class HotelData {
     @Column(columnDefinition = "TEXT")
     private String features;
 
+    @ManyToMany
+    @JoinTable(
+            name = "HotelData_FileLink",
+            joinColumns = @JoinColumn(name = "HotelData_id"),
+            inverseJoinColumns = @JoinColumn(name = "FileLink_id")
+    )
+    private List<FileLink> images;
+
     public HotelDataView toView() {
         HotelDataView hotelView = new HotelDataView();
 
@@ -164,6 +173,12 @@ public class HotelData {
             List<String> features = Arrays.asList(getFeatures().split(";"));
             hotelView.setFeatures(features);
         }
+
+        /*
+            images
+         */
+
+        hotelView.setImages(getImages());
 
         return hotelView;
     }
@@ -406,5 +421,13 @@ public class HotelData {
 
     public void setFeatures(String features) {
         this.features = features;
+    }
+
+    public List<FileLink> getImages() {
+        return images;
+    }
+
+    public void setImages(List<FileLink> images) {
+        this.images = images;
     }
 }

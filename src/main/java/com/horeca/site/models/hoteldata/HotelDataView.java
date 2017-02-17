@@ -2,6 +2,7 @@ package com.horeca.site.models.hoteldata;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.horeca.site.models.hotel.images.FileLink;
 import org.joda.time.LocalTime;
 
 import java.util.List;
@@ -36,6 +37,8 @@ public class HotelDataView {
     private HotelReviews reviews;
 
     private List<String> features;
+
+    private List<FileLink> images;
 
     public Long getId() {
         return id;
@@ -195,5 +198,13 @@ public class HotelDataView {
 
     public void setFeatures(List<String> features) {
         this.features = features;
+    }
+
+    public List<FileLink> getImages() {
+        return images;
+    }
+
+    public void setImages(List<FileLink> images) {
+        this.images = images;
     }
 }
