@@ -25,7 +25,15 @@ public class HotelDataService {
     @Autowired
     private HotelDataRepository repository;
 
-    public HotelDataView get(Long id) {
+    public HotelData get(Long id) {
+        HotelData hotelData = repository.findOne(id);
+        if (hotelData == null)
+            throw new ResourceNotFoundException();
+
+        return hotelData;
+    }
+
+    public HotelDataView getView(Long id) {
         HotelData hotelData = repository.findOne(id);
         if (hotelData == null)
             throw new ResourceNotFoundException();
@@ -76,6 +84,10 @@ public class HotelDataService {
 
         PageImpl<HotelDataView> result = new PageImpl<HotelDataView>(views, pageable, repository.getTotalCount());
         return result;
+    }
+
+    public HotelData update(HotelData updated) {
+        return repository.save(updated);
     }
 
     private static <T> Page<T> getPageForContent(List<T> content, Pageable pageable) {

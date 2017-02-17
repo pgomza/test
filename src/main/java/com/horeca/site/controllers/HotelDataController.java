@@ -17,7 +17,7 @@ public class HotelDataController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public HotelDataView get(@PathVariable("id") Long id) {
-        return service.get(id);
+        return service.getView(id);
     }
 
     @RequestMapping(value = "/search", params = "name", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
