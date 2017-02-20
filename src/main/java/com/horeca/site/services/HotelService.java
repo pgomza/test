@@ -2,6 +2,7 @@ package com.horeca.site.services;
 
 import com.google.common.hash.Hashing;
 import com.horeca.site.exceptions.ResourceNotFoundException;
+import com.horeca.site.extractors.HotelDataExtractor;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.user.UserInfo;
@@ -74,8 +75,11 @@ public class HotelService {
         return repository.save(hotel);
     }
 
+    public Iterable<Hotel> addAll(Iterable<Hotel> hotels) {
+        return repository.save(hotels); // don't return a populated List due to performance reasons
+    }
+
     public Hotel update(Long id, Hotel newOne) {
-        Hotel oldOne = get(id);
         newOne.setId(id);
         Hotel changed = repository.save(newOne);
 
@@ -85,5 +89,24 @@ public class HotelService {
     public void delete(Long id) {
         Hotel toDelete = get(id);
         repository.delete(toDelete);
+    }
+
+    public Hotel convertFromHotelData(HotelDataExtractor.HotelData hotelData) {
+        Hotel hotel = new Hotel();
+        hotel.setName(hotelData.title);
+        hotel.setDescription(hotelData.description);
+        hotel.setAddress(hotelData.addressFull);
+        hotel.setEmail(hotelData.email);
+        hotel.setWebsite(hotelData.website);
+        hotel.setPhone(hotelData.website);
+        hotel.setFax(hotelData.fax);
+        hotel.setStarRating(hotelData.starRating);
+        hotel.setRooms(hotelData.rooms);
+        hotel.setRatingOverall(hotelData.ratingOverall);
+        hotel.setRatingOverallText(hotelData.ratingOverallText);
+        hotel.setPropertyType(hotelData.propertyType);
+        hotel.setChain(hotelData.chain);
+
+        return hotel;
     }
 }

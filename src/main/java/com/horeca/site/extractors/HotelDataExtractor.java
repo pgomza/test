@@ -1,9 +1,12 @@
 package com.horeca.site.extractors;
 
+import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.services.HotelService;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,6 +38,9 @@ public class HotelDataExtractor {
     @Value("${datasource.password}")
     private String dataSourcePassword;
 
+    @Autowired
+    private HotelService hotelService;
+
     @PostConstruct
     private void initDataSource() {
         dataSource = new BasicDataSource();
@@ -52,6 +59,18 @@ public class HotelDataExtractor {
                 "and h.chain_id = c.id limit " + limit,
                 new HotelMapper()
         );
+
+        int i = 1;
+        List<Hotel> convertedHotels = new ArrayList<>();
+        for (HotelData hotelData : hotelList) {
+            convertedHotels.add(hotelService.convertFromHotelData(hotelData));
+
+            if (i % 100 == 0)
+                System.out.println("iterating over hoteldata, i: " + i);
+            i++;
+        }
+
+        hotelService.addAll(convertedHotels);
     }
 
     private static String getNullIfEmpty(String text) {
