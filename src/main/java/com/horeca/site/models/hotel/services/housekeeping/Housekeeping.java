@@ -20,7 +20,7 @@ public class Housekeeping {
     @NotNull
     private Price price;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "housekeeping_id")
     private Set<HousekeepingItem> items;
 

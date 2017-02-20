@@ -1,7 +1,6 @@
 package com.horeca.site.models.hotel.services.breakfast;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -17,7 +16,7 @@ public class BreakfastCategory {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "breakfast_category_id")
     private Set<BreakfastItem> items;
 

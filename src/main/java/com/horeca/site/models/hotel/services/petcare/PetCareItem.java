@@ -21,7 +21,7 @@ public class PetCareItem {
     @NotNull
     private Price price;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
     private PetCareCalendar calendar;
 

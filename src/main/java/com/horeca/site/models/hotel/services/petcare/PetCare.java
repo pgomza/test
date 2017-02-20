@@ -1,7 +1,6 @@
 package com.horeca.site.models.hotel.services.petcare;
 
 import com.horeca.site.models.Price;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,7 +18,7 @@ public class PetCare {
     @NotNull
     private Price price;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "pet_care_id")
     private Set<PetCareItem> items;
 

@@ -13,7 +13,7 @@ public class RoomDirectory {
     @JsonIgnore
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
     private Set<Section> sections;
 
