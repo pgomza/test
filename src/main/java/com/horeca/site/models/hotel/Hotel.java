@@ -39,17 +39,21 @@ public class Hotel {
 
 	private String fax;
 
-	public Float starRating;
+	private Float starRating;
 
-	public Integer rooms;
+	private Integer rooms;
 
-	public Float ratingOverall;
+	private Float ratingOverall;
 
-	public String ratingOverallText;
+	private String ratingOverallText;
 
-	public String propertyType;
+	private String propertyType;
 
-	public String chain;
+	private String chain;
+
+	private Double longitude;
+
+	private Double latitude;
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn
@@ -183,6 +187,22 @@ public class Hotel {
 		this.chain = chain;
 	}
 
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	public Double getLatitude() {
+		return latitude;
+	}
+
 	public UsefulInformation getUsefulInformation() {
 		return usefulInformation;
 	}
@@ -231,6 +251,8 @@ public class Hotel {
 		hotelView.setRatingOverallText(getRatingOverallText());
 		hotelView.setPropertyType(getPropertyType());
 		hotelView.setChain(getChain());
+		hotelView.setLongitude(getLongitude());
+		hotelView.setLatitude(getLatitude());
 		hotelView.setUsefulInformation(getUsefulInformation());
 		hotelView.setRoomDirectory(getRoomDirectory());
 

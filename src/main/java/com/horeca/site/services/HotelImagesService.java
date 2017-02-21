@@ -54,7 +54,7 @@ public class HotelImagesService {
         }
 
         // before uploading the file to GAE make it unique
-        String uniqueFilename = "hoteldata/" + hotelId + "/" + filename;
+        String uniqueFilename = "hotels/" + hotelId + "/" + filename;
         String url = uploadToGAE(uniqueFilename, imageStream);
         FileLink fileLink = new FileLink();
         fileLink.setFilename(filename);
@@ -78,7 +78,7 @@ public class HotelImagesService {
 
         Storage storage = StorageOptions.getDefaultInstance().getService();
         // map 'filename' to a unique filename on GAE
-        String uniqueFilename = "hoteldata/" + hotelId + "/" + filename;
+        String uniqueFilename = "hotels/" + hotelId + "/" + filename;
         BlobId blobId = BlobId.of(bucketName, uniqueFilename);
 
         try {

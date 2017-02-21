@@ -20,12 +20,14 @@ public class HotelView {
 	private String website;
 	private String phone;
 	private String fax;
-	public Float starRating;
-	public Integer rooms;
-	public Float ratingOverall;
-	public String ratingOverallText;
-	public String propertyType;
-	public String chain;
+	private Float starRating;
+	private Integer rooms;
+	private Float ratingOverall;
+	private String ratingOverallText;
+	private String propertyType;
+	private String chain;
+	private Double longitude;
+	private Double latitude;
 	private UsefulInformation usefulInformation;
 	private RoomDirectory roomDirectory;
 	private List<AvailableServiceViewSimplified> services;
@@ -141,6 +143,22 @@ public class HotelView {
 
 	public void setChain(String chain) {
 		this.chain = chain;
+	}
+
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
+	public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
 	}
 
 	public UsefulInformation getUsefulInformation() {

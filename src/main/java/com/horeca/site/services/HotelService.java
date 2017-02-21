@@ -182,7 +182,7 @@ public class HotelService {
         hotel.setAddress(hotelData.addressFull);
         hotel.setEmail(hotelData.email);
         hotel.setWebsite(hotelData.website);
-        hotel.setPhone(hotelData.website);
+        hotel.setPhone(hotelData.phone);
         hotel.setFax(hotelData.fax);
         hotel.setStarRating(hotelData.starRating);
         hotel.setRooms(hotelData.rooms);
@@ -190,6 +190,8 @@ public class HotelService {
         hotel.setRatingOverallText(hotelData.ratingOverallText);
         hotel.setPropertyType(hotelData.propertyType);
         hotel.setChain(hotelData.chain);
+        hotel.setLongitude(hotelData.longitude);
+        hotel.setLatitude(hotelData.latitude);
         return hotel;
     }
 }
