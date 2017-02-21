@@ -1,9 +1,8 @@
 package com.horeca.site.extractors;
 
-import com.horeca.site.models.hoteldata.HotelData;
-import com.horeca.site.repositories.hoteldata.HotelDataRepository;
+import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.services.HotelService;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -40,7 +39,7 @@ public class HotelDataExtractor {
     private String dataSourcePassword;
 
     @Autowired
-    private HotelDataRepository hotelDataRepository;
+    private HotelService hotelService;
 
     @PostConstruct
     private void initDataSource() {
@@ -54,7 +53,7 @@ public class HotelDataExtractor {
     }
 
     public void extract(int limit) {
-        List<Hotel> hotelList = jdbcTemplate.query(
+        List<HotelData> hotelList = jdbcTemplate.query(
                 "select * from hotel h, property_type p, chain c " +
                 "where h.property_type_id = p.id " +
                 "and h.chain_id = c.id limit " + limit,
@@ -62,92 +61,16 @@ public class HotelDataExtractor {
         );
 
         int i = 1;
-        List<HotelData> result = new ArrayList<>();
-        for (Hotel hotel : hotelList) {
-            List<HotelFeature> hotelFeatureList = jdbcTemplate.query(
-                    "select h.id, hf.type, hf.title from hotel h, hotel_feature_to_hotel hfh, hotel_feature hf " +
-                            "where h.id = hfh.hotel_id " +
-                            "and hfh.hotel_feature_id = hf.id " +
-                            "and h.id = ?",
-                    new Object[]{ hotel.id },
-                    new HotelFeatureMapper()
-            );
-
-            result.add(convert(hotel, hotelFeatureList));
+        List<Hotel> convertedHotels = new ArrayList<>();
+        for (HotelData hotelData : hotelList) {
+            convertedHotels.add(hotelService.convertFromHotelData(hotelData));
 
             if (i % 100 == 0)
                 System.out.println("iterating over hoteldata, i: " + i);
             i++;
         }
 
-        hotelDataRepository.save(result);
-    }
-
-    private HotelData convert(Hotel hotel, List<HotelFeature> hotelFeatureList) {
-        HotelData hotelData = new HotelData();
-        hotelData.setName(hotel.title);
-        hotelData.setDescription(hotel.description);
-        hotelData.setAddress(hotel.addressFull);
-        hotelData.setLongitude(hotel.longitude);
-        hotelData.setLatitude(hotel.latitude);
-        hotelData.setEmail(hotel.email);
-        hotelData.setWebsite(hotel.website);
-        hotelData.setPhone(hotel.phone);
-        hotelData.setFax(hotel.fax);
-        hotelData.setStarRating(hotel.starRating);
-        hotelData.setRooms(hotel.rooms);
-        hotelData.setLowestPriceUSD(hotel.priceUSD);
-        hotelData.setCheckIn(hotel.checkIn);
-        hotelData.setCheckOut(hotel.checkOut);
-        hotelData.setPropertyType(hotel.propertyType);
-        hotelData.setChain(hotel.chain);
-
-        if (hotel.ratingOverall != null) {
-            hotelData.setRatingOverall(hotel.ratingOverall);
-            hotelData.setRatingOverallText(hotel.ratingOverallText);
-            hotelData.setRatingCleanliness(hotel.ratingCleanliness);
-            hotelData.setRatingDining(hotel.ratingDining);
-            hotelData.setRatingFacilities(hotel.ratingFacilities);
-            hotelData.setRatingLocation(hotel.ratingLocation);
-            hotelData.setRatingRooms(hotel.ratingRooms);
-            hotelData.setRatingService(hotel.ratingService);
-            hotelData.setRatingMainPoints(hotel.ratingPoints);
-        }
-
-        if (hotel.reviewsCount != null) {
-            hotelData.setReviewsCount(hotel.reviewsCount);
-
-            if (hotel.reviewsSummaryPositive != null) {
-                List<String> positive = new ArrayList<>();
-                Matcher matcher = reviewsPattern.matcher(hotel.reviewsSummaryPositive);
-                while (matcher.find()) {
-                    positive.add(matcher.group(1));
-                }
-                if (!positive.isEmpty())
-                    hotelData.setReviewsPositive(StringUtils.join(positive, ";"));
-            }
-
-            if (hotel.reviewsSummaryNegative != null) {
-                List<String> negative = new ArrayList<>();
-                Matcher matcher = reviewsPattern.matcher(hotel.reviewsSummaryNegative);
-                while (matcher.find()) {
-                    negative.add(matcher.group(1));
-                }
-                if (!negative.isEmpty())
-                    hotelData.setReviewsNegative(StringUtils.join(negative, ";"));
-            }
-        }
-
-        if (!hotelFeatureList.isEmpty()) {
-            List<String> features = new ArrayList<>();
-            for (HotelFeature hotelFeature : hotelFeatureList) {
-                features.add(hotelFeature.name);
-            }
-
-            hotelData.setFeatures(StringUtils.join(features, ";"));
-        }
-
-        return hotelData;
+        hotelService.addAll(convertedHotels);
     }
 
     private static String getNullIfEmpty(String text) {
@@ -190,7 +113,7 @@ public class HotelDataExtractor {
         return null;
     }
 
-    private static class Hotel {
+    public static class HotelData {
 
         public Long id;
         public String title;
@@ -223,18 +146,14 @@ public class HotelDataExtractor {
         public String chain;
     }
 
-    private static class HotelFeature {
-        public String name;
-    }
-
-    private static class HotelMapper implements RowMapper<Hotel> {
+    private static class HotelMapper implements RowMapper<HotelData> {
 
         private DateTimeFormatter formatter = DateTimeFormat.forPattern("h:mm a");
         private Pattern timePattern = Pattern.compile("\\d{1,2}:\\d{2}\\s?(AM|PM)");
 
         @Override
-        public Hotel mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Hotel hotel = new Hotel();
+        public HotelData mapRow(ResultSet rs, int rowNum) throws SQLException {
+            HotelData hotel = new HotelData();
             hotel.id = rs.getLong("h.id");
             hotel.title = rs.getString("h.title");
             hotel.addressFull = getNullIfEmpty(rs.getString("h.address_full"));
@@ -296,16 +215,6 @@ public class HotelDataExtractor {
                 hotel.chain = chain;
 
             return hotel;
-        }
-    }
-
-    private static class HotelFeatureMapper implements RowMapper<HotelFeature> {
-
-        @Override
-        public HotelFeature mapRow(ResultSet rs, int rowNum) throws SQLException {
-            HotelFeature hotelFeature = new HotelFeature();
-            hotelFeature.name = rs.getString("title");
-            return hotelFeature;
         }
     }
 }

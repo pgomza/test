@@ -1,8 +1,6 @@
 package com.horeca.site.models.hotel;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.horeca.site.models.hotel.address.Address;
-import com.horeca.site.models.hotel.gallery.Gallery;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
@@ -26,25 +24,48 @@ public class Hotel {
 	@NotEmpty
 	private String name;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn
-	private Address address;
+	@Column(columnDefinition = "TEXT")
+	public String description;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@NotEmpty
+	@Column(columnDefinition = "TEXT")
+	private String address;
+
+	private String email;
+
+	private String website;
+
+	private String phone;
+
+	private String fax;
+
+	private Float starRating;
+
+	private Integer rooms;
+
+	private Float ratingOverall;
+
+	private String ratingOverallText;
+
+	private String propertyType;
+
+	private String chain;
+
+	private Double longitude;
+
+	private Double latitude;
+
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn
 	private UsefulInformation usefulInformation;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn
 	private RoomDirectory roomDirectory;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn
 	private AvailableServices availableServices;
-
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "hotel_gallery")
-	private Set<Gallery> galleries;
 
 	@ManyToMany
 	@JoinTable(
@@ -70,12 +91,116 @@ public class Hotel {
 		this.name = name;
 	}
 
-	public Address getAddress() {
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getAddress() {
 		return address;
 	}
 
-	public void setAddress(Address address) {
+	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getFax() {
+		return fax;
+	}
+
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
+
+	public Float getStarRating() {
+		return starRating;
+	}
+
+	public void setStarRating(Float starRating) {
+		this.starRating = starRating;
+	}
+
+	public Integer getRooms() {
+		return rooms;
+	}
+
+	public void setRooms(Integer rooms) {
+		this.rooms = rooms;
+	}
+
+	public Float getRatingOverall() {
+		return ratingOverall;
+	}
+
+	public void setRatingOverall(Float ratingOverall) {
+		this.ratingOverall = ratingOverall;
+	}
+
+	public String getRatingOverallText() {
+		return ratingOverallText;
+	}
+
+	public void setRatingOverallText(String ratingOverallText) {
+		this.ratingOverallText = ratingOverallText;
+	}
+
+	public String getPropertyType() {
+		return propertyType;
+	}
+
+	public void setPropertyType(String propertyType) {
+		this.propertyType = propertyType;
+	}
+
+	public String getChain() {
+		return chain;
+	}
+
+	public void setChain(String chain) {
+		this.chain = chain;
+	}
+
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	public Double getLatitude() {
+		return latitude;
 	}
 
 	public UsefulInformation getUsefulInformation() {
@@ -102,14 +227,6 @@ public class Hotel {
 		this.availableServices = availableServices;
 	}
 
-	public Set<Gallery> getGalleries() {
-		return galleries;
-	}
-
-	public void setGalleries(Set<Gallery> galleries) {
-		this.galleries = galleries;
-	}
-
 	public Set<FileLink> getImages() {
 		return images;
 	}
@@ -122,65 +239,81 @@ public class Hotel {
 		HotelView hotelView = new HotelView();
 		hotelView.setId(getId());
 		hotelView.setName(getName());
+		hotelView.setDescription(getDescription());
 		hotelView.setAddress(getAddress());
+		hotelView.setEmail(getEmail());
+		hotelView.setWebsite(getWebsite());
+		hotelView.setPhone(getPhone());
+		hotelView.setFax(getFax());
+		hotelView.setStarRating(getStarRating());
+		hotelView.setRooms(getRooms());
+		hotelView.setRatingOverall(getRatingOverall());
+		hotelView.setRatingOverallText(getRatingOverallText());
+		hotelView.setPropertyType(getPropertyType());
+		hotelView.setChain(getChain());
+		hotelView.setLongitude(getLongitude());
+		hotelView.setLatitude(getLatitude());
 		hotelView.setUsefulInformation(getUsefulInformation());
 		hotelView.setRoomDirectory(getRoomDirectory());
 
 		AvailableServices availableServices = getAvailableServices();
 
-		List<AvailableServiceViewSimplified> simplifiedList = new ArrayList<>();
-		if (availableServices.getBreakfast() != null) {
-			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-			simplified.setType(AvailableServiceViewSimplified.Type.BREAKFAST);
-			simplified.setPrice(availableServices.getBreakfast().getPrice());
-			simplifiedList.add(simplified);
+		if (availableServices != null) {
+			List<AvailableServiceViewSimplified> simplifiedList = new ArrayList<>();
+			if (availableServices.getBreakfast() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceViewSimplified.Type.BREAKFAST);
+				simplified.setPrice(availableServices.getBreakfast().getPrice());
+				simplifiedList.add(simplified);
+			}
+
+			if (availableServices.getCarPark() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceViewSimplified.Type.CARPARK);
+				simplified.setPrice(availableServices.getCarPark().getPrice());
+				simplifiedList.add(simplified);
+			}
+
+			if (availableServices.getReceptionCall() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceViewSimplified.Type.RECEPTIONCALL);
+				simplified.setPrice(availableServices.getReceptionCall().getPrice());
+				simplified.setAdditionalInfo(availableServices.getReceptionCall().getPhoneNumber());
+				simplifiedList.add(simplified);
+			}
+
+			if (availableServices.getPetCare() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceViewSimplified.Type.PETCARE);
+				simplified.setPrice(availableServices.getSpa().getPrice());
+				simplifiedList.add(simplified);
+			}
+
+			if (availableServices.getTaxi() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceViewSimplified.Type.TAXI);
+				simplified.setPrice(availableServices.getTaxi().getPrice());
+				simplifiedList.add(simplified);
+			}
+
+			if (availableServices.getHousekeeping() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceViewSimplified.Type.HOUSEKEEPING);
+				simplified.setPrice(availableServices.getHousekeeping().getPrice());
+				simplifiedList.add(simplified);
+			}
+
+			if (availableServices.getRoomService() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceViewSimplified.Type.ROOMSERVICE);
+				simplified.setPrice(availableServices.getRoomService().getPrice());
+				simplifiedList.add(simplified);
+			}
+
+			hotelView.setServices(simplifiedList);
 		}
 
-		if (availableServices.getCarPark() != null) {
-			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-			simplified.setType(AvailableServiceViewSimplified.Type.CARPARK);
-			simplified.setPrice(availableServices.getCarPark().getPrice());
-			simplifiedList.add(simplified);
-		}
-
-		if (availableServices.getReceptionCall() != null) {
-			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-			simplified.setType(AvailableServiceViewSimplified.Type.RECEPTIONCALL);
-			simplified.setPrice(availableServices.getReceptionCall().getPrice());
-			simplified.setAdditionalInfo(availableServices.getReceptionCall().getPhoneNumber());
-			simplifiedList.add(simplified);
-		}
-
-		if (availableServices.getPetCare() != null) {
-			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-			simplified.setType(AvailableServiceViewSimplified.Type.PETCARE);
-			simplified.setPrice(availableServices.getSpa().getPrice());
-			simplifiedList.add(simplified);
-		}
-
-		if (availableServices.getTaxi() != null) {
-			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-			simplified.setType(AvailableServiceViewSimplified.Type.TAXI);
-			simplified.setPrice(availableServices.getTaxi().getPrice());
-			simplifiedList.add(simplified);
-		}
-
-		if (availableServices.getHousekeeping() != null) {
-			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-			simplified.setType(AvailableServiceViewSimplified.Type.HOUSEKEEPING);
-			simplified.setPrice(availableServices.getHousekeeping().getPrice());
-			simplifiedList.add(simplified);
-		}
-
-		if (availableServices.getRoomService() != null) {
-			AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-			simplified.setType(AvailableServiceViewSimplified.Type.ROOMSERVICE);
-			simplified.setPrice(availableServices.getRoomService().getPrice());
-			simplifiedList.add(simplified);
-		}
-
-		hotelView.setServices(simplifiedList);
-		hotelView.setGalleries(getGalleries());
+		hotelView.setImages(getImages());
 
 		return hotelView;
 	}

@@ -1,6 +1,5 @@
 package com.horeca.site.models.hotel.services.housekeeping;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.horeca.site.models.Price;
 
 import javax.persistence.*;
@@ -12,7 +11,6 @@ public class Housekeeping {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     private String description;
@@ -20,7 +18,7 @@ public class Housekeeping {
     @NotNull
     private Price price;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "housekeeping_id")
     private Set<HousekeepingItem> items;
 

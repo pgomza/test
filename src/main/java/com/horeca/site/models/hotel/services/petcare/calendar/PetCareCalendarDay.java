@@ -1,7 +1,6 @@
 package com.horeca.site.models.hotel.services.petcare.calendar;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
@@ -14,14 +13,13 @@ public class PetCareCalendarDay {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate day;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "pet_care_calendar_day_id")
     private Set<PetCareCalendarHour> hours;
 

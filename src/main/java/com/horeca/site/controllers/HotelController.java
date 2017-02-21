@@ -5,13 +5,14 @@ import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.services.HotelService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Api(value = "hotels")
 @RestController
@@ -21,22 +22,22 @@ public class HotelController {
 	@Autowired
 	private HotelService service;
 
-	@RequestMapping(value = "", params = "full-version", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Hotel> getAll() {
-		return service.getAll();
+	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Page<Hotel> getAll(Pageable pageable) {
+		return service.getAll(pageable);
 	}
 
-    @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<HotelView> getAllViews() {
-        return service.getAllViews();
+    @RequestMapping(value = "", params = "simplified", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Page<HotelView> getAllViews(Pageable pageable) {
+        return service.getAllViews(pageable);
 	}
 
-	@RequestMapping(value = "/{id}", params = "full-version", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Hotel get(@PathVariable("id") Long id) {
 		return service.get(id);
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/{id}", params = "simplified", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public HotelView getView(@PathVariable("id") Long id) {
 		return service.getView(id);
 	}
@@ -57,4 +58,24 @@ public class HotelController {
     public void delete(@PathVariable("id") Long id) {
         service.delete(id);
     }
+
+	@RequestMapping(value = "", params = "name", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Page<Hotel> getByName(@RequestParam(value = "name") String name, Pageable pageable) {
+		return service.getByName(name, pageable);
+	}
+
+	@RequestMapping(value = "", params = { "name", "simplified" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Page<HotelView> getViewsByName(@RequestParam(value = "name") String name, Pageable pageable) {
+		return service.getViewsByName(name, pageable);
+	}
+
+	@RequestMapping(value = "", params = "city", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Page<Hotel> getByCity(@RequestParam(value = "city") String city, Pageable pageable) {
+		return service.getByCity(city, pageable);
+	}
+
+	@RequestMapping(value = "", params = { "city", "simplified" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Page<HotelView> getViewsByCity(@RequestParam(value = "city") String city, Pageable pageable) {
+		return service.getViewsByCity(city, pageable);
+	}
 }

@@ -1,6 +1,5 @@
 package com.horeca.site.models.hotel.services.taxi;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.horeca.site.models.Price;
 
 import javax.persistence.*;
@@ -12,13 +11,12 @@ public class Taxi {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     @NotNull
     private Price price;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "taxi_id")
     private Set<TaxiItem> items;
 

@@ -1,7 +1,6 @@
 package com.horeca.site.models.hotel.services.breakfast;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.horeca.site.models.Price;
 import org.joda.time.LocalTime;
 
@@ -14,7 +13,6 @@ public class Breakfast {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     private String description;
@@ -29,7 +27,7 @@ public class Breakfast {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime toHour;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "breakfast_id")
     private Set<BreakfastCategory> categories;
 
