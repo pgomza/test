@@ -8,7 +8,11 @@ import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.user.UserInfo;
 import com.horeca.site.repositories.HotelRepository;
 import com.horeca.site.security.LoginService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +32,10 @@ public class HotelService {
     @Autowired
     private LoginService loginService;
 
+    /*
+        general actions
+     */
+
     @PostConstruct
     private void addHardcodedPanelClient() {
         String hardcodedUsername = "admin";
@@ -39,23 +47,24 @@ public class HotelService {
         }
     }
 
-    public List<Hotel> getAll() {
-        Iterable<Hotel> hotels = repository.findAll();
-        List<Hotel> hotelList = new ArrayList<>();
-        for (Hotel hotel : hotels) {
-            hotelList.add(hotel);
+    public Page<Hotel> getAll(Pageable pageable) {
+        Iterable<Hotel> batchIterable = repository.findAll(pageable);
+        List<Hotel> batchList = new ArrayList<>();
+        for (Hotel hotel : batchIterable) {
+            batchList.add(hotel);
         }
-
-        return hotelList;
+        return new PageImpl<>(batchList, pageable, repository.getTotalCount());
     }
 
-    public List<HotelView> getAllViews() {
-        List<HotelView> hotelViews = new ArrayList<>();
-        for (Hotel hotel : getAll()) {
-            hotelViews.add(hotel.toView());
+    public Page<HotelView> getAllViews(Pageable pageable) {
+        Iterable<Hotel> batch = repository.findAll(pageable);
+        List<HotelView> views = new ArrayList<>();
+        for (Hotel hotel : batch) {
+            views.add(hotel.toView());
         }
 
-        return hotelViews;
+        PageImpl<HotelView> result = new PageImpl<>(views, pageable, repository.getTotalCount());
+        return result;
     }
 
     public Hotel get(Long id) {
@@ -91,6 +100,81 @@ public class HotelService {
         repository.delete(toDelete);
     }
 
+    /*
+        filtering hotels
+     */
+
+    private List<Hotel> filterByName(String name) {
+        String lowercaseName = StringUtils.lowerCase(name);
+        List<Hotel> found = repository.getByName(lowercaseName);
+        return found;
+    }
+
+    private List<Hotel> filterByCity(String city) {
+        String lowercaseCity = StringUtils.lowerCase(city);
+        List<Hotel> candidates = repository.getByCity(lowercaseCity);
+        List<Hotel> found = new ArrayList<>();
+        for (Hotel hotel : candidates) {
+            // assume that the city is the penultimate element in the 'address' field
+            // each element is separated by a comma
+            String address = hotel.getAddress();
+            String elements[] = address.split(",");
+            String extractedCity = elements[elements.length - 2].trim();
+            String extractedCityLowercase = StringUtils.lowerCase(extractedCity);
+
+            if (lowercaseCity.equals(extractedCityLowercase))
+                found.add(hotel);
+        }
+        return found;
+    }
+
+    public Page<Hotel> getByName(String name, Pageable pageable) {
+        List<Hotel> found = filterByName(name);
+        return getPageForContent(found, pageable);
+    }
+
+    public Page<HotelView> getViewsByName(String name, Pageable pageable) {
+        List<Hotel> found = filterByName(name);
+        List<HotelView> views = new ArrayList<>();
+        for (Hotel hotel : found) {
+            views.add(hotel.toView());
+        }
+
+        return getPageForContent(views, pageable);
+    }
+
+    public Page<Hotel> getByCity(String city, Pageable pageable) {
+        List<Hotel> found = filterByCity(city);
+        return getPageForContent(found, pageable);
+    }
+
+    public Page<HotelView> getViewsByCity(String city, Pageable pageable) {
+        List<Hotel> found = filterByCity(city);
+        List<HotelView> views = new ArrayList<>();
+        for (Hotel hotel : found) {
+            views.add(hotel.toView());
+        }
+        return getPageForContent(views, pageable);
+    }
+
+    private static <T> Page<T> getPageForContent(List<T> content, Pageable pageable) {
+        int totalCount = content.size();
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+        int fromIndex = Math.max(pageNumber * pageSize, 0);
+        int toIndex = Math.max(Math.min(fromIndex + pageSize, totalCount), 0);
+
+        List<T> result = new ArrayList<>();
+        if (fromIndex < totalCount)
+            result = content.subList(fromIndex, toIndex);
+
+        return new PageImpl<>(result, pageable, totalCount);
+    }
+
+    /*
+        conversion
+     */
+
     public Hotel convertFromHotelData(HotelDataExtractor.HotelData hotelData) {
         Hotel hotel = new Hotel();
         hotel.setName(hotelData.title);
@@ -106,7 +190,6 @@ public class HotelService {
         hotel.setRatingOverallText(hotelData.ratingOverallText);
         hotel.setPropertyType(hotelData.propertyType);
         hotel.setChain(hotelData.chain);
-
         return hotel;
     }
 }

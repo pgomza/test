@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
@@ -8,6 +9,7 @@ import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
 import java.util.List;
 import java.util.Set;
 
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class HotelView {
 	
 	private Long id;
