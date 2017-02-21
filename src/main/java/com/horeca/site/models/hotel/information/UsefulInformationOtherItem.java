@@ -1,6 +1,5 @@
 package com.horeca.site.models.hotel.information;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Entity;
@@ -13,7 +12,6 @@ public class UsefulInformationOtherItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     @NotEmpty

@@ -1,6 +1,5 @@
 package com.horeca.site.models.hotel.services.roomservice;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.horeca.site.models.Price;
 
 import javax.persistence.*;
@@ -12,7 +11,6 @@ public class RoomService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     private String description;

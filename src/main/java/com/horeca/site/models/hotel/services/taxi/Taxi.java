@@ -1,6 +1,5 @@
 package com.horeca.site.models.hotel.services.taxi;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.horeca.site.models.Price;
 
 import javax.persistence.*;
@@ -12,7 +11,6 @@ public class Taxi {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     @NotNull

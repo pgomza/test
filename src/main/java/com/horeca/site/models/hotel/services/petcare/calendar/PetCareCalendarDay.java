@@ -1,7 +1,6 @@
 package com.horeca.site.models.hotel.services.petcare.calendar;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
@@ -14,7 +13,6 @@ public class PetCareCalendarDay {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     @NotNull

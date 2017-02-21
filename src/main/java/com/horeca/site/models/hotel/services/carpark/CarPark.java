@@ -1,8 +1,6 @@
 package com.horeca.site.models.hotel.services.carpark;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.horeca.site.models.Price;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,7 +10,6 @@ public class CarPark {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     private String description;

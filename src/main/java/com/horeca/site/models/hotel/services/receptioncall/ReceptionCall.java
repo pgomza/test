@@ -1,6 +1,5 @@
 package com.horeca.site.models.hotel.services.receptioncall;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.horeca.site.models.Price;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -15,7 +14,6 @@ public class ReceptionCall {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     @NotNull

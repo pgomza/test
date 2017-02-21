@@ -1,7 +1,6 @@
 package com.horeca.site.models.hotel.information;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalTime;
@@ -16,7 +15,6 @@ public class UsefulInformationHourItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     @NotEmpty

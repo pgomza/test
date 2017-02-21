@@ -1,7 +1,6 @@
 package com.horeca.site.models.hotel.services.spa.calendar;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.joda.time.LocalTime;
 
 import javax.persistence.*;
@@ -13,7 +12,6 @@ public class SpaCalendarHour {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     @NotNull
