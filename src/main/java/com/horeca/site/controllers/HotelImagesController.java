@@ -22,15 +22,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Api(value = "hotels")
 @RestController
 @RequestMapping("/api/hotels")
 public class HotelImagesController {
-
-    private Pattern filenamePattern = Pattern.compile("^\\w+(\\.\\w+)?$");
 
     @Autowired
     private HotelImagesService service;
@@ -51,22 +47,12 @@ public class HotelImagesController {
     public FileLink save(@PathVariable("id") Long id, @PathVariable("filename") String filename, HttpServletRequest req)
             throws IOException, FileUploadException {
         if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
-            Matcher matcher = filenamePattern.matcher(filename);
-            if (!matcher.matches()) {
-                throw new BusinessRuleViolationException("Filename should only consist of alphanumeric characters. " +
-                        "A file extension can be specified too. A sample valid filename: hotel.jpg");
-            }
-
             ServletFileUpload upload = new ServletFileUpload();
             FileItemIterator iter = upload.getItemIterator(req);
-            try {
-                FileItemStream imageItem = iter.next();
-                InputStream imageStream = imageItem.openStream();
+            FileItemStream imageItem = iter.next();
+            InputStream imageStream = imageItem.openStream();
 
-                return service.save(id, filename, imageStream);
-            } catch (Exception ex) { // TODO narrow down to a specific type and improve the message
-                throw new RuntimeException("There was an error while processing the request");
-            }
+            return service.save(id, filename, imageStream);
         }
         else
             throw new BusinessRuleViolationException("Uploading images is not available on localhost");
