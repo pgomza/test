@@ -12,9 +12,9 @@ public interface HotelRepository extends PagingAndSortingRepository<Hotel, Long>
     @Query("select count(*) from Hotel")
     Long getTotalCount();
 
-    @Query("select h from Hotel h where lower(h.address) like %:city%)")
-    List<Hotel> getByCity(@Param("city") String city);
-
-    @Query("select h from Hotel h where lower(h.name) like %:name%")
+    @Query("select h from Hotel h where lower(h.name) like :name%")
     List<Hotel> getByName(@Param("name") String name);
+
+    @Query("select h from Hotel h where lower(h.address) like %:city%")
+    List<Hotel> getByCity(@Param("city") String city);
 }
