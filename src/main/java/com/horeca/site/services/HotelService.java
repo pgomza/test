@@ -128,7 +128,17 @@ public class HotelService {
         return found;
     }
 
+    private List<Hotel> filterByNameAndCity(String name, String city) {
+        // for now simply find the intersection
+        List<Hotel> byName = filterByName(name);
+        List<Hotel> byCity = filterByCity(city);
+        byName.retainAll(byCity);
+
+        return byName;
+    }
+
     public Page<Hotel> getByName(String name, Pageable pageable) {
+
         List<Hotel> found = filterByName(name);
         return getPageForContent(found, pageable);
     }
@@ -157,6 +167,37 @@ public class HotelService {
         return getPageForContent(views, pageable);
     }
 
+    public Page<Hotel> getByNameAndCity(String name, String city, Pageable pageable) {
+        if (name.isEmpty() && city.isEmpty())
+            return getEmptyPage(pageable);
+        else if (name.isEmpty())
+            return getByCity(city, pageable);
+        else if (city.isEmpty())
+            return getByName(name, pageable);
+        else {
+            List<Hotel> found = filterByNameAndCity(name, city);
+            return getPageForContent(found, pageable);
+        }
+    }
+
+    public Page<HotelView> getViewsByNameAndCity(String name, String city, Pageable pageable) {
+        if (name.isEmpty() && city.isEmpty())
+            return getEmptyPage(pageable);
+        else if (name.isEmpty())
+            return getViewsByCity(city, pageable);
+        else if (city.isEmpty())
+            return getViewsByName(name, pageable);
+        else {
+            List<Hotel> found = filterByNameAndCity(name, city);
+            List<HotelView> views = new ArrayList<>();
+            for (Hotel hotel : found) {
+                views.add(hotel.toView());
+            }
+
+            return getPageForContent(views, pageable);
+        }
+    }
+
     private static <T> Page<T> getPageForContent(List<T> content, Pageable pageable) {
         int totalCount = content.size();
         int pageNumber = pageable.getPageNumber();
@@ -169,6 +210,10 @@ public class HotelService {
             result = content.subList(fromIndex, toIndex);
 
         return new PageImpl<>(result, pageable, totalCount);
+    }
+
+    private static <T> Page<T> getEmptyPage(Pageable pageable) {
+        return new PageImpl<>(new ArrayList<T>(), pageable, 0L);
     }
 
     /*

@@ -60,22 +60,36 @@ public class HotelController {
     }
 
 	@RequestMapping(value = "", params = "name", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<Hotel> getByName(@RequestParam(value = "name") String name, Pageable pageable) {
+	public Page<Hotel> getByName(@RequestParam("name") String name, Pageable pageable) {
 		return service.getByName(name, pageable);
 	}
 
 	@RequestMapping(value = "", params = { "name", "simplified" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<HotelView> getViewsByName(@RequestParam(value = "name") String name, Pageable pageable) {
+	public Page<HotelView> getViewsByName(@RequestParam("name") String name, Pageable pageable) {
 		return service.getViewsByName(name, pageable);
 	}
 
 	@RequestMapping(value = "", params = "city", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<Hotel> getByCity(@RequestParam(value = "city") String city, Pageable pageable) {
+	public Page<Hotel> getByCity(@RequestParam("city") String city, Pageable pageable) {
 		return service.getByCity(city, pageable);
 	}
 
 	@RequestMapping(value = "", params = { "city", "simplified" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<HotelView> getViewsByCity(@RequestParam(value = "city") String city, Pageable pageable) {
+	public Page<HotelView> getViewsByCity(@RequestParam("city") String city, Pageable pageable) {
 		return service.getViewsByCity(city, pageable);
+	}
+
+	@RequestMapping(value = "", params = { "name", "city" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Page<Hotel> getByNameAndCity(@RequestParam("name") String name,
+										@RequestParam("city") String city,
+										Pageable pageable) {
+		return service.getByNameAndCity(name, city, pageable);
+	}
+
+	@RequestMapping(value = "", params = { "name", "city", "simplified" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Page<HotelView> getByViewsNameAndCity(@RequestParam("name") String name,
+												 @RequestParam("city") String city,
+													Pageable pageable) {
+		return service.getViewsByNameAndCity(name, city, pageable);
 	}
 }
