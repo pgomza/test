@@ -20,6 +20,7 @@ import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -105,12 +106,18 @@ public class HotelService {
      */
 
     private List<Hotel> filterByName(String name) {
+        if (name.length() < 3)
+            return Collections.emptyList();
+
         String lowercaseName = StringUtils.lowerCase(name);
         List<Hotel> found = repository.getByName(lowercaseName);
         return found;
     }
 
     private List<Hotel> filterByCity(String city) {
+        if (city.length() < 3)
+            return Collections.emptyList();
+
         String lowercaseCity = StringUtils.lowerCase(city);
         List<Hotel> candidates = repository.getByCity(lowercaseCity);
         List<Hotel> found = new ArrayList<>();
@@ -129,6 +136,9 @@ public class HotelService {
     }
 
     private List<Hotel> filterByNameAndCity(String name, String city) {
+        if (name.length() < 3 || city.length() < 3)
+            return Collections.emptyList();
+
         // for now simply find the intersection
         List<Hotel> byName = filterByName(name);
         List<Hotel> byCity = filterByCity(city);
@@ -138,7 +148,6 @@ public class HotelService {
     }
 
     public Page<Hotel> getByName(String name, Pageable pageable) {
-
         List<Hotel> found = filterByName(name);
         return getPageForContent(found, pageable);
     }
