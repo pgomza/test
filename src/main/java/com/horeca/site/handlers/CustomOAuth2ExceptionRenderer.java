@@ -4,6 +4,7 @@ import com.horeca.site.exceptions.ErrorResponse;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class CustomOAuth2ExceptionRenderer extends DefaultOAuth2ExceptionRenderer {
 
-    public static final int INVALID_TOKEN_HTTP_CODE = 498;
+    public static final int INVALID_TOKEN_HTTP_CODE = HttpStatus.UNAUTHORIZED.value();
 
     @Override
     public void handleHttpEntityResponse(HttpEntity<?> responseEntity, ServletWebRequest webRequest) throws Exception {
