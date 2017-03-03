@@ -37,6 +37,8 @@ public class Hotel {
 
 	private String phone;
 
+	private String bookingUrl;
+
 	private String fax;
 
 	private Float starRating;
@@ -129,6 +131,14 @@ public class Hotel {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public String getBookingUrl() {
+		return bookingUrl;
+	}
+
+	public void setBookingUrl(String bookingUrl) {
+		this.bookingUrl = bookingUrl;
 	}
 
 	public String getFax() {
@@ -244,6 +254,7 @@ public class Hotel {
 		hotelView.setEmail(getEmail());
 		hotelView.setWebsite(getWebsite());
 		hotelView.setPhone(getPhone());
+		hotelView.setBookingUrl(getBookingUrl());
 		hotelView.setFax(getFax());
 		hotelView.setStarRating(getStarRating());
 		hotelView.setRooms(getRooms());
