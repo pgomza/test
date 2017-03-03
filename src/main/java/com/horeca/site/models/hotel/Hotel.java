@@ -274,14 +274,6 @@ public class Hotel {
 				simplifiedList.add(simplified);
 			}
 
-			if (availableServices.getReceptionCall() != null) {
-				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-				simplified.setType(AvailableServiceViewSimplified.Type.RECEPTIONCALL);
-				simplified.setPrice(availableServices.getReceptionCall().getPrice());
-				simplified.setAdditionalInfo(availableServices.getReceptionCall().getPhoneNumber());
-				simplifiedList.add(simplified);
-			}
-
 			if (availableServices.getPetCare() != null) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceViewSimplified.Type.PETCARE);
