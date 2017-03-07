@@ -1,4 +1,4 @@
-package com.horeca.site.models.user;
+package com.horeca.site.security;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;

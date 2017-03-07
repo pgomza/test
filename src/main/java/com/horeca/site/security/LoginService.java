@@ -1,6 +1,5 @@
 package com.horeca.site.security;
 
-import com.horeca.site.models.user.UserInfo;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 

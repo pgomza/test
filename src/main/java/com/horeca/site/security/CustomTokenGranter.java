@@ -1,8 +1,6 @@
 package com.horeca.site.security;
 
 import com.horeca.site.exceptions.BadAuthorizationRequestException;
-import com.horeca.site.models.user.UserInfo;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -12,7 +10,8 @@ import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
 

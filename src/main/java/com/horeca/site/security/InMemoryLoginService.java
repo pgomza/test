@@ -1,9 +1,9 @@
 package com.horeca.site.security;
 
-import com.horeca.site.models.user.UserInfo;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 //@Service("inMemoryLoginService")
 public class InMemoryLoginService implements LoginService {
