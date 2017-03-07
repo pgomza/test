@@ -15,13 +15,14 @@ import java.util.Collections;
 import java.util.List;
 
 @Entity
-public class UserInfo implements UserDetails {
+public class UserAccount implements UserDetails {
 
-    public static final String AUTH_PREFIX_GUEST = "GUEST_";
-    public static final String AUTH_PREFIX_USER = "USER_";
+    public static final String USERNAME_PREFIX = "USER_";
 
     @Id
     private String username;
+
+    private Long hotelId;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -37,13 +38,18 @@ public class UserInfo implements UserDetails {
 
     private boolean enabled = true;
 
-    public UserInfo() {
+    public UserAccount() {
     }
 
-    public UserInfo(String username, String password, List<String> roles) {
+    public UserAccount(String username, Long hotelId, String password, List<String> roles) {
         this.username = username;
+        this.hotelId = hotelId;
         this.password = password;
         this.roles = roles;
+    }
+
+    public Long getHotelId() {
+        return hotelId;
     }
 
     @Override

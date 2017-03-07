@@ -6,8 +6,8 @@ import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.stay.*;
 import com.horeca.site.repositories.services.StayRepository;
-import com.horeca.site.security.LoginService;
-import com.horeca.site.security.UserInfo;
+import com.horeca.site.security.GuestAccount;
+import com.horeca.site.security.GuestAccountService;
 import com.horeca.site.services.GuestService;
 import com.horeca.site.services.HotelService;
 import com.horeca.site.services.PinGeneratorService;
@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -29,7 +27,7 @@ public class StayService {
     private StayRepository stayRepository;
 
     @Autowired
-    private LoginService loginService;
+    private GuestAccountService guestAccountService;
 
     @Autowired
     private PinGeneratorService pinGeneratorService;
@@ -129,25 +127,18 @@ public class StayService {
         stay.setPin(pin);
 
         Stay added = stayRepository.save(stay);
-        saveUserAssociatedWithPin(pin);
+        guestAccountService.registerGuest(stay);
 
         return added;
     }
 
     private void deregisterStay(String pin) {
         try {
-            loginService.deleteUser(UserInfo.AUTH_PREFIX_GUEST + pin);
+            guestAccountService.delete(GuestAccount.USERNAME_PREFIX + pin);
         }
         catch (UsernameNotFoundException ex) {
             throw new RuntimeException("No corresponding token has been found for this stay in the database");
         }
-    }
-
-    private void saveUserAssociatedWithPin(String pin) {
-        List<String> roles = new ArrayList<>(Arrays.asList("ROLE_USER"));
-        String randomPassword = UUID.randomUUID().toString();
-        UserInfo userInfo = new UserInfo(UserInfo.AUTH_PREFIX_GUEST + pin, randomPassword, roles);
-        loginService.saveUser(userInfo);
     }
 
     private void ensureEntityExists(String pin) {

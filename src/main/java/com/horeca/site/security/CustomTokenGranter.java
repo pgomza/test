@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter;
@@ -45,11 +46,11 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
         if (client.getClientId().equals(mobileClientId)) { // authenticate using the pin only
             String pin = parameters.get("pin");
             if (pin != null) {
-                UserInfo mobileUserInfo = getMobileUserInfo(UserInfo.AUTH_PREFIX_GUEST + pin);
-                if (mobileUserInfo == null)
+                UserDetails userDetails = getMobileUserInfo(GuestAccount.USERNAME_PREFIX + pin);
+                if (userDetails == null)
                     throw new BadCredentialsException("Invalid pin");
 
-                Authentication userAuth = getAsAuthenticated(mobileUserInfo, parameters);
+                Authentication userAuth = getAsAuthenticated(userDetails, parameters);
                 OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
                 return new OAuth2Authentication(storedOAuth2Request, userAuth);
             }
@@ -61,11 +62,11 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
             String plainTextPassword = parameters.get("password");
 
             if (login != null && plainTextPassword != null) {
-                UserInfo panelUserInfo = getPanelUserInfo(UserInfo.AUTH_PREFIX_USER + login, plainTextPassword);
-                if (panelUserInfo == null)
+                UserDetails userDetails = getPanelUserInfo(UserAccount.USERNAME_PREFIX + login, plainTextPassword);
+                if (userDetails == null)
                     throw new BadCredentialsException("Invalid login/password");
 
-                Authentication userAuth = getAsAuthenticated(panelUserInfo, parameters);
+                Authentication userAuth = getAsAuthenticated(userDetails, parameters);
                 OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
                 return new OAuth2Authentication(storedOAuth2Request, userAuth);
             }
@@ -77,27 +78,27 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
 
     }
 
-    private Authentication getAsAuthenticated(UserInfo userInfo, Map<String, String> parameters) {
-        final Authentication userAuth = new UsernamePasswordAuthenticationToken(userInfo, null, userInfo.getAuthorities());
+    private Authentication getAsAuthenticated(UserDetails userDetails, Map<String, String> parameters) {
+        final Authentication userAuth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         ((AbstractAuthenticationToken) userAuth).setDetails(parameters);
 
         return userAuth;
     }
 
-    private UserInfo getMobileUserInfo(String username) {
-        if (!loginService.isAlreadyPresent(username))
+    private UserDetails getMobileUserInfo(String username) {
+        if (!loginService.exists(username))
             return null;
 
         return loginService.loadUserByUsername(username);
     }
 
-    private UserInfo getPanelUserInfo(String username, String plainTextPassword) {
-        if (!loginService.isAlreadyPresent(username))
+    private UserDetails getPanelUserInfo(String username, String plainTextPassword) {
+        if (!loginService.exists(username))
             return null;
 
-        final UserInfo userInfo = loginService.loadUserByUsername(username);
-        if (BCrypt.checkpw(plainTextPassword, userInfo.getPassword()))
-            return userInfo;
+        final UserDetails userDetails = loginService.loadUserByUsername(username);
+        if (BCrypt.checkpw(plainTextPassword, userDetails.getPassword()))
+            return userDetails;
         else
             return null;
     }

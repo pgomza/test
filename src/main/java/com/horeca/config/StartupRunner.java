@@ -1,7 +1,9 @@
 package com.horeca.config;
 
-import com.horeca.site.security.Account;
+import com.horeca.site.security.GuestAccount;
 import com.horeca.site.security.LoginService;
+import com.horeca.site.security.UserAccount;
+import com.horeca.site.security.UserAccountService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -25,6 +27,9 @@ public class StartupRunner {
     @Autowired
     private LoginService loginService;
 
+    @Autowired
+    private UserAccountService userAccountService;
+
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
         addRootUser();
@@ -35,12 +40,12 @@ public class StartupRunner {
     // getting information any stay)
     private void addRootUser() {
         String hardcodedUsername = "ROOT";
-        if (!loginService.isAlreadyPresent(Account.AUTH_PREFIX_USER + hardcodedUsername)) {
+        if (!loginService.exists(GuestAccount.USERNAME_PREFIX + hardcodedUsername)) {
             List<String> roles = new ArrayList<>(Arrays.asList("ROLE_ROOT"));
             String salt = BCrypt.gensalt(12);
             String hashed_password = BCrypt.hashpw("throdi", salt);
-            Account account = new Account(Account.AUTH_PREFIX_USER + hardcodedUsername, hashed_password, roles);
-            loginService.saveUser(account);
+            UserAccount account = new UserAccount(UserAccount.USERNAME_PREFIX + hardcodedUsername, null, hashed_password, roles);
+            userAccountService.save(account);
         }
     }
 }

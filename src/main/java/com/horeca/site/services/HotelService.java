@@ -5,7 +5,6 @@ import com.horeca.site.extractors.HotelDataExtractor;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.repositories.HotelRepository;
-import com.horeca.site.security.LoginService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,9 +23,6 @@ public class HotelService {
 
     @Autowired
     private HotelRepository repository;
-
-    @Autowired
-    private LoginService loginService;
 
     /*
         general actions
