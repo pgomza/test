@@ -1,13 +1,11 @@
 package com.horeca.site.services;
 
-import com.google.common.hash.Hashing;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.extractors.HotelDataExtractor;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.repositories.HotelRepository;
 import com.horeca.site.security.LoginService;
-import com.horeca.site.security.UserInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,10 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,17 +31,6 @@ public class HotelService {
     /*
         general actions
      */
-
-    @PostConstruct
-    private void addHardcodedPanelClient() {
-        String hardcodedUsername = "admin";
-        if (!loginService.isAlreadyPresent(hardcodedUsername)) {
-            List<String> roles = new ArrayList<>(Arrays.asList("ROLE_HOTEL_1"));
-            String hardcodedPassword = Hashing.sha256().hashString("throdi", StandardCharsets.UTF_8).toString();
-            UserInfo userInfo = new UserInfo(UserInfo.AUTH_PREFIX_USER + hardcodedUsername, hardcodedPassword, roles);
-            loginService.saveUser(userInfo);
-        }
-    }
 
     public Page<Hotel> getAll(Pageable pageable) {
         Iterable<Hotel> batchIterable = repository.findAll(pageable);
