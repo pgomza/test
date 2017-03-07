@@ -136,7 +136,7 @@ public class StayService {
 
     private void deregisterStay(String pin) {
         try {
-            loginService.deleteUser(UserInfo.AUTH_PREFIX_PIN + pin);
+            loginService.deleteUser(UserInfo.AUTH_PREFIX_GUEST + pin);
         }
         catch (UsernameNotFoundException ex) {
             throw new RuntimeException("No corresponding token has been found for this stay in the database");
@@ -146,7 +146,7 @@ public class StayService {
     private void saveUserAssociatedWithPin(String pin) {
         List<String> roles = new ArrayList<>(Arrays.asList("ROLE_USER"));
         String randomPassword = UUID.randomUUID().toString();
-        UserInfo userInfo = new UserInfo(UserInfo.AUTH_PREFIX_PIN + pin, randomPassword, roles);
+        UserInfo userInfo = new UserInfo(UserInfo.AUTH_PREFIX_GUEST + pin, randomPassword, roles);
         loginService.saveUser(userInfo);
     }
 

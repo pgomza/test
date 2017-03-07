@@ -43,7 +43,7 @@ public class HotelService {
         if (!loginService.isAlreadyPresent(hardcodedUsername)) {
             List<String> roles = new ArrayList<>(Arrays.asList("ROLE_HOTEL_1"));
             String hardcodedPassword = Hashing.sha256().hashString("throdi", StandardCharsets.UTF_8).toString();
-            UserInfo userInfo = new UserInfo(UserInfo.AUTH_PREFIX_LOGIN + hardcodedUsername, hardcodedPassword, roles);
+            UserInfo userInfo = new UserInfo(UserInfo.AUTH_PREFIX_USER + hardcodedUsername, hardcodedPassword, roles);
             loginService.saveUser(userInfo);
         }
     }

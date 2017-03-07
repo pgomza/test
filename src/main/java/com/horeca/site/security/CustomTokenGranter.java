@@ -44,7 +44,7 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
         if (client.getClientId().equals(mobileClientId)) { // authenticate using the pin only
             String pin = parameters.get("pin");
             if (pin != null) {
-                UserInfo mobileUserInfo = getMobileUserInfo(UserInfo.AUTH_PREFIX_PIN + pin);
+                UserInfo mobileUserInfo = getMobileUserInfo(UserInfo.AUTH_PREFIX_GUEST + pin);
                 if (mobileUserInfo == null)
                     throw new BadCredentialsException("Invalid pin");
 
@@ -60,7 +60,7 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
             String password = parameters.get("password"); //SHA-256
 
             if (login != null && password != null) {
-                UserInfo panelUserInfo = getPanelUserInfo(UserInfo.AUTH_PREFIX_LOGIN + login, password);
+                UserInfo panelUserInfo = getPanelUserInfo(UserInfo.AUTH_PREFIX_USER + login, password);
                 if (panelUserInfo == null)
                     throw new BadCredentialsException("Invalid login/password");
 

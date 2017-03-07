@@ -17,8 +17,8 @@ import java.util.List;
 @Entity
 public class UserInfo implements UserDetails {
 
-    public static final String AUTH_PREFIX_PIN = "pin_";
-    public static final String AUTH_PREFIX_LOGIN = "login_";
+    public static final String AUTH_PREFIX_GUEST = "GUEST_";
+    public static final String AUTH_PREFIX_USER = "USER_";
 
     @Id
     private String username;
