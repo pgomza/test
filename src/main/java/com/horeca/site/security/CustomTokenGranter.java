@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
@@ -57,10 +58,10 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
         }
         else if (client.getClientId().equals(panelClientId)) { // authenticate using the login and the password
             String login = parameters.get("login");
-            String password = parameters.get("password"); //SHA-256
+            String plainTextPassword = parameters.get("password");
 
-            if (login != null && password != null) {
-                UserInfo panelUserInfo = getPanelUserInfo(UserInfo.AUTH_PREFIX_USER + login, password);
+            if (login != null && plainTextPassword != null) {
+                UserInfo panelUserInfo = getPanelUserInfo(UserInfo.AUTH_PREFIX_USER + login, plainTextPassword);
                 if (panelUserInfo == null)
                     throw new BadCredentialsException("Invalid login/password");
 
@@ -90,12 +91,12 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
         return loginService.loadUserByUsername(username);
     }
 
-    private UserInfo getPanelUserInfo(String username, String password) {
+    private UserInfo getPanelUserInfo(String username, String plainTextPassword) {
         if (!loginService.isAlreadyPresent(username))
             return null;
 
         final UserInfo userInfo = loginService.loadUserByUsername(username);
-        if (password.equals(userInfo.getPassword()))
+        if (BCrypt.checkpw(plainTextPassword, userInfo.getPassword()))
             return userInfo;
         else
             return null;
