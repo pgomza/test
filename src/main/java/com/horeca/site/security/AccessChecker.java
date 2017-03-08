@@ -1,6 +1,9 @@
 package com.horeca.site.security;
 
+import com.horeca.site.models.stay.Stay;
+import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +19,9 @@ public class AccessChecker {
     private final Pattern stayPinPattern = Pattern.compile("/api/stays/([a-z0-9]+)");
     private final Pattern checkInPattern = Pattern.compile("/api/check-in/([a-z0-9]+)");
     private final Pattern checkOutPattern = Pattern.compile("/api/check-out/([a-z0-9]+)");
+
+    @Autowired
+    private StayService stayService;
 
     public boolean checkForHotel(Authentication authentication, HttpServletRequest request) {
         Object principal = authentication.getPrincipal();
@@ -45,14 +51,22 @@ public class AccessChecker {
     }
 
     private boolean checkForStayHelper(Authentication authentication, HttpServletRequest request, Pattern requestPattern) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof GuestAccount) {
-            String servletPath = request.getServletPath();
-            String pin = extractStayPinFromServletPath(servletPath, requestPattern);
+        String servletPath = request.getServletPath();
+        String pin = extractStayPinFromServletPath(servletPath, requestPattern);
 
-            if (pin != null) {
+        if (pin != null) {
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof GuestAccount) {
                 GuestAccount guestAccount = (GuestAccount) principal;
                 if (pin.equals(guestAccount.getPin()))
+                    return true;
+            }
+            else if (principal instanceof UserAccount) {
+                UserAccount userAccount = (UserAccount) principal;
+                Stay stay = stayService.get(pin);
+                Long requestedId = stay.getHotel().getId();
+                if (userAccount.getHotelId().equals(requestedId))
                     return true;
             }
         }
