@@ -41,8 +41,15 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
     public void configure(HttpSecurity http) throws Exception {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels").permitAll();
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/**").permitAll();
+
+        // allow anybody to get info about any of the hotels
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels*/**").permitAll();
+
+        // admins (and only them) can access the hotel that they're associated with
+        http.authorizeRequests().antMatchers("/api/hotels/{\\d+}/**")
+                .access("@accessChecker.checkForHotel(authentication, request)");
+
+        // make sure that the rest of the endpoints is properly secured
         http.authorizeRequests().antMatchers("/api/**").authenticated();
     }
 

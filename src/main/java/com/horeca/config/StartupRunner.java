@@ -33,19 +33,33 @@ public class StartupRunner {
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
         addRootUser();
+        addRandomAdmins();
     }
 
     // root user has permission to manage all users
     // he SHOULD NOT have access to anything else (especially
-    // getting information any stay)
+    // getting information about any stay)
     private void addRootUser() {
-        String hardcodedUsername = "ROOT";
+        String hardcodedUsername = "root";
         if (!loginService.exists(GuestAccount.USERNAME_PREFIX + hardcodedUsername)) {
             List<String> roles = new ArrayList<>(Arrays.asList("ROLE_ROOT"));
             String salt = BCrypt.gensalt(12);
             String hashed_password = BCrypt.hashpw("throdi", salt);
             UserAccount account = new UserAccount(UserAccount.USERNAME_PREFIX + hardcodedUsername, null, hashed_password, roles);
             userAccountService.save(account);
+        }
+    }
+
+    private void addRandomAdmins() {
+        String[] admins = new String[] { "admin0", "admin1" };
+        for (int i = 0; i < admins.length; i++) {
+            if (!loginService.exists(GuestAccount.USERNAME_PREFIX + admins[i])) {
+                List<String> roles = new ArrayList<>(Arrays.asList("ROLE_ADMIN"));
+                String salt = BCrypt.gensalt(12);
+                String hashed_password = BCrypt.hashpw("throdi" + i, salt);
+                UserAccount account = new UserAccount(UserAccount.USERNAME_PREFIX + admins[i], new Long(i), hashed_password, roles);
+                userAccountService.save(account);
+            }
         }
     }
 }
