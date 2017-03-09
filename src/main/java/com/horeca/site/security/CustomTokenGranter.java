@@ -1,18 +1,19 @@
 package com.horeca.site.security;
 
 import com.horeca.site.exceptions.BadAuthorizationRequestException;
-import com.horeca.site.models.user.UserInfo;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
 
@@ -45,11 +46,11 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
         if (client.getClientId().equals(mobileClientId)) { // authenticate using the pin only
             String pin = parameters.get("pin");
             if (pin != null) {
-                UserInfo mobileUserInfo = getMobileUserInfo(UserInfo.AUTH_PREFIX_PIN + pin);
-                if (mobileUserInfo == null)
+                UserDetails userDetails = getMobileUserInfo(GuestAccount.USERNAME_PREFIX + pin);
+                if (userDetails == null)
                     throw new BadCredentialsException("Invalid pin");
 
-                Authentication userAuth = getAsAuthenticated(mobileUserInfo, parameters);
+                Authentication userAuth = getAsAuthenticated(userDetails, parameters);
                 OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
                 return new OAuth2Authentication(storedOAuth2Request, userAuth);
             }
@@ -58,14 +59,14 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
         }
         else if (client.getClientId().equals(panelClientId)) { // authenticate using the login and the password
             String login = parameters.get("login");
-            String password = parameters.get("password"); //SHA-256
+            String plainTextPassword = parameters.get("password");
 
-            if (login != null && password != null) {
-                UserInfo panelUserInfo = getPanelUserInfo(UserInfo.AUTH_PREFIX_LOGIN + login, password);
-                if (panelUserInfo == null)
+            if (login != null && plainTextPassword != null) {
+                UserDetails userDetails = getPanelUserInfo(UserAccount.USERNAME_PREFIX + login, plainTextPassword);
+                if (userDetails == null)
                     throw new BadCredentialsException("Invalid login/password");
 
-                Authentication userAuth = getAsAuthenticated(panelUserInfo, parameters);
+                Authentication userAuth = getAsAuthenticated(userDetails, parameters);
                 OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
                 return new OAuth2Authentication(storedOAuth2Request, userAuth);
             }
@@ -77,27 +78,27 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
 
     }
 
-    private Authentication getAsAuthenticated(UserInfo userInfo, Map<String, String> parameters) {
-        final Authentication userAuth = new UsernamePasswordAuthenticationToken(userInfo, null, userInfo.getAuthorities());
+    private Authentication getAsAuthenticated(UserDetails userDetails, Map<String, String> parameters) {
+        final Authentication userAuth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         ((AbstractAuthenticationToken) userAuth).setDetails(parameters);
 
         return userAuth;
     }
 
-    private UserInfo getMobileUserInfo(String username) {
-        if (!loginService.isAlreadyPresent(username))
+    private UserDetails getMobileUserInfo(String username) {
+        if (!loginService.exists(username))
             return null;
 
         return loginService.loadUserByUsername(username);
     }
 
-    private UserInfo getPanelUserInfo(String username, String password) {
-        if (!loginService.isAlreadyPresent(username))
+    private UserDetails getPanelUserInfo(String username, String plainTextPassword) {
+        if (!loginService.exists(username))
             return null;
 
-        final UserInfo userInfo = loginService.loadUserByUsername(username);
-        if (password.equals(userInfo.getPassword()))
-            return userInfo;
+        final UserDetails userDetails = loginService.loadUserByUsername(username);
+        if (BCrypt.checkpw(plainTextPassword, userDetails.getPassword()))
+            return userDetails;
         else
             return null;
     }

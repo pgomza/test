@@ -5,21 +5,21 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.stay.*;
-import com.horeca.site.models.user.UserInfo;
 import com.horeca.site.repositories.services.StayRepository;
-import com.horeca.site.security.LoginService;
+import com.horeca.site.security.GuestAccount;
+import com.horeca.site.security.GuestAccountService;
 import com.horeca.site.services.GuestService;
 import com.horeca.site.services.HotelService;
 import com.horeca.site.services.PinGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -29,7 +29,7 @@ public class StayService {
     private StayRepository stayRepository;
 
     @Autowired
-    private LoginService loginService;
+    private GuestAccountService guestAccountService;
 
     @Autowired
     private PinGeneratorService pinGeneratorService;
@@ -39,6 +39,13 @@ public class StayService {
 
     @Autowired
     private GuestService userService;
+
+    // used when the information about a given stay has to be returned
+    // irrespective of the fact whether it's active or not; for 'internal'
+    // use only
+    public Stay getWithoutChecks(String pin) {
+        return stayRepository.findOne(pin);
+    }
 
     public Stay get(String pin) {
         ensureEntityExists(pin);
@@ -54,6 +61,7 @@ public class StayService {
         return stayRepository.findAll();
     }
 
+    @PostFilter("@accessChecker.checkForStayFromCollection(authentication, filterObject)")
     public Iterable<StayView> getAllViews() {
         Iterable<Stay> stays = getAll();
         List<StayView> views = new ArrayList<>();
@@ -65,7 +73,6 @@ public class StayService {
 
     public Stay update(String pin, Stay stay) {
         ensureEntityExists(pin);
-//        ensureStatusNotNew(pin);
         stay.setPin(pin);
         return stayRepository.save(stay);
     }
@@ -105,6 +112,7 @@ public class StayService {
         stayRepository.save(stay);
     }
 
+    @PreAuthorize("@accessChecker.checkAddingStay(authentication, #stayPOST)")
     public Stay registerNewStay(StayPOST stayPOST) {
         Stay stay = new Stay();
         stay.setStatus(StayStatus.NEW);
@@ -129,25 +137,18 @@ public class StayService {
         stay.setPin(pin);
 
         Stay added = stayRepository.save(stay);
-        saveUserAssociatedWithPin(pin);
+        guestAccountService.registerGuest(stay);
 
         return added;
     }
 
     private void deregisterStay(String pin) {
         try {
-            loginService.deleteUser(UserInfo.AUTH_PREFIX_PIN + pin);
+            guestAccountService.delete(GuestAccount.USERNAME_PREFIX + pin);
         }
         catch (UsernameNotFoundException ex) {
             throw new RuntimeException("No corresponding token has been found for this stay in the database");
         }
-    }
-
-    private void saveUserAssociatedWithPin(String pin) {
-        List<String> roles = new ArrayList<>(Arrays.asList("ROLE_USER"));
-        String randomPassword = UUID.randomUUID().toString();
-        UserInfo userInfo = new UserInfo(UserInfo.AUTH_PREFIX_PIN + pin, randomPassword, roles);
-        loginService.saveUser(userInfo);
     }
 
     private void ensureEntityExists(String pin) {

@@ -1,44 +1,39 @@
 package com.horeca.site.security;
 
-import com.horeca.site.models.user.UserInfo;
-import com.horeca.site.repositories.UserInfoRepository;
+import com.horeca.site.repositories.GuestAccountRepository;
+import com.horeca.site.repositories.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("persistentLoginService")
+@Service
 @Transactional
 public class PersistentLoginService implements LoginService {
 
     @Autowired
-    private UserInfoRepository repository;
+    private GuestAccountRepository guestAccountRepository;
+    @Autowired
+    private UserAccountRepository userAccountRepository;
 
     @Override
-    public void saveUser(UserInfo user) {
-        repository.save(user);
+    public boolean exists(String username) {
+        if (username.startsWith(GuestAccount.USERNAME_PREFIX))
+            return guestAccountRepository.exists(username);
+        else if (username.startsWith(UserAccount.USERNAME_PREFIX))
+            return userAccountRepository.exists(username);
+        else
+            return false;
     }
 
     @Override
-    public boolean isAlreadyPresent(String username) {
-        return repository.exists(username);
-    }
-
-    @Override
-    public UserInfo loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserInfo userInfo = repository.findOne(username);
-        if (userInfo == null)
-            throw new UsernameNotFoundException("User " + username + " could not be found");
-
-        return userInfo;
-    }
-
-    @Override
-    public void deleteUser(String username) throws UsernameNotFoundException {
-        boolean exists = repository.exists(username);
-        if (!exists)
-            throw new UsernameNotFoundException("User " + username + " could not be found");
-
-        repository.delete(username);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if (username.startsWith(GuestAccount.USERNAME_PREFIX))
+            return guestAccountRepository.findOne(username);
+        else if (username.startsWith(UserAccount.USERNAME_PREFIX))
+            return userAccountRepository.findOne(username);
+        else
+            return null;
     }
 }
