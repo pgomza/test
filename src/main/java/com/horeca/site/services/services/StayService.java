@@ -13,6 +13,7 @@ import com.horeca.site.services.HotelService;
 import com.horeca.site.services.PinGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,6 +112,7 @@ public class StayService {
         stayRepository.save(stay);
     }
 
+    @PreAuthorize("@accessChecker.checkAddingStay(authentication, #stayPOST)")
     public Stay registerNewStay(StayPOST stayPOST) {
         Stay stay = new Stay();
         stay.setStatus(StayStatus.NEW);

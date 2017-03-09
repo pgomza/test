@@ -1,6 +1,7 @@
 package com.horeca.site.security;
 
 import com.horeca.site.models.stay.Stay;
+import com.horeca.site.models.stay.StayPOST;
 import com.horeca.site.models.stay.StayView;
 import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
@@ -59,6 +60,17 @@ public class AccessChecker {
         String servletPath = request.getServletPath();
         String pin = extractStayPinFromServletPath(servletPath, checkOutPattern);
         return checkForStayHelper(authentication, pin);
+    }
+
+    public boolean checkAddingStay(Authentication authentication, StayPOST stayPOST) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserAccount) {
+            UserAccount userAccount = (UserAccount) principal;
+            Long requestedHotelId = stayPOST.getHotelId();
+            if (userAccount.getHotelId().equals(requestedHotelId))
+                return true;
+        }
+        return false;
     }
 
     private boolean checkForStayHelper(Authentication authentication, String pin) {
