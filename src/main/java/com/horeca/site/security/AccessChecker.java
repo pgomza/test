@@ -1,8 +1,10 @@
 package com.horeca.site.security;
 
+import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.models.stay.StayPOST;
 import com.horeca.site.models.stay.StayView;
+import com.horeca.site.repositories.GuestRepository;
 import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +27,9 @@ public class AccessChecker {
 
     @Autowired
     private StayService stayService;
+
+    @Autowired
+    private GuestRepository guestRepository;
 
     public boolean checkForHotel(Authentication authentication, HttpServletRequest request) {
         Object principal = authentication.getPrincipal();
@@ -68,6 +74,18 @@ public class AccessChecker {
             UserAccount userAccount = (UserAccount) principal;
             Long requestedHotelId = stayPOST.getHotelId();
             if (userAccount.getHotelId().equals(requestedHotelId))
+                return true;
+        }
+        return false;
+    }
+
+    public boolean checkForGuestFromCollection(Authentication authentication, Guest filterObject) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserAccount) {
+            UserAccount userAccount = (UserAccount) principal;
+            Long filteredGuestId = filterObject.getId();
+            List<Guest> guests = guestRepository.checkIfGuestInHotel(filteredGuestId, userAccount.getHotelId());
+            if (!guests.isEmpty())
                 return true;
         }
         return false;

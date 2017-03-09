@@ -3,6 +3,7 @@ package com.horeca.site.services;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.repositories.GuestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ public class GuestService {
     @Autowired
     private GuestRepository repository;
 
+    @PostFilter("@accessChecker.checkForGuestFromCollection(authentication, filterObject)")
     public Set<Guest> getAll() {
         Set<Guest> guests = new HashSet<>();
         for (Guest guest : repository.findAll()) {
