@@ -16,7 +16,7 @@ public class BreakfastCategory {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "breakfast_category_id")
     private Set<BreakfastItem> items;
 
