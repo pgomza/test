@@ -12,6 +12,7 @@ import com.horeca.site.services.GuestService;
 import com.horeca.site.services.HotelService;
 import com.horeca.site.services.PinGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,13 @@ public class StayService {
     @Autowired
     private GuestService userService;
 
+    // used when the information about a given stay has to be returned
+    // irrespective of the fact whether it's active or not; for 'internal'
+    // use only
+    public Stay getWithoutChecks(String pin) {
+        return stayRepository.findOne(pin);
+    }
+
     public Stay get(String pin) {
         ensureEntityExists(pin);
         ensureStatusNotNew(pin);
@@ -52,6 +60,7 @@ public class StayService {
         return stayRepository.findAll();
     }
 
+    @PostFilter("@accessChecker.checkForStayFromCollection(authentication, filterObject)")
     public Iterable<StayView> getAllViews() {
         Iterable<Stay> stays = getAll();
         List<StayView> views = new ArrayList<>();
@@ -63,7 +72,6 @@ public class StayService {
 
     public Stay update(String pin, Stay stay) {
         ensureEntityExists(pin);
-//        ensureStatusNotNew(pin);
         stay.setPin(pin);
         return stayRepository.save(stay);
     }

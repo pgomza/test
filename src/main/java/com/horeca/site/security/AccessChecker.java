@@ -1,6 +1,7 @@
 package com.horeca.site.security;
 
 import com.horeca.site.models.stay.Stay;
+import com.horeca.site.models.stay.StayView;
 import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,22 +39,29 @@ public class AccessChecker {
         return false;
     }
 
+    public boolean checkForStayFromCollection(Authentication authentication, StayView filterObject) {
+        return checkForStayHelper(authentication, filterObject.getPin());
+    }
+
     public boolean checkForStay(Authentication authentication, HttpServletRequest request) {
-        return checkForStayHelper(authentication, request, stayPinPattern);
+        String servletPath = request.getServletPath();
+        String pin = extractStayPinFromServletPath(servletPath, stayPinPattern);
+        return checkForStayHelper(authentication, pin);
     }
 
     public boolean checkForStayCheckIn(Authentication authentication, HttpServletRequest request) {
-        return checkForStayHelper(authentication, request, checkInPattern);
+        String servletPath = request.getServletPath();
+        String pin = extractStayPinFromServletPath(servletPath, checkInPattern);
+        return checkForStayHelper(authentication, pin);
     }
 
     public boolean checkForStayCheckOut(Authentication authentication, HttpServletRequest request) {
-        return checkForStayHelper(authentication, request, checkOutPattern);
+        String servletPath = request.getServletPath();
+        String pin = extractStayPinFromServletPath(servletPath, checkOutPattern);
+        return checkForStayHelper(authentication, pin);
     }
 
-    private boolean checkForStayHelper(Authentication authentication, HttpServletRequest request, Pattern requestPattern) {
-        String servletPath = request.getServletPath();
-        String pin = extractStayPinFromServletPath(servletPath, requestPattern);
-
+    private boolean checkForStayHelper(Authentication authentication, String pin) {
         if (pin != null) {
             Object principal = authentication.getPrincipal();
 
@@ -64,7 +72,7 @@ public class AccessChecker {
             }
             else if (principal instanceof UserAccount) {
                 UserAccount userAccount = (UserAccount) principal;
-                Stay stay = stayService.get(pin);
+                Stay stay = stayService.getWithoutChecks(pin);
                 Long requestedId = stay.getHotel().getId();
                 if (userAccount.getHotelId().equals(requestedId))
                     return true;
