@@ -13,12 +13,16 @@ public class GuestAccountService {
     @Autowired
     private GuestAccountRepository repository;
 
+    public boolean existsForStay(String pin) {
+        return repository.exists(GuestAccount.USERNAME_PREFIX + pin);
+    }
+
     public GuestAccount save(GuestAccount account) {
         return repository.save(account);
     }
 
-    public void delete(String username) {
-        repository.delete(username);
+    public void deleteForStay(String pin) {
+        repository.delete(GuestAccount.USERNAME_PREFIX + pin);
     }
 
     public void registerGuest(Stay stay) {

@@ -144,7 +144,7 @@ public class StayService {
 
     private void deregisterStay(String pin) {
         try {
-            guestAccountService.delete(GuestAccount.USERNAME_PREFIX + pin);
+            guestAccountService.deleteForStay(GuestAccount.USERNAME_PREFIX + pin);
         }
         catch (UsernameNotFoundException ex) {
             throw new RuntimeException("No corresponding token has been found for this stay in the database");
