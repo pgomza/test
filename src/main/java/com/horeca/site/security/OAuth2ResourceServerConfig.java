@@ -58,6 +58,10 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers("/api/check-out/{pin}")
                 .access("@accessChecker.checkForStayCheckOut(authentication, request)");
 
+        // only authorized users can manage specific hotel guests
+        http.authorizeRequests().antMatchers("/api/guests/{\\d+}/**")
+                .access("@accessChecker.checkForGuest(authentication, request)");
+
         // make sure that the rest of the endpoints is properly secured
         http.authorizeRequests().antMatchers("/api/**").authenticated();
     }

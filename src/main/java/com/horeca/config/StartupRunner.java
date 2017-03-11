@@ -1,9 +1,8 @@
 package com.horeca.config;
 
-import com.horeca.site.security.GuestAccount;
-import com.horeca.site.security.LoginService;
-import com.horeca.site.security.UserAccount;
-import com.horeca.site.security.UserAccountService;
+import com.horeca.site.models.stay.Stay;
+import com.horeca.site.security.*;
+import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -30,10 +29,17 @@ public class StartupRunner {
     @Autowired
     private UserAccountService userAccountService;
 
+    @Autowired
+    private GuestAccountService guestAccountService;
+
+    @Autowired
+    private StayService stayService;
+
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
         addRootUser();
         addRandomAdmins();
+        checkGuestAccountsForStays();
     }
 
     // root user has permission to manage all users
@@ -51,7 +57,7 @@ public class StartupRunner {
     }
 
     private void addRandomAdmins() {
-        String[] admins = new String[] { "admin0", "admin1" };
+        String[] admins = new String[] { "admin0", "admin1", "admin2" };
         for (int i = 0; i < admins.length; i++) {
             if (!loginService.exists(GuestAccount.USERNAME_PREFIX + admins[i])) {
                 List<String> roles = new ArrayList<>(Arrays.asList("ROLE_ADMIN"));
@@ -60,6 +66,14 @@ public class StartupRunner {
                 UserAccount account = new UserAccount(UserAccount.USERNAME_PREFIX + admins[i], new Long(i), hashed_password, roles);
                 userAccountService.save(account);
             }
+        }
+    }
+
+    private void checkGuestAccountsForStays() {
+        Iterable<Stay> stays = stayService.getAll();
+        for (Stay stay : stays) {
+            if (!guestAccountService.existsForStay(stay.getPin()))
+                guestAccountService.registerGuest(stay);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.horeca.site.security;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.horeca.site.models.accounts.UserAccountView;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -121,5 +122,17 @@ public class UserAccount implements UserDetails {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public UserAccountView toView() {
+        UserAccountView view = new UserAccountView();
+        view.setLogin(getUsername().substring(USERNAME_PREFIX.length()));
+        view.setHotelId(getHotelId());
+        view.setRoles(getRoles());
+        view.setAccountNonExpired(isAccountNonExpired());
+        view.setAccountNonLocked(isAccountNonLocked());
+        view.setCredentialsNonExpired(isCredentialsNonExpired());
+        view.setEnabled(isEnabled());
+        return view;
     }
 }
