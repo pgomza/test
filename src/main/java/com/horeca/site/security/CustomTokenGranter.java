@@ -1,6 +1,9 @@
 package com.horeca.site.security;
 
 import com.horeca.site.exceptions.BadAuthorizationRequestException;
+import com.horeca.site.security.models.GuestAccount;
+import com.horeca.site.security.models.UserAccount;
+import com.horeca.site.security.services.LoginService;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

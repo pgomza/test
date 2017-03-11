@@ -5,6 +5,8 @@ import com.horeca.site.models.stay.Stay;
 import com.horeca.site.models.stay.StayPOST;
 import com.horeca.site.models.stay.StayView;
 import com.horeca.site.repositories.GuestRepository;
+import com.horeca.site.security.models.GuestAccount;
+import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

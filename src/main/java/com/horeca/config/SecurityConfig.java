@@ -1,6 +1,6 @@
 package com.horeca.config;
 
-import com.horeca.site.security.LoginService;
+import com.horeca.site.security.services.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

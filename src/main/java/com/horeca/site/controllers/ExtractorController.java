@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(value = "stays")
+@Api(value = "stays", hidden = true)
 @RestController
 @RequestMapping("/api")
 public class ExtractorController {

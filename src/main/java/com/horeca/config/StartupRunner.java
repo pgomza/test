@@ -1,7 +1,11 @@
 package com.horeca.config;
 
 import com.horeca.site.models.stay.Stay;
-import com.horeca.site.security.*;
+import com.horeca.site.security.models.GuestAccount;
+import com.horeca.site.security.models.UserAccount;
+import com.horeca.site.security.services.GuestAccountService;
+import com.horeca.site.security.services.LoginService;
+import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

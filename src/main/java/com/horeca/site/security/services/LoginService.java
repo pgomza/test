@@ -1,4 +1,4 @@
-package com.horeca.site.security;
+package com.horeca.site.security.services;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,4 +1,4 @@
-package com.horeca.site.security;
+package com.horeca.site.security.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.horeca.site.models.accounts.UserAccountView;

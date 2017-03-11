@@ -1,4 +1,4 @@
-package com.horeca.site.security;
+package com.horeca.site.security.models;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
