@@ -23,6 +23,7 @@ public class AccessChecker {
     private final Pattern stayPinPattern = Pattern.compile("/api/stays/([a-z0-9]+)");
     private final Pattern checkInPattern = Pattern.compile("/api/check-in/([a-z0-9]+)");
     private final Pattern checkOutPattern = Pattern.compile("/api/check-out/([a-z0-9]+)");
+    private final Pattern guestIdPattern = Pattern.compile("/api/guests/(\\d+)");
 
     @Autowired
     private StayService stayService;
@@ -31,18 +32,9 @@ public class AccessChecker {
     private GuestRepository guestRepository;
 
     public boolean checkForHotel(Authentication authentication, HttpServletRequest request) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserAccount) {
-            String servletPath = request.getServletPath();
-            Long hotelId = extractHotelIdFromServletPath(servletPath);
-
-            if (hotelId != null) {
-                UserAccount userAccount = (UserAccount) principal;
-                if (hotelId.equals(userAccount.getHotelId()))
-                    return true;
-            }
-        }
-        return false;
+        String servletPath = request.getServletPath();
+        Long hotelId = extractIdFromServletPath(servletPath, hotelIdPattern);
+        return checkForHotelHelper(authentication, hotelId);
     }
 
     public boolean checkForStayFromCollection(Authentication authentication, StayView filterObject) {
@@ -68,31 +60,21 @@ public class AccessChecker {
     }
 
     public boolean checkAddingStay(Authentication authentication, StayPOST stayPOST) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserAccount) {
-            UserAccount userAccount = (UserAccount) principal;
-            Long requestedHotelId = stayPOST.getHotelId();
-            if (userAccount.getHotelId().equals(requestedHotelId))
-                return true;
-        }
-        return false;
+        Long requestedHotelId = stayPOST.getHotelId();
+        Long requestedGuestId = stayPOST.getGuestId();
+        boolean allowedToManageHotel = checkForHotelHelper(authentication, requestedHotelId);
+        boolean allowedToManageGuest = checkForGuestHelper(authentication, requestedGuestId);
+        return (allowedToManageHotel && allowedToManageGuest);
     }
 
     public boolean checkForGuestFromCollection(Authentication authentication, Guest filterObject) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserAccount) {
-            UserAccount userAccount = (UserAccount) principal;
-            Long filteredGuestId = filterObject.getId();
-            boolean guestInTheHotel = guestRepository.checkIfGuestInHotel(filteredGuestId, userAccount.getHotelId());
-            if (guestInTheHotel)
-                return true;
-            else {
-                // maybe the currently filtered guest hasn't been associated with any stay yet?
-                // if so, they should be available too
-                return !guestRepository.checkIfGuestInAnyStay(filteredGuestId);
-            }
-        }
-        return false;
+        return checkForGuestHelper(authentication, filterObject.getId());
+    }
+
+    public boolean checkForGuest(Authentication authentication, HttpServletRequest request) {
+        String servletPath = request.getServletPath();
+        Long hotelId = extractIdFromServletPath(servletPath, guestIdPattern);
+        return checkForGuestHelper(authentication, hotelId);
     }
 
     private boolean checkForStayHelper(Authentication authentication, String pin) {
@@ -115,15 +97,43 @@ public class AccessChecker {
         return false;
     }
 
-    private Long extractHotelIdFromServletPath(String servletPath) {
-        Matcher matcher = hotelIdPattern.matcher(servletPath);
+    private boolean checkForGuestHelper(Authentication authentication, Long guestId) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserAccount) {
+            UserAccount userAccount = (UserAccount) principal;
+            boolean guestInTheHotel = guestRepository.checkIfGuestInHotel(guestId, userAccount.getHotelId());
+            if (guestInTheHotel)
+                return true;
+            else {
+                // maybe the currently filtered guest hasn't been associated with any stay yet?
+                // if so, they should be available too
+                return !guestRepository.checkIfGuestInAnyStay(guestId);
+            }
+        }
+        return false;
+    }
+
+    private boolean checkForHotelHelper(Authentication authentication, Long hotelId) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserAccount) {
+            if (hotelId != null) {
+                UserAccount userAccount = (UserAccount) principal;
+                if (hotelId.equals(userAccount.getHotelId()))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private Long extractIdFromServletPath(String servletPath, Pattern pattern) {
+        Matcher matcher = pattern.matcher(servletPath);
         Long result = null;
         if (matcher.find() && matcher.groupCount() == 1) {
             try {
                 result = Long.valueOf(matcher.group(1));
             }
             catch (NumberFormatException ex) {
-                logger.warn("Could not find a hotel id in the request path " + servletPath);
+                logger.warn("Could not extract an id from the request path: " + servletPath);
                 throw ex;
             }
         }
@@ -138,7 +148,7 @@ public class AccessChecker {
                 result = matcher.group(1);
             }
             catch (NumberFormatException ex) {
-                logger.warn("Could not find a stay pin in the request path " + servletPath);
+                logger.warn("Could not extract a stay pin from the request path: " + servletPath);
                 throw ex;
             }
         }
