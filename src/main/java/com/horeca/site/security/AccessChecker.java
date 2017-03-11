@@ -12,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -84,9 +83,14 @@ public class AccessChecker {
         if (principal instanceof UserAccount) {
             UserAccount userAccount = (UserAccount) principal;
             Long filteredGuestId = filterObject.getId();
-            List<Guest> guests = guestRepository.checkIfGuestInHotel(filteredGuestId, userAccount.getHotelId());
-            if (!guests.isEmpty())
+            boolean guestInTheHotel = guestRepository.checkIfGuestInHotel(filteredGuestId, userAccount.getHotelId());
+            if (guestInTheHotel)
                 return true;
+            else {
+                // maybe the currently filtered guest hasn't been associated with any stay yet?
+                // if so, they should be available too
+                return !guestRepository.checkIfGuestInAnyStay(filteredGuestId);
+            }
         }
         return false;
     }
