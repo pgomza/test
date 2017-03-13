@@ -1,7 +1,7 @@
 package com.horeca.site.models.hotel.roomdirectory;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 public class RoomDirectory {
@@ -11,8 +11,9 @@ public class RoomDirectory {
     private Long id;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn
-    private Set<Section> sections;
+    @JoinColumn(name = "room_directory_id")
+    @OrderColumn(name = "sections_order")
+    private List<Section> sections;
 
     public Long getId() {
         return id;
@@ -22,11 +23,11 @@ public class RoomDirectory {
         this.id = id;
     }
 
-    public Set<Section> getSections() {
+    public List<Section> getSections() {
         return sections;
     }
 
-    public void setSections(Set<Section> sections) {
+    public void setSections(List<Section> sections) {
         this.sections = sections;
     }
 }
