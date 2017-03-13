@@ -99,19 +99,7 @@ public class HotelService {
             return Collections.emptyList();
 
         String lowercaseCity = StringUtils.lowerCase(city);
-        List<Hotel> candidates = repository.getByCity(lowercaseCity);
-        List<Hotel> found = new ArrayList<>();
-        for (Hotel hotel : candidates) {
-            // assume that the city is the penultimate element in the 'address' field
-            // each element is separated by a comma
-            String address = hotel.getAddress();
-            String elements[] = address.split(",");
-            String extractedCity = elements[elements.length - 2].trim();
-            String extractedCityLowercase = StringUtils.lowerCase(extractedCity);
-
-            if (lowercaseCity.equals(extractedCityLowercase))
-                found.add(hotel);
-        }
+        List<Hotel> found = repository.getByCity(lowercaseCity);
         return found;
     }
 
