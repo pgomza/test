@@ -29,6 +29,7 @@ public class HotelView {
 	private String chain;
 	private Double longitude;
 	private Double latitude;
+	private Boolean throdiPartner;
 	private UsefulInformation usefulInformation;
 	private RoomDirectory roomDirectory;
 	private List<AvailableServiceViewSimplified> services;
@@ -168,6 +169,14 @@ public class HotelView {
 
 	public void setLatitude(Double latitude) {
 		this.latitude = latitude;
+	}
+
+	public Boolean getThrodiPartner() {
+		return throdiPartner;
+	}
+
+	public void setThrodiPartner(Boolean throdiPartner) {
+		this.throdiPartner = throdiPartner;
 	}
 
 	public UsefulInformation getUsefulInformation() {

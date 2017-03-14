@@ -57,6 +57,8 @@ public class Hotel {
 
 	private Double latitude;
 
+	private Boolean throdiPartner;
+
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn
 	private UsefulInformation usefulInformation;
@@ -213,6 +215,14 @@ public class Hotel {
 		return latitude;
 	}
 
+	public Boolean getThrodiPartner() {
+		return throdiPartner;
+	}
+
+	public void setThrodiPartner(Boolean throdiPartner) {
+		this.throdiPartner = throdiPartner;
+	}
+
 	public UsefulInformation getUsefulInformation() {
 		return usefulInformation;
 	}
@@ -264,6 +274,7 @@ public class Hotel {
 		hotelView.setChain(getChain());
 		hotelView.setLongitude(getLongitude());
 		hotelView.setLatitude(getLatitude());
+		hotelView.setThrodiPartner(getThrodiPartner());
 		hotelView.setUsefulInformation(getUsefulInformation());
 		hotelView.setRoomDirectory(getRoomDirectory());
 
