@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -83,6 +84,7 @@ public class HotelService {
 
     /*
         filtering hotels
+        // TODO refactor the filtering methods because as of now they're doing pretty much the same thing
      */
 
     private List<Hotel> filterByName(String name) {
@@ -91,6 +93,7 @@ public class HotelService {
 
         String lowercaseName = StringUtils.lowerCase(name);
         List<Hotel> found = repository.getByName(lowercaseName);
+        Collections.sort(found, new HotelComparator());
         return found;
     }
 
@@ -100,6 +103,7 @@ public class HotelService {
 
         String lowercaseCity = StringUtils.lowerCase(city);
         List<Hotel> found = repository.getByCity(lowercaseCity);
+        Collections.sort(found, new HotelComparator());
         return found;
     }
 
@@ -111,6 +115,7 @@ public class HotelService {
         List<Hotel> byName = filterByName(name);
         List<Hotel> byCity = filterByCity(city);
         byName.retainAll(byCity);
+        Collections.sort(byName, new HotelComparator());
 
         return byName;
     }
@@ -191,6 +196,24 @@ public class HotelService {
 
     private static <T> Page<T> getEmptyPage(Pageable pageable) {
         return new PageImpl<>(new ArrayList<T>(), pageable, 0L);
+    }
+
+    private static class HotelComparator implements Comparator<Hotel> {
+        @Override
+        public int compare(Hotel hotel1, Hotel hotel2) {
+            if (hotel1.getIsThrodiPartner() && (!hotel2.getIsThrodiPartner()))
+                return -1;
+            else if ((!hotel1.getIsThrodiPartner()) && hotel2.getIsThrodiPartner())
+                return 1;
+            else { // simply sort by id
+                if (hotel1.getId() < hotel2.getId())
+                    return -1;
+                else if (hotel1.getId() > hotel2.getId())
+                    return 1;
+                else
+                    return 0;
+            }
+        }
     }
 
     /*
