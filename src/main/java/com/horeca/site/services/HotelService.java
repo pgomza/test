@@ -82,6 +82,12 @@ public class HotelService {
         repository.delete(toDelete);
     }
 
+    public void ensureExists(Long hotelId) {
+        boolean exists = repository.exists(hotelId);
+        if (!exists)
+            throw new ResourceNotFoundException("Could not find a hotel with such an id");
+    }
+
     /*
         filtering hotels
         // TODO refactor the filtering methods because as of now they're doing pretty much the same thing

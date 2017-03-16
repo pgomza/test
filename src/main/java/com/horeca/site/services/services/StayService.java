@@ -37,7 +37,7 @@ public class StayService {
     private HotelService hotelService;
 
     @Autowired
-    private GuestService userService;
+    private GuestService guestService;
 
     // used when the information about a given stay has to be returned
     // irrespective of the fact whether it's active or not; for 'internal'
@@ -120,7 +120,7 @@ public class StayService {
         stay.setToDate(stayPOST.getToDate());
 
         Hotel hotel = hotelService.get(stayPOST.getHotelId());
-        Guest guest = userService.get(stayPOST.getGuestId());
+        Guest guest = guestService.get(stayPOST.getHotelId(), stayPOST.getGuestId());
 
         if (hotel == null || guest == null)
             throw new ResourceNotFoundException();

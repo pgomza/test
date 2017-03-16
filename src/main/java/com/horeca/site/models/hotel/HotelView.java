@@ -1,6 +1,8 @@
 package com.horeca.site.models.hotel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
@@ -34,6 +36,9 @@ public class HotelView {
 	private RoomDirectory roomDirectory;
 	private List<AvailableServiceViewSimplified> services;
 	private Set<FileLink> images;
+
+	@JsonIgnore
+	private Set<Guest> guests;
 
 	public Long getId() {
 		return id;
@@ -209,5 +214,13 @@ public class HotelView {
 
 	public void setImages(Set<FileLink> images) {
 		this.images = images;
+	}
+
+	public Set<Guest> getGuests() {
+		return guests;
+	}
+
+	public void setGuests(Set<Guest> guests) {
+		this.guests = guests;
 	}
 }
