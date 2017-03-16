@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -35,8 +36,17 @@ public class GuestService {
     }
 
     public Guest save(Long hotelId, Guest entity) {
-        hotelService.ensureExists(hotelId);
-        return repository.save(entity);
+        Hotel hotel = hotelService.get(hotelId);
+        Guest saved = repository.save(entity);
+        Set<Guest> currentGuests = hotel.getGuests();
+        if (currentGuests == null) {
+            currentGuests = new HashSet<>();
+        }
+        if (!currentGuests.contains(saved)) {
+            currentGuests.add(saved);
+            hotelService.update(hotelId, hotel);
+        }
+        return saved;
     }
 
     public void delete(Long hotelId, Long id) {
