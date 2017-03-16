@@ -71,10 +71,13 @@ public class HotelService {
     }
 
     public Hotel update(Long id, Hotel newOne) {
-        newOne.setId(id);
-        Hotel changed = repository.save(newOne);
+        newOne.setId(id); // TODO this should have been set by the time this method is invoked
+        Hotel current = get(id);
+        // don't let this update overwrite info about the guests - ignore whatever has been set in newOne as 'guests'
+        // there's a different endpoint specifically intended for managing the guests
+        newOne.setGuests(current.getGuests());
 
-        return changed;
+        return repository.save(newOne);
     }
 
     public void delete(Long id) {
