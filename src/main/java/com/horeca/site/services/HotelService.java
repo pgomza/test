@@ -71,15 +71,28 @@ public class HotelService {
     }
 
     public Hotel update(Long id, Hotel newOne) {
-        newOne.setId(id);
-        Hotel changed = repository.save(newOne);
+        newOne.setId(id); // TODO this should have been set by the time this method is invoked
+        return repository.save(newOne);
+    }
 
-        return changed;
+    public Hotel updateIgnoreGuests(Long id, Hotel newOne) {
+        Hotel current = get(id);
+        // don't let this update overwrite info about the guests - ignore whatever has been set in newOne as 'guests'
+        // there's a different endpoint specifically intended for managing the guests
+        newOne.setGuests(current.getGuests());
+
+        return update(id, newOne);
     }
 
     public void delete(Long id) {
         Hotel toDelete = get(id);
         repository.delete(toDelete);
+    }
+
+    public void ensureExists(Long hotelId) {
+        boolean exists = repository.exists(hotelId);
+        if (!exists)
+            throw new ResourceNotFoundException("Could not find a hotel with such an id");
     }
 
     /*

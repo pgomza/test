@@ -1,13 +1,13 @@
 package com.horeca.site.services;
 
+import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.guest.Guest;
+import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.repositories.GuestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,24 +18,39 @@ public class GuestService {
     @Autowired
     private GuestRepository repository;
 
-    @PostFilter("@accessChecker.checkForGuestFromCollection(authentication, filterObject)")
-    public Set<Guest> getAll() {
-        Set<Guest> guests = new HashSet<>();
-        for (Guest guest : repository.findAll()) {
-            guests.add(guest);
+    @Autowired
+    private HotelService hotelService;
+
+    public Set<Guest> getAll(Long hotelId) {
+        Hotel hotel = hotelService.get(hotelId);
+        return hotel.getGuests();
+    }
+
+    public Guest get(Long hotelId, Long id) {
+        hotelService.ensureExists(hotelId);
+        Guest guest = repository.findOne(id);
+        if (guest != null)
+            return guest;
+        else
+            throw new ResourceNotFoundException("Could not find a guest with such an id");
+    }
+
+    public Guest save(Long hotelId, Guest entity) {
+        Hotel hotel = hotelService.get(hotelId);
+        Guest saved = repository.save(entity);
+        Set<Guest> currentGuests = hotel.getGuests();
+        if (currentGuests == null) {
+            currentGuests = new HashSet<>();
         }
-        return guests;
+        if (!currentGuests.contains(saved)) {
+            currentGuests.add(saved);
+            hotelService.update(hotelId, hotel);
+        }
+        return saved;
     }
 
-    public Guest get(Long id) {
-        return repository.findOne(id);
-    }
-
-    public Guest save(@Valid Guest entity) {
-        return repository.save(entity);
-    }
-
-    public void delete(Long id) {
+    public void delete(Long hotelId, Long id) {
+        hotelService.ensureExists(hotelId);
         repository.delete(id);
     }
 }

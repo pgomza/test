@@ -9,35 +9,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/guests")
+@RequestMapping("/api/hotels")
 public class GuestController {
 
     @Autowired
     private GuestService service;
 
-    @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<Guest> getAll() {
-        return service.getAll();
+    @RequestMapping(value = "/{hotelId}/guests", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Set<Guest> getAll(@PathVariable("hotelId") Long hotelId) {
+        return service.getAll(hotelId);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Guest get(@PathVariable("id") Long id) {
-        return service.get(id);
+    @RequestMapping(value = "/{hotelId}/guests/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Guest get(@PathVariable("hotelId") Long hotelId, @PathVariable("id") Long id) {
+        return service.get(hotelId, id);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Guest add(@RequestBody Guest guest) {
-        return service.save(guest);
+    @RequestMapping(value = "/{hotelId}/guests", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Guest add(@PathVariable("hotelId") Long hotelId, @RequestBody Guest guest) {
+        return service.save(hotelId, guest);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Guest update(@PathVariable("id") Long id, @RequestBody Guest guest) {
+    @RequestMapping(value = "/{hotelId}/guests/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Guest update(@PathVariable("hotelId") Long hotelId, @PathVariable("id") Long id, @RequestBody Guest guest) {
         guest.setId(id);
-        return service.save(guest);
+        return service.save(hotelId, guest);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@PathVariable("id") Long id) {
-        service.delete(id);
+    @RequestMapping(value = "/{hotelId}/guests/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@PathVariable("hotelId") Long hotelId, @PathVariable("id") Long id) {
+        service.delete(hotelId, id);
     }
 }

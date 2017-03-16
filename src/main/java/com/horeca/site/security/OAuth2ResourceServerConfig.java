@@ -43,7 +43,10 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // allow anybody to get info about any of the hotels
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels*/**").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/services/**").permitAll();
+
 
         // users (and only them) can access the hotel that they're associated with
         http.authorizeRequests().antMatchers("/api/hotels/{\\d+}/**")

@@ -1,6 +1,8 @@
 package com.horeca.site.models.hotel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
@@ -78,6 +80,11 @@ public class Hotel {
 			inverseJoinColumns = @JoinColumn(name = "FileLink_id")
 	)
 	private Set<FileLink> images;
+
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "Hotel_id")
+	private Set<Guest> guests;
 
 	public Long getId() {
 		return id;
@@ -255,6 +262,14 @@ public class Hotel {
 		this.images = images;
 	}
 
+	public Set<Guest> getGuests() {
+		return guests;
+	}
+
+	public void setGuests(Set<Guest> guests) {
+		this.guests = guests;
+	}
+
 	public HotelView toView() {
 		HotelView hotelView = new HotelView();
 		hotelView.setId(getId());
@@ -277,6 +292,7 @@ public class Hotel {
 		hotelView.setIsThrodiPartner(getIsThrodiPartner());
 		hotelView.setUsefulInformation(getUsefulInformation());
 		hotelView.setRoomDirectory(getRoomDirectory());
+		hotelView.setGuests(getGuests());
 
 		AvailableServices availableServices = getAvailableServices();
 
