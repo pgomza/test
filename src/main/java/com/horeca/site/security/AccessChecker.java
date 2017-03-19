@@ -40,7 +40,7 @@ public class AccessChecker {
     }
 
     public boolean checkForStayFromCollection(Authentication authentication, Stay filterObject) {
-        return checkForStayHelper(authentication, filterObject.getPin());
+        return checkForStayHelper(authentication, filterObject);
     }
 
     public boolean checkForStay(Authentication authentication, HttpServletRequest request) {
@@ -70,22 +70,25 @@ public class AccessChecker {
     }
 
     private boolean checkForStayHelper(Authentication authentication, String pin) {
-        if (pin != null) {
-            Object principal = authentication.getPrincipal();
+        Stay stay = stayService.getWithoutChecks(pin);
+        return checkForStayHelper(authentication, stay);
+    }
 
-            if (principal instanceof GuestAccount) {
-                GuestAccount guestAccount = (GuestAccount) principal;
-                if (pin.equals(guestAccount.getPin()))
-                    return true;
-            }
-            else if (principal instanceof UserAccount) {
-                UserAccount userAccount = (UserAccount) principal;
-                Stay stay = stayService.getWithoutChecks(pin);
-                Long requestedId = stay.getHotel().getId();
-                if (userAccount.getHotelId().equals(requestedId))
-                    return true;
-            }
+    private boolean checkForStayHelper(Authentication authentication, Stay stay) {
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof GuestAccount) {
+            GuestAccount guestAccount = (GuestAccount) principal;
+            if (stay.getPin().equals(guestAccount.getPin()))
+                return true;
         }
+        else if (principal instanceof UserAccount) {
+            UserAccount userAccount = (UserAccount) principal;
+            Long requestedId = stay.getHotel().getId();
+            if (userAccount.getHotelId().equals(requestedId))
+                return true;
+        }
+
         return false;
     }
 
