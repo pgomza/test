@@ -1,12 +1,12 @@
 package com.horeca.config;
 
 import com.horeca.site.models.stay.Stay;
+import com.horeca.site.repositories.services.StayRepository;
 import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.GuestAccountService;
 import com.horeca.site.security.services.LoginService;
 import com.horeca.site.security.services.UserAccountService;
-import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -37,7 +37,7 @@ public class StartupRunner {
     private GuestAccountService guestAccountService;
 
     @Autowired
-    private StayService stayService;
+    private StayRepository stayRepository;
 
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
@@ -74,7 +74,7 @@ public class StartupRunner {
     }
 
     private void checkGuestAccountsForStays() {
-        Iterable<Stay> stays = stayService.getAll();
+        Iterable<Stay> stays = stayRepository.findAll();
         for (Stay stay : stays) {
             if (!guestAccountService.existsForStay(stay.getPin()))
                 guestAccountService.registerGuest(stay);

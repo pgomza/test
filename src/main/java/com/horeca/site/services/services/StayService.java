@@ -4,7 +4,10 @@ import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
-import com.horeca.site.models.stay.*;
+import com.horeca.site.models.stay.Stay;
+import com.horeca.site.models.stay.StayPOST;
+import com.horeca.site.models.stay.StayStatus;
+import com.horeca.site.models.stay.StayStatusUPDATE;
 import com.horeca.site.repositories.services.StayRepository;
 import com.horeca.site.security.services.GuestAccountService;
 import com.horeca.site.services.GuestService;
@@ -16,9 +19,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Transactional
@@ -52,22 +52,9 @@ public class StayService {
         return stayRepository.findOne(pin);
     }
 
-    public StayView getView(String pin) {
-        return get(pin).toView();
-    }
-
+    @PostFilter("@accessChecker.checkForStayFromCollection(authentication, filterObject)")
     public Iterable<Stay> getAll() {
         return stayRepository.findAll();
-    }
-
-    @PostFilter("@accessChecker.checkForStayFromCollection(authentication, filterObject)")
-    public Iterable<StayView> getAllViews() {
-        Iterable<Stay> stays = getAll();
-        List<StayView> views = new ArrayList<>();
-        for (Stay stay : stays) {
-            views.add(stay.toView());
-        }
-        return views;
     }
 
     public Stay update(String pin, Stay stay) {
@@ -93,14 +80,13 @@ public class StayService {
         stayRepository.deleteAll();
     }
 
-    public StayView checkIn(String pin) {
+    public Stay checkIn(String pin) {
         ensureEntityExists(pin);
         ensureStatusNotFinished(pin);
         Stay stay = stayRepository.findOne(pin);
         stay.setStatus(StayStatus.ACTIVE);
 
-        Stay savedStay = stayRepository.save(stay);
-        return savedStay.toView();
+        return stayRepository.save(stay);
     }
 
     public void checkOut(String pin) {

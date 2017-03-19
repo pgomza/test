@@ -101,19 +101,4 @@ public class Stay {
     public void setGuest(Guest guest) {
         this.guest = guest;
     }
-
-    public StayView toView() {
-        StayView view = new StayView();
-
-        view.setPin(getPin());
-        view.setFromDate(getFromDate());
-        view.setToDate(getToDate());
-        view.setRoomNumber(getRoomNumber());
-        view.setStatus(getStatus());
-        view.setOrders(getOrders());
-        view.setHotel(getHotel().toView());
-        view.setGuest(getGuest());
-
-        return view;
-    }
 }

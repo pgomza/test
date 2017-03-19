@@ -4,7 +4,6 @@ import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.models.stay.StayPOST;
-import com.horeca.site.models.stay.StayView;
 import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.services.HotelService;
@@ -40,7 +39,7 @@ public class AccessChecker {
         return checkForHotelHelper(authentication, hotelId);
     }
 
-    public boolean checkForStayFromCollection(Authentication authentication, StayView filterObject) {
+    public boolean checkForStayFromCollection(Authentication authentication, Stay filterObject) {
         return checkForStayHelper(authentication, filterObject.getPin());
     }
 
