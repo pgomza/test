@@ -3,6 +3,7 @@ package com.horeca.site.controllers;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.models.stay.StayPOST;
 import com.horeca.site.models.stay.StayStatusUPDATE;
+import com.horeca.site.models.stay.StayView;
 import com.horeca.site.services.services.StayService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ public class StayController {
     private StayService stayService;
 
     @RequestMapping(value = "/stays", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Iterable<Stay> getAll() {
-        return stayService.getAll();
+    public Iterable<StayView> getAll() {
+        return stayService.getAllViews();
     }
 
     @RequestMapping(value = "/stays", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -30,8 +31,8 @@ public class StayController {
     }
 
     @RequestMapping(value = "/stays/{pin}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Stay get(@PathVariable String pin) {
-        return stayService.get(pin);
+    public StayView get(@PathVariable String pin) {
+        return stayService.getView(pin);
     }
 
     @RequestMapping(value = "/stays/{pin}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,7 +56,7 @@ public class StayController {
     }
 
     @RequestMapping(value = "/check-in/{pin}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Stay checkIn(@PathVariable String pin) {
+    public StayView checkIn(@PathVariable String pin) {
         return stayService.checkIn(pin);
     }
 

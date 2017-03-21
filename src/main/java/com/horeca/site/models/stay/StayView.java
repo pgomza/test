@@ -1,41 +1,18 @@
 package com.horeca.site.models.stay;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.guest.Guest;
-import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.orders.Orders;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+public class StayView {
 
-@Entity
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-public class Stay {
-
-    @Id
     private String pin;
-
-    private String fromDate; //TODO change the type
-
-    private String toDate; //TODO change the type
-
-    @NotNull
+    private String fromDate;
+    private String toDate;
     private String roomNumber;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private StayStatus status = StayStatus.NEW;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn
-    private Orders orders = new Orders();
-
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn
-    private Hotel hotel;
-
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn
+    private StayStatus status;
+    private Orders orders;
+    private HotelView hotel;
     private Guest guest;
 
     public String getPin() {
@@ -86,11 +63,11 @@ public class Stay {
         this.orders = orders;
     }
 
-    public Hotel getHotel() {
+    public HotelView getHotel() {
         return hotel;
     }
 
-    public void setHotel(Hotel hotel) {
+    public void setHotel(HotelView hotel) {
         this.hotel = hotel;
     }
 
@@ -100,20 +77,5 @@ public class Stay {
 
     public void setGuest(Guest guest) {
         this.guest = guest;
-    }
-
-    public StayView toView() {
-        StayView view = new StayView();
-
-        view.setPin(getPin());
-        view.setFromDate(getFromDate());
-        view.setToDate(getToDate());
-        view.setRoomNumber(getRoomNumber());
-        view.setStatus(getStatus());
-        view.setOrders(getOrders());
-        view.setHotel(getHotel().toView());
-        view.setGuest(getGuest());
-
-        return view;
     }
 }

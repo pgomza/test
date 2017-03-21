@@ -4,6 +4,7 @@ import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.models.stay.StayPOST;
+import com.horeca.site.models.stay.StayView;
 import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.services.HotelService;
@@ -39,7 +40,7 @@ public class AccessChecker {
         return checkForHotelHelper(authentication, hotelId);
     }
 
-    public boolean checkForStayFromCollection(Authentication authentication, Stay filterObject) {
+    public boolean checkForStayFromCollection(Authentication authentication, StayView filterObject) {
         return checkForStayHelper(authentication, filterObject);
     }
 
@@ -71,10 +72,11 @@ public class AccessChecker {
 
     private boolean checkForStayHelper(Authentication authentication, String pin) {
         Stay stay = stayService.getWithoutChecks(pin);
-        return checkForStayHelper(authentication, stay);
+        StayView stayView = stay.toView();
+        return checkForStayHelper(authentication, stayView);
     }
 
-    private boolean checkForStayHelper(Authentication authentication, Stay stay) {
+    private boolean checkForStayHelper(Authentication authentication, StayView stay) {
         Object principal = authentication.getPrincipal();
 
         if (principal instanceof GuestAccount) {
