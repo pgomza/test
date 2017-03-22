@@ -4,24 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.horeca.site.models.accounts.UserAccountView;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Entity
-public class UserAccount implements UserDetails {
+public class UserAccount extends AbstractAccount {
 
     public static final String USERNAME_PREFIX = "USER_";
-
-    @Id
-    private String username;
 
     private Long hotelId;
 
@@ -31,35 +23,27 @@ public class UserAccount implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
-    private boolean accountNonExpired = true;
-
-    private boolean accountNonLocked = true;
-
-    private boolean credentialsNonExpired = true;
-
-    private boolean enabled = true;
-
-    public UserAccount() {
+    UserAccount() {
     }
 
-    public UserAccount(String username, Long hotelId, String password, List<String> roles) {
-        this.username = username;
-        this.hotelId = hotelId;
+    public UserAccount(String username, String password, Long hotelId) {
+        super(username);
         this.password = password;
-        this.roles = roles;
+        this.hotelId = hotelId;
+        ensureRolesContainDefaultRole();
     }
 
-    public Long getHotelId() {
-        return hotelId;
+    public UserAccount(String username, String password, Long hotelId, List<String> roles) {
+        super(username);
+        this.password = password;
+        this.hotelId = hotelId;
+        this.roles = roles;
+        ensureRolesContainDefaultRole();
     }
 
     @Override
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public String getUsernamePrefix() {
+        return USERNAME_PREFIX;
     }
 
     @Override
@@ -71,12 +55,26 @@ public class UserAccount implements UserDetails {
         this.password = password;
     }
 
+    @Override
+    public String getDefaultRole() {
+        return "ROLE_USER";
+    }
+
+    public Long getHotelId() {
+        return hotelId;
+    }
+
+    public void setHotelId(Long hotelId) {
+        this.hotelId = hotelId;
+    }
+
     public List<String> getRoles() {
         return roles;
     }
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+        ensureRolesContainDefaultRole();
     }
 
     @Override
@@ -88,45 +86,16 @@ public class UserAccount implements UserDetails {
         return Collections.unmodifiableCollection(authorities);
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return accountNonExpired;
-    }
-
-    public void setAccountNonExpired(boolean accountNonExpired) {
-        this.accountNonExpired = accountNonExpired;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return accountNonLocked;
-    }
-
-    public void setAccountNonLocked(boolean accountNonLocked) {
-        this.accountNonLocked = accountNonLocked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return credentialsNonExpired;
-    }
-
-    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-        this.credentialsNonExpired = credentialsNonExpired;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    private void ensureRolesContainDefaultRole() {
+        if (this.roles == null)
+            this.roles = new ArrayList<>(Arrays.asList(getDefaultRole()));
+        else if (!this.roles.contains(getDefaultRole()))
+            this.roles.add(getDefaultRole());
     }
 
     public UserAccountView toView() {
         UserAccountView view = new UserAccountView();
-        view.setLogin(getUsername().substring(USERNAME_PREFIX.length()));
+        view.setLogin(getUsername().substring(getUsernamePrefix().length()));
         view.setHotelId(getHotelId());
         view.setRoles(getRoles());
         view.setAccountNonExpired(isAccountNonExpired());

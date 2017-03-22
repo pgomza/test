@@ -51,11 +51,11 @@ public class StartupRunner {
     // getting information about any stay)
     private void addRootUser() {
         String hardcodedUsername = "root";
-        if (!loginService.exists(GuestAccount.USERNAME_PREFIX + hardcodedUsername)) {
+        if (!loginService.exists(UserAccount.USERNAME_PREFIX + hardcodedUsername)) {
             List<String> roles = new ArrayList<>(Arrays.asList("ROLE_ROOT"));
             String salt = BCrypt.gensalt(12);
             String hashed_password = BCrypt.hashpw("throdi", salt);
-            UserAccount account = new UserAccount(UserAccount.USERNAME_PREFIX + hardcodedUsername, null, hashed_password, roles);
+            UserAccount account = new UserAccount(hardcodedUsername, hashed_password, -1L, roles);
             userAccountService.save(account);
         }
     }
@@ -67,7 +67,7 @@ public class StartupRunner {
                 List<String> roles = new ArrayList<>(Arrays.asList("ROLE_ADMIN"));
                 String salt = BCrypt.gensalt(12);
                 String hashed_password = BCrypt.hashpw("throdi" + i, salt);
-                UserAccount account = new UserAccount(UserAccount.USERNAME_PREFIX + admins[i], new Long(i), hashed_password, roles);
+                UserAccount account = new UserAccount(UserAccount.USERNAME_PREFIX + admins[i], hashed_password, new Long(i), roles);
                 userAccountService.save(account);
             }
         }
