@@ -1,7 +1,6 @@
 package com.horeca.config;
 
 import com.horeca.site.models.stay.Stay;
-import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.GuestAccountService;
 import com.horeca.site.security.services.LoginService;
@@ -31,25 +30,25 @@ public class StartupRunner {
     private LoginService loginService;
 
     @Autowired
+    private StayService stayService;
+
+    @Autowired
     private UserAccountService userAccountService;
 
     @Autowired
     private GuestAccountService guestAccountService;
 
-    @Autowired
-    private StayService stayService;
-
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
-        addRandomAdmins();
+        addDefaultAdmins();
         checkGuestAccountsForStays();
     }
 
-    private void addRandomAdmins() {
-        String[] admins = new String[] { "admin0", "admin1", "admin2" };
+    private void addDefaultAdmins() {
+        String[] admins = new String[] { "admin1", "admin2" };
         for (int i = 0; i < admins.length; i++) {
-            if (!loginService.exists(GuestAccount.USERNAME_PREFIX + admins[i])) {
-                List<String> roles = new ArrayList<>(Arrays.asList("ROLE_ADMIN"));
+            if (!loginService.exists(UserAccount.USERNAME_PREFIX + admins[i])) {
+                List<String> roles = new ArrayList<>(Arrays.asList(UserAccount.DEFAULT_ROLE));
                 String salt = BCrypt.gensalt(12);
                 String hashed_password = BCrypt.hashpw("throdi" + i, salt);
                 UserAccount account = new UserAccount(UserAccount.USERNAME_PREFIX + admins[i], hashed_password, new Long(i), roles);
