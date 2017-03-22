@@ -21,15 +21,24 @@ import javax.sql.DataSource;
 @EnableAuthorizationServer
 public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    private final static String mobileClientId = "throdiMobile";
+    /*
+        TODO move these properties to a different structure e.g. to a different class
+        with the help of the ConfigurationProperties annotation
+     */
+    public final static String MOBILE_CLIENT_ID = "throdiMobile";
     @Value("${oauth2.mobile.secret}")
     private String mobileSecret;
-    private final static Integer mobileTokenValiditySeconds = 900; // 15 minutes
+    private final static Integer MOBILE_TOKEN_VALIDITY_SECONDS = 900; // 15 minutes
 
-    private final static String panelClientId = "throdiPanel";
+    public final static String PANEL_CLIENT_ID = "throdiPanel";
     @Value("${oauth2.panel.secret}")
     private String panelSecret;
-    private final static Integer panelTokenValiditySeconds = 2678400; // 31 days
+    private final static Integer PANEL_TOKEN_VALIDITY_SECONDS = 2678400; // 31 days
+
+    public final static String SALES_CLIENT_ID = "throdiSales";
+    @Value("${oauth2.sales.secret}")
+    private String salesSecret;
+    private final static Integer SALES_TOKEN_VALIDITY_SECONDS = 3600; // 1 hour
 
     @Autowired
     private LoginService loginService;
@@ -53,19 +62,26 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients
                 .inMemory()
-                    .withClient(mobileClientId)
+                    .withClient(MOBILE_CLIENT_ID)
                     .secret(mobileSecret)
                     .authorizedGrantTypes("password-like")
                     .scopes("read", "write")
                     .resourceIds("throdiResources")
-                    .accessTokenValiditySeconds(mobileTokenValiditySeconds)
+                    .accessTokenValiditySeconds(MOBILE_TOKEN_VALIDITY_SECONDS)
                 .and()
-                    .withClient(panelClientId)
+                    .withClient(PANEL_CLIENT_ID)
                     .secret(panelSecret)
                     .authorizedGrantTypes("password-like")
                     .scopes("read", "write")
                     .resourceIds("throdiResources")
-                    .accessTokenValiditySeconds(panelTokenValiditySeconds);
+                    .accessTokenValiditySeconds(PANEL_TOKEN_VALIDITY_SECONDS)
+                .and()
+                    .withClient(SALES_CLIENT_ID)
+                    .secret(salesSecret)
+                    .authorizedGrantTypes("password-like")
+                    .scopes("read", "write")
+                    .resourceIds("throdiResources")
+                    .accessTokenValiditySeconds(SALES_TOKEN_VALIDITY_SECONDS);
     }
 
     @Bean
