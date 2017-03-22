@@ -34,7 +34,7 @@ public class SalesmanAccount implements UserDetails {
 
     private boolean enabled = true;
 
-    public SalesmanAccount() {
+    SalesmanAccount() {
     }
 
     public SalesmanAccount(String username, String password, List<String> roles) {

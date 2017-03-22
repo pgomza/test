@@ -7,7 +7,7 @@ public class GuestAccount extends AbstractAccount {
 
     public static final String USERNAME_PREFIX = "PIN_";
 
-    public GuestAccount() {
+    GuestAccount() {
     }
 
     public GuestAccount(String username) {
