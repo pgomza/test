@@ -48,12 +48,14 @@ public abstract class AbstractAccount implements UserDetails {
 
     public abstract String getPassword();
 
-    public abstract String getDefaultRole();
+    public abstract Collection<String> getRoles();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(getDefaultRole()));
+        for (String role : getRoles()) {
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
         return Collections.unmodifiableCollection(authorities);
     }
 

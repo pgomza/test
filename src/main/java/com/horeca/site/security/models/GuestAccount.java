@@ -1,11 +1,14 @@
 package com.horeca.site.security.models;
 
 import javax.persistence.Entity;
+import java.util.Arrays;
+import java.util.Collection;
 
 @Entity
 public class GuestAccount extends AbstractAccount {
 
     public static final String USERNAME_PREFIX = "PIN_";
+    public static final String DEFAULT_ROLE = "ROLE_GUEST";
 
     GuestAccount() {
     }
@@ -29,7 +32,7 @@ public class GuestAccount extends AbstractAccount {
     }
 
     @Override
-    public String getDefaultRole() {
-        return "ROLE_GUEST";
+    public Collection<String> getRoles() {
+        return Arrays.asList(DEFAULT_ROLE);
     }
 }

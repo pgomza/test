@@ -2,18 +2,17 @@ package com.horeca.site.security.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.horeca.site.models.accounts.UserAccountView;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import java.util.*;
+import java.util.List;
 
 @Entity
 public class UserAccount extends AbstractAccount {
 
     public static final String USERNAME_PREFIX = "USER_";
+    public static final String DEFAULT_ROLE = "ROLE_ADMIN";
 
     private Long hotelId;
 
@@ -26,19 +25,11 @@ public class UserAccount extends AbstractAccount {
     UserAccount() {
     }
 
-    public UserAccount(String username, String password, Long hotelId) {
-        super(username);
-        this.password = password;
-        this.hotelId = hotelId;
-        ensureRolesContainDefaultRole();
-    }
-
     public UserAccount(String username, String password, Long hotelId, List<String> roles) {
         super(username);
         this.password = password;
         this.hotelId = hotelId;
         this.roles = roles;
-        ensureRolesContainDefaultRole();
     }
 
     @Override
@@ -55,11 +46,6 @@ public class UserAccount extends AbstractAccount {
         this.password = password;
     }
 
-    @Override
-    public String getDefaultRole() {
-        return "ROLE_USER";
-    }
-
     public Long getHotelId() {
         return hotelId;
     }
@@ -74,23 +60,6 @@ public class UserAccount extends AbstractAccount {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
-        ensureRolesContainDefaultRole();
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>(roles.size());
-        for (String role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role));
-        }
-        return Collections.unmodifiableCollection(authorities);
-    }
-
-    private void ensureRolesContainDefaultRole() {
-        if (this.roles == null)
-            this.roles = new ArrayList<>(Arrays.asList(getDefaultRole()));
-        else if (!this.roles.contains(getDefaultRole()))
-            this.roles.add(getDefaultRole());
     }
 
     public UserAccountView toView() {
