@@ -3,17 +3,15 @@ package com.horeca.site.security.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import java.util.List;
 
+@Entity
 public class SalesmanAccount extends AbstractAccount {
 
     public static final String USERNAME_PREFIX = "SALESMAN_";
     public static final String DEFAULT_ROLE = "ROLE_SALESMAN";
-
-    @Id
-    private String username;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -21,19 +19,11 @@ public class SalesmanAccount extends AbstractAccount {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
-    private boolean accountNonExpired = true;
-
-    private boolean accountNonLocked = true;
-
-    private boolean credentialsNonExpired = true;
-
-    private boolean enabled = true;
-
     SalesmanAccount() {
     }
 
     public SalesmanAccount(String username, String password, List<String> roles) {
-        this.username = username;
+        super(username);
         this.password = password;
         this.roles = roles;
     }
@@ -41,15 +31,6 @@ public class SalesmanAccount extends AbstractAccount {
     @Override
     public String getUsernamePrefix() {
         return USERNAME_PREFIX;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     @Override

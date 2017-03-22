@@ -60,7 +60,7 @@ public class StartupRunner {
     private void checkGuestAccountsForStays() {
         Iterable<Stay> stays = stayService.getAll();
         for (Stay stay : stays) {
-            if (!guestAccountService.existsForStay(stay.getPin()))
+            if (!guestAccountService.exists(stay.getPin()))
                 guestAccountService.registerGuest(stay);
         }
     }
