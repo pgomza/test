@@ -1,13 +1,16 @@
 package com.horeca.config;
 
 import com.horeca.site.models.stay.Stay;
+import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.GuestAccountService;
 import com.horeca.site.security.services.LoginService;
+import com.horeca.site.security.services.SalesmanAccountService;
 import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -20,6 +23,8 @@ import java.util.List;
 
 // responsible for performing various maintenance actions after
 // the startup i.e. after the application context has been loaded
+// TODO divide this class into several classes
+// TODO it's dependent on too many classes (has too many responsibilities)
 @Service
 @Transactional
 public class StartupRunner {
@@ -38,9 +43,21 @@ public class StartupRunner {
     @Autowired
     private GuestAccountService guestAccountService;
 
+    @Autowired
+    private SalesmanAccountService salesmanAccountService;
+
+    // TODO use @ConfigurationProperties instead
+    @Value("${salesman.default.username.suffix}")
+    private String salesmanDefaultUsernameSuffix;
+
+    // TODO use @ConfigurationProperties instead
+    @Value("${salesman.default.password}")
+    private String salesmanDefaultPassword;
+
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
         addDefaultAdmins();
+        addDefaultSalesman();
         checkGuestAccountsForStays();
     }
 
@@ -54,6 +71,17 @@ public class StartupRunner {
                 UserAccount account = new UserAccount(UserAccount.USERNAME_PREFIX + admins[i], hashed_password, new Long(i), roles);
                 userAccountService.save(account);
             }
+        }
+    }
+
+    private void addDefaultSalesman() {
+        String username = SalesmanAccount.USERNAME_PREFIX + salesmanDefaultUsernameSuffix;
+        if (!salesmanAccountService.exists(username)) {
+            List<String> roles = new ArrayList<>(Arrays.asList(SalesmanAccount.DEFAULT_ROLE));
+            String salt = BCrypt.gensalt(12);
+            String hashed_password = BCrypt.hashpw(salesmanDefaultPassword, salt);
+            SalesmanAccount account = new SalesmanAccount(username, hashed_password, roles);
+            salesmanAccountService.save(account);
         }
     }
 
