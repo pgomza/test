@@ -13,6 +13,10 @@ public abstract class AbstractAccountService<T extends AbstractAccount> {
         return repository.exists(username);
     }
 
+    public T get(String username) {
+        return repository.findOne(username);
+    }
+
     public T save(T account) {
         return repository.save(account);
     }
