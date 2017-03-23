@@ -1,5 +1,6 @@
 package com.horeca.site.services;
 
+import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.accounts.UserAccountView;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.models.UserAccountTempToken;
@@ -42,8 +43,19 @@ public class AccountService {
         Set<String> roles = new HashSet<>(Arrays.asList(UserAccount.DEFAULT_ROLE));
         UserAccountTempToken tempToken = userAccountTempTokenService.generateTempToken(request.getHotelId(), roles);
 
-        long currentTimeMillis = System.currentTimeMillis();
-        Long expiresIn = (tempToken.getExpiresAt().getTime() - currentTimeMillis) / 1000L;
+        Integer expiresIn = userAccountTempTokenService.getSecondsUntilExpiration(tempToken);
         return new UserAccountTempTokenResponse(tempToken.getToken(), request.getHotelId(), expiresIn.intValue());
+    }
+
+    public UserAccountTempTokenResponse getInfoAboutUserAccountTempToken(String token) {
+        UserAccountTempToken tempToken = userAccountTempTokenService.get(token);
+        boolean isValid = userAccountTempTokenService.isValid(tempToken);
+
+        if (!isValid) {
+            throw new ResourceNotFoundException("The requested token has been invalidated or has never existed");
+        }
+
+        int expiresIn = userAccountTempTokenService.getSecondsUntilExpiration(tempToken);
+        return new UserAccountTempTokenResponse(tempToken.getToken(), tempToken.getHotel().getId(), expiresIn);
     }
 }

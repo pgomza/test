@@ -1,15 +1,16 @@
 package com.horeca.site.security.services;
 
+import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.repositories.UserAccountTempTokenRepository;
 import com.horeca.site.security.models.UserAccountTempToken;
 import com.horeca.site.services.HotelService;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.util.Set;
 import java.util.UUID;
 
@@ -30,12 +31,32 @@ public class UserAccountTempTokenService {
         String token = generateRandomString();
         Hotel hotel = hotelService.get(hotelId);
 
-        long currentTimeMillis = System.currentTimeMillis();
-        Timestamp createdAt = new Timestamp(currentTimeMillis);
-        Timestamp expiresAt = new Timestamp(currentTimeMillis + tempTokenValiditySeconds * 1000L);
+        LocalDateTime createdAt = new LocalDateTime();
+        LocalDateTime expiresAt = new LocalDateTime().plusSeconds(tempTokenValiditySeconds);
 
         UserAccountTempToken tempToken = new UserAccountTempToken(token, hotel, roles, createdAt, expiresAt);
         return repository.save(tempToken);
+    }
+
+    public UserAccountTempToken get(String token) {
+        UserAccountTempToken tempToken = repository.findOne(token);
+        if (tempToken == null)
+            throw new ResourceNotFoundException("The requested token has been invalidated or has never existed");
+        return tempToken;
+    }
+
+    public void delete(String token) {
+        repository.delete(token);
+    }
+
+    public int getSecondsUntilExpiration(UserAccountTempToken tempToken) {
+        LocalDateTime expiresAt = tempToken.getExpiresAt();
+        Long expiresIn = (expiresAt.toDateTime().getMillis() - (new LocalDateTime().toDateTime().getMillis())) / 1000L;
+        return expiresIn.intValue();
+    }
+
+    public boolean isValid(UserAccountTempToken tempToken) {
+        return getSecondsUntilExpiration(tempToken) > 0;
     }
 
     private String generateRandomString() {
