@@ -23,17 +23,17 @@ public class UserAccountTempToken {
     private Timestamp createdAt;
 
     @NotNull
-    private Integer validForSeconds;
+    private Timestamp expiresAt;
 
     UserAccountTempToken() {
     }
 
-    public UserAccountTempToken(String token, Hotel hotel, Set<String> roles, Timestamp createdAt, Integer validForSeconds) {
+    public UserAccountTempToken(String token, Hotel hotel, Set<String> roles, Timestamp createdAt, Timestamp expiresAt) {
         this.token = token;
         this.hotel = hotel;
         this.roles = roles;
         this.createdAt = createdAt;
-        this.validForSeconds = validForSeconds;
+        this.expiresAt = expiresAt;
     }
 
     public String getToken() {
@@ -68,11 +68,11 @@ public class UserAccountTempToken {
         this.createdAt = createdAt;
     }
 
-    public Integer getValidForSeconds() {
-        return validForSeconds;
+    public Timestamp getExpiresAt() {
+        return expiresAt;
     }
 
-    public void setValidForSeconds(Integer validForSeconds) {
-        this.validForSeconds = validForSeconds;
+    public void setExpiresAt(Timestamp expiresAt) {
+        this.expiresAt = expiresAt;
     }
 }
