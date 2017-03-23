@@ -39,6 +39,7 @@ public class AccountService {
             throw new AccessDeniedException("Access denied");
     }
 
+    @PreAuthorize("hasRole('ROLE_SALESMAN')")
     public UserAccountTempTokenResponse getTempTokenForNewUserAccount(UserAccountTempTokenRequest request) {
         Set<String> roles = new HashSet<>(Arrays.asList(UserAccount.DEFAULT_ROLE));
         UserAccountTempToken tempToken = userAccountTempTokenService.generateTempToken(request.getHotelId(), roles);

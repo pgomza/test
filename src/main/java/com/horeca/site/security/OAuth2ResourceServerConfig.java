@@ -47,6 +47,9 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/services/**").permitAll();
 
+        // allow anybody to get info about a temp token
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/accounts/users/tokens/{token}").permitAll();
+
 
         // users (and only them) can access the hotel that they're associated with
         http.authorizeRequests().antMatchers("/api/hotels/{\\d+}/**")
