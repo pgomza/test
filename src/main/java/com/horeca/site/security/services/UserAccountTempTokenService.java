@@ -5,12 +5,15 @@ import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.repositories.UserAccountTempTokenRepository;
 import com.horeca.site.security.models.UserAccountTempToken;
 import com.horeca.site.services.HotelService;
+import org.apache.log4j.Logger;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,6 +21,7 @@ import java.util.UUID;
 @Transactional
 public class UserAccountTempTokenService {
 
+    private static final Logger logger = Logger.getLogger(UserAccountTempTokenService.class);
     private static final String NOT_FOUND_OR_INVALID_MESSAGE =
             "The requested token has been invalidated or has never existed";
 
@@ -59,11 +63,27 @@ public class UserAccountTempTokenService {
     }
 
     public void ensureValidity(UserAccountTempToken tempToken) {
-        if (getSecondsUntilExpiration(tempToken) <= 0)
+        if (getSecondsUntilExpiration(tempToken) <= 0) {
             throw new ResourceNotFoundException(NOT_FOUND_OR_INVALID_MESSAGE);
+        }
     }
 
     private String generateRandomString() {
         return UUID.randomUUID().toString();
+    }
+
+    @Scheduled(fixedDelay = 60 * 60 * 1000) // execute every hour
+    public void periodicallyDeleteInvalidTokens() {
+         logger.info("Checking for invalid temp tokens...");
+
+        Iterable<UserAccountTempToken> tempTokens = repository.findAll();
+        Set<UserAccountTempToken> toDelete = new HashSet<>();
+        for (UserAccountTempToken tempToken : tempTokens) {
+            if (getSecondsUntilExpiration(tempToken) <= 0)
+                toDelete.add(tempToken);
+        }
+        repository.delete(toDelete);
+
+        logger.info(toDelete.size() + " invalid temp tokens have been deleted");
     }
 }

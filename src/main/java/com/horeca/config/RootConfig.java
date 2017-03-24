@@ -14,6 +14,7 @@ import org.springframework.context.support.StaticMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -30,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
+@EnableScheduling
 public class RootConfig extends WebMvcConfigurerAdapter
 {
     @Value("${datasource.driverclassname.gae}")
