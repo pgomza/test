@@ -18,6 +18,9 @@ import java.util.UUID;
 @Transactional
 public class UserAccountTempTokenService {
 
+    private static final String NOT_FOUND_OR_INVALID_MESSAGE =
+            "The requested token has been invalidated or has never existed";
+
     @Value("${tempToken.validitySeconds}")
     private Integer tempTokenValiditySeconds;
 
@@ -41,7 +44,7 @@ public class UserAccountTempTokenService {
     public UserAccountTempToken get(String token) {
         UserAccountTempToken tempToken = repository.findOne(token);
         if (tempToken == null)
-            throw new ResourceNotFoundException("The requested token has been invalidated or has never existed");
+            throw new ResourceNotFoundException(NOT_FOUND_OR_INVALID_MESSAGE);
         return tempToken;
     }
 
@@ -55,8 +58,9 @@ public class UserAccountTempTokenService {
         return expiresIn.intValue();
     }
 
-    public boolean isValid(UserAccountTempToken tempToken) {
-        return getSecondsUntilExpiration(tempToken) > 0;
+    public void ensureValidity(UserAccountTempToken tempToken) {
+        if (getSecondsUntilExpiration(tempToken) <= 0)
+            throw new ResourceNotFoundException(NOT_FOUND_OR_INVALID_MESSAGE);
     }
 
     private String generateRandomString() {
