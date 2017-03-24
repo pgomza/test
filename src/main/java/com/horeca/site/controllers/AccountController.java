@@ -1,6 +1,7 @@
 package com.horeca.site.controllers;
 
 import com.horeca.site.models.accounts.UserAccountView;
+import com.horeca.site.security.models.UserAccountPOST;
 import com.horeca.site.security.models.UserAccountTempTokenRequest;
 import com.horeca.site.security.models.UserAccountTempTokenResponse;
 import com.horeca.site.services.AccountService;
@@ -17,6 +18,12 @@ public class AccountController {
 
     @Autowired
     private AccountService service;
+
+    @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserAccountView addUserAccount(@RequestHeader(name = "Temp-Token", required = true) String token,
+                                                 @RequestBody UserAccountPOST userAccountPOST) {
+        return service.addUserAccount(token, userAccountPOST);
+    }
 
     @RequestMapping(value = "/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserAccountView getCurrentUserAccount(Authentication authentication) {

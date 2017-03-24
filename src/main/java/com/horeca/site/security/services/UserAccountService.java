@@ -7,4 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class UserAccountService extends AbstractAccountService<UserAccount> {
+
+    public UserAccount save(UserAccount userAccount) {
+        return repository.save(userAccount);
+    }
 }
