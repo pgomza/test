@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @Api(value = "hotels")
 @RestController
 @RequestMapping("/api/accounts")
@@ -23,6 +25,11 @@ public class AccountController {
     public UserAccountView addUserAccount(@RequestHeader(name = "Temp-Token", required = true) String token,
                                                  @RequestBody UserAccountPOST userAccountPOST) {
         return service.addUserAccount(token, userAccountPOST);
+    }
+
+    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Set<UserAccountView> getUserAccountViews() {
+        return service.getUserAccountViews();
     }
 
     @RequestMapping(value = "/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

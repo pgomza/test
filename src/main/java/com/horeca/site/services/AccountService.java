@@ -29,6 +29,14 @@ public class AccountService {
     @Autowired
     private UserAccountTempTokenService userAccountTempTokenService;
 
+    public Set<UserAccountView> getUserAccountViews() {
+        Set<UserAccountView> views = new HashSet<>();
+        for (UserAccount userAccount : userAccountService.getAll()) {
+            views.add(userAccount.toView());
+        }
+        return views;
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public UserAccountView getCurrentUserAccount(Authentication authentication) {
         Object principal = authentication.getPrincipal();
