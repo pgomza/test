@@ -1,5 +1,8 @@
 package com.horeca.site.security.services;
 
+import com.horeca.site.repositories.GuestAccountRepository;
+import com.horeca.site.repositories.SalesmanAccountRepository;
+import com.horeca.site.repositories.UserAccountRepository;
 import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.models.UserAccount;
@@ -14,20 +17,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class PersistentLoginService implements LoginService {
 
     @Autowired
-    private GuestAccountService guestAccountService;
+    private GuestAccountRepository guestAccountRepository;
     @Autowired
-    private UserAccountService userAccountService;
+    private UserAccountRepository userAccountRepository;
     @Autowired
-    private SalesmanAccountService salesmanAccountService;
+    private SalesmanAccountRepository salesmanAccountRepository;
 
     @Override
     public boolean exists(String username) {
         if (username.startsWith(GuestAccount.USERNAME_PREFIX))
-            return guestAccountService.exists(username);
+            return guestAccountRepository.exists(username);
         else if (username.startsWith(UserAccount.USERNAME_PREFIX))
-            return userAccountService.exists(username);
+            return userAccountRepository.exists(username);
         else if (username.startsWith(SalesmanAccount.USERNAME_PREFIX))
-            return salesmanAccountService.exists(username);
+            return salesmanAccountRepository.exists(username);
         else
             return false;
     }
@@ -35,11 +38,11 @@ public class PersistentLoginService implements LoginService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         if (username.startsWith(GuestAccount.USERNAME_PREFIX))
-            return guestAccountService.get(username);
+            return guestAccountRepository.findOne(username);
         else if (username.startsWith(UserAccount.USERNAME_PREFIX))
-            return userAccountService.get(username);
+            return userAccountRepository.findOne(username);
         else if (username.startsWith(SalesmanAccount.USERNAME_PREFIX))
-            return salesmanAccountService.get(username);
+            return salesmanAccountRepository.findOne(username);
         else
             return null;
     }
