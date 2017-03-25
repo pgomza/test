@@ -68,6 +68,11 @@ public class UserAccountTempTokenService {
         }
     }
 
+    public void invalidate(UserAccountTempToken tempToken) {
+        tempToken.setExpiresAt(new LocalDateTime().minusHours(1));
+        repository.save(tempToken);
+    }
+
     private String generateRandomString() {
         return UUID.randomUUID().toString();
     }

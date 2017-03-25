@@ -74,21 +74,18 @@ public class AccountService {
             throw new UnauthorizedException(ex); // in that case this exception makes more sense
         }
 
-        Long allowedHotelId = tempToken.getHotel().getId();
-        Long requestedHotelId = tempToken.getHotel().getId();
-
-        if (!allowedHotelId.equals(requestedHotelId)) {
-            throw new UnauthorizedException("The temp token you've sent doesn't authorize you to access the requested hotel");
-        }
-
         String username = UserAccount.USERNAME_PREFIX + userAccountPOST.getLogin();
         // TODO refactor generating a hashed password into a separate method
         String salt = BCrypt.gensalt(12);
         String hashed_password = BCrypt.hashpw(userAccountPOST.getPassword(), salt);
         List<String> roles = new ArrayList<>(Arrays.asList(UserAccount.DEFAULT_ROLE));
-        UserAccount userAccount = new UserAccount(username, hashed_password, allowedHotelId, roles);
+        UserAccount userAccount = new UserAccount(username, hashed_password, tempToken.getHotel().getId(), roles);
 
         UserAccount savedUserAccount = userAccountService.save(userAccount);
+
+        // to prevent people from creating several user accounts with the same temp token, invalidate it
+        userAccountTempTokenService.invalidate(tempToken);
+
         return savedUserAccount.toView();
     }
 }
