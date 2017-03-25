@@ -70,6 +70,17 @@ public class AccessChecker {
         return (allowedToManageHotel && allowedToManageGuest);
     }
 
+    public boolean checkForUserAccountFromCollection(Authentication authentication, UserAccount filterObject) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserAccount) {
+            UserAccount userAccount = (UserAccount) principal;
+            if (userAccount.getHotelId().equals(filterObject.getHotelId()))
+                return true;
+        }
+
+        return false;
+    }
+
     private boolean checkForStayHelper(Authentication authentication, String pin) {
         Stay stay = stayService.getWithoutChecks(pin);
         StayView stayView = stay.toView();

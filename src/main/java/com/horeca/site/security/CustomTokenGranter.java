@@ -2,6 +2,7 @@ package com.horeca.site.security;
 
 import com.horeca.site.exceptions.BadAuthorizationRequestException;
 import com.horeca.site.security.models.GuestAccount;
+import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.LoginService;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -19,10 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
-
-    // TODO the values should be passed, not hardcoded
-    private final static String mobileClientId = "throdiMobile";
-    private final static String panelClientId = "throdiPanel";
 
     private static final String GRANT_TYPE = "password-like";
     private final LoginService loginService;
@@ -45,11 +42,13 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
     @Override
     protected OAuth2Authentication getOAuth2Authentication(ClientDetails client, TokenRequest tokenRequest) {
         Map<String, String> parameters = new LinkedHashMap<String, String>(tokenRequest.getRequestParameters());
+        final String clientId = client.getClientId();
 
-        if (client.getClientId().equals(mobileClientId)) { // authenticate using the pin only
+        if (clientId.equals(OAuth2AuthorizationServerConfig.MOBILE_CLIENT_ID)) {
+            // authenticate using the pin only
             String pin = parameters.get("pin");
             if (pin != null) {
-                UserDetails userDetails = getMobileUserInfo(GuestAccount.USERNAME_PREFIX + pin);
+                UserDetails userDetails = getUserDetails(GuestAccount.USERNAME_PREFIX + pin);
                 if (userDetails == null)
                     throw new BadCredentialsException("Invalid pin");
 
@@ -58,14 +57,22 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
                 return new OAuth2Authentication(storedOAuth2Request, userAuth);
             }
             else
-                throw new BadAuthorizationRequestException("A pin has to be specified in the request");
+                throw new BadAuthorizationRequestException("The pin has to be specified in the request");
         }
-        else if (client.getClientId().equals(panelClientId)) { // authenticate using the login and the password
+        else if (clientId.equals(OAuth2AuthorizationServerConfig.PANEL_CLIENT_ID)
+                || clientId.equals(OAuth2AuthorizationServerConfig.SALES_CLIENT_ID)) {
+            // authenticate using the login and the password
             String login = parameters.get("login");
             String plainTextPassword = parameters.get("password");
 
             if (login != null && plainTextPassword != null) {
-                UserDetails userDetails = getPanelUserInfo(UserAccount.USERNAME_PREFIX + login, plainTextPassword);
+                UserDetails userDetails;
+                if (clientId.equals(OAuth2AuthorizationServerConfig.PANEL_CLIENT_ID)) {
+                    userDetails = getUserDetails(UserAccount.USERNAME_PREFIX + login, plainTextPassword);
+                }
+                else
+                    userDetails = getUserDetails(SalesmanAccount.USERNAME_PREFIX + login, plainTextPassword);
+
                 if (userDetails == null)
                     throw new BadCredentialsException("Invalid login/password");
 
@@ -74,7 +81,7 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
                 return new OAuth2Authentication(storedOAuth2Request, userAuth);
             }
             else
-                throw new BadAuthorizationRequestException("Both a login and a password have to be specified in the request");
+                throw new BadAuthorizationRequestException("Both the login and the password have to be specified in the request");
         }
         else // should never happen
             throw new BadAuthorizationRequestException("Unsupported type of client");
@@ -88,14 +95,14 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
         return userAuth;
     }
 
-    private UserDetails getMobileUserInfo(String username) {
+    private UserDetails getUserDetails(String username) {
         if (!loginService.exists(username))
             return null;
 
         return loginService.loadUserByUsername(username);
     }
 
-    private UserDetails getPanelUserInfo(String username, String plainTextPassword) {
+    private UserDetails getUserDetails(String username, String plainTextPassword) {
         if (!loginService.exists(username))
             return null;
 

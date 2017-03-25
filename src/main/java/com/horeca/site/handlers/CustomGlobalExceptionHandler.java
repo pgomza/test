@@ -11,6 +11,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -38,7 +39,6 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
         BAD_REQUEST_EXCEPTIONS.add(BusinessRuleViolationException.class);
         BAD_REQUEST_EXCEPTIONS.add(ConstraintViolationException.class);
         BAD_REQUEST_EXCEPTIONS.add(DataIntegrityViolationException.class);
-        BAD_REQUEST_EXCEPTIONS.add(BadAuthorizationRequestException.class);
         BAD_REQUEST_EXCEPTIONS.add(HttpRequestMethodNotSupportedException.class);
         BAD_REQUEST_EXCEPTIONS.add(HttpMediaTypeNotSupportedException.class);
         BAD_REQUEST_EXCEPTIONS.add(HttpMessageNotReadableException.class);
@@ -49,6 +49,8 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
         BAD_REQUEST_EXCEPTIONS.add(BindException.class);
         BAD_REQUEST_EXCEPTIONS.add(TypeMismatchException.class);
         BAD_REQUEST_EXCEPTIONS.add(MethodArgumentNotValidException.class);
+        BAD_REQUEST_EXCEPTIONS.add(BadAuthorizationRequestException.class);
+        BAD_REQUEST_EXCEPTIONS.add(UnsupportedGrantTypeException.class);
 
         NOT_FOUND_EXCEPTIONS.add(ResourceNotFoundException.class);
 
