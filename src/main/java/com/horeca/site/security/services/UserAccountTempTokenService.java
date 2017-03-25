@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,8 +76,7 @@ public class UserAccountTempTokenService {
         return UUID.randomUUID().toString();
     }
 
-    @Scheduled(fixedDelay = 60 * 60 * 1000) // execute every hour
-    public void periodicallyDeleteInvalidTokens() {
+    public void deleteInvalidTokens() {
          logger.info("Checking for invalid temp tokens...");
 
         Iterable<UserAccountTempToken> tempTokens = repository.findAll();

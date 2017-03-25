@@ -3,10 +3,7 @@ package com.horeca.config;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.models.UserAccount;
-import com.horeca.site.security.services.GuestAccountService;
-import com.horeca.site.security.services.LoginService;
-import com.horeca.site.security.services.SalesmanAccountService;
-import com.horeca.site.security.services.UserAccountService;
+import com.horeca.site.security.services.*;
 import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +43,9 @@ public class StartupRunner {
     @Autowired
     private SalesmanAccountService salesmanAccountService;
 
+    @Autowired
+    private UserAccountTempTokenService userAccountTempTokenService;
+
     // TODO use @ConfigurationProperties instead
     @Value("${salesman.default.username.suffix}")
     private String salesmanDefaultUsernameSuffix;
@@ -59,6 +59,7 @@ public class StartupRunner {
         addDefaultAdmins();
         addDefaultSalesman();
         checkGuestAccountsForStays();
+        userAccountTempTokenService.deleteInvalidTokens();
     }
 
     private void addDefaultAdmins() {
