@@ -1,6 +1,5 @@
 package com.horeca.site.services;
 
-import com.google.cloud.storage.*;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.Hotel;
@@ -12,8 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -72,44 +69,10 @@ public class HotelImagesService {
     }
 
     public void delete(Long hotelId, String filename) {
-        FileLink foundLink = get(hotelId, filename);
-        if (foundLink == null)
-            throw new ResourceNotFoundException("An image with such a filename could not be found");
-
-        Storage storage = StorageOptions.getDefaultInstance().getService();
-        // map 'filename' to a unique filename on GAE
-        String uniqueFilename = "hotels/" + hotelId + "/" + filename;
-        BlobId blobId = BlobId.of(bucketName, uniqueFilename);
-
-        try {
-            boolean deleted = storage.delete(blobId);
-            if (!deleted)
-                throw new RuntimeException("There was an error while trying to delete this file");
-        }
-        catch (StorageException ex) {
-            throw new RuntimeException("There was an error while trying to delete this file");
-        }
-
-        Hotel hotel = hotelService.get(hotelId);
-        hotel.getImages().remove(foundLink);
-        hotelService.update(hotel.getId(), hotel);
     }
 
     private String uploadToGAE(String filename, InputStream imageStream) {
-        List<Acl> acls = new ArrayList<>();
-        acls.add(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
-
-        Storage storage = StorageOptions.getDefaultInstance().getService();
-        Blob blob;
-
-        try {
-            blob = storage.create(BlobInfo.newBuilder(bucketName, filename).setAcl(acls).build(), imageStream);
-        }
-        catch (StorageException ex) {
-            throw new RuntimeException("There was an error while trying to upload this file to GAE");
-        }
-
-        return blob.getMediaLink();
+        return null;
     }
 
     private FileLink findByFilename(Long hotelId, String filename) {
