@@ -1,14 +1,17 @@
 package com.horeca.config;
 
+import org.apache.log4j.Logger;
+
 import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@WebFilter("/*")
 public class SimpleCorsFilter implements Filter {
 
-    public SimpleCorsFilter() {
-    }
+    private static final Logger logger = Logger.getLogger(SimpleCorsFilter.class);
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -28,6 +31,7 @@ public class SimpleCorsFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
+        logger.info("Initializing SimpleCorsFilter...");
     }
 
     @Override

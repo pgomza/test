@@ -7,7 +7,6 @@ import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -29,27 +28,11 @@ public class HotelDataExtractor {
     private JdbcTemplate jdbcTemplate = null;
     private static final String DATASOURCE_URL = "jdbc:mysql://localhost/hoteldata?useUnicode=yes&characterEncoding=UTF-8";
 
-    @Value("${datasource.driverclassname.local}")
-    private String localDataSourceDriverClassName;
-
-    @Value("${datasource.username}")
-    private String dataSourceUsername;
-
-    @Value("${datasource.password}")
-    private String dataSourcePassword;
-
     @Autowired
     private HotelService hotelService;
 
     @PostConstruct
     private void initDataSource() {
-        dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(localDataSourceDriverClassName);
-        dataSource.setUrl(DATASOURCE_URL);
-        dataSource.setUsername(dataSourceUsername);
-        dataSource.setPassword(dataSourcePassword);
-
-        jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     public void extract(int limit) {

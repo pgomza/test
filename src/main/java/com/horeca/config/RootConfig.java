@@ -3,7 +3,6 @@ package com.horeca.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.horeca.site.handlers.CustomGlobalExceptionHandler;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +20,6 @@ import org.springframework.web.servlet.resource.ResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -30,31 +28,6 @@ import java.util.List;
 @Configuration
 public class RootConfig extends WebMvcConfigurerAdapter
 {
-    @Value("${datasource.driverclassname.gae}")
-    private String gaeDataSourceDriverClassName;
-
-    @Value("${datasource.driverclassname.local}")
-    private String localDataSourceDriverClassName;
-
-    @Value("${datasource.connectionurl.gae}")
-    private String gaeDataSourceConnectionUrl;
-
-    @Value("${datasource.connectionurl.local}")
-    private String localDataSourceConnectionUrl;
-
-    @Value("${datasource.username}")
-    private String dataSourceUsername;
-
-    @Value("${datasource.password}")
-    private String dataSourcePassword;
-
-    //TODO change datasource's implementation to some more efficient one
-    @Bean(destroyMethod="close")
-    public DataSource basicDataSource() {
-        return null;
-    }
-
-
     @Bean(name = "messageSource")
     public MessageSource messageSource() {
         StaticMessageSource messageSource = new StaticMessageSource();
