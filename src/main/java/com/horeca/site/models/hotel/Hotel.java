@@ -26,11 +26,11 @@ public class Hotel {
 	@NotEmpty
 	private String name;
 
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "nvarchar(4000)")
 	public String description;
 
 	@NotEmpty
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "nvarchar(4000)")
 	private String address;
 
 	private String email;
