@@ -6,19 +6,17 @@ import com.horeca.site.models.Price;
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class AvailableServiceViewSimplified {
 
-    public enum Type { BREAKFAST, CARPARK, ROOMSERVICE, SPA, PETCARE, TAXI, HOUSEKEEPING }
-
-    private Type type;
+    private AvailableServiceType type;
 
     private Price price;
 
     private String additionalInfo;
 
-    public Type getType() {
+    public AvailableServiceType getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(AvailableServiceType type) {
         this.type = type;
     }
 

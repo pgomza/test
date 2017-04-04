@@ -6,6 +6,7 @@ import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
+import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -300,42 +301,42 @@ public class Hotel {
 			List<AvailableServiceViewSimplified> simplifiedList = new ArrayList<>();
 			if (availableServices.getBreakfast() != null) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-				simplified.setType(AvailableServiceViewSimplified.Type.BREAKFAST);
+				simplified.setType(AvailableServiceType.BREAKFAST);
 				simplified.setPrice(availableServices.getBreakfast().getPrice());
 				simplifiedList.add(simplified);
 			}
 
 			if (availableServices.getCarPark() != null) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-				simplified.setType(AvailableServiceViewSimplified.Type.CARPARK);
+				simplified.setType(AvailableServiceType.CARPARK);
 				simplified.setPrice(availableServices.getCarPark().getPrice());
 				simplifiedList.add(simplified);
 			}
 
 			if (availableServices.getPetCare() != null) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-				simplified.setType(AvailableServiceViewSimplified.Type.PETCARE);
+				simplified.setType(AvailableServiceType.PETCARE);
 				simplified.setPrice(availableServices.getSpa().getPrice());
 				simplifiedList.add(simplified);
 			}
 
 			if (availableServices.getTaxi() != null) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-				simplified.setType(AvailableServiceViewSimplified.Type.TAXI);
+				simplified.setType(AvailableServiceType.TAXI);
 				simplified.setPrice(availableServices.getTaxi().getPrice());
 				simplifiedList.add(simplified);
 			}
 
 			if (availableServices.getHousekeeping() != null) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-				simplified.setType(AvailableServiceViewSimplified.Type.HOUSEKEEPING);
+				simplified.setType(AvailableServiceType.HOUSEKEEPING);
 				simplified.setPrice(availableServices.getHousekeeping().getPrice());
 				simplifiedList.add(simplified);
 			}
 
 			if (availableServices.getRoomService() != null) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
-				simplified.setType(AvailableServiceViewSimplified.Type.ROOMSERVICE);
+				simplified.setType(AvailableServiceType.ROOMSERVICE);
 				simplified.setPrice(availableServices.getRoomService().getPrice());
 				simplifiedList.add(simplified);
 			}
