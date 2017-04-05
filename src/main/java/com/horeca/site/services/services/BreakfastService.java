@@ -1,16 +1,23 @@
 package com.horeca.site.services.services;
 
+import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.models.hotel.Hotel;
-import com.horeca.site.models.hotel.services.breakfast.*;
+import com.horeca.site.models.Currency;
+import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.services.AvailableServices;
+import com.horeca.site.models.hotel.services.breakfast.Breakfast;
+import com.horeca.site.models.hotel.services.breakfast.BreakfastCategory;
+import com.horeca.site.models.hotel.services.breakfast.BreakfastItem;
+import com.horeca.site.models.hotel.services.breakfast.BreakfastItemUpdate;
 import com.horeca.site.repositories.services.BreakfastCategoryRepository;
 import com.horeca.site.repositories.services.BreakfastItemRepository;
-import com.horeca.site.repositories.services.BreakfastRepository;
-import com.horeca.site.services.HotelService;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,11 +25,10 @@ import java.util.Set;
 @Transactional
 public class BreakfastService {
 
-    @Autowired
-    private HotelService hotelService;
+    private static final DateTimeFormatter localTimeFormatter = DateTimeFormat.forPattern("HH:mm");
 
     @Autowired
-    private BreakfastRepository breakfastRepository;
+    private AvailableServicesService availableServicesService;
 
     @Autowired
     private BreakfastCategoryRepository breakfastCategoryRepository;
@@ -31,8 +37,32 @@ public class BreakfastService {
     private BreakfastItemRepository breakfastItemRepository;
 
     public Breakfast get(Long hotelId) {
-        Hotel hotel = hotelService.get(hotelId);
-        return hotel.getAvailableServices().getBreakfast();
+        AvailableServices services = availableServicesService.get(hotelId);
+        if (services == null || services.getBreakfast() == null)
+            throw new ResourceNotFoundException();
+
+        return services.getBreakfast();
+    }
+
+    public Breakfast addDefaultBreakfast(Long hotelId) {
+        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        if (services.getBreakfast() == null) {
+            Breakfast breakfast = new Breakfast();
+            breakfast.setDescription("");
+            breakfast.setFromHour(localTimeFormatter.parseLocalTime("08:00"));
+            breakfast.setToHour(localTimeFormatter.parseLocalTime("11:00"));
+            Price breakfastPrice = new Price();
+            breakfastPrice.setCurrency(Currency.EURO);
+            breakfastPrice.setValue(new BigDecimal(5));
+            breakfast.setPrice(breakfastPrice);
+
+            services.setBreakfast(breakfast);
+            AvailableServices updatedServices = availableServicesService.update(services);
+            return updatedServices.getBreakfast();
+        }
+        else {
+            throw new BusinessRuleViolationException("A breakfast service has already been added");
+        }
     }
 
     public BreakfastCategory getCategory(Long hotelId, BreakfastCategory.Category category) {

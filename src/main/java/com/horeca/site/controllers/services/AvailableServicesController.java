@@ -1,7 +1,6 @@
 package com.horeca.site.controllers.services;
 
 import com.horeca.site.models.hotel.services.AvailableServices;
-import com.horeca.site.services.HotelService;
 import com.horeca.site.services.services.AvailableServicesService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/hotels")
 public class AvailableServicesController {
-
-    @Autowired
-    private HotelService hotelService;
 
     @Autowired
     private AvailableServicesService service;
