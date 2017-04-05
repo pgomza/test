@@ -1,6 +1,11 @@
 package com.horeca.site.services.services;
 
+import com.horeca.site.exceptions.BusinessRuleViolationException;
+import com.horeca.site.exceptions.ResourceNotFoundException;
+import com.horeca.site.models.Currency;
+import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarDay;
@@ -16,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +31,9 @@ public class PetCareService {
 
     @Autowired
     private HotelService hotelService;
+
+    @Autowired
+    private AvailableServicesService availableServicesService;
 
     @Autowired
     private PetCareRepository repository;
@@ -39,8 +48,29 @@ public class PetCareService {
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy");
 
     public PetCare get(Long hotelId) {
-        Hotel hotel = hotelService.get(hotelId);
-        return hotel.getAvailableServices().getPetCare();
+        AvailableServices services = availableServicesService.get(hotelId);
+        if (services == null || services.getPetCare() == null)
+            throw new ResourceNotFoundException();
+        return services.getPetCare();
+    }
+
+    public PetCare addDefaultPetCare(Long hotelId) {
+        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        if (services.getPetCare() == null) {
+            PetCare petCare = new PetCare();
+            petCare.setDescription("");
+            Price petCarePrice = new Price();
+            petCarePrice.setCurrency(Currency.EURO);
+            petCarePrice.setValue(new BigDecimal(5));
+            petCare.setPrice(petCarePrice);
+
+            services.setPetCare(petCare);
+            AvailableServices updatedServices = availableServicesService.update(services);
+            return updatedServices.getPetCare();
+        }
+        else {
+            throw new BusinessRuleViolationException("A petcare service has already been added");
+        }
     }
 
     public PetCareItem addItem(Long hotelId, PetCareItem item) {
