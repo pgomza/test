@@ -24,6 +24,11 @@ public class SpaController {
         return spaService.get(hotelId);
     }
 
+    @RequestMapping(value = "/{hotelId}/services/spa", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Spa addDefault(@PathVariable("hotelId") Long hotelId) {
+        return spaService.addDefaultSpa(hotelId);
+    }
+
     @RequestMapping(value = "/{hotelId}/services/spa/items/{itemId}/calendar",
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<SpaCalendarHour> getHoursOld(@PathVariable("hotelId") Long hotelId,
