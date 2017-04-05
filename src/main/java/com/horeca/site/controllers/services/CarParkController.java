@@ -22,4 +22,9 @@ public class CarParkController {
     public CarPark get(@PathVariable("hotelId") Long hotelId) {
         return carParkService.get(hotelId);
     }
+
+    @RequestMapping(value = "/{hotelId}/services/carpark", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public CarPark addDefault(@PathVariable("hotelId") Long hotelId) {
+        return carParkService.addDefaultCarPark(hotelId);
+    }
 }
