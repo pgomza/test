@@ -23,6 +23,11 @@ public class RoomServiceController {
         return roomServiceService.get(hotelId);
     }
 
+    @RequestMapping(value = "/{hotelId}/services/roomservice", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public RoomService addDefault(@PathVariable("hotelId") Long hotelId) {
+        return roomServiceService.addDefaultRoomService(hotelId);
+    }
+
     @RequestMapping(value = "/{hotelId}/services/roomservice/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void addItem(@PathVariable("hotelId") Long hotelId,
                         @Valid @RequestBody RoomServiceItemUpdate item) {
