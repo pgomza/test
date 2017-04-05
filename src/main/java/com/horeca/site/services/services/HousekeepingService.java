@@ -1,15 +1,18 @@
 package com.horeca.site.services.services;
 
+import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.models.Currency;
+import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
 import com.horeca.site.models.hotel.services.housekeeping.HousekeepingItem;
 import com.horeca.site.repositories.services.HousekeepingRepository;
-import com.horeca.site.services.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,14 +21,35 @@ import java.util.Set;
 public class HousekeepingService {
 
     @Autowired
-    private HotelService hotelService;
+    private AvailableServicesService availableServicesService;
 
     @Autowired
     private HousekeepingRepository repository;
 
     public Housekeeping get(Long hotelId) {
-        Hotel hotel = hotelService.get(hotelId);
-        return hotel.getAvailableServices().getHousekeeping();
+        AvailableServices services = availableServicesService.get(hotelId);
+        if (services == null || services.getHousekeeping() == null)
+            throw new ResourceNotFoundException();
+        return services.getHousekeeping();
+    }
+
+    public Housekeeping addDefaultHousekeeping(Long hotelId) {
+        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        if (services.getHousekeeping() == null) {
+            Housekeeping housekeeping = new Housekeeping();
+            housekeeping.setDescription("");
+            Price housekeepingPrice = new Price();
+            housekeepingPrice.setCurrency(Currency.EURO);
+            housekeepingPrice.setValue(new BigDecimal(5));
+            housekeeping.setPrice(housekeepingPrice);
+
+            services.setHousekeeping(housekeeping);
+            AvailableServices updatedServices = availableServicesService.update(services);
+            return updatedServices.getHousekeeping();
+        }
+        else {
+            throw new BusinessRuleViolationException("A housekeeping service has already been added");
+        }
     }
 
     public Iterable<HousekeepingItem> getItems(Long hotelId) {
