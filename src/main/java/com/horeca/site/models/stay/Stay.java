@@ -26,6 +26,10 @@ public class Stay {
     @NotNull
     private String roomNumber;
 
+    private String wifiPassword;
+
+    private String doorKey;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private StayStatus status = StayStatus.NEW;
@@ -74,6 +78,22 @@ public class Stay {
         this.roomNumber = roomNumber;
     }
 
+    public String getWifiPassword() {
+        return wifiPassword;
+    }
+
+    public void setWifiPassword(String wifiPassword) {
+        this.wifiPassword = wifiPassword;
+    }
+
+    public String getDoorKey() {
+        return doorKey;
+    }
+
+    public void setDoorKey(String doorKey) {
+        this.doorKey = doorKey;
+    }
+
     public StayStatus getStatus() {
         return status;
     }
@@ -113,6 +133,8 @@ public class Stay {
         view.setFromDate(getFromDate());
         view.setToDate(getToDate());
         view.setRoomNumber(getRoomNumber());
+        view.setWifiPassword(getWifiPassword());
+        view.setDoorKey(getDoorKey());
         view.setStatus(getStatus());
         view.setOrders(getOrders());
         view.setHotel(getHotel().toView());

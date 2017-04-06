@@ -14,6 +14,8 @@ public class StayView {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate toDate;
     private String roomNumber;
+    private String wifiPassword;
+    private String doorKey;
     private StayStatus status;
     private Orders orders;
     private HotelView hotel;
@@ -49,6 +51,22 @@ public class StayView {
 
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
+    }
+
+    public String getWifiPassword() {
+        return wifiPassword;
+    }
+
+    public void setWifiPassword(String wifiPassword) {
+        this.wifiPassword = wifiPassword;
+    }
+
+    public String getDoorKey() {
+        return doorKey;
+    }
+
+    public void setDoorKey(String doorKey) {
+        this.doorKey = doorKey;
     }
 
     public StayStatus getStatus() {

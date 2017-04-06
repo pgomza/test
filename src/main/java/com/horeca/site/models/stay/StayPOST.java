@@ -16,6 +16,10 @@ public class StayPOST {
     @NotNull
     private String roomNumber;
 
+    private String wifiPassword;
+
+    private String doorKey;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate fromDate;
 
@@ -44,6 +48,22 @@ public class StayPOST {
 
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
+    }
+
+    public String getWifiPassword() {
+        return wifiPassword;
+    }
+
+    public void setWifiPassword(String wifiPassword) {
+        this.wifiPassword = wifiPassword;
+    }
+
+    public String getDoorKey() {
+        return doorKey;
+    }
+
+    public void setDoorKey(String doorKey) {
+        this.doorKey = doorKey;
     }
 
     public LocalDate getFromDate() {

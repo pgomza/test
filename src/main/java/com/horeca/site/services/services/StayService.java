@@ -116,6 +116,8 @@ public class StayService {
         Stay stay = new Stay();
         stay.setStatus(StayStatus.NEW);
         stay.setRoomNumber(stayPOST.getRoomNumber());
+        stay.setWifiPassword(stayPOST.getWifiPassword());
+        stay.setDoorKey(stayPOST.getDoorKey());
         stay.setFromDate(stayPOST.getFromDate());
         stay.setToDate(stayPOST.getToDate());
 
