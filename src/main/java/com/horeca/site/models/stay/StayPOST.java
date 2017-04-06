@@ -1,5 +1,8 @@
 package com.horeca.site.models.stay;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.joda.time.LocalDate;
+
 import javax.validation.constraints.NotNull;
 
 public class StayPOST {
@@ -13,9 +16,11 @@ public class StayPOST {
     @NotNull
     private String roomNumber;
 
-    private String fromDate; //TODO change the type
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate fromDate;
 
-    private String toDate; //TODO change the type
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate toDate;
 
     public Long getHotelId() {
         return hotelId;
@@ -41,19 +46,19 @@ public class StayPOST {
         this.roomNumber = roomNumber;
     }
 
-    public String getFromDate() {
+    public LocalDate getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(String fromDate) {
+    public void setFromDate(LocalDate fromDate) {
         this.fromDate = fromDate;
     }
 
-    public String getToDate() {
+    public LocalDate getToDate() {
         return toDate;
     }
 
-    public void setToDate(String toDate) {
+    public void setToDate(LocalDate toDate) {
         this.toDate = toDate;
     }
 }

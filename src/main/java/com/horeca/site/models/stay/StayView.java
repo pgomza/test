@@ -1,14 +1,18 @@
 package com.horeca.site.models.stay;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.orders.Orders;
+import org.joda.time.LocalDate;
 
 public class StayView {
 
     private String pin;
-    private String fromDate;
-    private String toDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate fromDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate toDate;
     private String roomNumber;
     private StayStatus status;
     private Orders orders;
@@ -23,19 +27,19 @@ public class StayView {
         this.pin = pin;
     }
 
-    public String getFromDate() {
+    public LocalDate getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(String fromDate) {
+    public void setFromDate(LocalDate fromDate) {
         this.fromDate = fromDate;
     }
 
-    public String getToDate() {
+    public LocalDate getToDate() {
         return toDate;
     }
 
-    public void setToDate(String toDate) {
+    public void setToDate(LocalDate toDate) {
         this.toDate = toDate;
     }
 
