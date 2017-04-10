@@ -19,6 +19,8 @@ public class UserAccountPendingService {
         return repository.findOne(email);
     }
 
+    public UserAccountPending getBySecret(String secret) { return repository.findBySecret(secret); }
+
     public UserAccountPending save(UserAccountPending account) {
         return repository.save(account);
     }

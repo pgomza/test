@@ -29,6 +29,11 @@ public class AccountController {
         return new ResponseMessage("The activation link has been sent to " + userAccountPOST.getEmail());
     }
 
+    @RequestMapping(value = "/users/activation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserAccountView activateUserAccount(@RequestParam(value = "secret", required = true) String secret) {
+        return service.activateAndGetUserAccount(secret).toView();
+    }
+
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<UserAccountView> getUserAccountViews() {
         return service.getUserAccountViews();
@@ -36,7 +41,7 @@ public class AccountController {
 
     @RequestMapping(value = "/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserAccountView getCurrentUserAccount(Authentication authentication) {
-        return service.getCurrentUserAccount(authentication);
+        return service.getCurrentUserAccount(authentication).toView();
     }
 
     @RequestMapping(value = "/users/tokens", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

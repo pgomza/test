@@ -16,9 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional
@@ -42,11 +40,11 @@ public class AccountService {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public UserAccountView getCurrentUserAccount(Authentication authentication) {
+    public UserAccount getCurrentUserAccount(Authentication authentication) {
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserAccount) { // should always be true
             UserAccount userAccount = (UserAccount) principal;
-            return userAccount.toView();
+            return userAccount;
         }
         else
             throw new AccessDeniedException("Access denied");
@@ -96,5 +94,21 @@ public class AccountService {
         userAccountTempTokenService.invalidate(tempToken);
 
         return saved;
+    }
+
+    public UserAccount activateAndGetUserAccount(String secret) {
+        UserAccountPending userAccountPending = userAccountPendingService.getBySecret(secret);
+        if (userAccountPending == null) {
+            throw new ResourceNotFoundException("Invalid secret");
+        }
+
+        List<String> roles = new ArrayList<>(Arrays.asList(UserAccount.DEFAULT_ROLE));
+        UserAccount userAccount =
+                new UserAccount(userAccountPending.getEmail(), userAccountPending.getPassword(),
+                        userAccountPending.getHotelId(), roles);
+        UserAccount savedUserAccount = userAccountService.save(userAccount);
+        userAccountPendingService.delete(userAccountPending.getEmail());
+
+        return savedUserAccount;
     }
 }
