@@ -7,6 +7,7 @@ import org.springframework.boot.actuate.endpoint.ShutdownEndpoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,7 @@ public class ShutdownController {
     @Value("${shutdownSecret}")
     private String shutdownSecret;
 
-    @RequestMapping("/shutdown")
+    @RequestMapping(value = "/shutdown", method = RequestMethod.GET)
     public ResponseEntity<Void> shutdown(@RequestParam(value = "secret", required = true) String secret) {
         if (Objects.equals(secret, shutdownSecret)) {
             shutdownEndpoint.invoke();

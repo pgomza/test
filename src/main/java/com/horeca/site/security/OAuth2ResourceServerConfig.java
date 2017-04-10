@@ -44,7 +44,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 
         // THIS RULE EXISTS SOLELY TO FACILITATE THE DEPLOYMENT PROCESS:
         // allow anybody to send GET requests to the shutdown endpoint
-        // 'anybody' as far as oauth authorization is concerned - that person has to know the secret key
+        // 'anybody' as far as the oauth authorization is concerned - that person has to know the secret key
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/maintenance/shutdown").permitAll();
 
         // allow anybody to get info about any of the hotels
@@ -58,6 +58,9 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 
         // allow anybody to get info about a temp token
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/accounts/users/tokens/{token}").permitAll();
+
+        // allow anybody (who knows the associated activation secret) to activate their account
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/accounts/users/activation").permitAll();
 
         // users (and only them) can access the hotel that they're associated with
         http.authorizeRequests().antMatchers("/api/hotels/{\\d+}/**")

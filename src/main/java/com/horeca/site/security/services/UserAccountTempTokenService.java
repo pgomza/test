@@ -72,7 +72,7 @@ public class UserAccountTempTokenService {
         repository.save(tempToken);
     }
 
-    private String generateRandomString() {
+    public String generateRandomString() {
         return UUID.randomUUID().toString();
     }
 
