@@ -3,7 +3,7 @@ HOST='waws-prod-am2-121.ftp.azurewebsites.windows.net'
 USER='ThrodiBackend\\throdidashftp'
 PASSWORD='123qweasdZXC'
 
-curl https://throdibackend.azurewebsites.net/api/maintenance/shutdown?secret=345fafc1-2beb-4835-ae6f-e739623144a5
+wget https://throdibackend.azurewebsites.net/api/maintenance/shutdown?secret=345fafc1-2beb-4835-ae6f-e739623144a5
 
 sleep 5
 
