@@ -75,6 +75,9 @@ public class HotelService {
 
     @PreAuthorize("hasRole('SALESMAN')")
     public Hotel add(Hotel hotel) {
+        // TODO needs refactoring
+        if (hotel.getImages() == null)
+            hotel.setImages(new HashSet<>());
         repository.save(hotel);
         ensureEnoughInfoAboutHotel(hotel.getId());
         return get(hotel.getId());
@@ -144,7 +147,7 @@ public class HotelService {
             ClassLoader classLoader = getClass().getClassLoader();
             File file = new File(classLoader.getResource("other/defaultHotelImage.png").getFile());
             try {
-                hotelImagesService.save(hotelId, hotelImagesService.DEFAULT_FILENAME, new FileInputStream(file));
+                hotelImagesService.save(hotelId, HotelImagesService.DEFAULT_FILENAME, new FileInputStream(file));
             } catch (FileNotFoundException e) {
                 throw new RuntimeException("There was a problem while trying to set the default image for " +
                         "hotel " + hotelId, e);
