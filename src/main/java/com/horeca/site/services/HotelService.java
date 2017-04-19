@@ -75,7 +75,9 @@ public class HotelService {
 
     @PreAuthorize("hasRole('SALESMAN')")
     public Hotel add(Hotel hotel) {
-        return repository.save(hotel);
+        repository.save(hotel);
+        ensureEnoughInfoAboutHotel(hotel.getId());
+        return get(hotel.getId());
     }
 
     public Iterable<Hotel> addAll(Iterable<Hotel> hotels) {
