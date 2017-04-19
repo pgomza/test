@@ -56,6 +56,15 @@ public class BreakfastService {
             breakfastPrice.setValue(new BigDecimal(5));
             breakfast.setPrice(breakfastPrice);
 
+            BreakfastCategory dishCategory = new BreakfastCategory();
+            dishCategory.setCategory(BreakfastCategory.Category.DISH);
+            BreakfastCategory drinkCategory = new BreakfastCategory();
+            drinkCategory.setCategory(BreakfastCategory.Category.DRINK);
+            Set<BreakfastCategory> categories = new HashSet<>();
+            categories.add(dishCategory);
+            categories.add(drinkCategory);
+            breakfast.setCategories(categories);
+
             services.setBreakfast(breakfast);
             AvailableServices updatedServices = availableServicesService.update(services);
             return updatedServices.getBreakfast();
