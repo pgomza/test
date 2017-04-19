@@ -4,6 +4,7 @@ import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.accounts.UserAccountView;
+import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.security.models.*;
 import com.horeca.site.security.services.UserAccountMailService;
 import com.horeca.site.security.services.UserAccountPendingService;
@@ -127,5 +128,9 @@ public class AccountService {
         // this may be the first user for this hotel
         // make sure that the hotel contains enough information
         hotelService.ensureEnoughInfoAboutHotel(userAccount.getHotelId());
+
+        Hotel hotel = hotelService.get(userAccount.getHotelId());
+        hotel.setIsThrodiPartner(true);
+        hotelService.update(hotel.getId(), hotel);
     }
 }
