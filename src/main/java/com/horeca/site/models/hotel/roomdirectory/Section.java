@@ -1,7 +1,5 @@
 package com.horeca.site.models.hotel.roomdirectory;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,10 +12,8 @@ public class Section {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
     private String heading;
 
-    @NotEmpty
     private String text;
 
     public Long getId() {
