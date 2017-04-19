@@ -4,9 +4,13 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.extractors.HotelDataExtractor;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
+import com.horeca.site.models.hotel.information.UsefulInformation;
+import com.horeca.site.models.hotel.information.UsefulInformationHourItem;
 import com.horeca.site.repositories.HotelRepository;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -14,10 +18,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.*;
 
 @Service
 @Transactional
@@ -25,6 +29,12 @@ public class HotelService {
 
     @Autowired
     private HotelRepository repository;
+
+    // TODO avoid a circular dependency: HotelImagesService is dependent on HotelService
+    // for now, @Lazy is used as a workaround
+    @Autowired
+    @Lazy
+    private HotelImagesService hotelImagesService;
 
     /*
         general actions
@@ -95,6 +105,51 @@ public class HotelService {
         boolean exists = repository.exists(hotelId);
         if (!exists)
             throw new ResourceNotFoundException("Could not find a hotel with such an id");
+    }
+
+    /**
+     * Checks whether the hotel contains enough information for clients
+     * to process it properly; if not, it adds default data
+     * This method doesn't attempt to add such crucial data as the hotel's
+     * name in case it hasn't been specified
+     */
+    public void ensureEnoughInfoAboutHotel(Long hotelId) {
+        Hotel hotel = get(hotelId);
+        if (hotel.getDescription() == null)
+            hotel.setDescription("");
+
+        if (hotel.getStarRating() == null)
+            hotel.setStarRating(0F);
+
+        if (hotel.getPropertyType() == null)
+            hotel.setPropertyType("Hotel");
+
+        if (hotel.getUsefulInformation() == null) {
+            UsefulInformation usefulInformation = new UsefulInformation();
+
+            UsefulInformationHourItem checkOut = new UsefulInformationHourItem();
+            checkOut.setName("Check-out");
+            checkOut.setFromHour(LocalTime.parse("08:00"));
+            checkOut.setToHour(LocalTime.parse("18:00"));
+
+            Set<UsefulInformationHourItem> hours = new HashSet<>();
+            hours.add(checkOut);
+            usefulInformation.setHours(hours);
+            hotel.setUsefulInformation(usefulInformation);
+        }
+
+        if (hotel.getImages() == null || hotel.getImages().size() == 0) {
+            ClassLoader classLoader = getClass().getClassLoader();
+            File file = new File(classLoader.getResource("other/defaultHotelImage.png").getFile());
+            try {
+                hotelImagesService.save(hotelId, hotelImagesService.DEFAULT_FILENAME, new FileInputStream(file));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("There was a problem while trying to set the default image for " +
+                        "hotel " + hotelId, e);
+            }
+        }
+
+        update(hotelId, hotel);
     }
 
     /*

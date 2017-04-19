@@ -36,6 +36,9 @@ public class AccountService {
     @Autowired
     private UserAccountMailService userAccountMailService;
 
+    @Autowired
+    private HotelService hotelService;
+
     public Set<UserAccountView> getUserAccountViews() {
         Set<UserAccountView> views = new HashSet<>();
         for (UserAccount userAccount : userAccountService.getAll()) {
@@ -120,5 +123,9 @@ public class AccountService {
                 new UserAccount(userAccountPending.getEmail(), userAccountPending.getPassword(),
                         userAccountPending.getHotelId(), roles);
         userAccountService.save(userAccount);
+
+        // this may be the first user for this hotel
+        // make sure that the hotel contains enough information
+        hotelService.ensureEnoughInfoAboutHotel(userAccount.getHotelId());
     }
 }

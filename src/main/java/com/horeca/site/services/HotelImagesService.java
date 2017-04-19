@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 @Transactional
 public class HotelImagesService {
 
+    public static final String DEFAULT_FILENAME = "default.png";
     private static final Pattern filenamePattern = Pattern.compile("^\\w+(\\.\\w+)?$");
 
     @Autowired
@@ -68,7 +69,7 @@ public class HotelImagesService {
     public FileLink save(Long hotelId, String filename, InputStream imageStream) {
         Matcher matcher = filenamePattern.matcher(filename);
         if (!matcher.matches()) {
-            throw new BusinessRuleViolationException("Filename should only consist of alphanumeric characters. " +
+            throw new BusinessRuleViolationException("The filename should only consist of alphanumeric characters. " +
                     "A file extension can be specified too. A sample valid filename: hotel.jpg");
         }
 
