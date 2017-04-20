@@ -77,7 +77,7 @@ public class UserAccountTempTokenService {
     }
 
     public void deleteInvalidTokens() {
-         logger.info("Checking for invalid temp tokens...");
+        logger.info("Checking for invalid temp tokens...");
 
         Iterable<UserAccountTempToken> tempTokens = repository.findAll();
         Set<UserAccountTempToken> toDelete = new HashSet<>();
