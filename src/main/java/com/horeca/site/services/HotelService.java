@@ -7,7 +7,6 @@ import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.information.UsefulInformationHourItem;
 import com.horeca.site.repositories.HotelRepository;
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -22,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -35,6 +35,9 @@ public class HotelService {
     @Autowired
     @Lazy
     private HotelImagesService hotelImagesService;
+
+    @Autowired
+    private HotelSearchService hotelSearchService;
 
     /*
         general actions
@@ -159,69 +162,26 @@ public class HotelService {
 
     /*
         filtering hotels
-        // TODO refactor the filtering methods because as of now they're doing pretty much the same thing
      */
 
-    private List<Hotel> filterByName(String name) {
-        if (name.length() < 3)
-            return Collections.emptyList();
-
-        String lowercaseName = StringUtils.lowerCase(name);
-        List<Hotel> found = repository.getByName(lowercaseName);
-        Collections.sort(found, new HotelComparator());
-        return found;
-    }
-
-    private List<Hotel> filterByCity(String city) {
-        if (city.length() < 3)
-            return Collections.emptyList();
-
-        String lowercaseCity = StringUtils.lowerCase(city);
-        List<Hotel> found = repository.getByCity(lowercaseCity);
-        Collections.sort(found, new HotelComparator());
-        return found;
-    }
-
-    private List<Hotel> filterByNameAndCity(String name, String city) {
-        if (name.length() < 3 || city.length() < 3)
-            return Collections.emptyList();
-
-        // for now simply find the intersection
-        List<Hotel> byName = filterByName(name);
-        List<Hotel> byCity = filterByCity(city);
-        byName.retainAll(byCity);
-        Collections.sort(byName, new HotelComparator());
-
-        return byName;
-    }
-
     public Page<Hotel> getByName(String name, Pageable pageable) {
-        List<Hotel> found = filterByName(name);
-        return getPageForContent(found, pageable);
+        List<Long> foundIds = hotelSearchService.getIdsByName(name);
+        return getPageOfHotels(foundIds, pageable);
     }
 
     public Page<HotelView> getViewsByName(String name, Pageable pageable) {
-        List<Hotel> found = filterByName(name);
-        List<HotelView> views = new ArrayList<>();
-        for (Hotel hotel : found) {
-            views.add(hotel.toView());
-        }
-
-        return getPageForContent(views, pageable);
+        List<Long> foundIds = hotelSearchService.getIdsByName(name);
+        return getPageOfHotelViews(foundIds, pageable);
     }
 
     public Page<Hotel> getByCity(String city, Pageable pageable) {
-        List<Hotel> found = filterByCity(city);
-        return getPageForContent(found, pageable);
+        List<Long> foundIds = hotelSearchService.getIdsByCity(city);
+        return getPageOfHotels(foundIds, pageable);
     }
 
     public Page<HotelView> getViewsByCity(String city, Pageable pageable) {
-        List<Hotel> found = filterByCity(city);
-        List<HotelView> views = new ArrayList<>();
-        for (Hotel hotel : found) {
-            views.add(hotel.toView());
-        }
-        return getPageForContent(views, pageable);
+        List<Long> foundIds = hotelSearchService.getIdsByCity(city);
+        return getPageOfHotelViews(foundIds, pageable);
     }
 
     public Page<Hotel> getByNameAndCity(String name, String city, Pageable pageable) {
@@ -232,8 +192,8 @@ public class HotelService {
         else if (city.isEmpty())
             return getByName(name, pageable);
         else {
-            List<Hotel> found = filterByNameAndCity(name, city);
-            return getPageForContent(found, pageable);
+            List<Long> foundIds = hotelSearchService.getIdsByNameAndCity(name, city);
+            return getPageOfHotels(foundIds, pageable);
         }
     }
 
@@ -245,32 +205,41 @@ public class HotelService {
         else if (city.isEmpty())
             return getViewsByName(name, pageable);
         else {
-            List<Hotel> found = filterByNameAndCity(name, city);
-            List<HotelView> views = new ArrayList<>();
-            for (Hotel hotel : found) {
-                views.add(hotel.toView());
-            }
-
-            return getPageForContent(views, pageable);
+            List<Long> foundIds = hotelSearchService.getIdsByNameAndCity(name, city);
+            return getPageOfHotelViews(foundIds, pageable);
         }
     }
 
-    private static <T> Page<T> getPageForContent(List<T> content, Pageable pageable) {
-        int totalCount = content.size();
+    private Page<Hotel> getPageOfHotels(List<Long> hotelIds, Pageable pageable) {
+        List<Hotel> hotels = fetchBatchAndSort(hotelIds, pageable);
+        return getPageForContent(hotels, pageable, hotelIds.size());
+    }
+
+    private Page<HotelView> getPageOfHotelViews(List<Long> hotelIds, Pageable pageable) {
+        List<Hotel> hotels = fetchBatchAndSort(hotelIds, pageable);
+        List<HotelView> views = hotels.stream().map(hotel -> hotel.toView()).collect(Collectors.toList());
+        return getPageForContent(views, pageable, hotelIds.size());
+    }
+
+    private static <T> Page<T> getEmptyPage(Pageable pageable) {
+        return new PageImpl<>(new ArrayList<>(), pageable, 0L);
+    }
+
+    private static <T> Page<T> getPageForContent(List<T> content, Pageable pageable, int totalCount) {
+        return new PageImpl<>(content, pageable, totalCount);
+    }
+
+    private List<Hotel> fetchBatchAndSort(List<Long> hotelIds, Pageable pageable) {
+        int totalCount = hotelIds.size();
         int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
         int fromIndex = Math.max(pageNumber * pageSize, 0);
         int toIndex = Math.max(Math.min(fromIndex + pageSize, totalCount), 0);
 
-        List<T> result = new ArrayList<>();
-        if (fromIndex < totalCount)
-            result = content.subList(fromIndex, toIndex);
-
-        return new PageImpl<>(result, pageable, totalCount);
-    }
-
-    private static <T> Page<T> getEmptyPage(Pageable pageable) {
-        return new PageImpl<>(new ArrayList<T>(), pageable, 0L);
+        List<Long> idsToFetch = hotelIds.subList(fromIndex, toIndex);
+        List<Hotel> fetched = idsToFetch.stream().map(id -> repository.findOne(id)).collect(Collectors.toList());
+        Collections.sort(fetched, new HotelComparator());
+        return fetched;
     }
 
     private static class HotelComparator implements Comparator<Hotel> {

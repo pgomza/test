@@ -51,6 +51,7 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
         BAD_REQUEST_EXCEPTIONS.add(MethodArgumentNotValidException.class);
         BAD_REQUEST_EXCEPTIONS.add(BadAuthorizationRequestException.class);
         BAD_REQUEST_EXCEPTIONS.add(UnsupportedGrantTypeException.class);
+        BAD_REQUEST_EXCEPTIONS.add(IllegalArgumentException.class);
 
         NOT_FOUND_EXCEPTIONS.add(ResourceNotFoundException.class);
 
