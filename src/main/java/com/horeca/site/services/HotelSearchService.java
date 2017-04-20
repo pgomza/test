@@ -37,11 +37,13 @@ public class HotelSearchService {
             // assume that the city is the penultimate element in the 'address' field
             // each element is separated by a comma
             String elements[] = address.split(",");
-            String extractedCity = elements[elements.length - 2].trim();
-            String extractedCityLowercase = StringUtils.lowerCase(extractedCity);
+            if (elements.length >= 2) {
+                String extractedCity = elements[elements.length - 2].trim();
+                String extractedCityLowercase = StringUtils.lowerCase(extractedCity);
 
-            if (lowercaseCity.equals(extractedCityLowercase))
-                remainingIds.add(id);
+                if (extractedCityLowercase.contains(lowercaseCity))
+                    remainingIds.add(id);
+            }
         }
 
         return remainingIds;
