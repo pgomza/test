@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.horeca.site.exceptions.BadAuthorizationRequestException;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
+import com.horeca.site.exceptions.UnauthorizedException;
 import org.joda.time.DateTime;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -56,6 +57,7 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
         NOT_FOUND_EXCEPTIONS.add(ResourceNotFoundException.class);
 
         UNAUTHORIZED_EXCEPTIONS.add(BadCredentialsException.class);
+        UNAUTHORIZED_EXCEPTIONS.add(UnauthorizedException.class);
 
         FORBIDDEN_EXCEPTIONS.add(AccessDeniedException.class);
     }

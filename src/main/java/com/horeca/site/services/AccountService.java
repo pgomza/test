@@ -3,7 +3,6 @@ package com.horeca.site.services;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.exceptions.UnauthorizedException;
-import com.horeca.site.models.accounts.UserAccountView;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.security.models.*;
 import com.horeca.site.security.services.UserAccountMailService;
@@ -40,18 +39,10 @@ public class AccountService {
     @Autowired
     private HotelService hotelService;
 
-    public Set<UserAccountView> getUserAccountViews() {
-        Set<UserAccountView> views = new HashSet<>();
-        for (UserAccount userAccount : userAccountService.getAll()) {
-            views.add(userAccount.toView());
-        }
-        return views;
-    }
-
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public UserAccount getCurrentUserAccount(Authentication authentication) {
         Object principal = authentication.getPrincipal();
-        if (principal instanceof UserAccount) { // should always be true
+        if (principal instanceof UserAccount) {
             UserAccount userAccount = (UserAccount) principal;
             return userAccount;
         }

@@ -1,11 +1,9 @@
 package com.horeca.site.controllers;
 
 import com.horeca.site.models.accounts.UserAccountView;
-import com.horeca.site.security.models.UserAccountPOST;
-import com.horeca.site.security.models.UserAccountPending;
-import com.horeca.site.security.models.UserAccountTempTokenRequest;
-import com.horeca.site.security.models.UserAccountTempTokenResponse;
+import com.horeca.site.security.models.*;
 import com.horeca.site.security.services.UserAccountPendingService;
+import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.AccountService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,27 @@ public class AccountController {
     private AccountService service;
 
     @Autowired
+    private UserAccountService userAccountService;
+
+    @Autowired
     private UserAccountPendingService userAccountPendingService;
+
+    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Set<UserAccountView> getUserAccountViews() {
+        return userAccountService.getViews();
+    }
+
+    @RequestMapping(value = "/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserAccountView getCurrentUserAccount(Authentication authentication) {
+        return service.getCurrentUserAccount(authentication).toView();
+    }
+
+    @RequestMapping(value = "/users/current/password", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void changePasswordOfCurrentUserAccount(Authentication authentication,
+                                                   @RequestBody PasswordChangeRequest request) {
+        UserAccount userAccount = service.getCurrentUserAccount(authentication);
+        userAccountService.changePassword(userAccount.getUsername(), request.currentPassword, request.newPassword);
+    }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseMessage addUserAccountPending(@RequestHeader(name = "Temp-Token", required = true) String token,
@@ -50,16 +68,6 @@ public class AccountController {
         return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
     }
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<UserAccountView> getUserAccountViews() {
-        return service.getUserAccountViews();
-    }
-
-    @RequestMapping(value = "/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserAccountView getCurrentUserAccount(Authentication authentication) {
-        return service.getCurrentUserAccount(authentication).toView();
-    }
-
     @RequestMapping(value = "/users/tokens", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserAccountTempTokenResponse getTempTokenForNewUserAccount(@RequestBody UserAccountTempTokenRequest request) {
         return service.getTempTokenForNewUserAccount(request);
@@ -70,19 +78,32 @@ public class AccountController {
         return service.getInfoAboutUserAccountTempToken(token);
     }
 
-    private static class ResponseMessage {
+    public static class ResponseMessage {
         private String message;
 
         public ResponseMessage(String message) {
             this.message = message;
         }
+    }
 
-        public String getMessage() {
-            return message;
+    public static class PasswordChangeRequest {
+        private String currentPassword;
+        private String newPassword;
+
+        public String getCurrentPassword() {
+            return currentPassword;
         }
 
-        public void setMessage(String message) {
-            this.message = message;
+        public void setCurrentPassword(String currentPassword) {
+            this.currentPassword = currentPassword;
+        }
+
+        public String getNewPassword() {
+            return newPassword;
+        }
+
+        public void setNewPassword(String newPassword) {
+            this.newPassword = newPassword;
         }
     }
 }

@@ -6,6 +6,8 @@ import org.springframework.data.repository.CrudRepository;
 
 public abstract class AbstractAccountService<T extends AbstractAccount> {
 
+    protected final static String passwordRegex = "[^\\s]{5,}";
+
     @Autowired
     protected CrudRepository<T, String> repository;
 
