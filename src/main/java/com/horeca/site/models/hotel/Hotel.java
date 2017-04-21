@@ -10,6 +10,7 @@ import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -40,7 +41,17 @@ public class Hotel {
 
 	private String phone;
 
+	@URL
 	private String bookingUrl;
+
+	@URL
+	private String shopsUrl;
+
+	@URL
+	private String restaurantsUrl;
+
+	@URL
+	private String interestingPlacesUrl;
 
 	private String fax;
 
@@ -149,6 +160,30 @@ public class Hotel {
 
 	public void setBookingUrl(String bookingUrl) {
 		this.bookingUrl = bookingUrl;
+	}
+
+	public String getShopsUrl() {
+		return shopsUrl;
+	}
+
+	public void setShopsUrl(String shopsUrl) {
+		this.shopsUrl = shopsUrl;
+	}
+
+	public String getRestaurantsUrl() {
+		return restaurantsUrl;
+	}
+
+	public void setRestaurantsUrl(String restaurantsUrl) {
+		this.restaurantsUrl = restaurantsUrl;
+	}
+
+	public String getInterestingPlacesUrl() {
+		return interestingPlacesUrl;
+	}
+
+	public void setInterestingPlacesUrl(String interestingPlacesUrl) {
+		this.interestingPlacesUrl = interestingPlacesUrl;
 	}
 
 	public String getFax() {
@@ -281,6 +316,9 @@ public class Hotel {
 		hotelView.setWebsite(getWebsite());
 		hotelView.setPhone(getPhone());
 		hotelView.setBookingUrl(getBookingUrl());
+		hotelView.setShopsUrl(getShopsUrl());
+		hotelView.setRestaurantsUrl(getRestaurantsUrl());
+		hotelView.setInterestingPlacesUrl(getInterestingPlacesUrl());
 		hotelView.setFax(getFax());
 		hotelView.setStarRating(getStarRating());
 		hotelView.setRooms(getRooms());

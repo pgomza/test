@@ -22,6 +22,9 @@ public class HotelView {
 	private String website;
 	private String phone;
 	private String bookingUrl;
+	private String shopsUrl;
+	private String restaurantsUrl;
+	private String interestingPlacesUrl;
 	private String fax;
 	private Float starRating;
 	private Integer rooms;
@@ -102,6 +105,30 @@ public class HotelView {
 
 	public void setBookingUrl(String bookingUrl) {
 		this.bookingUrl = bookingUrl;
+	}
+
+	public String getShopsUrl() {
+		return shopsUrl;
+	}
+
+	public void setShopsUrl(String shopsUrl) {
+		this.shopsUrl = shopsUrl;
+	}
+
+	public String getRestaurantsUrl() {
+		return restaurantsUrl;
+	}
+
+	public void setRestaurantsUrl(String restaurantsUrl) {
+		this.restaurantsUrl = restaurantsUrl;
+	}
+
+	public String getInterestingPlacesUrl() {
+		return interestingPlacesUrl;
+	}
+
+	public void setInterestingPlacesUrl(String interestingPlacesUrl) {
+		this.interestingPlacesUrl = interestingPlacesUrl;
 	}
 
 	public String getFax() {
