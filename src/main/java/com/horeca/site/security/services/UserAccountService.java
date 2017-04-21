@@ -41,8 +41,7 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
                 throw new BusinessRuleViolationException("The new password must contain at least 5 characters");
             }
 
-            String salt = BCrypt.gensalt(12);
-            String hashedPassword = BCrypt.hashpw(newPassword, salt);
+            String hashedPassword = PasswordHashingService.getHashedFromPlain(newPassword);
             userAccount.setPassword(hashedPassword);
             save(userAccount);
         }

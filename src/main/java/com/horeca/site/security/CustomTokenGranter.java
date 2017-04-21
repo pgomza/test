@@ -5,13 +5,13 @@ import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.LoginService;
+import com.horeca.site.security.services.PasswordHashingService;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
@@ -107,7 +107,7 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
             return null;
 
         final UserDetails userDetails = loginService.loadUserByUsername(username);
-        if (BCrypt.checkpw(plainTextPassword, userDetails.getPassword()))
+        if (PasswordHashingService.checkIfPlainEqualToHashed(plainTextPassword, userDetails.getPassword()))
             return userDetails;
         else
             return null;

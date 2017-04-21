@@ -5,15 +5,11 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.security.models.*;
-import com.horeca.site.security.services.UserAccountMailService;
-import com.horeca.site.security.services.UserAccountPendingService;
-import com.horeca.site.security.services.UserAccountService;
-import com.horeca.site.security.services.UserAccountTempTokenService;
+import com.horeca.site.security.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,16 +76,15 @@ public class AccountService {
         if (userAccountService.exists(username)) {
             throw new BusinessRuleViolationException("A user with such an email already exists");
         }
-        // TODO refactor generating a hashed password into a separate method
-        String salt = BCrypt.gensalt(12);
-        String hashed_password = BCrypt.hashpw(userAccountPOST.getPassword(), salt);
+
+        String hashedPassword = PasswordHashingService.getHashedFromPlain(userAccountPOST.getPassword());
         String secret = userAccountTempTokenService.generateRandomString();
         String redirectUrl = userAccountPOST.getRedirectUrl();
         if (redirectUrl.endsWith("/"))
             redirectUrl = redirectUrl.substring(0, redirectUrl.length() - 1);
 
         UserAccountPending userAccountPending =
-                new UserAccountPending(userAccountPOST.getEmail(), hashed_password, tempToken.getHotel().getId(), secret, redirectUrl);
+                new UserAccountPending(userAccountPOST.getEmail(), hashedPassword, tempToken.getHotel().getId(), secret, redirectUrl);
         UserAccountPending saved = userAccountPendingService.save(userAccountPending);
 
         try {
