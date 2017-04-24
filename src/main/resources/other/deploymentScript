@@ -1,0 +1,20 @@
+#!/bin/bash
+HOST='waws-prod-am2-121.ftp.azurewebsites.windows.net'
+USER='ThrodiBackend\\throdidashftp'
+PASSWORD='123qweasdZXC'
+
+wget https://throdibackend.azurewebsites.net/api/maintenance/shutdown?secret=345fafc1-2beb-4835-ae6f-e739623144a5
+
+sleep 5
+
+ftp -nvp $HOST <<END_SCRIPT
+quote USER $USER
+quote PASS $PASSWORD
+cd site/wwwroot
+mdelete webapps/*
+quit
+END_SCRIPT
+
+sleep 10
+
+exit 0
