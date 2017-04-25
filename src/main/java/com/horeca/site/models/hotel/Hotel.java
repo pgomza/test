@@ -53,6 +53,9 @@ public class Hotel {
 	@URL
 	private String interestingPlacesUrl;
 
+	@URL
+	private String eventsUrl;
+
 	private String fax;
 
 	private Float starRating;
@@ -184,6 +187,14 @@ public class Hotel {
 
 	public void setInterestingPlacesUrl(String interestingPlacesUrl) {
 		this.interestingPlacesUrl = interestingPlacesUrl;
+	}
+
+	public String getEventsUrl() {
+		return eventsUrl;
+	}
+
+	public void setEventsUrl(String eventsUrl) {
+		this.eventsUrl = eventsUrl;
 	}
 
 	public String getFax() {
@@ -319,6 +330,7 @@ public class Hotel {
 		hotelView.setShopsUrl(getShopsUrl());
 		hotelView.setRestaurantsUrl(getRestaurantsUrl());
 		hotelView.setInterestingPlacesUrl(getInterestingPlacesUrl());
+		hotelView.setEventsUrl(getEventsUrl());
 		hotelView.setFax(getFax());
 		hotelView.setStarRating(getStarRating());
 		hotelView.setRooms(getRooms());

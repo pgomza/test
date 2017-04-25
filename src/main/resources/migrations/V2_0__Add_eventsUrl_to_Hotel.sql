@@ -1,0 +1,1 @@
+ALTER TABLE Hotel ADD eventsUrl NVARCHAR(255);
