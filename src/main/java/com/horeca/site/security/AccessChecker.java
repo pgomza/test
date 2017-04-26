@@ -82,7 +82,7 @@ public class AccessChecker {
     }
 
     private boolean checkForStayHelper(Authentication authentication, String pin) {
-        Stay stay = stayService.getWithoutChecks(pin);
+        Stay stay = stayService.getWithoutCheckingStatus(pin);
         StayView stayView = stay.toView();
         return checkForStayHelper(authentication, stayView);
     }

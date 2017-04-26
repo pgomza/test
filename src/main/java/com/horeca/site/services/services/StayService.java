@@ -42,7 +42,8 @@ public class StayService {
     // used when the information about a given stay has to be returned
     // irrespective of the fact whether it's active or not; for 'internal'
     // use only
-    public Stay getWithoutChecks(String pin) {
+    public Stay getWithoutCheckingStatus(String pin) {
+        ensureEntityExists(pin);
         return stayRepository.findOne(pin);
     }
 
