@@ -39,7 +39,7 @@ public class HotelView {
 	private UsefulInformation usefulInformation;
 	private RoomDirectory roomDirectory;
 	private List<AvailableServiceViewSimplified> services;
-	private Set<FileLink> images;
+	private List<FileLink> images;
 
 	@JsonIgnore
 	private Set<Guest> guests;
@@ -244,11 +244,11 @@ public class HotelView {
 		this.services = services;
 	}
 
-	public Set<FileLink> getImages() {
+	public List<FileLink> getImages() {
 		return images;
 	}
 
-	public void setImages(Set<FileLink> images) {
+	public void setImages(List<FileLink> images) {
 		this.images = images;
 	}
 

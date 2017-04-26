@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
-import java.util.Set;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,7 +61,7 @@ public class HotelImagesService {
         return foundLink;
     }
 
-    public Set<FileLink> getAll(Long hotelId) {
+    public List<FileLink> getAll(Long hotelId) {
         Hotel hotel = hotelService.get(hotelId);
         return hotel.getImages();
     }

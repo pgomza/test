@@ -80,7 +80,7 @@ public class HotelService {
     public Hotel add(Hotel hotel) {
         // TODO needs refactoring
         if (hotel.getImages() == null)
-            hotel.setImages(new HashSet<>());
+            hotel.setImages(new ArrayList<>());
         repository.save(hotel);
         ensureEnoughInfoAboutHotel(hotel.getId());
         return get(hotel.getId());

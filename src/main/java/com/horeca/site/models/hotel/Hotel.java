@@ -88,13 +88,10 @@ public class Hotel {
 	@JoinColumn
 	private AvailableServices availableServices;
 
-	@ManyToMany
-	@JoinTable(
-			name = "Hotel_FileLink",
-			joinColumns = @JoinColumn(name = "Hotel_id"),
-			inverseJoinColumns = @JoinColumn(name = "FileLink_id")
-	)
-	private Set<FileLink> images;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@JoinColumn(name = "hotel_id")
+	@OrderColumn(name = "filelink_order")
+	private List<FileLink> images;
 
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -301,11 +298,11 @@ public class Hotel {
 		this.availableServices = availableServices;
 	}
 
-	public Set<FileLink> getImages() {
+	public List<FileLink> getImages() {
 		return images;
 	}
 
-	public void setImages(Set<FileLink> images) {
+	public void setImages(List<FileLink> images) {
 		this.images = images;
 	}
 

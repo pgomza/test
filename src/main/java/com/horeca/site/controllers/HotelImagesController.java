@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
+import java.util.List;
 
 @Api(value = "hotels")
 @RestController
@@ -35,7 +35,7 @@ public class HotelImagesController {
     }
 
     @RequestMapping(value = "/{id}/images", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<FileLink> getAll(@PathVariable("id") Long id) {
+    public List<FileLink> getAll(@PathVariable("id") Long id) {
         return service.getAll(id);
     }
 
