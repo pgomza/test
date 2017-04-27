@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 public class HotelImagesService {
 
     public static final String DEFAULT_FILENAME = "default.png";
-    private static final Pattern filenamePattern = Pattern.compile("^\\w+(\\.\\w+)?$");
+    private static final Pattern filenamePattern = Pattern.compile("^[\\w\\-. ]+$");
 
     @Autowired
     private HotelService hotelService;
