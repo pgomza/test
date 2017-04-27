@@ -8,6 +8,7 @@ import com.horeca.site.exceptions.UnauthorizedException;
 import org.joda.time.DateTime;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -40,6 +41,7 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
         BAD_REQUEST_EXCEPTIONS.add(BusinessRuleViolationException.class);
         BAD_REQUEST_EXCEPTIONS.add(ConstraintViolationException.class);
         BAD_REQUEST_EXCEPTIONS.add(DataIntegrityViolationException.class);
+        BAD_REQUEST_EXCEPTIONS.add(InvalidDataAccessApiUsageException.class);
         BAD_REQUEST_EXCEPTIONS.add(HttpRequestMethodNotSupportedException.class);
         BAD_REQUEST_EXCEPTIONS.add(HttpMediaTypeNotSupportedException.class);
         BAD_REQUEST_EXCEPTIONS.add(HttpMessageNotReadableException.class);

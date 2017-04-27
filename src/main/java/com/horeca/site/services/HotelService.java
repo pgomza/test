@@ -1,9 +1,11 @@
 package com.horeca.site.services;
 
+import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.extractors.HotelDataExtractor;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
+import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.information.UsefulInformationHourItem;
 import com.horeca.site.repositories.HotelRepository;
@@ -90,9 +92,10 @@ public class HotelService {
         return repository.save(hotels); // don't return a populated List due to performance reasons
     }
 
-    public Hotel update(Long id, Hotel newOne) {
-        newOne.setId(id); // TODO this should have been set by the time this method is invoked
-        return repository.save(newOne);
+    public Hotel update(Long id, Hotel updated) {
+        updated.setId(id); // TODO this should have been set by the time this method is invoked
+        checkImagesOnUpdate(updated);
+        return repository.save(updated);
     }
 
     public Hotel updateIgnoreGuests(Long id, Hotel newOne) {
@@ -158,6 +161,34 @@ public class HotelService {
         }
 
         update(hotelId, hotel);
+    }
+
+    /**
+     * Checks what (if anything) has been changed in the hotel's images
+     * Only a change in their order is allowed
+     */
+    private void checkImagesOnUpdate(Hotel updatedHotel) {
+        Hotel currentHotel = get(updatedHotel.getId());
+        Set<FileLink> currentImages = new HashSet<>(currentHotel.getImages());
+        Set<FileLink> updatedImages = null;
+
+        boolean failedRetrieval = false;
+        try {
+            updatedImages = updatedHotel.getImages().stream()
+                    .map(image -> hotelImagesService.get(updatedHotel.getId(), image.getFilename()))
+                    .collect(Collectors.toSet());
+        }
+        catch (ResourceNotFoundException ex) {
+            failedRetrieval = true;
+        }
+
+        if (!failedRetrieval && currentImages.size() == updatedImages.size()) {
+            currentImages.retainAll(updatedImages);
+            if (currentImages.size() == updatedImages.size())
+                return;
+        }
+        throw new BusinessRuleViolationException("Only a change in the order of the existing hotel images is allowed. " +
+                "To add or delete an image use the ~/api/hotels/" + updatedHotel.getId() + "/images endpoint");
     }
 
     /*
