@@ -33,13 +33,14 @@ public class HotelImagesService {
     private HotelService hotelService;
     @Autowired
     private FileLinkRepository repository;
-
     private CloudBlobContainer container;
 
     @Value("${storage.connectionString}")
     private String storageConnectionString;
     @Value("${storage.containerName}")
     private String containerName;
+    @Value("${storage.maxImagesPerHotel}")
+    private Integer maxImagesPerHotel;
 
     @PostConstruct
     void initStorageContainer() throws URISyntaxException, InvalidKeyException, StorageException {
@@ -67,6 +68,12 @@ public class HotelImagesService {
     }
 
     public FileLink save(Long hotelId, String filename, InputStream imageStream) {
+        Hotel hotel = hotelService.get(hotelId);
+        if (hotel.getImages().size() >= maxImagesPerHotel) { // should never be '>', but just in case
+            throw new BusinessRuleViolationException("A hotel can't have more than " + maxImagesPerHotel + " images " +
+                    "associated with it");
+        }
+
         Matcher matcher = filenamePattern.matcher(filename);
         if (!matcher.matches()) {
             throw new BusinessRuleViolationException("The filename should only consist of alphanumeric characters. " +
@@ -80,10 +87,8 @@ public class HotelImagesService {
         fileLink.setFilename(filename);
         fileLink.setUrl(url);
 
-        Hotel hotel = hotelService.get(hotelId);
         if (findByFilename(hotelId, filename) != null)
             delete(hotelId, filename);
-
 
         FileLink savedFileLink = repository.save(fileLink);
         hotel.getImages().add(fileLink);
