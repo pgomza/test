@@ -47,10 +47,11 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         // 'anybody' as far as the oauth authorization is concerned - that person has to know the secret key
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/maintenance/shutdown").permitAll();
 
-        // allow anybody to get info about any of the hotels
+        // allow anybody to get info about any of the hotels (but not their guests)
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/services/**").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/images/**").permitAll();
 
         // allow anybody who's in possession of a temp token to add a user account
         // 'anybody' means people that don't have to go through the OAuth2 authentication process
