@@ -9,6 +9,7 @@ import com.horeca.site.models.orders.housekeeping.HousekeepingOrder;
 import com.horeca.site.models.orders.petcare.PetCareOrder;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrder;
 import com.horeca.site.models.orders.spa.SpaOrder;
+import com.horeca.site.models.orders.tableordering.TableOrderingOrder;
 import com.horeca.site.models.orders.taxi.TaxiOrder;
 
 import javax.persistence.*;
@@ -55,6 +56,10 @@ public class Orders {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "orders_id_room_service")
     private Set<RoomServiceOrder> roomServiceOrders = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "orders_id_tableordering")
+    private Set<TableOrderingOrder> tableOrderingOrders = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -126,5 +131,13 @@ public class Orders {
 
     public void setRoomServiceOrders(Set<RoomServiceOrder> roomServiceOrders) {
         this.roomServiceOrders = roomServiceOrders;
+    }
+
+    public Set<TableOrderingOrder> getTableOrderingOrders() {
+        return tableOrderingOrders;
+    }
+
+    public void setTableOrderingOrders(Set<TableOrderingOrder> tableOrderingOrders) {
+        this.tableOrderingOrders = tableOrderingOrders;
     }
 }
