@@ -7,6 +7,7 @@ import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.roomservice.RoomService;
 import com.horeca.site.models.hotel.services.spa.Spa;
+import com.horeca.site.models.hotel.services.tableordering.TableOrdering;
 import com.horeca.site.models.hotel.services.taxi.Taxi;
 
 import javax.persistence.*;
@@ -46,6 +47,10 @@ public class AvailableServices {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
     private RoomService roomService;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn
+    private TableOrdering tableOrdering;
 
     public Long getId() {
         return id;
@@ -109,5 +114,13 @@ public class AvailableServices {
 
     public void setRoomService(RoomService roomService) {
         this.roomService = roomService;
+    }
+
+    public TableOrdering getTableOrdering() {
+        return tableOrdering;
+    }
+
+    public void setTableOrdering(TableOrdering tableOrdering) {
+        this.tableOrdering = tableOrdering;
     }
 }

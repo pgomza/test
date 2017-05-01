@@ -2,6 +2,7 @@ package com.horeca.site.models.hotel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.horeca.site.models.Price;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
@@ -385,6 +386,15 @@ public class Hotel {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.ROOMSERVICE);
 				simplified.setPrice(availableServices.getRoomService().getPrice());
+				simplifiedList.add(simplified);
+			}
+
+			if (availableServices.getTableOrdering() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceType.TABLEORDERING);
+				Price price = new Price();
+				price.setText("Free");
+				simplified.setPrice(price);
 				simplifiedList.add(simplified);
 			}
 
