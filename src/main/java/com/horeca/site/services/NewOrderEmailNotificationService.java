@@ -1,7 +1,9 @@
 package com.horeca.site.services;
 
+import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.notifications.NewOrderEvent;
+import com.horeca.site.models.notifications.NotificationSettings;
 import com.horeca.site.models.stay.Stay;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,12 @@ public class NewOrderEmailNotificationService implements ApplicationListener<New
     @Override
     public void onApplicationEvent(NewOrderEvent event) {
         Stay stay = event.getStay();
-        String recipientEmail = stay.getHotel().getNotificationSettings().getEmail();
+        NotificationSettings notificationSettings = stay.getHotel().getNotificationSettings();
+        if (notificationSettings == null) {
+            throw new BusinessRuleViolationException("An email about a new order cannot be send because the " +
+            "notification service's settings haven't been specified");
+        }
+        String recipientEmail = notificationSettings.getEmail();
         String service = event.getServiceType().toString();
         Guest guest = stay.getGuest();
 
@@ -33,6 +40,7 @@ public class NewOrderEmailNotificationService implements ApplicationListener<New
         } catch (MessagingException e) {
             logger.error("Error while sending an email about a new order to: " + recipientEmail);
             logger.error("Guest: " + guest.getId() + ", service: " + service);
+            throw new RuntimeException("There was an error while sending a new order to: " + recipientEmail, e);
         }
     }
 
