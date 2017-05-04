@@ -10,6 +10,7 @@ import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
 import com.horeca.site.models.hotel.services.AvailableServices;
+import com.horeca.site.models.notifications.NotificationSettings;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
@@ -98,6 +99,11 @@ public class Hotel {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "Hotel_id")
 	private Set<Guest> guests;
+
+	@JsonIgnore
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@JoinColumn(name = "notificationSettings_id")
+	private NotificationSettings notificationSettings;
 
 	public Long getId() {
 		return id;
@@ -313,6 +319,14 @@ public class Hotel {
 
 	public void setGuests(Set<Guest> guests) {
 		this.guests = guests;
+	}
+
+	public NotificationSettings getNotificationSettings() {
+		return notificationSettings;
+	}
+
+	public void setNotificationSettings(NotificationSettings notificationSettings) {
+		this.notificationSettings = notificationSettings;
 	}
 
 	public HotelView toView() {
