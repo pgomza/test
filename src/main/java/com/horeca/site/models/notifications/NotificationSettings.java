@@ -26,7 +26,7 @@ public class NotificationSettings {
     private boolean housekeeping;
     private boolean tableOrdering;
 
-    NotificationSettings() {
+    public NotificationSettings() {
     }
 
     public Long getId() {

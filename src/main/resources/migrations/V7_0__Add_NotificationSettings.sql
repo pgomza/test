@@ -1,6 +1,7 @@
 create table NotificationSettings
 (
   id bigint not null identity primary key,
+  email nvarchar(255),
   breakfast bit not null,
   carPark bit not null,
   roomService bit not null,
