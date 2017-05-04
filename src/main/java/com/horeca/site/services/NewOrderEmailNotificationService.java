@@ -2,6 +2,7 @@ package com.horeca.site.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.guest.Guest;
+import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.notifications.NotificationSettings;
 import com.horeca.site.models.stay.Stay;
@@ -31,16 +32,33 @@ public class NewOrderEmailNotificationService implements ApplicationListener<New
             throw new BusinessRuleViolationException("An email about a new order cannot be send because the " +
             "notification service's settings haven't been specified");
         }
-        String recipientEmail = notificationSettings.getEmail();
-        String service = event.getServiceType().toString();
-        Guest guest = stay.getGuest();
 
-        try {
-            prepareAndSendMessage(recipientEmail, service, guest);
-        } catch (MessagingException e) {
-            logger.error("Error while sending an email about a new order to: " + recipientEmail);
-            logger.error("Guest: " + guest.getId() + ", service: " + service);
-            throw new RuntimeException("There was an error while sending a new order to: " + recipientEmail, e);
+        AvailableServiceType requestedService = event.getServiceType();
+        if (shouldNotificationBeSend(notificationSettings, requestedService)) {
+            String recipientEmail = notificationSettings.getEmail();
+            Guest guest = stay.getGuest();
+
+            try {
+                prepareAndSendMessage(recipientEmail, requestedService.toString(), guest);
+            } catch (MessagingException e) {
+                logger.error("Error while sending an email about a new order to: " + recipientEmail);
+                logger.error("Guest: " + guest.getId() + ", service: " + requestedService);
+                throw new RuntimeException("There was an error while sending a new order to: " + recipientEmail, e);
+            }
+        }
+    }
+
+    private boolean shouldNotificationBeSend(NotificationSettings settings, AvailableServiceType requestedService) {
+        switch (requestedService) {
+            case BREAKFAST: return settings.isBreakfast();
+            case CARPARK: return settings.isCarPark();
+            case ROOMSERVICE: return settings.isRoomService();
+            case SPA: return settings.isSpa();
+            case PETCARE: return settings.isPetCare();
+            case TAXI: return settings.isTaxi();
+            case HOUSEKEEPING: return settings.isHousekeeping();
+            case TABLEORDERING: return settings.isTableOrdering();
+            default: return false;
         }
     }
 
