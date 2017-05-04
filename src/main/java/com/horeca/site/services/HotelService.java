@@ -8,6 +8,7 @@ import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.information.UsefulInformationHourItem;
+import com.horeca.site.models.notifications.NotificationSettings;
 import com.horeca.site.repositories.HotelRepository;
 import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,6 +161,12 @@ public class HotelService {
                 throw new RuntimeException("There was a problem while trying to set the default image for " +
                         "hotel " + hotelId, e);
             }
+        }
+
+        if (hotel.getNotificationSettings() == null) {
+            NotificationSettings settings = new NotificationSettings();
+            settings.setEmail("");
+            hotel.setNotificationSettings(settings);
         }
 
         update(hotelId, hotel);
