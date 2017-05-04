@@ -52,6 +52,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/services/**").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/images/**").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/notifications/**").permitAll();
 
         // allow anybody who's in possession of a temp token to add a user account
         // 'anybody' means people that don't have to go through the OAuth2 authentication process
