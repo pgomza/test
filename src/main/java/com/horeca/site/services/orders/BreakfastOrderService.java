@@ -3,9 +3,11 @@ package com.horeca.site.services.orders;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastCategory;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastItem;
+import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
@@ -19,6 +21,7 @@ import com.horeca.site.services.services.StayService;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +41,9 @@ public class BreakfastOrderService {
 
     @Autowired
     private BreakfastOrderRepository repository;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
 
@@ -85,6 +91,15 @@ public class BreakfastOrderService {
         stayService.update(stayPin, stay);
 
         return savedOrder;
+    }
+
+    public BreakfastOrder addAndTryToNotify(String stayPin, BreakfastOrderPOST entity) {
+        BreakfastOrder added = add(stayPin, entity);
+        Stay stay = stayService.get(stayPin);
+
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.BREAKFAST, stay));
+
+        return added;
     }
 
     public BreakfastOrder update(String stayPin, Long id, BreakfastOrder updated) {

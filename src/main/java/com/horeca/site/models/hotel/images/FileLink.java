@@ -20,24 +20,6 @@ public class FileLink {
     @NotEmpty
     private String url;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FileLink)) return false;
-
-        FileLink fileLink = (FileLink) o;
-
-        if (filename != null ? !filename.equals(fileLink.filename) : fileLink.filename != null) return false;
-        return url != null ? url.equals(fileLink.url) : fileLink.url == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = filename != null ? filename.hashCode() : 0;
-        result = 31 * result + (url != null ? url.hashCode() : 0);
-        return result;
-    }
-
     public Long getId() {
         return id;
     }

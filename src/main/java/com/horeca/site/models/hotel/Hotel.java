@@ -2,6 +2,7 @@ package com.horeca.site.models.hotel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.horeca.site.models.Price;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
@@ -9,6 +10,7 @@ import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
 import com.horeca.site.models.hotel.services.AvailableServices;
+import com.horeca.site.models.notifications.NotificationSettings;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
@@ -88,18 +90,20 @@ public class Hotel {
 	@JoinColumn
 	private AvailableServices availableServices;
 
-	@ManyToMany
-	@JoinTable(
-			name = "Hotel_FileLink",
-			joinColumns = @JoinColumn(name = "Hotel_id"),
-			inverseJoinColumns = @JoinColumn(name = "FileLink_id")
-	)
-	private Set<FileLink> images;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@JoinColumn(name = "hotel_id")
+	@OrderColumn(name = "filelink_order")
+	private List<FileLink> images;
 
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "Hotel_id")
 	private Set<Guest> guests;
+
+	@JsonIgnore
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@JoinColumn(name = "notificationSettings_id")
+	private NotificationSettings notificationSettings;
 
 	public Long getId() {
 		return id;
@@ -301,11 +305,11 @@ public class Hotel {
 		this.availableServices = availableServices;
 	}
 
-	public Set<FileLink> getImages() {
+	public List<FileLink> getImages() {
 		return images;
 	}
 
-	public void setImages(Set<FileLink> images) {
+	public void setImages(List<FileLink> images) {
 		this.images = images;
 	}
 
@@ -315,6 +319,14 @@ public class Hotel {
 
 	public void setGuests(Set<Guest> guests) {
 		this.guests = guests;
+	}
+
+	public NotificationSettings getNotificationSettings() {
+		return notificationSettings;
+	}
+
+	public void setNotificationSettings(NotificationSettings notificationSettings) {
+		this.notificationSettings = notificationSettings;
 	}
 
 	public HotelView toView() {
@@ -388,6 +400,15 @@ public class Hotel {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.ROOMSERVICE);
 				simplified.setPrice(availableServices.getRoomService().getPrice());
+				simplifiedList.add(simplified);
+			}
+
+			if (availableServices.getTableOrdering() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceType.TABLEORDERING);
+				Price price = new Price();
+				price.setText("Free");
+				simplified.setPrice(price);
 				simplifiedList.add(simplified);
 			}
 

@@ -2,5 +2,17 @@ package com.horeca.site.models.hotel.services;
 
 public enum AvailableServiceType {
 
-    BREAKFAST, CARPARK, ROOMSERVICE, SPA, PETCARE, TAXI, HOUSEKEEPING
+    BREAKFAST("breakfast"), CARPARK("car park"), ROOMSERVICE("room service"), SPA("spa"), PETCARE("pet care"),
+    TAXI("taxi"), HOUSEKEEPING("housekeeping"), TABLEORDERING("table ordering");
+
+    private final String name;
+
+    AvailableServiceType(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

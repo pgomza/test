@@ -1,6 +1,8 @@
 package com.horeca.site.services.orders;
 
 import com.horeca.site.exceptions.ResourceNotFoundException;
+import com.horeca.site.models.hotel.services.AvailableServiceType;
+import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
@@ -12,6 +14,7 @@ import com.horeca.site.services.services.StayService;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,9 @@ public class CarParkOrderService {
 
     @Autowired
     private CarParkOrderRepository repository;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
 
@@ -67,6 +73,15 @@ public class CarParkOrderService {
         stayService.update(stayPin, stay);
 
         return savedOrder;
+    }
+
+    public CarParkOrder addAndTryToNotify(String stayPin, CarParkOrderPOST entity) {
+        CarParkOrder added = add(stayPin, entity);
+        Stay stay = stayService.get(stayPin);
+
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.CARPARK, stay));
+
+        return added;
     }
 
     public CarParkOrder update(String stayPin, Long id, CarParkOrder updated) {

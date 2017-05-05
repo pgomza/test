@@ -1,0 +1,2 @@
+alter table AvailableServices add tableOrdering_id bigint default NULL references TableOrdering;
+create index AvailableServices_TableOrdering_index on AvailableServices(tableOrdering_id);

@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
-import java.util.Set;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,19 +27,20 @@ import java.util.regex.Pattern;
 public class HotelImagesService {
 
     public static final String DEFAULT_FILENAME = "default.png";
-    private static final Pattern filenamePattern = Pattern.compile("^\\w+(\\.\\w+)?$");
+    private static final Pattern filenamePattern = Pattern.compile("^[\\w\\-. ]+$");
 
     @Autowired
     private HotelService hotelService;
     @Autowired
     private FileLinkRepository repository;
-
     private CloudBlobContainer container;
 
     @Value("${storage.connectionString}")
     private String storageConnectionString;
     @Value("${storage.containerName}")
     private String containerName;
+    @Value("${storage.maxImagesPerHotel}")
+    private Integer maxImagesPerHotel;
 
     @PostConstruct
     void initStorageContainer() throws URISyntaxException, InvalidKeyException, StorageException {
@@ -61,12 +62,18 @@ public class HotelImagesService {
         return foundLink;
     }
 
-    public Set<FileLink> getAll(Long hotelId) {
+    public List<FileLink> getAll(Long hotelId) {
         Hotel hotel = hotelService.get(hotelId);
         return hotel.getImages();
     }
 
     public FileLink save(Long hotelId, String filename, InputStream imageStream) {
+        Hotel hotel = hotelService.get(hotelId);
+        if (hotel.getImages().size() >= maxImagesPerHotel) { // should never be '>', but just in case
+            throw new BusinessRuleViolationException("A hotel can't have more than " + maxImagesPerHotel + " images " +
+                    "associated with it");
+        }
+
         Matcher matcher = filenamePattern.matcher(filename);
         if (!matcher.matches()) {
             throw new BusinessRuleViolationException("The filename should only consist of alphanumeric characters. " +
@@ -80,10 +87,8 @@ public class HotelImagesService {
         fileLink.setFilename(filename);
         fileLink.setUrl(url);
 
-        Hotel hotel = hotelService.get(hotelId);
         if (findByFilename(hotelId, filename) != null)
             delete(hotelId, filename);
-
 
         FileLink savedFileLink = repository.save(fileLink);
         hotel.getImages().add(fileLink);

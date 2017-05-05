@@ -2,10 +2,12 @@ package com.horeca.site.services.orders;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
+import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarDay;
 import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarHour;
+import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
@@ -19,10 +21,10 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -40,6 +42,9 @@ public class PetCareOrderService {
 
     @Autowired
     private PetCareOrderRepository repository;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
 
@@ -84,6 +89,14 @@ public class PetCareOrderService {
         return savedOrder;
     }
 
+    public PetCareOrder addAndTryToNotify(String stayPin, PetCareOrderPOST entity) {
+        PetCareOrder added = add(stayPin, entity);
+        Stay stay = stayService.get(stayPin);
+
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.PETCARE, stay));
+
+        return added;
+    }
 
     public PetCareOrder update(String stayPin, Long id, PetCareOrder updated) {
         PetCareOrder order = get(stayPin, id);
