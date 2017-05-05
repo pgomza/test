@@ -30,7 +30,7 @@ public class AccountService {
     private UserAccountTempTokenService userAccountTempTokenService;
 
     @Autowired
-    private UserAccountMailService userAccountMailService;
+    private UserAccountEmailService userAccountEmailService;
 
     @Autowired
     private HotelService hotelService;
@@ -88,7 +88,7 @@ public class AccountService {
         UserAccountPending saved = userAccountPendingService.save(userAccountPending);
 
         try {
-            userAccountMailService.sendActivation(userAccountPending);
+            userAccountEmailService.sendActivation(userAccountPending);
         } catch (MessagingException e) {
             throw new RuntimeException("There was a problem while trying to send the activation email", e);
         }

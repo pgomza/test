@@ -3,10 +3,12 @@ package com.horeca.site.controllers.orders;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.petcare.PetCareOrder;
 import com.horeca.site.models.orders.petcare.PetCareOrderPOST;
+import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.services.orders.PetCareOrderService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,8 +33,13 @@ public class PetCareOrderController {
     }
 
     @RequestMapping(value = "/{pin}/orders/petcare", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public PetCareOrder add(@PathVariable String pin, @Valid @RequestBody PetCareOrderPOST newOrder) {
-        return service.add(pin, newOrder);
+    public PetCareOrder add(@PathVariable String pin, @Valid @RequestBody PetCareOrderPOST newOrder,
+                            Authentication authentication) {
+        if (authentication.getPrincipal() instanceof GuestAccount) {
+            return service.addAndTryToNotify(pin, newOrder);
+        }
+        else
+            return service.add(pin, newOrder);
     }
 
     @RequestMapping(value = "/{pin}/orders/petcare/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)

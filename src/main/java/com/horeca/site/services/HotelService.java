@@ -8,6 +8,7 @@ import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.information.UsefulInformationHourItem;
+import com.horeca.site.models.notifications.NotificationSettings;
 import com.horeca.site.repositories.HotelRepository;
 import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,11 +99,13 @@ public class HotelService {
         return repository.save(updated);
     }
 
-    public Hotel updateIgnoreGuests(Long id, Hotel newOne) {
+    public Hotel updateIgnoringSomeFields(Long id, Hotel newOne) {
         Hotel current = get(id);
         // don't let this update overwrite info about the guests - ignore whatever has been set in newOne as 'guests'
         // there's a different endpoint specifically intended for managing the guests
         newOne.setGuests(current.getGuests());
+        // the same applies for the notification settings
+        newOne.setNotificationSettings(current.getNotificationSettings());
 
         return update(id, newOne);
     }
@@ -158,6 +161,12 @@ public class HotelService {
                 throw new RuntimeException("There was a problem while trying to set the default image for " +
                         "hotel " + hotelId, e);
             }
+        }
+
+        if (hotel.getNotificationSettings() == null) {
+            NotificationSettings settings = new NotificationSettings();
+            settings.setEmail("");
+            hotel.setNotificationSettings(settings);
         }
 
         update(hotelId, hotel);
