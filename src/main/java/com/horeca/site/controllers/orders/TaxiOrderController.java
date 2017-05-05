@@ -8,7 +8,7 @@ import com.horeca.site.services.orders.TaxiOrderService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -33,9 +33,8 @@ public class TaxiOrderController {
     }
 
     @RequestMapping(value = "/{pin}/orders/taxi", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public TaxiOrder add(@PathVariable String pin, @Valid @RequestBody TaxiOrderPOST newOrder) {
-        Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (authentication instanceof GuestAccount) {
+    public TaxiOrder add(@PathVariable String pin, @Valid @RequestBody TaxiOrderPOST newOrder, Authentication authentication) {
+        if (authentication.getPrincipal() instanceof GuestAccount) {
             return service.addAndTryToNotify(pin, newOrder);
         }
         else
