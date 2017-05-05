@@ -3,9 +3,11 @@ package com.horeca.site.services.orders;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.roomservice.RoomService;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceCategory;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceItem;
+import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrder;
@@ -17,6 +19,7 @@ import com.horeca.site.services.services.StayService;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +36,9 @@ public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrde
 
     @Autowired
     private StayService stayService;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
 
@@ -67,6 +73,15 @@ public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrde
         stayService.update(stayPin, stay);
 
         return savedOrder;
+    }
+
+    public RoomServiceOrder addAndTryToNotify(String stayPin, RoomServiceOrderPOST entity) {
+        RoomServiceOrder added = add(stayPin, entity);
+        Stay stay = stayService.get(stayPin);
+
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.ROOMSERVICE, stay));
+
+        return added;
     }
 
     private RoomServiceItem resolveItemIdToEntity(String stayPin, Long id) {
