@@ -5,6 +5,7 @@ import com.horeca.site.exceptions.BadAuthorizationRequestException;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.exceptions.UnauthorizedException;
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolver {
+
+    private static final Logger logger = Logger.getLogger(CustomGlobalExceptionHandler.class.getName());
 
     private final List<Class<? extends Exception>> BAD_REQUEST_EXCEPTIONS = new ArrayList<>();
     private final List<Class<? extends Exception>> NOT_FOUND_EXCEPTIONS = new ArrayList<>();
@@ -69,9 +72,12 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
     @Override
     protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         String message = ex.getMessage();
-//        String timestamp = new SimpleDateFormat("dd.MM.yyyy.HH.mm.ss").format(new Date());
         String timestamp = new DateTime().toString();
-        int statusCode = 0;
+
+        logger.error("Handling exception: " + ex.getMessage());
+        logger.error("Exception cause: " + ex.getCause());
+
+        int statusCode;
 
         if (checkIfBelongsToList(ex.getClass(), BAD_REQUEST_EXCEPTIONS)) {
             statusCode = HttpServletResponse.SC_BAD_REQUEST;
