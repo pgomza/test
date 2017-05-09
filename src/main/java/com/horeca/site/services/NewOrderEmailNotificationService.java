@@ -40,9 +40,11 @@ public class NewOrderEmailNotificationService implements ApplicationListener<New
 
             try {
                 prepareAndSendMessage(recipientEmail, requestedService.toString(), guest);
-            } catch (MessagingException e) {
+            } catch (Exception e) {
                 logger.error("Error while sending an email about a new order to: " + recipientEmail);
                 logger.error("Guest: " + guest.getId() + ", service: " + requestedService);
+                logger.error("Exception message: " + e.getMessage());
+                logger.error("Exception cause: " + e.getCause());
                 throw new RuntimeException("There was an error while sending a new order to: " + recipientEmail, e);
             }
         }

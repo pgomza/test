@@ -6,6 +6,7 @@ import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.security.models.*;
 import com.horeca.site.security.services.*;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,12 +14,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.mail.MessagingException;
 import java.util.*;
 
 @Service
 @Transactional
 public class AccountService {
+
+    private static final Logger logger = Logger.getLogger(AccountService.class.getName());
 
     @Autowired
     private UserAccountService userAccountService;
@@ -89,7 +91,10 @@ public class AccountService {
 
         try {
             userAccountEmailService.sendActivation(userAccountPending);
-        } catch (MessagingException e) {
+        } catch (Exception e) {
+            logger.error("Exception while sending an activation email to " + userAccountPending.getEmail());
+            logger.error("Exception message: " + e.getMessage());
+            logger.error("Exception cause: " + e.getCause());
             throw new RuntimeException("There was a problem while trying to send the activation email", e);
         }
 
