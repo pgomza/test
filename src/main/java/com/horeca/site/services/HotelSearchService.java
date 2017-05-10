@@ -18,7 +18,7 @@ public class HotelSearchService {
             return Collections.emptyList();
 
         String lowercaseName = StringUtils.lowerCase(name);
-        return repository.getIdsByName(lowercaseName);
+        return repository.getIdsByName(lowercaseName, false);
     }
 
     public List<Long> getIdsByCity(String city) {
@@ -26,7 +26,7 @@ public class HotelSearchService {
             return Collections.emptyList();
 
         String lowercaseCity = StringUtils.lowerCase(city);
-        List<Object[]> candidates = repository.getCandidatesByCity(lowercaseCity);
+        List<Object[]> candidates = repository.getCandidatesByCity(lowercaseCity, false);
 
         List<Long> remainingIds = new ArrayList<>();
         for (Object[] candidate : candidates) {
