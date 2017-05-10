@@ -84,8 +84,11 @@ public class HotelService {
         // TODO needs refactoring
         if (hotel.getImages() == null)
             hotel.setImages(new ArrayList<>());
+        hotel.setIsThrodiPartner(false);
+
         repository.save(hotel);
         ensureEnoughInfoAboutHotel(hotel.getId());
+
         return get(hotel.getId());
     }
 
@@ -143,7 +146,7 @@ public class HotelService {
 
             UsefulInformationHourItem checkOut = new UsefulInformationHourItem();
             checkOut.setName("Check-out");
-            checkOut.setFromHour(LocalTime.parse("08:00"));
+            checkOut.setFromHour(LocalTime.parse("18:00"));
             checkOut.setToHour(LocalTime.parse("18:00"));
 
             Set<UsefulInformationHourItem> hours = new HashSet<>();
