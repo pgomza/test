@@ -1,0 +1,1 @@
+alter table Hotel add isTestHotel bit not null DEFAULT 0;

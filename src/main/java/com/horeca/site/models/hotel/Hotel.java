@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.guest.Guest;
@@ -15,6 +16,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -76,7 +78,11 @@ public class Hotel {
 
 	private Double latitude;
 
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private Boolean isThrodiPartner;
+
+	@NotNull
+	private Boolean isTestHotel;
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn
@@ -281,6 +287,10 @@ public class Hotel {
 		this.isThrodiPartner = isThrodiPartner;
 	}
 
+	public Boolean getIsTestHotel() { return isTestHotel; }
+
+	public void setIsTestHotel(Boolean isTestHotel) { this.isTestHotel = isTestHotel; }
+
 	public UsefulInformation getUsefulInformation() {
 		return usefulInformation;
 	}
@@ -353,6 +363,7 @@ public class Hotel {
 		hotelView.setLongitude(getLongitude());
 		hotelView.setLatitude(getLatitude());
 		hotelView.setIsThrodiPartner(getIsThrodiPartner());
+		hotelView.setIsTestHotel(getIsTestHotel());
 		hotelView.setUsefulInformation(getUsefulInformation());
 		hotelView.setRoomDirectory(getRoomDirectory());
 		hotelView.setGuests(getGuests());

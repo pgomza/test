@@ -36,6 +36,7 @@ public class HotelView {
 	private Double longitude;
 	private Double latitude;
 	private Boolean isThrodiPartner;
+	private Boolean isTestHotel;
 	private UsefulInformation usefulInformation;
 	private RoomDirectory roomDirectory;
 	private List<AvailableServiceViewSimplified> services;
@@ -219,6 +220,10 @@ public class HotelView {
 	public void setIsThrodiPartner(Boolean isThrodiPartner) {
 		this.isThrodiPartner = isThrodiPartner;
 	}
+
+	public Boolean getIsTestHotel() { return isTestHotel; }
+
+	public void setIsTestHotel(Boolean isTestHotel) { this.isTestHotel = isTestHotel; }
 
 	public UsefulInformation getUsefulInformation() {
 		return usefulInformation;
