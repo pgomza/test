@@ -1,7 +1,6 @@
 package com.horeca.site.models.hotel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.guest.Guest;
@@ -78,7 +77,6 @@ public class Hotel {
 
 	private Double latitude;
 
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private Boolean isThrodiPartner;
 
 	@NotNull
