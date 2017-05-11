@@ -1,5 +1,6 @@
 package com.horeca.site.controllers;
 
+import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.services.HotelService;
@@ -53,6 +54,14 @@ public class HotelController {
         Hotel changed = service.updateIgnoringSomeFields(id, hotel);
 		return new ResponseEntity<Hotel>(changed, HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "/{id}/reset", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void reset(@PathVariable("id") Long id) {
+        Hotel hotel = service.get(id);
+        if (!hotel.getIsTestHotel()) {
+            throw new BusinessRuleViolationException("You mustn't reset a non-test hotel");
+        }
+    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@PathVariable("id") Long id) {
