@@ -96,7 +96,8 @@ public class HousekeepingService {
         if (!found)
             throw new ResourceNotFoundException("Could not find an item with such an id");
 
-        housekeeping.setItems(remaining);
+        housekeeping.getItems().clear();
+        remaining.forEach(item -> housekeeping.getItems().add(item));
         repository.save(housekeeping);
     }
 }
