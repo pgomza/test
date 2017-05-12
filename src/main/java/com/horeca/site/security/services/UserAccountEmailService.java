@@ -2,6 +2,7 @@ package com.horeca.site.security.services;
 
 import com.horeca.site.security.models.UserAccountPending;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,13 @@ public class UserAccountEmailService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Value("${activation.url}")
+    private String activationUrl;
+
     public void sendActivation(UserAccountPending account) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
-        String link = "https://throdibackend.azurewebsites.net/api/accounts/users/activation?secret=" + account.getSecret();
+
+        String link = activationUrl + account.getSecret();
         String messageBody =
                 "<div>" +
                         "Hi," +
