@@ -69,7 +69,9 @@ public class HotelImagesService {
 
     public FileLink save(Long hotelId, String filename, InputStream imageStream) {
         Hotel hotel = hotelService.get(hotelId);
-        if (hotel.getImages().size() >= maxImagesPerHotel) { // should never be '>', but just in case
+        List<FileLink> hotelImages = hotel.getImages();
+
+        if (hotelImages.size() >= maxImagesPerHotel) { // should never be '>', but just in case
             throw new BusinessRuleViolationException("A hotel can't have more than " + maxImagesPerHotel + " images " +
                     "associated with it");
         }
@@ -78,6 +80,13 @@ public class HotelImagesService {
         if (!matcher.matches()) {
             throw new BusinessRuleViolationException("The filename should only consist of alphanumeric characters. " +
                     "A file extension can be specified too. A sample valid filename: hotel.jpg");
+        }
+
+        for (FileLink image : hotelImages) {
+            if (image.getFilename().equals(filename)) {
+                throw new BusinessRuleViolationException("An image with such a name already exists. Either delete the " +
+                        "current one or choose a different name");
+            }
         }
 
         // before uploading the file to GAE make it unique
@@ -91,7 +100,7 @@ public class HotelImagesService {
             delete(hotelId, filename);
 
         FileLink savedFileLink = repository.save(fileLink);
-        hotel.getImages().add(fileLink);
+        hotelImages.add(fileLink);
         hotelService.update(hotel.getId(), hotel);
         return savedFileLink;
     }
