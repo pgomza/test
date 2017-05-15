@@ -34,7 +34,7 @@ public class Stay {
     @Enumerated(EnumType.STRING)
     private StayStatus status = StayStatus.NEW;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
     private Orders orders = new Orders();
 
