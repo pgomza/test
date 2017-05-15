@@ -96,6 +96,7 @@ public class HotelImagesService {
         fileLink.setFilename(filename);
         fileLink.setUrl(url);
 
+        // TODO check this chunk of code - it can probably be removed
         if (findByFilename(hotelId, filename) != null)
             delete(hotelId, filename);
 
@@ -116,7 +117,6 @@ public class HotelImagesService {
         Hotel hotel = hotelService.get(hotelId);
         hotel.getImages().remove(foundLink);
         hotelService.update(hotel.getId(), hotel);
-        repository.delete(foundLink);
     }
 
     private String uploadToContainer(String filename, InputStream imageStream) {

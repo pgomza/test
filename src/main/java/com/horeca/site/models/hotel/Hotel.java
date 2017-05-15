@@ -100,7 +100,7 @@ public class Hotel {
 	private List<FileLink> images;
 
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@JoinColumn(name = "Hotel_id")
 	private Set<Guest> guests;
 
