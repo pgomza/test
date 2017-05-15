@@ -6,6 +6,7 @@ import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.stay.*;
 import com.horeca.site.repositories.services.StayRepository;
+import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.services.GuestAccountService;
 import com.horeca.site.services.GuestService;
 import com.horeca.site.services.HotelService;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -69,6 +71,10 @@ public class StayService {
             views.add(stay.toView());
         }
         return views;
+    }
+
+    public Collection<String> getByHotelId(Long hotelId) {
+        return stayRepository.findByHotelId(hotelId);
     }
 
     public Stay update(String pin, Stay stay) {
@@ -146,7 +152,7 @@ public class StayService {
 
     private void deregisterStay(String pin) {
         try {
-            guestAccountService.delete(pin);
+            guestAccountService.delete(GuestAccount.USERNAME_PREFIX + pin);
         }
         catch (UsernameNotFoundException ex) {
             throw new RuntimeException("No corresponding token has been found for this stay in the database");
