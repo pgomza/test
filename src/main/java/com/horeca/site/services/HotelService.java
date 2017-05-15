@@ -10,6 +10,7 @@ import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.information.UsefulInformationHourItem;
 import com.horeca.site.models.notifications.NotificationSettings;
 import com.horeca.site.repositories.HotelRepository;
+import com.horeca.site.services.services.StayService;
 import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -41,6 +42,10 @@ public class HotelService {
 
     @Autowired
     private HotelSearchService hotelSearchService;
+
+    @Autowired
+    @Lazy
+    private StayService stayService;
 
     /*
         general actions
@@ -113,6 +118,57 @@ public class HotelService {
         return update(id, newOne);
     }
 
+    public void reset(Long id) {
+        Hotel hotel = get(id);
+        if (!hotel.getIsTestHotel()) {
+            throw new BusinessRuleViolationException("You mustn't reset a non-test hotel");
+        }
+
+        Collection<String> pinsToDelete = stayService.getByHotelId(id);
+        pinsToDelete.forEach(pin -> stayService.delete(pin));
+
+        hotel.setIsTestHotel(true);
+        hotel.setDescription(null);
+        hotel.setEmail(null);
+        hotel.setWebsite(null);
+        hotel.setPhone(null);
+        hotel.setBookingUrl(null);
+        hotel.setShopsUrl(null);
+        hotel.setRestaurantsUrl(null);
+        hotel.setInterestingPlacesUrl(null);
+        hotel.setEventsUrl(null);
+        hotel.setFax(null);
+        hotel.setStarRating(null);
+        hotel.setRooms(null);
+        hotel.setRatingOverall(null);
+        hotel.setRatingOverallText(null);
+        hotel.setPropertyType(null);
+        hotel.setChain(null);
+        hotel.setLongitude(null);
+        hotel.setLatitude(null);
+        hotel.setUsefulInformation(null);
+        hotel.setRoomDirectory(null);
+        hotel.setAvailableServices(null);
+
+        if (hotel.getImages() != null) {
+            List<String> imageFilenames = hotel.getImages().stream()
+                    .map(image -> image.getFilename())
+                    .collect(Collectors.toList());
+
+            imageFilenames.stream().forEach(filename -> hotelImagesService.delete(hotel.getId(), filename));
+            hotel.getImages().clear();
+        }
+
+        if (hotel.getGuests() != null) {
+            hotel.getGuests().clear();
+        }
+
+        hotel.setNotificationSettings(null);
+
+        update(id, hotel);
+        ensureEnoughInfoAboutHotel(id);
+    }
+
     public void delete(Long id) {
         Hotel toDelete = get(id);
         repository.delete(toDelete);
@@ -155,7 +211,10 @@ public class HotelService {
             hotel.setUsefulInformation(usefulInformation);
         }
 
-        if (hotel.getImages() == null || hotel.getImages().size() == 0) {
+        if (hotel.getImages() == null)
+            hotel.setImages(new ArrayList<>());
+
+        if (hotel.getImages().size() == 0) {
             ClassLoader classLoader = getClass().getClassLoader();
             File file = new File(classLoader.getResource("other/defaultHotelImage.png").getFile());
             try {
@@ -181,26 +240,27 @@ public class HotelService {
      */
     private void checkImagesOnUpdate(Hotel updatedHotel) {
         Hotel currentHotel = get(updatedHotel.getId());
-        Set<FileLink> currentImages = new HashSet<>(currentHotel.getImages());
-        Set<FileLink> updatedImages = null;
+        if (currentHotel.getImages() != null) {
+            Set<FileLink> currentImages = new HashSet<>(currentHotel.getImages());
+            Set<FileLink> updatedImages = null;
 
-        boolean failedRetrieval = false;
-        try {
-            updatedImages = updatedHotel.getImages().stream()
-                    .map(image -> hotelImagesService.get(updatedHotel.getId(), image.getFilename()))
-                    .collect(Collectors.toSet());
-        }
-        catch (ResourceNotFoundException ex) {
-            failedRetrieval = true;
-        }
+            boolean failedRetrieval = false;
+            try {
+                updatedImages = updatedHotel.getImages().stream()
+                        .map(image -> hotelImagesService.get(updatedHotel.getId(), image.getFilename()))
+                        .collect(Collectors.toSet());
+            } catch (ResourceNotFoundException ex) {
+                failedRetrieval = true;
+            }
 
-        if (!failedRetrieval && currentImages.size() == updatedImages.size()) {
-            currentImages.retainAll(updatedImages);
-            if (currentImages.size() == updatedImages.size())
-                return;
+            if (!failedRetrieval && currentImages.size() == updatedImages.size()) {
+                currentImages.retainAll(updatedImages);
+                if (currentImages.size() == updatedImages.size())
+                    return;
+            }
+            throw new BusinessRuleViolationException("Only a change in the order of the existing hotel images is allowed. " +
+                    "To add or delete an image use the ~/api/hotels/" + updatedHotel.getId() + "/images endpoint");
         }
-        throw new BusinessRuleViolationException("Only a change in the order of the existing hotel images is allowed. " +
-                "To add or delete an image use the ~/api/hotels/" + updatedHotel.getId() + "/images endpoint");
     }
 
     /*
