@@ -80,7 +80,7 @@ public class BreakfastOrderService {
             entries.add(entry);
         }
         breakfastOrder.setItems(entries);
-        breakfastOrder.setTotal(computeTotal(stayPin, entries));
+        breakfastOrder.setTotal(computeTotal(entries));
         breakfastOrder.setTime(formatter.parseLocalDateTime(entity.getTime()));
         breakfastOrder.setStatus(OrderStatus.NEW);
         BreakfastOrder savedOrder = repository.save(breakfastOrder);
@@ -138,9 +138,8 @@ public class BreakfastOrderService {
         throw new ResourceNotFoundException("Could not find an item with such an id");
     }
 
-    private Price computeTotal(String stayPin, Set<BreakfastOrderItem> entries) {
+    private Price computeTotal(Set<BreakfastOrderItem> entries) {
         Price totalPrice = new Price();
-        Breakfast breakfast = stayService.get(stayPin).getHotel().getAvailableServices().getBreakfast();
         BigDecimal totalValue = BigDecimal.ZERO;
 
         for (BreakfastOrderItem entry : entries) {
