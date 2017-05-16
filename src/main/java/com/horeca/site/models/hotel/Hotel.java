@@ -2,6 +2,7 @@ package com.horeca.site.models.hotel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.horeca.site.models.Currency;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.images.FileLink;
@@ -81,6 +82,10 @@ public class Hotel {
 
 	@NotNull
 	private Boolean isTestHotel;
+
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private Currency currency;
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn
@@ -289,6 +294,14 @@ public class Hotel {
 
 	public void setIsTestHotel(Boolean isTestHotel) { this.isTestHotel = isTestHotel; }
 
+	public Currency getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
+	}
+
 	public UsefulInformation getUsefulInformation() {
 		return usefulInformation;
 	}
@@ -362,6 +375,7 @@ public class Hotel {
 		hotelView.setLatitude(getLatitude());
 		hotelView.setIsThrodiPartner(getIsThrodiPartner());
 		hotelView.setIsTestHotel(getIsTestHotel());
+		hotelView.setCurrency(getCurrency());
 		hotelView.setUsefulInformation(getUsefulInformation());
 		hotelView.setRoomDirectory(getRoomDirectory());
 		hotelView.setGuests(getGuests());

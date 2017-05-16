@@ -2,6 +2,7 @@ package com.horeca.site.models.hotel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.horeca.site.models.Currency;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
@@ -37,6 +38,7 @@ public class HotelView {
 	private Double latitude;
 	private Boolean isThrodiPartner;
 	private Boolean isTestHotel;
+	private Currency currency;
 	private UsefulInformation usefulInformation;
 	private RoomDirectory roomDirectory;
 	private List<AvailableServiceViewSimplified> services;
@@ -224,6 +226,14 @@ public class HotelView {
 	public Boolean getIsTestHotel() { return isTestHotel; }
 
 	public void setIsTestHotel(Boolean isTestHotel) { this.isTestHotel = isTestHotel; }
+
+	public Currency getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
+	}
 
 	public UsefulInformation getUsefulInformation() {
 		return usefulInformation;

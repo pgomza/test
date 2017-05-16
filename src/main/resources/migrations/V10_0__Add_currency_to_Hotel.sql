@@ -1,0 +1,1 @@
+alter table Hotel add currency nvarchar(255) not null DEFAULT 'EURO';
