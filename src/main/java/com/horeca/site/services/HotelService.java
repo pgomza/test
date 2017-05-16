@@ -3,6 +3,7 @@ package com.horeca.site.services;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.extractors.HotelDataExtractor;
+import com.horeca.site.models.Currency;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.hotel.images.FileLink;
@@ -196,6 +197,9 @@ public class HotelService {
 
         if (hotel.getPropertyType() == null)
             hotel.setPropertyType("Hotel");
+
+        if (hotel.getCurrency() == null)
+            hotel.setCurrency(Currency.EURO);
 
         if (hotel.getUsefulInformation() == null) {
             UsefulInformation usefulInformation = new UsefulInformation();
