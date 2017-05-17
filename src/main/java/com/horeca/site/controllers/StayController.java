@@ -64,4 +64,25 @@ public class StayController {
     public void checkOut(@PathVariable String pin) {
         stayService.checkOut(pin);
     }
+
+    @RequestMapping(value = "/stays/{pin}/notification", method = RequestMethod.POST)
+    public void sendNotification(@PathVariable String pin) {
+        stayService.notifyGuestAboutStay(pin);
+    }
+
+    public static class ResponseMessage {
+        private String message;
+
+        public ResponseMessage(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
 }
