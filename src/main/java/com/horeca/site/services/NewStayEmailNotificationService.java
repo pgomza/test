@@ -23,7 +23,6 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
     @Value("${appLink.playStore}")
     private String appLinkPlayStore;
 
-
     @Autowired
     private JavaMailSender mailSender;
 
@@ -51,12 +50,16 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
 
     private void prepareAndSendMessage(String recipientEmail, String hotelName, String guestName, String pin)
             throws MessagingException {
+        boolean hotelNameBeginsWithHotel = false;
+        if (hotelName.length() >= 5 && hotelName.substring(0, 5).toLowerCase().equals("hotel"))
+            hotelNameBeginsWithHotel = true;
+
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         String messageBody =
                 "<div>" +
                     "Dear " + guestName + "," +
                     "<br/><br/>" +
-                    "Welcome to hotel " + hotelName + "." +
+                    "Welcome to " + (hotelNameBeginsWithHotel ? hotelName : "hotel " + hotelName) +
                     "<br/><br/>" +
                     "To enjoy fully all digital services of this hotel, we highly recommend you to use the Throdi " +
                     "application during your stay." +
