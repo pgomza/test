@@ -4,6 +4,7 @@ import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.models.notifications.NewStayEvent;
 import com.horeca.site.models.stay.*;
 import com.horeca.site.repositories.services.StayRepository;
 import com.horeca.site.security.models.GuestAccount;
@@ -12,6 +13,7 @@ import com.horeca.site.services.GuestService;
 import com.horeca.site.services.HotelService;
 import com.horeca.site.services.PinGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -40,6 +42,9 @@ public class StayService {
 
     @Autowired
     private GuestService guestService;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     // used when the information about a given stay has to be returned
     // irrespective of the fact whether it's active or not; for 'internal'
@@ -138,6 +143,14 @@ public class StayService {
         stay.setGuest(guest);
 
         return registerNewStay(stay);
+    }
+
+    public void notifyGuestAboutStay(String pin) {
+        Stay stay = getWithoutCheckingStatus(pin);
+        Guest guest = stay.getGuest();
+        String hotelName = stay.getHotel().getName();
+
+        eventPublisher.publishEvent(new NewStayEvent(this, guest, hotelName, pin));
     }
 
     private Stay registerNewStay(Stay stay) {
