@@ -43,7 +43,7 @@ public class HotelController {
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Hotel> add(@Valid @RequestBody Hotel hotel) {
+	public ResponseEntity<Hotel> add(@RequestBody Hotel hotel) {
 		Hotel added = service.add(hotel);
         return new ResponseEntity<>(added, HttpStatus.CREATED);
 	}

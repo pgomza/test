@@ -90,7 +90,10 @@ public class HotelService {
         // TODO needs refactoring
         if (hotel.getImages() == null)
             hotel.setImages(new ArrayList<>());
+
         hotel.setIsThrodiPartner(false);
+        if (hotel.getCurrency() == null)
+            hotel.setCurrency(Currency.EURO);
 
         repository.save(hotel);
         ensureEnoughInfoAboutHotel(hotel.getId());
@@ -129,6 +132,7 @@ public class HotelService {
         pinsToDelete.forEach(pin -> stayService.delete(pin));
 
         hotel.setIsTestHotel(true);
+        hotel.setCurrency(Currency.EURO);
         hotel.setDescription(null);
         hotel.setEmail(null);
         hotel.setWebsite(null);
@@ -197,9 +201,6 @@ public class HotelService {
 
         if (hotel.getPropertyType() == null)
             hotel.setPropertyType("Hotel");
-
-        if (hotel.getCurrency() == null)
-            hotel.setCurrency(Currency.EURO);
 
         if (hotel.getUsefulInformation() == null) {
             UsefulInformation usefulInformation = new UsefulInformation();
