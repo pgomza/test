@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.horeca.site.models.hotel.services.bar.Bar;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
 import com.horeca.site.models.hotel.services.carpark.CarPark;
 import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
@@ -51,6 +52,10 @@ public class AvailableServices {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
     private TableOrdering tableOrdering;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn
+    private Bar bar;
 
     public Long getId() {
         return id;
@@ -122,5 +127,13 @@ public class AvailableServices {
 
     public void setTableOrdering(TableOrdering tableOrdering) {
         this.tableOrdering = tableOrdering;
+    }
+
+    public Bar getBar() {
+        return bar;
+    }
+
+    public void setBar(Bar bar) {
+        this.bar = bar;
     }
 }

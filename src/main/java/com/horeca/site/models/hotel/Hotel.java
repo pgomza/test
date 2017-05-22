@@ -435,6 +435,13 @@ public class Hotel {
 				simplifiedList.add(simplified);
 			}
 
+			if (availableServices.getBar() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceType.BAR);
+				simplified.setPrice(availableServices.getBar().getPrice());
+				simplifiedList.add(simplified);
+			}
+
 			hotelView.setServices(simplifiedList);
 		}
 
