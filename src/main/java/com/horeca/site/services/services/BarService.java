@@ -11,6 +11,8 @@ import com.horeca.site.models.hotel.services.bar.BarItem;
 import com.horeca.site.models.hotel.services.bar.BarItemUpdate;
 import com.horeca.site.repositories.services.BarCategoryRepository;
 import com.horeca.site.repositories.services.BarItemRepository;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,8 @@ import java.util.stream.Stream;
 @Service
 @Transactional
 public class BarService {
+
+    private static final DateTimeFormatter localTimeFormatter = DateTimeFormat.forPattern("HH:mm");
 
     @Autowired
     private AvailableServicesService availableServicesService;
@@ -51,6 +55,8 @@ public class BarService {
             price.setCurrency(Currency.EURO);
             price.setValue(new BigDecimal(5));
             bar.setPrice(price);
+            bar.setFromHour(localTimeFormatter.parseLocalTime("08:00"));
+            bar.setToHour(localTimeFormatter.parseLocalTime("11:00"));
 
             Set<BarCategory> barCategories = Stream.of(BarCategory.Category.values())
                     .map(categoryName -> {
