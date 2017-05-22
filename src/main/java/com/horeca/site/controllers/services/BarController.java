@@ -4,19 +4,16 @@ import com.horeca.site.models.hotel.services.bar.Bar;
 import com.horeca.site.models.hotel.services.bar.BarItem;
 import com.horeca.site.models.hotel.services.bar.BarItemUpdate;
 import com.horeca.site.services.services.BarService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Service
-@Transactional
+@Api(value = "hotels")
+@RestController
+@RequestMapping("/api/hotels")
 public class BarController {
 
     @Autowired

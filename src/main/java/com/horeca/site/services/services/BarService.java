@@ -38,9 +38,9 @@ public class BarService {
     @Autowired
     private BarItemRepository barItemRepository;
 
-    public com.horeca.site.models.hotel.services.bar.Bar get(Long hotelId) {
+    public Bar get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
-        if (services == null || services.getBreakfast() == null)
+        if (services == null || services.getBar() == null)
             throw new ResourceNotFoundException();
 
         return services.getBar();
