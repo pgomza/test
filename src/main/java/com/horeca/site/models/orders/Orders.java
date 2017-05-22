@@ -2,6 +2,7 @@ package com.horeca.site.models.orders;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.horeca.site.models.orders.bar.BarOrder;
 import com.horeca.site.models.orders.breakfast.BreakfastOrder;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.dnd.DndOrder;
@@ -60,6 +61,10 @@ public class Orders {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "orders_id_tableordering")
     private Set<TableOrderingOrder> tableOrderingOrders = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "orders_id_bar")
+    private Set<BarOrder> barOrders = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -139,5 +144,13 @@ public class Orders {
 
     public void setTableOrderingOrders(Set<TableOrderingOrder> tableOrderingOrders) {
         this.tableOrderingOrders = tableOrderingOrders;
+    }
+
+    public Set<BarOrder> getBarOrders() {
+        return barOrders;
+    }
+
+    public void setBarOrders(Set<BarOrder> barOrders) {
+        this.barOrders = barOrders;
     }
 }
