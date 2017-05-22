@@ -92,37 +92,59 @@ public class BarService {
             throw new ResourceNotFoundException("There is no such category");
     }
 
-    public void updateItem(Long hotelId, BarItemUpdate itemSent) {
+    public BarItem updateItem(Long hotelId, BarItemUpdate itemSent) {
         Bar bar = get(hotelId);
         Set<BarCategory> categories = bar.getCategories();
 
-        boolean updated = false;
+        BarItem found = null;
+        BarCategory inCategory = null;
         for (BarCategory barCategory : categories) {
             Optional<BarItem> filteredItem = barCategory.getItems().stream()
                     .filter(item -> item.getId().equals(itemSent.getId()))
                     .findFirst();
 
             if (filteredItem.isPresent()) {
-                BarItem itemToUpdate = filteredItem.get();
-                itemToUpdate.setPrice(itemSent.getPrice());
-                itemToUpdate.setAvailable(itemSent.isAvailable());
-                itemToUpdate.setName(itemSent.getName());
-                barItemRepository.save(itemToUpdate);
-                updated = true;
+                found = filteredItem.get();
+                inCategory = barCategory;
                 break;
             }
         }
 
-        if (!updated)
+        if (found == null)
             throw new ResourceNotFoundException("Could not find an item with such an id");
+
+        found.setPrice(itemSent.getPrice());
+        found.setAvailable(itemSent.isAvailable());
+        found.setName(itemSent.getName());
+        BarItem savedItem = barItemRepository.save(found);
+
+        if (itemSent.getType() != inCategory.getCategory()) {
+            BarCategory itemSentCategory = getCategory(hotelId, itemSent.getType());
+            itemSentCategory.getItems().add(savedItem);
+            barCategoryRepository.save(itemSentCategory);
+        }
+
+        return savedItem;
     }
 
-    public void deleteItem(Long itemId) {
-        BarItem existingItem = barItemRepository.findOne(itemId);
-        if (existingItem != null) {
-            barItemRepository.delete(itemId);
+    public void deleteItem(Long hotelId, Long idToDelete) {
+        Bar bar = get(hotelId);
+        Set<BarCategory> categories = bar.getCategories();
+
+        boolean found = false;
+        for (BarCategory barCategory : categories) {
+            Optional<BarItem> filteredItem = barCategory.getItems().stream()
+                    .filter(item -> item.getId().equals(idToDelete))
+                    .findFirst();
+
+            if (filteredItem.isPresent()) {
+                barItemRepository.delete(filteredItem.get());
+                found = true;
+                break;
+            }
         }
-        else
+
+        if (!found)
             throw new ResourceNotFoundException("Could not find an item with such an id");
     }
 }
