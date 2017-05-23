@@ -1,6 +1,7 @@
 package com.horeca.site.models.stay;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.orders.Orders;
@@ -20,6 +21,8 @@ public class StayView {
     private Orders orders;
     private HotelView hotel;
     private Guest guest;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String createdAt;
 
     public String getPin() {
         return pin;
@@ -99,5 +102,13 @@ public class StayView {
 
     public void setGuest(Guest guest) {
         this.guest = guest;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }
