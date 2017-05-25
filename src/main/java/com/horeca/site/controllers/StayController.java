@@ -1,9 +1,6 @@
 package com.horeca.site.controllers;
 
-import com.horeca.site.models.stay.Stay;
-import com.horeca.site.models.stay.StayPOST;
-import com.horeca.site.models.stay.StayStatusUPDATE;
-import com.horeca.site.models.stay.StayView;
+import com.horeca.site.models.stay.*;
 import com.horeca.site.services.services.StayService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +33,7 @@ public class StayController {
     }
 
     @RequestMapping(value = "/stays/{pin}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Stay update(@PathVariable String pin, @Valid @RequestBody Stay entity) {
+    public Stay update(@PathVariable String pin, @RequestBody StayUPDATE entity) {
         return stayService.update(pin, entity);
     }
 

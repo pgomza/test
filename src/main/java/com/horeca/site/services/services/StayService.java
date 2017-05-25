@@ -82,10 +82,22 @@ public class StayService {
         return stayRepository.findByHotelId(hotelId);
     }
 
-    public Stay update(String pin, Stay stay) {
+    public Stay update(String pin, Stay updated) {
         ensureEntityExists(pin);
-        stay.setPin(pin);
-        return stayRepository.save(stay);
+        updated.setPin(pin);
+        return stayRepository.save(updated);
+    }
+
+    public Stay update(String pin, StayUPDATE updated) {
+        Stay currentStay = getWithoutCheckingStatus(pin);
+        currentStay.setFromDate(updated.getFromDate());
+        currentStay.setToDate(updated.getToDate());
+        currentStay.setRoomNumber(updated.getRoomNumber());
+        currentStay.setWifiPassword(updated.getWifiPassword());
+        currentStay.setDoorKey(updated.getDoorKey());
+        currentStay.setStatus(updated.getStatus());
+
+        return stayRepository.save(currentStay);
     }
 
     public StayStatusUPDATE updateStatus(String pin, StayStatusUPDATE newStatus) {
