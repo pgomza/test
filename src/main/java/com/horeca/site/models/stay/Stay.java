@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.orders.Orders;
+import org.hibernate.annotations.CreationTimestamp;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
 
 @Entity
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
@@ -45,6 +47,10 @@ public class Stay {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn
     private Guest guest;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Timestamp createdAt;
 
     public String getPin() {
         return pin;
@@ -126,6 +132,14 @@ public class Stay {
         this.guest = guest;
     }
 
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public StayView toView() {
         StayView view = new StayView();
 
@@ -139,6 +153,7 @@ public class Stay {
         view.setOrders(getOrders());
         view.setHotel(getHotel().toView());
         view.setGuest(getGuest());
+        view.setCreatedAt(getCreatedAt().toString());
 
         return view;
     }

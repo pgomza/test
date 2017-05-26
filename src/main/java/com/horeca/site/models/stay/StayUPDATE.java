@@ -1,36 +1,30 @@
 package com.horeca.site.models.stay;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.horeca.site.models.guest.Guest;
-import com.horeca.site.models.hotel.HotelView;
-import com.horeca.site.models.orders.Orders;
 import org.joda.time.LocalDate;
 
-public class StayView {
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.validation.constraints.NotNull;
 
-    private String pin;
+public class StayUPDATE {
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate fromDate;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate toDate;
+
+    @NotNull
     private String roomNumber;
+
     private String wifiPassword;
+
     private String doorKey;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
     private StayStatus status;
-    private Orders orders;
-    private HotelView hotel;
-    private Guest guest;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String createdAt;
-
-    public String getPin() {
-        return pin;
-    }
-
-    public void setPin(String pin) {
-        this.pin = pin;
-    }
 
     public LocalDate getFromDate() {
         return fromDate;
@@ -78,37 +72,5 @@ public class StayView {
 
     public void setStatus(StayStatus status) {
         this.status = status;
-    }
-
-    public Orders getOrders() {
-        return orders;
-    }
-
-    public void setOrders(Orders orders) {
-        this.orders = orders;
-    }
-
-    public HotelView getHotel() {
-        return hotel;
-    }
-
-    public void setHotel(HotelView hotel) {
-        this.hotel = hotel;
-    }
-
-    public Guest getGuest() {
-        return guest;
-    }
-
-    public void setGuest(Guest guest) {
-        this.guest = guest;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
     }
 }
