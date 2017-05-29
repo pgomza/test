@@ -8,6 +8,7 @@ import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.roomservice.RoomService;
 import com.horeca.site.models.hotel.services.spa.Spa;
+import com.horeca.site.models.hotel.services.spacall.SpaCall;
 import com.horeca.site.models.hotel.services.tableordering.TableOrdering;
 import com.horeca.site.models.hotel.services.taxi.Taxi;
 
@@ -56,6 +57,10 @@ public class AvailableServices {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
     private Bar bar;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn
+    private SpaCall spaCall;
 
     public Long getId() {
         return id;
@@ -135,5 +140,13 @@ public class AvailableServices {
 
     public void setBar(Bar bar) {
         this.bar = bar;
+    }
+
+    public SpaCall getSpaCall() {
+        return spaCall;
+    }
+
+    public void setSpaCall(SpaCall spaCall) {
+        this.spaCall = spaCall;
     }
 }

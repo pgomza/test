@@ -3,7 +3,7 @@ package com.horeca.site.models.hotel.services;
 public enum AvailableServiceType {
 
     BREAKFAST("breakfast"), CARPARK("car park"), ROOMSERVICE("room service"), SPA("spa"), PETCARE("pet care"),
-    TAXI("taxi"), HOUSEKEEPING("housekeeping"), TABLEORDERING("table ordering"), BAR("bar");
+    TAXI("taxi"), HOUSEKEEPING("housekeeping"), TABLEORDERING("table ordering"), BAR("bar"), SPACALL("spa call");
 
     private final String name;
 
