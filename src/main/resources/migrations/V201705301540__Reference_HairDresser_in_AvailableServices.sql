@@ -1,0 +1,2 @@
+alter table AvailableServices add hairDresser_id bigint default NULL references HairDresser;
+create index AvailableServices_HairDresser_index on AvailableServices(hairDresser_id);
