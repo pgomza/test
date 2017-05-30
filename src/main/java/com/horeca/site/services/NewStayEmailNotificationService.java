@@ -59,9 +59,9 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
                 "<div>" +
                     "Dear " + guestName + "," +
                     "<br/><br/>" +
-                    "Welcome to " + (hotelNameBeginsWithHotel ? hotelName : "hotel " + hotelName) +
+                    "Welcome to " + (hotelNameBeginsWithHotel ? hotelName : "hotel " + hotelName) + "." +
                     "<br/><br/>" +
-                    "To enjoy fully all digital services of this hotel, we highly recommend you to use the Throdi " +
+                    "To fully enjoy all digital services of this hotel, we highly recommend you to use the Throdi " +
                     "application during your stay." +
                     "<br/><br/>" +
                     "The free Throdi application for iOS can be downloaded from the App Store here:" +
@@ -69,13 +69,14 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
                     appLinkAppStore +
                     "<br/>" +
                     "The free Throdi application for Android can be downloaded from the Google Play Store here:" +
+                    "<br/>" +
                     appLinkPlayStore +
                     "<br/><br/>" +
-                    "Your personel check in code to start using the Throdi application is:" +
+                    "Your personal check-in code to start using the Throdi application is:" +
                     "<br/><br/>" +
                     "<b>" + pin + "</b>" +
                     "<br/><br/>" +
-                    "Enjoy you stay." +
+                    "Enjoy your stay." +
                     "<br/><br/>" +
                     "The Throdi Team" +
                     "<br>" +

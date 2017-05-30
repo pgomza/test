@@ -2,6 +2,7 @@ package com.horeca.site.models.orders.bar;
 
 import com.horeca.site.models.Price;
 import com.horeca.site.models.orders.OrderStatus;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -20,6 +21,9 @@ public class BarOrder {
 
     @NotNull
     private Price total;
+
+    @NotEmpty
+    private String tableNumber;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "bar_order_id")
@@ -55,5 +59,13 @@ public class BarOrder {
 
     public void setItems(Set<BarOrderItem> items) {
         this.items = items;
+    }
+
+    public String getTableNumber() {
+        return tableNumber;
+    }
+
+    public void setTableNumber(String tableNumber) {
+        this.tableNumber = tableNumber;
     }
 }

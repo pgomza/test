@@ -1,5 +1,7 @@
 package com.horeca.site.models.hotel.services.bar;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -7,7 +9,14 @@ import java.util.Set;
 @Table(indexes = @Index(name = "bar_id", columnList = "bar_id"))
 public class BarCategory {
 
-    public enum Category { DRINK, HOT_DRINK, SOFT_DRINK }
+    public enum Category {
+        @JsonProperty("DRINK")
+        DRINK,
+        @JsonProperty("HOT DRINK")
+        HOT_DRINK,
+        @JsonProperty("SOFT DRINK")
+        SOFT_DRINK
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

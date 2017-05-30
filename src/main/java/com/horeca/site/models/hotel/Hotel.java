@@ -442,6 +442,24 @@ public class Hotel {
 				simplifiedList.add(simplified);
 			}
 
+			if (availableServices.getSpaCall() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceType.SPACALL);
+				Price price = new Price();
+				price.setText("Free");
+				simplified.setPrice(price);
+				simplifiedList.add(simplified);
+			}
+
+			if (availableServices.getHairDresser() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceType.HAIRDRESSER);
+				Price price = new Price();
+				price.setText("Free");
+				simplified.setPrice(price);
+				simplifiedList.add(simplified);
+			}
+
 			hotelView.setServices(simplifiedList);
 		}
 
