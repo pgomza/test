@@ -75,6 +75,7 @@ public class BarOrderService {
             entry.setCount(entryPOST.getCount());
             entries.add(entry);
         }
+        barOrder.setTableNumber(entity.getTableNumber());
         barOrder.setItems(entries);
         barOrder.setTotal(computeTotal(entries));
         barOrder.setStatus(OrderStatus.NEW);

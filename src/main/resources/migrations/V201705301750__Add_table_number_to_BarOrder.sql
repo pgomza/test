@@ -1,0 +1,1 @@
+alter table BarOrder add tableNumber nvarchar(255) not null;
