@@ -7,6 +7,7 @@ import com.horeca.site.models.hotel.services.carpark.CarPark;
 import com.horeca.site.models.hotel.services.hairdresser.HairDresser;
 import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
+import com.horeca.site.models.hotel.services.rental.Rental;
 import com.horeca.site.models.hotel.services.roomservice.RoomService;
 import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spacall.SpaCall;
@@ -66,6 +67,10 @@ public class AvailableServices {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn
     private HairDresser hairDresser;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn
+    private Rental rental;
 
     public Long getId() {
         return id;
@@ -161,5 +166,13 @@ public class AvailableServices {
 
     public void setHairDresser(HairDresser hairDresser) {
         this.hairDresser = hairDresser;
+    }
+
+    public Rental getRental() {
+        return rental;
+    }
+
+    public void setRental(Rental rental) {
+        this.rental = rental;
     }
 }
