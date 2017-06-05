@@ -2,12 +2,17 @@ package com.horeca.site.models.hotel.services.bar;
 
 import com.horeca.site.models.Price;
 
+import javax.validation.constraints.NotNull;
+
 public class BarItemUpdate {
 
     private Long id;
+    @NotNull
     private String name;
+    @NotNull
     private Price price;
     private boolean available;
+    @NotNull
     private BarCategory.Category type;
 
     public Long getId() {
