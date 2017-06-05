@@ -12,10 +12,8 @@ public class BarCategory {
     public enum Category {
         @JsonProperty("DRINK")
         DRINK,
-        @JsonProperty("HOT DRINK")
-        HOT_DRINK,
-        @JsonProperty("SOFT DRINK")
-        SOFT_DRINK
+        @JsonProperty("SNACK")
+        SNACK
     }
 
     @Id
