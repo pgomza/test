@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,13 +58,13 @@ public class BarService {
             bar.setFromHour(localTimeFormatter.parseLocalTime("08:00"));
             bar.setToHour(localTimeFormatter.parseLocalTime("11:00"));
 
-            Set<BarCategory> barCategories = Stream.of(BarCategory.Category.values())
+            List<BarCategory> barCategories = Stream.of(BarCategory.Category.values())
                     .map(categoryName -> {
                         BarCategory category = new BarCategory();
                         category.setCategory(categoryName);
                         return category;
                     })
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
 
             bar.setCategories(barCategories);
             services.setBar(bar);
@@ -100,7 +100,7 @@ public class BarService {
 
     public BarItem updateItem(Long hotelId, BarItemUpdate itemSent) {
         Bar bar = get(hotelId);
-        Set<BarCategory> categories = bar.getCategories();
+        List<BarCategory> categories = bar.getCategories();
 
         BarItem found = null;
         BarCategory inCategory = null;
@@ -135,7 +135,7 @@ public class BarService {
 
     public void deleteItem(Long hotelId, Long idToDelete) {
         Bar bar = get(hotelId);
-        Set<BarCategory> categories = bar.getCategories();
+        List<BarCategory> categories = bar.getCategories();
 
         boolean found = false;
         for (BarCategory barCategory : categories) {
