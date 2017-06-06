@@ -8,6 +8,7 @@ import com.horeca.site.services.orders.TableOrderingOrderService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +43,7 @@ public class TableOrderingOrderController {
             return service.addAndTryToNotify(pin, newOrder);
         }
         else
-            return service.add(pin, newOrder);
+            throw new AccessDeniedException("You are not allowed to add a new order");
     }
 
     @RequestMapping(value = "/{pin}/orders/tableordering/{id}", method = RequestMethod.PUT,

@@ -64,7 +64,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
                 .access("@accessChecker.checkForHotel(authentication, request)");
 
         // a specific stay can be accessed either by a guest associated with it or by a user
-        // whose hotel is associated with it; that goes for the check in/out endpoints as well
+        // whose hotel is associated with it; that goes for the check-in/out endpoints as well
         http.authorizeRequests().antMatchers("/api/stays/{pin}/**")
                 .access("@accessChecker.checkForStay(authentication, request)");
         http.authorizeRequests().antMatchers("/api/check-in/{pin}")
