@@ -1,18 +1,20 @@
 package com.horeca.site.controllers;
 
+import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.services.HotelImagesService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 @Api(value = "hotels")
@@ -40,8 +42,17 @@ public class HotelImagesController {
                          @PathVariable("filename") String filename)
             throws IOException, FileUploadException {
 
-        InputStream imageStream = file.getInputStream();
-        return service.save(id, filename, imageStream);
+        // TODO check if this needs to be instantiated each time the method is invoked
+        Tika tika = new Tika();
+        BufferedInputStream bufferedStream = new BufferedInputStream(file.getInputStream());
+        String mediaType = tika.detect(bufferedStream);
+
+        if (mediaType.length() >= 5 && mediaType.substring(0, 5).equalsIgnoreCase("image")) {
+            return service.save(id, filename, bufferedStream);
+        }
+        else
+            throw new BusinessRuleViolationException("You are allowed to upload images only");
+
     }
 
     @RequestMapping(value = "/{id}/images/{filename:.+}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)

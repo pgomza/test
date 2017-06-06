@@ -113,6 +113,11 @@
             <artifactId>flyway-core</artifactId>
             <version>4.1.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>1.14</version>
+        </dependency>
     </dependencies>
 
     <build>
