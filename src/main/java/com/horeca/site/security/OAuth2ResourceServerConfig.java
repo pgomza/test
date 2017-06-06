@@ -42,11 +42,6 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        // THIS RULE EXISTS SOLELY TO FACILITATE THE DEPLOYMENT PROCESS:
-        // allow anybody to send GET requests to the shutdown endpoint
-        // 'anybody' as far as the oauth authorization is concerned - that person has to know the secret key
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/maintenance/shutdown").permitAll();
-
         // allow anybody to get info about any of the hotels (but not their guests)
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}").permitAll();
