@@ -9,12 +9,14 @@ import io.swagger.annotations.ApiImplicitParams;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @Api(value = "hotels")
@@ -24,6 +26,12 @@ public class HotelImagesController {
 
     @Autowired
     private HotelImagesService service;
+
+    @Value("${images.maxWidth}")
+    private Integer maxImageWidth;
+
+    @Value("${images.maxHeight}")
+    private Integer maxImageHeight;
 
     @RequestMapping(value = "/{id}/images/{filename:.+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public FileLink get(@PathVariable("id") Long id, @PathVariable("filename") String filename) {
@@ -48,7 +56,9 @@ public class HotelImagesController {
         String mediaType = tika.detect(bufferedStream);
 
         if (mediaType.length() >= 5 && mediaType.substring(0, 5).equalsIgnoreCase("image")) {
-            return service.save(id, filename, bufferedStream);
+            String format = mediaType.split("/")[1];
+            InputStream scaled = service.resize(bufferedStream, format, maxImageWidth, maxImageHeight);
+            return service.save(id, filename, scaled);
         }
         else
             throw new BusinessRuleViolationException("You are allowed to upload images only");

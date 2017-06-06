@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.util.List;
@@ -151,5 +153,36 @@ public class HotelImagesService {
         }
 
         return foundLink;
+    }
+
+    public InputStream resize(InputStream imageStream, String format, int maxWidth, int maxHeight) throws IOException {
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(imageStream);
+        BufferedImage inputImage = ImageIO.read(bufferedInputStream);
+        int imageWidth = inputImage.getWidth();
+        int imageHeight = inputImage.getHeight();
+
+        float widthRatio = maxWidth / (float) imageWidth;
+        float heightRatio = maxHeight / (float) imageHeight;
+        float minRatio = Math.min(widthRatio, heightRatio);
+
+        if (minRatio < 1.0f) {
+            int newImageWidth = Math.round(imageWidth * minRatio);
+            int newImageHeight = Math.round(imageHeight * minRatio);
+
+            BufferedImage outputImage = new BufferedImage(newImageWidth, newImageHeight, inputImage.getType());
+            Graphics2D g2d = outputImage.createGraphics();
+            g2d.drawImage(inputImage, 0, 0, newImageWidth, newImageHeight, null);
+            g2d.dispose();
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(outputImage, format, outputStream);
+
+            return new BufferedInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
+        }
+        else {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(inputImage, format, outputStream);
+            return new BufferedInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
+        }
     }
 }
