@@ -6,6 +6,7 @@ import com.horeca.site.models.stay.Stay;
 import com.horeca.site.models.stay.StayPOST;
 import com.horeca.site.models.stay.StayView;
 import com.horeca.site.security.models.GuestAccount;
+import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.services.HotelService;
 import com.horeca.site.services.services.StayService;
@@ -107,7 +108,11 @@ public class AccessChecker {
 
     private boolean checkForHotelHelper(Authentication authentication, Long hotelId) {
         Object principal = authentication.getPrincipal();
-        if (principal instanceof UserAccount) {
+        if (principal instanceof SalesmanAccount) {
+            // allow any salesman to update hotels' data
+            return true;
+        }
+        else if (principal instanceof UserAccount) {
             if (hotelId != null) {
                 UserAccount userAccount = (UserAccount) principal;
                 if (hotelId.equals(userAccount.getHotelId()))
