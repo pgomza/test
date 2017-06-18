@@ -101,10 +101,12 @@ public class RestaurantMenuService {
                 .orElseThrow(ResourceNotFoundException::new);
     }
 
-    public void addItem(Long hotelId, Long categoryId, RestaurantMenuItem item) {
+    public RestaurantMenuItem addItem(Long hotelId, Long categoryId, RestaurantMenuItem item) {
         RestaurantMenuCategory category = getCategory(hotelId, categoryId);
-        category.getItems().add(item);
+        RestaurantMenuItem saved = itemRepository.save(item);
+        category.getItems().add(saved);
         updateCategory(hotelId, category);
+        return saved;
     }
 
     public RestaurantMenuItem updateItem(Long hotelId, Long categoryId, RestaurantMenuItem itemSent) {
