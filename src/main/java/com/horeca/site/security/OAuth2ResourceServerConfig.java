@@ -42,6 +42,9 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+        // don't secure the websocket endpoints
+        http.authorizeRequests().antMatchers("/api/updates/**").permitAll();
+
         // allow anybody to get info about any of the hotels (but not their guests)
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}").permitAll();
