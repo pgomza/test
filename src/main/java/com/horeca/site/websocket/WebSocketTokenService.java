@@ -53,7 +53,7 @@ public class WebSocketTokenService {
         return false;
     }
 
-    public void invalidateAll() {
+    public void deleteAll() {
         repository.deleteAll();
     }
 
