@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -23,16 +22,26 @@ public class WebSocketUpdatesInterceptor implements HandshakeInterceptor {
     @Autowired
     private TokenStore tokenStore;
 
+    @Autowired
+    private WebSocketTokenService tokenService;
+
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) throws Exception {
-        URI requestURI = request.getURI();
-        Optional<String> token = extractToken(requestURI.getQuery());
-        if (token.isPresent()) {
-            OAuth2Authentication authentication = tokenStore.readAuthentication(token.get());
-            if (authentication != null) {
-                attributes.put("authentication", authentication);
-                return true;
+        String queryString = request.getURI().getQuery();
+        if (queryString != null) {
+            Optional<String> webSocketTokenOptional = extractWebSocketToken(queryString);
+            if (webSocketTokenOptional.isPresent()) {
+                String webSocketToken = webSocketTokenOptional.get();
+                Optional<String> oauthToken = tokenService.getOauthToken(webSocketToken);
+                if (oauthToken.isPresent()) {
+                    tokenService.invalidate(webSocketToken);
+                    OAuth2Authentication authentication = tokenStore.readAuthentication(oauthToken.get());
+                    if (authentication != null) {
+                        attributes.put("authentication", authentication);
+                        return true;
+                    }
+                }
             }
         }
         return false;
@@ -43,7 +52,7 @@ public class WebSocketUpdatesInterceptor implements HandshakeInterceptor {
                                Exception exception) {
     }
 
-    private Optional<String> extractToken(String queryString) {
+    private Optional<String> extractWebSocketToken(String queryString) {
         Matcher matcher = tokenPattern.matcher(queryString);
         if (matcher.find() && matcher.groupCount() == 1) {
             return Optional.of(matcher.group(1));
