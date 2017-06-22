@@ -10,24 +10,17 @@ import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.services.HotelService;
 import com.horeca.site.services.services.StayService;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static com.horeca.utils.UrlPartExtractors.*;
 
 @Component
 public class AccessChecker {
-
-    private final Logger logger = Logger.getLogger(AccessChecker.class);
-    private final Pattern hotelIdPattern = Pattern.compile("/api/hotels/(\\d+)");
-    private final Pattern stayPinPattern = Pattern.compile("/api/stays/([a-z0-9]+)");
-    private final Pattern checkInPattern = Pattern.compile("/api/check-in/([a-z0-9]+)");
-    private final Pattern checkOutPattern = Pattern.compile("/api/check-out/([a-z0-9]+)");
 
     @Autowired
     private StayService stayService;
@@ -134,35 +127,5 @@ public class AccessChecker {
             }
         }
         return false;
-    }
-
-    private Long extractIdFromServletPath(String servletPath, Pattern pattern) {
-        Matcher matcher = pattern.matcher(servletPath);
-        Long result = null;
-        if (matcher.find() && matcher.groupCount() == 1) {
-            try {
-                result = Long.valueOf(matcher.group(1));
-            }
-            catch (NumberFormatException ex) {
-                logger.warn("Could not extract an id from the request path: " + servletPath);
-                throw ex;
-            }
-        }
-        return result;
-    }
-
-    private String extractStayPinFromServletPath(String servletPath, Pattern pattern) {
-        Matcher matcher = pattern.matcher(servletPath);
-        String result = null;
-        if (matcher.find() && matcher.groupCount() == 1) {
-            try {
-                result = matcher.group(1);
-            }
-            catch (NumberFormatException ex) {
-                logger.warn("Could not extract a stay pin from the request path: " + servletPath);
-                throw ex;
-            }
-        }
-        return result;
     }
 }
