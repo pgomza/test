@@ -3,6 +3,7 @@ package com.horeca.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.horeca.site.handlers.CustomGlobalExceptionHandler;
+import com.horeca.site.handlers.UpdatesInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -11,9 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.resource.ResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
@@ -121,5 +120,11 @@ public class RootConfig extends WebMvcConfigurerAdapter
         configurer.favorParameter(false);
         configurer.ignoreAcceptHeader(false);
         configurer.useJaf(false);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        InterceptorRegistration registration = registry.addInterceptor(new UpdatesInterceptor());
+        registration.addPathPatterns("/api/**");
     }
 }
