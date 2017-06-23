@@ -2,6 +2,7 @@ package com.horeca.site.websocket;
 
 import com.horeca.site.security.models.UserAccount;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -15,31 +16,33 @@ public class WebSocketUpdatesHandler extends TextWebSocketHandler {
 
     private static Logger logger = Logger.getLogger(WebSocketUpdatesHandler.class);
 
+    @Autowired
+    private WebSocketUpdatesService service;
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws IOException, InterruptedException {
         OAuth2Authentication authentication = getAuthentication(session);
-        UserAccount userAccount = (UserAccount) authentication.getPrincipal();
-        String login = userAccount.getUsername().substring(userAccount.getUsernamePrefix().length());
-
-        // for testing purposes
-        int k = 0;
-        for (int i = 0; i < 3; i++) {
-            session.sendMessage(new TextMessage("UPDATE no. " + (k++) + " for " + login));
-            Thread.sleep(10);
-            session.sendMessage(new TextMessage("UPDATE no. " + (k++) + " for " + login));
-            Thread.sleep(50);
-            session.sendMessage(new TextMessage("UPDATE no. " + (k++) + " for " + login));
-            Thread.sleep(20000);
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserAccount) {
+            UserAccount userAccount = (UserAccount) principal;
+            service.registerSessionForHotel(userAccount.getHotelId(), session);
         }
-
-        session.close(CloseStatus.SERVICE_RESTARTED);
+        else {
+            session.close(CloseStatus.NORMAL);
+        }
     }
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         // in this case only log the message
         OAuth2Authentication authentication = getAuthentication(session);
-        logger.debug("Received websocket message: " + message + " from " + authentication.getPrincipal());
+        logger.debug("Received message: " + message + " from " + authentication.getPrincipal());
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        logger.debug("Connection with session " + session.getId() + " has been closed with status " + status);
+        service.deregisterSession(session);
     }
 
     @Override
