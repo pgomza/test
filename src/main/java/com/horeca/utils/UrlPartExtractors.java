@@ -7,6 +7,7 @@ public class UrlPartExtractors {
 
     public static final Pattern hotelIdPattern = Pattern.compile("/api/hotels/(\\d+)");
     public static final Pattern stayPinPattern = Pattern.compile("/api/stays/([a-z0-9]+)");
+    public static final Pattern stayPinPatternExact = Pattern.compile("^/api/stays/([a-z0-9]+)$");
     public static final Pattern checkInPattern = Pattern.compile("/api/check-in/([a-z0-9]+)");
     public static final Pattern checkOutPattern = Pattern.compile("/api/check-out/([a-z0-9]+)");
 

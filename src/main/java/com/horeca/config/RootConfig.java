@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.horeca.site.handlers.CustomGlobalExceptionHandler;
 import com.horeca.site.handlers.UpdatesInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -25,6 +26,9 @@ import java.util.List;
 @Configuration
 public class RootConfig extends WebMvcConfigurerAdapter
 {
+    @Autowired
+    private UpdatesInterceptor updatesInterceptor;
+
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
@@ -124,7 +128,7 @@ public class RootConfig extends WebMvcConfigurerAdapter
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        InterceptorRegistration registration = registry.addInterceptor(new UpdatesInterceptor());
+        InterceptorRegistration registration = registry.addInterceptor(updatesInterceptor);
         registration.addPathPatterns("/api/**");
     }
 }
