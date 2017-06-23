@@ -1,6 +1,7 @@
 package com.horeca.config;
 
 import com.horeca.site.security.services.UserAccountTempTokenService;
+import com.horeca.site.websocket.WebSocketTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -18,8 +19,12 @@ public class StartupRunner {
     @Autowired
     private UserAccountTempTokenService userAccountTempTokenService;
 
+    @Autowired
+    private WebSocketTokenService tokenService;
+
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
         userAccountTempTokenService.deleteInvalidTokens();
+        tokenService.deleteAll();
     }
 }

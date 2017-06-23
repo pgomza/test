@@ -11,4 +11,7 @@ public interface StayRepository extends CrudRepository<Stay, String> {
 
     @Query("select s.pin from Stay s where s.hotel.id = :hotelId")
     Collection<String> findByHotelId(@Param("hotelId") Long hotelId);
+
+    @Query("select s.hotel.id from Stay s where s.pin = :pin")
+    Long getHotelIdOfStay(@Param("pin") String pin);
 }
