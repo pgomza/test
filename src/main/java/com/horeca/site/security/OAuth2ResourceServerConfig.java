@@ -44,6 +44,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 
         // don't secure the websocket endpoints
         http.authorizeRequests().antMatchers("/api/updates/**").permitAll();
+        http.authorizeRequests().antMatchers("/api/demo/**").permitAll();
 
         // allow anybody to get info about any of the hotels (but not their guests)
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels").permitAll();

@@ -1,5 +1,6 @@
 package com.horeca.config;
 
+import com.horeca.site.websocket.DemoHandler;
 import com.horeca.site.websocket.WebSocketUpdatesHandler;
 import com.horeca.site.websocket.WebSocketUpdatesInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,21 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 .addHandler(updatesHandler(), "/api/updates")
                 .addInterceptors(interceptor)
                 .setAllowedOrigins("*");
+
+        registry
+                .addHandler(demoHandler(), "/api/demo")
+                .addInterceptors(interceptor)
+                .setAllowedOrigins("*");
     }
 
     @Bean
     public WebSocketHandler updatesHandler() {
         return new WebSocketUpdatesHandler();
+    }
+
+    @Bean
+    public DemoHandler demoHandler() {
+        return new DemoHandler();
     }
 }
 
