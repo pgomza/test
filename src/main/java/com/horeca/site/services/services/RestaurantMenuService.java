@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -59,6 +61,10 @@ public class RestaurantMenuService {
         }
     }
 
+    public List<RestaurantMenuCategory> getCategories(Long hotelId) {
+        return get(hotelId).getCategories();
+    }
+
     public RestaurantMenuCategory getCategory(Long hotelId, Long categoryId) {
         return get(hotelId).getCategories().stream()
                 .filter(c -> c.getId().equals(categoryId))
@@ -89,8 +95,16 @@ public class RestaurantMenuService {
     }
 
     public void deleteCategory(Long hotelId, Long categoryId) {
-        getCategory(hotelId, categoryId);
-        categoryRepository.delete(categoryId);
+        RestaurantMenu menu = get(hotelId);
+        List<RestaurantMenuCategory> remainingCategories = menu.getCategories().stream()
+                .filter(c -> c.getId() != categoryId)
+                .collect(Collectors.toList());
+        menu.setCategories(remainingCategories);
+        update(menu);
+    }
+
+    public List<RestaurantMenuItem> getItems(Long hotelId, Long categoryId) {
+        return getCategory(hotelId, categoryId).getItems();
     }
 
     public RestaurantMenuItem getItem(Long hotelId, Long categoryId, Long itemId) {
@@ -115,7 +129,11 @@ public class RestaurantMenuService {
     }
 
     public void deleteItem(Long hotelId, Long categoryId, Long itemId) {
-        getItem(hotelId, categoryId, itemId);
-        itemRepository.delete(itemId);
+        RestaurantMenuCategory category = getCategory(hotelId, categoryId);
+        List<RestaurantMenuItem> remainingItems = category.getItems().stream()
+                .filter(i -> i.getId() != itemId)
+                .collect(Collectors.toList());
+        category.setItems(remainingItems);
+        updateCategory(hotelId, category);
     }
 }
