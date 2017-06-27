@@ -91,12 +91,12 @@ public class UpdatesInterceptor extends HandlerInterceptorAdapter {
     }
 
     private void notifyHotel(Long hotelId) {
-        logger.info("Change in hotel: " + hotelId);
+        logger.debug("Change in hotel: " + hotelId);
         eventPublisher.publishEvent(new ChangeInHotelEvent(this, hotelId));
     }
 
     private void notifyHotel(String pin) {
-        logger.info("Change in stay: " + pin);
+        logger.debug("Change in stay: " + pin);
         eventPublisher.publishEvent(new ChangeInStayEvent(this, pin));
     }
 }
