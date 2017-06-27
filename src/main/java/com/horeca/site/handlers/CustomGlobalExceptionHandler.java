@@ -5,6 +5,7 @@ import com.horeca.site.exceptions.BadAuthorizationRequestException;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.exceptions.UnauthorizedException;
+import com.horeca.site.security.models.AbstractAccount;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.TypeMismatchException;
@@ -13,7 +14,10 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -74,8 +78,19 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
         String message = ex.getMessage();
         String timestamp = new DateTime().toString();
 
-        logger.error("Handling exception: " + ex.getMessage());
-        logger.error("Exception cause: " + ex.getCause());
+        logger.warn("Message: " + ex.getMessage());
+        logger.warn("URI: " + request.getRequestURI());
+        if (handler != null) { // not sure if that can ever be false
+            logger.warn("Handler: " + handler);
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof AbstractAccount) {
+            logger.warn("Principal: " + ((AbstractAccount) authentication.getPrincipal()).getUsername());
+        }
+        else if (authentication instanceof AnonymousAuthenticationToken) {
+            logger.warn("Principal: anonymous");
+        }
 
         int statusCode;
 
