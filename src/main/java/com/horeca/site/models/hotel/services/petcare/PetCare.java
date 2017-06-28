@@ -4,7 +4,8 @@ import com.horeca.site.models.Price;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class PetCare {
@@ -18,9 +19,9 @@ public class PetCare {
     @NotNull
     private Price price;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "pet_care_id")
-    private Set<PetCareItem> items;
+    private List<PetCareItem> items = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -46,11 +47,11 @@ public class PetCare {
         this.price = price;
     }
 
-    public Set<PetCareItem> getItems() {
+    public List<PetCareItem> getItems() {
         return items;
     }
 
-    public void setItems(Set<PetCareItem> items) {
+    public void setItems(List<PetCareItem> items) {
         this.items = items;
     }
 }
