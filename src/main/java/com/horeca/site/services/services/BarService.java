@@ -11,6 +11,7 @@ import com.horeca.site.models.hotel.services.bar.BarItem;
 import com.horeca.site.models.hotel.services.bar.BarItemUpdate;
 import com.horeca.site.repositories.services.BarCategoryRepository;
 import com.horeca.site.repositories.services.BarItemRepository;
+import com.horeca.site.repositories.services.BarRepository;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,6 +34,9 @@ public class BarService {
 
     @Autowired
     private AvailableServicesService availableServicesService;
+
+    @Autowired
+    private BarRepository repository;
 
     @Autowired
     private BarCategoryRepository barCategoryRepository;
@@ -46,6 +52,10 @@ public class BarService {
         return services.getBar();
     }
 
+    public Bar update(Bar updated) {
+        return repository.save(updated);
+    }
+
     public Bar addDefaultBar(Long hotelId) {
         AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
         if (services.getBar() == null) {
@@ -58,13 +68,13 @@ public class BarService {
             bar.setFromHour(localTimeFormatter.parseLocalTime("08:00"));
             bar.setToHour(localTimeFormatter.parseLocalTime("11:00"));
 
-            Set<BarCategory> barCategories = Stream.of(BarCategory.Category.values())
+            List<BarCategory> barCategories = Stream.of(BarCategory.Category.values())
                     .map(categoryName -> {
                         BarCategory category = new BarCategory();
                         category.setCategory(categoryName);
                         return category;
                     })
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
 
             bar.setCategories(barCategories);
             services.setBar(bar);
@@ -81,26 +91,45 @@ public class BarService {
         return get(hotelId).getCategories().stream()
                 .filter(category -> category.getCategory() == categoryName)
                 .findFirst()
+                .orElse(null);
+    }
+
+    public BarCategory addCategory(Long hotelId, BarCategory.Category categoryName) {
+        // check if such a category is permitted
+        BarCategory.Category matchingCategory = Arrays.stream(BarCategory.Category.values())
+                .filter(c -> c == categoryName)
+                .findAny()
                 .orElseThrow(() -> new ResourceNotFoundException("There is no such category"));
+
+        Bar bar = get(hotelId);
+        BarCategory newCategory = new BarCategory();
+        newCategory.setCategory(matchingCategory);
+        newCategory.setItems(new HashSet<>());
+
+        BarCategory savedCategory = barCategoryRepository.save(newCategory);
+        bar.getCategories().add(savedCategory);
+        update(bar);
+
+        return savedCategory;
     }
 
     public void addItem(Long hotelId, BarItemUpdate item) {
         BarCategory category = getCategory(hotelId, item.getType());
-        if (category != null) {
-            BarItem itemNew = new BarItem();
-            itemNew.setPrice(item.getPrice());
-            itemNew.setAvailable(item.isAvailable());
-            itemNew.setName(item.getName());
-            category.getItems().add(itemNew);
-            barCategoryRepository.save(category);
+        if (category == null) {
+            category = addCategory(hotelId, item.getType());
         }
-        else
-            throw new ResourceNotFoundException("There is no such category");
+
+        BarItem itemNew = new BarItem();
+        itemNew.setPrice(item.getPrice());
+        itemNew.setAvailable(item.isAvailable());
+        itemNew.setName(item.getName());
+        category.getItems().add(itemNew);
+        barCategoryRepository.save(category);
     }
 
     public BarItem updateItem(Long hotelId, BarItemUpdate itemSent) {
         Bar bar = get(hotelId);
-        Set<BarCategory> categories = bar.getCategories();
+        List<BarCategory> categories = bar.getCategories();
 
         BarItem found = null;
         BarCategory inCategory = null;
@@ -135,7 +164,7 @@ public class BarService {
 
     public void deleteItem(Long hotelId, Long idToDelete) {
         Bar bar = get(hotelId);
-        Set<BarCategory> categories = bar.getCategories();
+        List<BarCategory> categories = bar.getCategories();
 
         boolean found = false;
         for (BarCategory barCategory : categories) {

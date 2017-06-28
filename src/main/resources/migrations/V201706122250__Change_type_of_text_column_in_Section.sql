@@ -1,0 +1,1 @@
+alter table Section alter column text nvarchar(max) not null;

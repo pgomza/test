@@ -460,6 +460,13 @@ public class Hotel {
 				simplifiedList.add(simplified);
 			}
 
+			if (availableServices.getRental() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceType.RENTAL);
+				simplified.setPrice(availableServices.getRental().getPrice());
+				simplifiedList.add(simplified);
+			}
+
 			hotelView.setServices(simplifiedList);
 		}
 

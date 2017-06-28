@@ -25,6 +25,8 @@ public class NotificationSettings {
     private boolean taxi;
     private boolean housekeeping;
     private boolean tableOrdering;
+    private boolean bar;
+    private boolean rental;
 
     public NotificationSettings() {
     }
@@ -107,5 +109,21 @@ public class NotificationSettings {
 
     public void setTableOrdering(boolean tableOrdering) {
         this.tableOrdering = tableOrdering;
+    }
+
+    public boolean isBar() {
+        return bar;
+    }
+
+    public void setBar(boolean bar) {
+        this.bar = bar;
+    }
+
+    public boolean isRental() {
+        return rental;
+    }
+
+    public void setRental(boolean rental) {
+        this.rental = rental;
     }
 }

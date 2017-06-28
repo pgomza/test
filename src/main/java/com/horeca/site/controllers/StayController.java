@@ -4,10 +4,15 @@ import com.horeca.site.models.stay.*;
 import com.horeca.site.services.services.StayService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 
 @Api(value = "stays")
 @RestController
@@ -23,8 +28,16 @@ public class StayController {
     }
 
     @RequestMapping(value = "/stays", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Stay add(@Valid @RequestBody StayPOST entity) {
-        return stayService.registerNewStay(entity);
+    public ResponseEntity<Stay> add(@Valid @RequestBody StayPOST entity) {
+        Stay stay = stayService.registerNewStay(entity);
+        URI newPollUri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{pin}")
+                .buildAndExpand(stay.getPin())
+                .toUri();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(newPollUri);
+        return new ResponseEntity<>(stay, headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/stays/{pin}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -6,7 +6,7 @@ import org.joda.time.LocalTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 public class Bar {
@@ -29,7 +29,8 @@ public class Bar {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "bar_id")
-    private Set<BarCategory> categories;
+    @OrderColumn(name = "category_order")
+    private List<BarCategory> categories;
 
     public Long getId() {
         return id;
@@ -71,11 +72,11 @@ public class Bar {
         this.toHour = toHour;
     }
 
-    public Set<BarCategory> getCategories() {
+    public List<BarCategory> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<BarCategory> categories) {
+    public void setCategories(List<BarCategory> categories) {
         this.categories = categories;
     }
 }

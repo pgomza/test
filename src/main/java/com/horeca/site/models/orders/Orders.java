@@ -8,6 +8,7 @@ import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.dnd.DndOrder;
 import com.horeca.site.models.orders.housekeeping.HousekeepingOrder;
 import com.horeca.site.models.orders.petcare.PetCareOrder;
+import com.horeca.site.models.orders.rental.RentalOrder;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrder;
 import com.horeca.site.models.orders.spa.SpaOrder;
 import com.horeca.site.models.orders.tableordering.TableOrderingOrder;
@@ -65,6 +66,10 @@ public class Orders {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "orders_id_bar")
     private Set<BarOrder> barOrders = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "orders_id_rental")
+    private Set<RentalOrder> rentalOrders = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -152,5 +157,13 @@ public class Orders {
 
     public void setBarOrders(Set<BarOrder> barOrders) {
         this.barOrders = barOrders;
+    }
+
+    public Set<RentalOrder> getRentalOrders() {
+        return rentalOrders;
+    }
+
+    public void setRentalOrders(Set<RentalOrder> rentalOrders) {
+        this.rentalOrders = rentalOrders;
     }
 }

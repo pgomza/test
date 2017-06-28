@@ -42,10 +42,9 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        // THIS RULE EXISTS SOLELY TO FACILITATE THE DEPLOYMENT PROCESS:
-        // allow anybody to send GET requests to the shutdown endpoint
-        // 'anybody' as far as the oauth authorization is concerned - that person has to know the secret key
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/maintenance/shutdown").permitAll();
+        // don't secure the websocket endpoints
+        http.authorizeRequests().antMatchers("/api/updates/**").permitAll();
+        http.authorizeRequests().antMatchers("/api/demo/**").permitAll();
 
         // allow anybody to get info about any of the hotels (but not their guests)
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels").permitAll();
@@ -69,7 +68,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
                 .access("@accessChecker.checkForHotel(authentication, request)");
 
         // a specific stay can be accessed either by a guest associated with it or by a user
-        // whose hotel is associated with it; that goes for the check in/out endpoints as well
+        // whose hotel is associated with it; that goes for the check-in/out endpoints as well
         http.authorizeRequests().antMatchers("/api/stays/{pin}/**")
                 .access("@accessChecker.checkForStay(authentication, request)");
         http.authorizeRequests().antMatchers("/api/check-in/{pin}")

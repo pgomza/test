@@ -1,0 +1,2 @@
+alter table AvailableServices add restaurantMenu_id bigint default NULL references RestaurantMenu;
+create index AvailableServices_RestaurantMenu_index on AvailableServices(restaurantMenu_id);

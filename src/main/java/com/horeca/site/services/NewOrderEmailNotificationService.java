@@ -60,6 +60,8 @@ public class NewOrderEmailNotificationService implements ApplicationListener<New
             case TAXI: return settings.isTaxi();
             case HOUSEKEEPING: return settings.isHousekeeping();
             case TABLEORDERING: return settings.isTableOrdering();
+            case BAR: return settings.isBar();
+            case RENTAL: return settings.isRental();
             default: return false;
         }
     }
