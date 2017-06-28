@@ -1,12 +1,9 @@
 package com.horeca.site.services.orders;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
-import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarDay;
-import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendarHour;
 import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
@@ -15,16 +12,13 @@ import com.horeca.site.models.orders.petcare.PetCareOrder;
 import com.horeca.site.models.orders.petcare.PetCareOrderPOST;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.PetCareOrderRepository;
-import com.horeca.site.services.services.PetCareService;
 import com.horeca.site.services.services.StayService;
-import org.joda.time.LocalDateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -38,46 +32,37 @@ public class PetCareOrderService {
     private StayService stayService;
 
     @Autowired
-    private PetCareService petCareService;
-
-    @Autowired
     private PetCareOrderRepository repository;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
-
     public PetCareOrder get(String stayPin, Long id) {
-        PetCareOrder found = null;
-        for (PetCareOrder petCareOrder : getAll(stayPin)) {
-            if (petCareOrder.getId().equals(id)) {
-                found = petCareOrder;
-                break;
-            }
-        }
-        if (found == null)
-            throw new ResourceNotFoundException();
+        Optional<PetCareOrder> orderOptional = getAll(stayPin).stream()
+                .filter(order -> order.getId().equals(id))
+                .findAny();
 
-        return found;
+        if (orderOptional.isPresent()) {
+            return orderOptional.get();
+        }
+        else {
+            throw new ResourceNotFoundException();
+        }
     }
 
     public Set<PetCareOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
-        Set<PetCareOrder> petCareOrders = orders.getPetCareOrders();
 
-        return petCareOrders;
+        return orders.getPetCareOrders();
     }
 
     public PetCareOrder add(String stayPin, PetCareOrderPOST entity) {
         PetCareOrder newOrder = new PetCareOrder();
 
         PetCareItem resolvedItem = resolveItemIdToEntity(stayPin, entity.getItemId());
-        LocalDateTime reservationTime = formatter.parseLocalDateTime(entity.getTime());
-        makeReservation(resolvedItem, reservationTime);
 
         newOrder.setStatus(OrderStatus.NEW);
-        newOrder.setTime(reservationTime);
+        newOrder.setDate(entity.getDate());
         newOrder.setItem(resolvedItem);
         PetCareOrder savedOrder = repository.save(newOrder);
 
@@ -126,28 +111,5 @@ public class PetCareOrderService {
         }
 
         throw new ResourceNotFoundException("Could not find an item with such an id");
-    }
-
-    private void makeReservation(PetCareItem resolvedItem, LocalDateTime reservationTime) {
-        Set<PetCareCalendarDay> availableDays = resolvedItem.getCalendar().getDays();
-        for (PetCareCalendarDay day : availableDays) {
-            if (day.getDay().equals(reservationTime.toLocalDate())) {
-
-                Set<PetCareCalendarHour> availableHours = day.getHours();
-                for (PetCareCalendarHour hour : availableHours) {
-                    if (hour.getHour().equals(reservationTime.toLocalTime())) {
-                        if (hour.isAvailable()) {
-                            hour.setAvailable(false);
-                            petCareService.updateCalendarHour(hour);
-                            return;
-                        }
-                        else
-                            throw new BusinessRuleViolationException("The service is not available at the specified reservation time");
-                    }
-                }
-            }
-        }
-
-        throw new BusinessRuleViolationException("The service is not available at the specified reservation time");
     }
 }

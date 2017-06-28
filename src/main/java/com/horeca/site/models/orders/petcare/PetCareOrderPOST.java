@@ -1,5 +1,8 @@
 package com.horeca.site.models.orders.petcare;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.joda.time.LocalDate;
+
 import javax.validation.constraints.NotNull;
 
 public class PetCareOrderPOST {
@@ -8,7 +11,8 @@ public class PetCareOrderPOST {
     private Long itemId;
 
     @NotNull
-    private String time;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate date;
 
     public Long getItemId() {
         return itemId;
@@ -18,11 +22,11 @@ public class PetCareOrderPOST {
         this.itemId = itemId;
     }
 
-    public String getTime() {
-        return time;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }
