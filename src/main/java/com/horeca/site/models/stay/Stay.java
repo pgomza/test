@@ -52,6 +52,8 @@ public class Stay {
     @Column(updatable = false)
     private Timestamp createdAt;
 
+    private Long cubilisId;
+
     public String getPin() {
         return pin;
     }
@@ -140,6 +142,14 @@ public class Stay {
         this.createdAt = createdAt;
     }
 
+    public Long getCubilisId() {
+        return cubilisId;
+    }
+
+    public void setCubilisId(Long cubilisId) {
+        this.cubilisId = cubilisId;
+    }
+
     public StayView toView() {
         StayView view = new StayView();
 
@@ -154,6 +164,7 @@ public class Stay {
         view.setHotel(getHotel().toView());
         view.setGuest(getGuest());
         view.setCreatedAt(getCreatedAt().toString());
+        view.setCubilisId(getCubilisId());
 
         return view;
     }
