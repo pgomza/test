@@ -50,7 +50,7 @@ public class HotelController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Hotel> update(@PathVariable("id") Long id, @Valid @RequestBody Hotel hotel) {
-        Hotel changed = service.updateIgnoringSomeFields(id, hotel);
+        Hotel changed = service.updateFromController(id, hotel);
 		return new ResponseEntity<Hotel>(changed, HttpStatus.OK);
 	}
 

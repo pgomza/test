@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.Currency;
 import com.horeca.site.models.Price;
+import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
@@ -116,6 +117,11 @@ public class Hotel {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@JoinColumn(name = "notificationSettings_id")
 	private NotificationSettings notificationSettings;
+
+	@JsonIgnore
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@JoinColumn(name = "cubilisSettings_id")
+	private CubilisSettings cubilisSettings;
 
 	public Long getId() {
 		return id;
@@ -359,6 +365,14 @@ public class Hotel {
 
 	public void setNotificationSettings(NotificationSettings notificationSettings) {
 		this.notificationSettings = notificationSettings;
+	}
+
+	public CubilisSettings getCubilisSettings() {
+		return cubilisSettings;
+	}
+
+	public void setCubilisSettings(CubilisSettings cubilisSettings) {
+		this.cubilisSettings = cubilisSettings;
 	}
 
 	public HotelView toView() {
