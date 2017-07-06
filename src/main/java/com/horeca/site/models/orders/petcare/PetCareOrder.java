@@ -3,13 +3,12 @@ package com.horeca.site.models.orders.petcare;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
 import com.horeca.site.models.orders.OrderStatus;
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(indexes = @Index(name = "orders_id_pet_care", columnList = "orders_id_pet_care"))
 public class PetCareOrder {
 
     @Id
@@ -24,8 +23,8 @@ public class PetCareOrder {
     private PetCareItem item;
 
     @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
-    private LocalDateTime time;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate date;
 
     public Long getId() {
         return id;
@@ -51,11 +50,11 @@ public class PetCareOrder {
         this.item = item;
     }
 
-    public LocalDateTime getTime() {
-        return time;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setTime(LocalDateTime time) {
-        this.time = time;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }

@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.restaurantmenu;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,7 +16,7 @@ public class RestaurantMenu {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_menu_id")
     @OrderColumn(name = "category_order")
-    private List<RestaurantMenuCategory> categories;
+    private List<RestaurantMenuCategory> categories = new ArrayList<>();
 
     public Long getId() {
         return id;

@@ -3,6 +3,7 @@ package com.horeca.site.models.hotel.services.restaurantmenu;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,7 +20,7 @@ public class RestaurantMenuCategory {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_menu_category_id")
     @OrderColumn(name = "item_order")
-    private List<RestaurantMenuItem> items;
+    private List<RestaurantMenuItem> items = new ArrayList<>();
 
     public Long getId() {
         return id;

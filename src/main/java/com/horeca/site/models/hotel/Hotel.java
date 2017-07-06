@@ -60,6 +60,9 @@ public class Hotel {
 	@URL
 	private String eventsUrl;
 
+	@URL
+	private String meteoUrl;
+
 	private String fax;
 
 	private Float starRating;
@@ -208,6 +211,14 @@ public class Hotel {
 
 	public void setEventsUrl(String eventsUrl) {
 		this.eventsUrl = eventsUrl;
+	}
+
+	public String getMeteoUrl() {
+		return meteoUrl;
+	}
+
+	public void setMeteoUrl(String meteoUrl) {
+		this.meteoUrl = meteoUrl;
 	}
 
 	public String getFax() {
@@ -364,6 +375,7 @@ public class Hotel {
 		hotelView.setRestaurantsUrl(getRestaurantsUrl());
 		hotelView.setInterestingPlacesUrl(getInterestingPlacesUrl());
 		hotelView.setEventsUrl(getEventsUrl());
+		hotelView.setMeteoUrl(getMeteoUrl());
 		hotelView.setFax(getFax());
 		hotelView.setStarRating(getStarRating());
 		hotelView.setRooms(getRooms());
@@ -401,7 +413,7 @@ public class Hotel {
 			if (availableServices.getPetCare() != null) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.PETCARE);
-				simplified.setPrice(availableServices.getSpa().getPrice());
+				simplified.setPrice(availableServices.getPetCare().getPrice());
 				simplifiedList.add(simplified);
 			}
 
@@ -464,6 +476,15 @@ public class Hotel {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.RENTAL);
 				simplified.setPrice(availableServices.getRental().getPrice());
+				simplifiedList.add(simplified);
+			}
+
+			if (availableServices.getRestaurantMenu() != null) {
+				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
+				simplified.setType(AvailableServiceType.RESTAURANTMENU);
+				Price price = new Price();
+				price.setText("Free");
+				simplified.setPrice(price);
 				simplifiedList.add(simplified);
 			}
 

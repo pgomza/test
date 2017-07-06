@@ -1,0 +1,1 @@
+ALTER TABLE Hotel ADD meteoUrl NVARCHAR(255);

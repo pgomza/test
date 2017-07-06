@@ -1,14 +1,15 @@
 package com.horeca.site.models.hotel.services.petcare;
 
 import com.horeca.site.models.Price;
-import com.horeca.site.models.hotel.services.petcare.calendar.PetCareCalendar;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(indexes = @Index(name = "pet_care_id", columnList = "pet_care_id"))
 public class PetCareItem {
 
     @Id
@@ -18,12 +19,10 @@ public class PetCareItem {
     @NotEmpty
     private String name;
 
+    private String description;
+
     @NotNull
     private Price price;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn
-    private PetCareCalendar calendar;
 
     public Long getId() {
         return id;
@@ -41,19 +40,19 @@ public class PetCareItem {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Price getPrice() {
         return price;
     }
 
     public void setPrice(Price price) {
         this.price = price;
-    }
-
-    public PetCareCalendar getCalendar() {
-        return calendar;
-    }
-
-    public void setCalendar(PetCareCalendar calendar) {
-        this.calendar = calendar;
     }
 }
