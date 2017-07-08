@@ -240,7 +240,11 @@ public class HotelService {
         }
 
         if (hotel.getCubilisSettings() == null) {
-            hotel.setCubilisSettings(new CubilisSettings());
+            CubilisSettings settings = new CubilisSettings();
+            settings.setEnabled(false);
+            settings.setLogin("someone@example.com");
+            settings.setPassword("pass123");
+            hotel.setCubilisSettings(settings);
         }
 
         update(hotelId, hotel);
@@ -397,5 +401,13 @@ public class HotelService {
         hotel.setLongitude(hotelData.longitude);
         hotel.setLatitude(hotelData.latitude);
         return hotel;
+    }
+
+    /*
+        Cubilis-related functionality
+     */
+
+    public List<Long> getIdsOfCubilisEnabledHotels() {
+        return repository.getIdsOfCubilisEnabledHotels();
     }
 }
