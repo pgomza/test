@@ -16,6 +16,8 @@ public class CubilisSettings {
 
     private boolean isEnabled;
 
+    private boolean isMergingEnabled;
+
     @NotEmpty
     private String login;
 
@@ -36,6 +38,14 @@ public class CubilisSettings {
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+    }
+
+    public boolean isMergingEnabled() {
+        return isMergingEnabled;
+    }
+
+    public void setMergingEnabled(boolean mergingEnabled) {
+        isMergingEnabled = mergingEnabled;
     }
 
     public String getLogin() {
