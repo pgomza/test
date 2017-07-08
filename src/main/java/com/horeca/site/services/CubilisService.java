@@ -1,0 +1,82 @@
+package com.horeca.site.services;
+
+import com.horeca.site.models.cubilis.CubilisConnectionStatus;
+import com.horeca.site.models.cubilis.CubilisReservation;
+import com.horeca.site.models.cubilis.CubilisSettings;
+import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.repositories.CubilisSettingsRepository;
+import com.horeca.site.services.services.StayService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional
+public class CubilisService {
+
+    @Autowired
+    private CubilisConnectorService connectorService;
+
+    @Autowired
+    private CubilisReservationService reservationService;
+
+    @Autowired
+    private CubilisSettingsRepository settingsRepository;
+
+    @Autowired
+    private HotelService hotelService;
+
+    @Autowired
+    private StayService stayService;
+
+    public CubilisSettings getSettings(Long hotelId) {
+        Hotel hotel = hotelService.get(hotelId);
+        return hotel.getCubilisSettings();
+    }
+
+    public CubilisSettings updateSettings(Long hotelId, CubilisSettings updated) {
+        CubilisSettings current = getSettings(hotelId);
+        updated.setId(current.getId());
+        return settingsRepository.save(updated);
+    }
+
+    public CubilisConnectionStatus getConnectionStatus(CubilisSettings settings) {
+        if (!settings.isEnabled()) {
+            return new CubilisConnectionStatus(CubilisConnectionStatus.Status.DISABLED);
+        }
+        return null;
+    }
+
+    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    public void fetchAndUpdatePendingStays() {
+        List<Long> hotelIds = hotelService.getIdsOfCubilisEnabledHotels();
+        Map<Long, CubilisSettings> hotelIdToSettings = hotelIds.stream()
+                .collect(Collectors.toMap(Function.identity(), this::getSettings));
+
+        for (Map.Entry<Long, CubilisSettings> entry : hotelIdToSettings.entrySet()) {
+            Long hotelId = entry.getKey();
+            CubilisSettings settings = entry.getValue();
+
+            List<CubilisReservation> fetchedReservations =
+                    connectorService.fetchReservations(settings.getLogin(), settings.getPassword());
+
+            List<CubilisReservation> filteredReservations = filterFetchedReservations(hotelId, fetchedReservations);
+
+            if (settings.isMergingEnabled()) {
+                reservationService.mergeReservations(hotelId, filteredReservations);
+            }
+        }
+    }
+
+    private List<CubilisReservation> filterFetchedReservations(Long hotelId, List<CubilisReservation> reservations) {
+        Set<Long> existingIds = stayService.getAllCubilisIdsInHotel(hotelId);
+        return reservations.stream().filter(r -> !existingIds.contains(r.getId())).collect(Collectors.toList());
+    }
+}

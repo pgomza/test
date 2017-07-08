@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.*;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
+@EnableScheduling
 public class RootConfig extends WebMvcConfigurerAdapter
 {
     @Autowired

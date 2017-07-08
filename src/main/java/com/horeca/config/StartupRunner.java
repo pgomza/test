@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 // responsible for performing various maintenance actions after
 // the startup i.e. after the application context has been loaded
-// TODO divide this class into several classes
-// TODO it's dependent on too many classes (has too many responsibilities)
 @Service
 @Transactional
 public class StartupRunner {
