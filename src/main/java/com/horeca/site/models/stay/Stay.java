@@ -40,10 +40,12 @@ public class Stay {
     @JoinColumn
     private Orders orders = new Orders();
 
+    @NotNull
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn
     private Hotel hotel;
 
+    @NotNull
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn
     private Guest guest;

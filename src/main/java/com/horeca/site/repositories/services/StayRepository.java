@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
+import java.util.Set;
 
 public interface StayRepository extends CrudRepository<Stay, String> {
 
@@ -14,4 +15,7 @@ public interface StayRepository extends CrudRepository<Stay, String> {
 
     @Query("select s.hotel.id from Stay s where s.pin = :pin")
     Long getHotelIdOfStay(@Param("pin") String pin);
+
+    @Query("select s.cubilisId from Stay s where s.cubilisId is not null and s.hotel.id = :hotelId")
+    Set<Long> getAllCubilisIdsInHotel(@Param("hotelId") Long hotelId);
 }
