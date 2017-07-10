@@ -8,6 +8,7 @@ import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.CubilisReservationRepository;
 import com.horeca.site.services.services.StayService;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class CubilisReservationService {
+
+    private static final int OUTDATE_RESERVATION_DAYS = 14;
 
     @Autowired
     private GuestService guestService;
@@ -54,6 +57,14 @@ public class CubilisReservationService {
         List<CubilisReservation> reservations = getByIds(hotelId, reservationIds);
         reservations.forEach(r -> r.setRejected(true));
         save(reservations);
+    }
+
+    public void deleteOutdated() {
+        for (CubilisReservation reservation : repository.findAll()) {
+            if (reservation.isRejected() && isOutdated(reservation)) {
+                repository.delete(reservation);
+            }
+        }
     }
 
     void merge(List<CubilisReservation> reservations) {
@@ -108,5 +119,13 @@ public class CubilisReservationService {
         }
 
         return matchingGuest;
+    }
+
+    private static boolean isOutdated(CubilisReservation reservation) {
+        LocalDate todayMinusOutdatedFactor = LocalDate.now().minusDays(OUTDATE_RESERVATION_DAYS);
+        if (reservation.getDeparture().isBefore(todayMinusOutdatedFactor)) {
+            return true;
+        }
+        return false;
     }
 }
