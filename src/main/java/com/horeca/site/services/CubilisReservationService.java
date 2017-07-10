@@ -1,5 +1,6 @@
 package com.horeca.site.services;
 
+import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.cubilis.CubilisCustomer;
 import com.horeca.site.models.cubilis.CubilisReservation;
 import com.horeca.site.models.guest.Guest;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -27,7 +29,34 @@ public class CubilisReservationService {
     @Autowired
     private CubilisReservationRepository repository;
 
-    void mergeReservations(List<CubilisReservation> reservations) {
+    public List<CubilisReservation> getAll(Long hotelId) {
+        return repository.getByHotelId(hotelId);
+    }
+
+    public List<CubilisReservation> getAllNotRejected(Long hotelId) {
+        return getAll(hotelId).stream().filter(r -> !r.isRejected()).collect(Collectors.toList());
+    }
+
+    public CubilisReservation get(Long hotelId, Long id) {
+        CubilisReservation found = repository.getByHotelIdAndId(hotelId, id);
+        if (found == null) {
+            throw new ResourceNotFoundException();
+        }
+        return found;
+    }
+
+    public void confirm(Long hotelId, List<Long> reservationIds) {
+        List<CubilisReservation> reservations = getByIds(hotelId, reservationIds);
+        merge(reservations);
+    }
+
+    public void reject(Long hotelId, List<Long> reservationIds) {
+        List<CubilisReservation> reservations = getByIds(hotelId, reservationIds);
+        reservations.forEach(r -> r.setRejected(true));
+        save(reservations);
+    }
+
+    void merge(List<CubilisReservation> reservations) {
         for (CubilisReservation reservation : reservations) {
             Hotel hotel = reservation.getHotel();
 
@@ -47,8 +76,12 @@ public class CubilisReservationService {
         }
     }
 
-    void saveReservations(List<CubilisReservation> reservations) {
+    void save(List<CubilisReservation> reservations) {
         repository.save(reservations);
+    }
+
+    private List<CubilisReservation> getByIds(Long hotelId, List<Long> reservationIds) {
+        return reservationIds.stream().map(id -> get(hotelId, id)).collect(Collectors.toList());
     }
 
     private Guest getGuestForCustomer(Long hotelId, CubilisCustomer customer) {

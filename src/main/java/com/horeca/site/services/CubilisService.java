@@ -71,10 +71,10 @@ public class CubilisService {
             setHotelForReservations(hotelId, filteredReservations);
 
             if (settings.isMergingEnabled()) {
-                reservationService.mergeReservations(filteredReservations);
+                reservationService.merge(filteredReservations);
             }
             else {
-                reservationService.saveReservations(filteredReservations);
+                reservationService.save(filteredReservations);
             }
         }
     }
