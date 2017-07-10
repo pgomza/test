@@ -80,8 +80,14 @@ public class CubilisService {
     }
 
     private List<CubilisReservation> filterFetchedReservations(Long hotelId, List<CubilisReservation> reservations) {
-        Set<Long> existingIds = stayService.getAllCubilisIdsInHotel(hotelId);
-        return reservations.stream().filter(r -> !existingIds.contains(r.getId())).collect(Collectors.toList());
+        Set<Long> alreadyMergedIds = stayService.getAllCubilisIdsInHotel(hotelId);
+        Set<Long> pendingReservationIds = reservationService.getAll(hotelId).stream()
+                .map(r -> r.getId())
+                .collect(Collectors.toSet());
+
+        alreadyMergedIds.addAll(pendingReservationIds);
+
+        return reservations.stream().filter(r -> !alreadyMergedIds.contains(r.getId())).collect(Collectors.toList());
     }
 
     private void setHotelForReservations(Long hotelId, List<CubilisReservation> reservations) {
