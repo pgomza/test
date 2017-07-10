@@ -1,6 +1,7 @@
 package com.horeca.site.models.cubilis;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.horeca.site.models.hotel.Hotel;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -13,6 +14,11 @@ public class CubilisReservation {
 
     @Id
     private Long id;
+
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "hotel_id")
+    private Hotel hotel;
 
     @NotEmpty
     private String status;
@@ -36,6 +42,14 @@ public class CubilisReservation {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Hotel getHotel() {
+        return hotel;
+    }
+
+    public void setHotel(Hotel hotel) {
+        this.hotel = hotel;
     }
 
     public String getStatus() {
