@@ -55,7 +55,7 @@ public class CubilisService {
     }
 
     @Scheduled(fixedDelay = 5 * 60 * 1000)
-    public void fetchAndUpdatePendingStays() {
+    public void fetchAndUpdateReservations() {
         List<Long> hotelIds = hotelService.getIdsOfCubilisEnabledHotels();
         Map<Long, CubilisSettings> hotelIdToSettings = hotelIds.stream()
                 .collect(Collectors.toMap(Function.identity(), this::getSettings));
@@ -68,9 +68,13 @@ public class CubilisService {
                     connectorService.fetchReservations(settings.getLogin(), settings.getPassword());
 
             List<CubilisReservation> filteredReservations = filterFetchedReservations(hotelId, fetchedReservations);
+            setHotelForReservations(hotelId, filteredReservations);
 
             if (settings.isMergingEnabled()) {
-                reservationService.mergeReservations(hotelId, filteredReservations);
+                reservationService.mergeReservations(filteredReservations);
+            }
+            else {
+                reservationService.saveReservations(filteredReservations);
             }
         }
     }
@@ -78,5 +82,12 @@ public class CubilisService {
     private List<CubilisReservation> filterFetchedReservations(Long hotelId, List<CubilisReservation> reservations) {
         Set<Long> existingIds = stayService.getAllCubilisIdsInHotel(hotelId);
         return reservations.stream().filter(r -> !existingIds.contains(r.getId())).collect(Collectors.toList());
+    }
+
+    private void setHotelForReservations(Long hotelId, List<CubilisReservation> reservations) {
+        Hotel hotel = hotelService.get(hotelId);
+        for (CubilisReservation reservation : reservations) {
+            reservation.setHotel(hotel);
+        }
     }
 }
