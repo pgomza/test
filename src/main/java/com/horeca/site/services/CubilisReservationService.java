@@ -18,6 +18,9 @@ public class CubilisReservationService {
     private GuestService guestService;
 
     @Autowired
+    private HotelService hotelService;
+
+    @Autowired
     private StayService stayService;
 
     public void mergeReservations(Long hotelId, List<CubilisReservation> reservations) {
@@ -29,8 +32,10 @@ public class CubilisReservationService {
             stay.setCubilisId(reservation.getId());
             stay.setFromDate(reservation.getArrival().toLocalDate());
             stay.setToDate(reservation.getDeparture());
-            stay.setGuest(matchingGuest);
             stay.setRoomNumber("");
+
+            stay.setGuest(matchingGuest);
+            stay.setHotel(hotelService.get(hotelId));
 
             stayService.registerNewStay(stay);
         }
