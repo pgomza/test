@@ -1,0 +1,1 @@
+ALTER TABLE CubilisReservation ADD isRejected BIT NOT NULL DEFAULT 0;
