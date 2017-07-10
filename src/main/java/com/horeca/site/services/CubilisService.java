@@ -47,11 +47,16 @@ public class CubilisService {
         return settingsRepository.save(updated);
     }
 
-    public CubilisConnectionStatus getConnectionStatus(CubilisSettings settings) {
+    public CubilisConnectionStatus getConnectionStatus(Long hotelId) {
+        CubilisSettings settings = getSettings(hotelId);
         if (!settings.isEnabled()) {
             return new CubilisConnectionStatus(CubilisConnectionStatus.Status.DISABLED);
         }
-        return null;
+
+        CubilisConnectionStatus.Status status =
+                connectorService.checkConnectionStatus(settings.getLogin(), settings.getPassword());
+
+        return new CubilisConnectionStatus(status);
     }
 
     @Scheduled(fixedDelay = 5 * 60 * 1000)
