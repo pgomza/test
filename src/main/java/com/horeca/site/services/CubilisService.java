@@ -4,9 +4,11 @@ import com.horeca.site.models.cubilis.CubilisConnectionStatus;
 import com.horeca.site.models.cubilis.CubilisReservation;
 import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.models.updates.ChangeInHotelEvent;
 import com.horeca.site.repositories.CubilisSettingsRepository;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,9 @@ public class CubilisService {
 
     @Autowired
     private StayService stayService;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     public CubilisSettings getSettings(Long hotelId) {
         Hotel hotel = hotelService.get(hotelId);
@@ -81,6 +86,8 @@ public class CubilisService {
             else {
                 reservationService.save(filteredReservations);
             }
+
+            eventPublisher.publishEvent(new ChangeInHotelEvent(this, hotelId));
         }
     }
 
