@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -27,12 +28,14 @@ public class GuestService {
     }
 
     public Guest get(Long hotelId, Long id) {
-        hotelService.ensureExists(hotelId);
-        Guest guest = repository.findOne(id);
-        if (guest != null)
-            return guest;
-        else
+        Set<Guest> guests = getAll(hotelId);
+        Optional<Guest> guestOptional = guests.stream().filter(g -> id.equals(g.getId())).findAny();
+        if (guestOptional.isPresent()) {
+            return guestOptional.get();
+        }
+        else {
             throw new ResourceNotFoundException("Could not find a guest with such an id");
+        }
     }
 
     public Guest save(Long hotelId, Guest entity) {
