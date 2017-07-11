@@ -94,7 +94,7 @@ public class CubilisService {
     private List<CubilisReservation> filterFetchedReservations(Long hotelId, List<CubilisReservation> reservations) {
         Set<Long> alreadyMergedIds = stayService.getAllCubilisIdsInHotel(hotelId);
         Set<Long> pendingReservationIds = reservationService.getAll(hotelId).stream()
-                .map(r -> r.getId())
+                .map(CubilisReservation::getId)
                 .collect(Collectors.toSet());
 
         alreadyMergedIds.addAll(pendingReservationIds);

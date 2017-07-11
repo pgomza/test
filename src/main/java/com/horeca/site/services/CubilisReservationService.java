@@ -3,12 +3,14 @@ package com.horeca.site.services;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.cubilis.CubilisCustomer;
 import com.horeca.site.models.cubilis.CubilisReservation;
+import com.horeca.site.models.cubilis.CubilisReservationUpdate;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.CubilisReservationRepository;
 import com.horeca.site.services.services.StayService;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,20 +34,43 @@ public class CubilisReservationService {
     @Autowired
     private CubilisReservationRepository repository;
 
-    public List<CubilisReservation> getAll(Long hotelId) {
+    List<CubilisReservation> getAll(Long hotelId) {
         return repository.getByHotelId(hotelId);
     }
 
-    public List<CubilisReservation> getAllNotRejected(Long hotelId) {
+    private List<CubilisReservation> getAllNotRejected(Long hotelId) {
         return getAll(hotelId).stream().filter(r -> !r.isRejected()).collect(Collectors.toList());
     }
 
-    public CubilisReservation get(Long hotelId, Long id) {
+    public List<CubilisReservationUpdate> getAllNotRejectedViews(Long hotelId) {
+        return getAllNotRejected(hotelId).stream()
+                .map(CubilisReservation::toView)
+                .collect(Collectors.toList());
+    }
+
+    private CubilisReservation get(Long hotelId, Long id) {
         CubilisReservation found = repository.getByHotelIdAndId(hotelId, id);
         if (found == null) {
             throw new ResourceNotFoundException();
         }
         return found;
+    }
+
+    public CubilisReservationUpdate update(Long hotelId, Long id, CubilisReservationUpdate updated) {
+        CubilisReservation current = get(hotelId, id);
+
+        Guest matchingGuest = null;
+        if (updated.getGuestId() != null) {
+            matchingGuest = guestService.get(hotelId, updated.getGuestId());
+        }
+        current.setGuest(matchingGuest);
+
+        current.setArrival(updated.getArrival().toLocalDateTime(LocalTime.MIDNIGHT));
+        current.setDeparture(updated.getDeparture());
+        current.setCustomer(updated.getCubilisCustomer());
+
+        CubilisReservation saved = repository.save(current);
+        return saved.toView();
     }
 
     public void confirm(Long hotelId, List<Long> reservationIds) {

@@ -1,7 +1,7 @@
 package com.horeca.site.controllers;
 
 import com.horeca.site.models.cubilis.CubilisConnectionStatus;
-import com.horeca.site.models.cubilis.CubilisReservation;
+import com.horeca.site.models.cubilis.CubilisReservationUpdate;
 import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.services.CubilisReservationService;
 import com.horeca.site.services.CubilisService;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Api(value = "hotels")
@@ -43,8 +44,16 @@ public class CubilisController {
 
     @RequestMapping(value = "/{hotelId}/cubilis/reservations", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CubilisReservation> getReservations(@PathVariable("hotelId") Long hotelId) {
-        return cubilisReservationService.getAll(hotelId);
+    public List<CubilisReservationUpdate> getReservations(@PathVariable("hotelId") Long hotelId) {
+        return cubilisReservationService.getAllNotRejectedViews(hotelId);
+    }
+
+    @RequestMapping(value = "/{hotelId}/cubilis/reservations/{id}", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public CubilisReservationUpdate updateReservation(@PathVariable("hotelId") Long hotelId,
+                                                      @PathVariable("id") Long id,
+                                                      @Valid @RequestBody CubilisReservationUpdate updated) {
+        return cubilisReservationService.update(hotelId, id, updated);
     }
 
     @RequestMapping(value = "/{hotelId}/cubilis/confirmation", method = RequestMethod.POST,
