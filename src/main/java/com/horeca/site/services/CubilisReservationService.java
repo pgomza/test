@@ -71,8 +71,12 @@ public class CubilisReservationService {
         for (CubilisReservation reservation : reservations) {
             Hotel hotel = reservation.getHotel();
 
-            CubilisCustomer customer = reservation.getCustomer();
-            Guest matchingGuest = getGuestForCustomer(hotel.getId(), customer);
+            // the guest that has been specified manually takes precedence
+            Guest matchingGuest = reservation.getGuest();
+            if (matchingGuest == null) {
+                CubilisCustomer customer = reservation.getCustomer();
+                matchingGuest = getGuestForCustomer(hotel.getId(), customer);
+            }
 
             Stay stay = new Stay();
             stay.setCubilisId(reservation.getId());
