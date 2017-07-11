@@ -16,7 +16,7 @@ public class CubilisReservation {
     @Id
     private Long id;
 
-    boolean isRejected;
+    private boolean isRejected;
 
     @NotNull
     @ManyToOne
@@ -105,5 +105,17 @@ public class CubilisReservation {
 
     public void setCustomer(CubilisCustomer customer) {
         this.customer = customer;
+    }
+
+    public CubilisReservationUpdate toView() {
+        CubilisReservationUpdate view = new CubilisReservationUpdate();
+        view.setId(getId());
+        view.setArrival(getArrival().toLocalDate());
+        view.setDeparture(getDeparture());
+        view.setCubilisCustomer(getCustomer());
+        if (getGuest() != null) {
+            view.setGuestId(getGuest().getId());
+        }
+        return view;
     }
 }
