@@ -64,7 +64,7 @@ public class CubilisService {
         return new CubilisConnectionStatus(status);
     }
 
-    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    @Scheduled(fixedRate = 5 * 60 * 1000)
     public void fetchAndUpdateReservations() {
         List<Long> hotelIds = hotelService.getIdsOfCubilisEnabledHotels();
         Map<Long, CubilisSettings> hotelIdToSettings = hotelIds.stream()
@@ -78,16 +78,18 @@ public class CubilisService {
                     connectorService.fetchReservations(settings.getLogin(), settings.getPassword());
 
             List<CubilisReservation> filteredReservations = filterFetchedReservations(hotelId, fetchedReservations);
-            setHotelForReservations(hotelId, filteredReservations);
 
-            if (settings.isMergingEnabled()) {
-                reservationService.merge(filteredReservations);
-            }
-            else {
-                reservationService.save(filteredReservations);
-            }
+            if (!filteredReservations.isEmpty()) {
+                setHotelForReservations(hotelId, filteredReservations);
 
-            eventPublisher.publishEvent(new ChangeInHotelEvent(this, hotelId));
+                if (settings.isMergingEnabled()) {
+                    reservationService.merge(filteredReservations);
+                } else {
+                    reservationService.save(filteredReservations);
+                }
+
+                eventPublisher.publishEvent(new ChangeInHotelEvent(this, hotelId));
+            }
         }
     }
 
