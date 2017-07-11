@@ -75,7 +75,13 @@ public class CubilisReservationService {
 
     public void confirm(Long hotelId, List<Long> reservationIds) {
         List<CubilisReservation> reservations = getByIds(hotelId, reservationIds);
+        for (CubilisReservation reservation : reservations) {
+            if (reservation.isRejected()) {
+                throw new ResourceNotFoundException();
+            }
+        }
         merge(reservations);
+        repository.delete(reservations);
     }
 
     public void reject(Long hotelId, List<Long> reservationIds) {
