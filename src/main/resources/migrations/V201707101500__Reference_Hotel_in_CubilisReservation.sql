@@ -1,0 +1,1 @@
+ALTER TABLE CubilisReservation ADD hotel_id BIGINT REFERENCES Hotel;

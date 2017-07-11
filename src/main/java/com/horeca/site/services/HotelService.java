@@ -4,6 +4,7 @@ import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.extractors.HotelDataExtractor;
 import com.horeca.site.models.Currency;
+import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.hotel.images.FileLink;
@@ -111,13 +112,15 @@ public class HotelService {
         return repository.save(updated);
     }
 
-    public Hotel updateIgnoringSomeFields(Long id, Hotel newOne) {
+    public Hotel updateFromController(Long id, Hotel newOne) {
         Hotel current = get(id);
         // don't let this update overwrite info about the guests - ignore whatever has been set in newOne as 'guests'
         // there's a different endpoint specifically intended for managing the guests
         newOne.setGuests(current.getGuests());
         // the same applies for the notification settings
         newOne.setNotificationSettings(current.getNotificationSettings());
+        // and the Cubilis settings
+        newOne.setCubilisSettings(current.getCubilisSettings());
 
         return update(id, newOne);
     }
@@ -234,6 +237,14 @@ public class HotelService {
             NotificationSettings settings = new NotificationSettings();
             settings.setEmail("");
             hotel.setNotificationSettings(settings);
+        }
+
+        if (hotel.getCubilisSettings() == null) {
+            CubilisSettings settings = new CubilisSettings();
+            settings.setEnabled(false);
+            settings.setLogin("someone@example.com");
+            settings.setPassword("pass123");
+            hotel.setCubilisSettings(settings);
         }
 
         update(hotelId, hotel);
@@ -390,5 +401,13 @@ public class HotelService {
         hotel.setLongitude(hotelData.longitude);
         hotel.setLatitude(hotelData.latitude);
         return hotel;
+    }
+
+    /*
+        Cubilis-related functionality
+     */
+
+    public List<Long> getIdsOfCubilisEnabledHotels() {
+        return repository.getIdsOfCubilisEnabledHotels();
     }
 }

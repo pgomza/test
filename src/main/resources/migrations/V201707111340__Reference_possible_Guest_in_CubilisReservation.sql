@@ -1,0 +1,1 @@
+ALTER TABLE CubilisReservation ADD guest_id BIGINT DEFAULT NULL REFERENCES Guest;

@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -80,6 +81,10 @@ public class StayService {
 
     public Collection<String> getByHotelId(Long hotelId) {
         return stayRepository.findByHotelId(hotelId);
+    }
+
+    public Set<Long> getAllCubilisIdsInHotel(Long hotelId) {
+        return stayRepository.getAllCubilisIdsInHotel(hotelId);
     }
 
     public Stay update(String pin, Stay updated) {
@@ -148,9 +153,6 @@ public class StayService {
         Hotel hotel = hotelService.get(stayPOST.getHotelId());
         Guest guest = guestService.get(stayPOST.getHotelId(), stayPOST.getGuestId());
 
-        if (hotel == null || guest == null)
-            throw new ResourceNotFoundException();
-
         stay.setHotel(hotel);
         stay.setGuest(guest);
 
@@ -165,7 +167,7 @@ public class StayService {
         eventPublisher.publishEvent(new NewStayEvent(this, guest, hotelName, pin));
     }
 
-    private Stay registerNewStay(Stay stay) {
+    public Stay registerNewStay(Stay stay) {
         String pin = pinGeneratorService.generatePin();
         stay.setPin(pin);
 

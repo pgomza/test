@@ -1,0 +1,1 @@
+ALTER TABLE Stay ADD cubilisId BIGINT;
