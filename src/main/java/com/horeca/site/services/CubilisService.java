@@ -1,5 +1,6 @@
 package com.horeca.site.services;
 
+import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.cubilis.CubilisConnectionStatus;
 import com.horeca.site.models.cubilis.CubilisReservation;
 import com.horeca.site.models.cubilis.CubilisSettings;
@@ -13,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -74,8 +76,16 @@ public class CubilisService {
             Long hotelId = entry.getKey();
             CubilisSettings settings = entry.getValue();
 
-            List<CubilisReservation> fetchedReservations =
-                    connectorService.fetchReservations(settings.getLogin(), settings.getPassword());
+            List<CubilisReservation> fetchedReservations = new ArrayList<>();
+            try {
+                fetchedReservations = connectorService.fetchReservations(settings.getLogin(), settings.getPassword());
+            } catch (UnauthorizedException ex) {
+                // disable the integration; otherwise requests with the wrong credentials would be sent
+                // repeatedly causing the associated Cubilis account to become blocked
+                CubilisSettings currentSettings = getSettings(hotelId);
+                currentSettings.setEnabled(false);
+                updateSettings(hotelId, currentSettings);
+            }
 
             List<CubilisReservation> filteredReservations = filterFetchedReservations(hotelId, fetchedReservations);
 

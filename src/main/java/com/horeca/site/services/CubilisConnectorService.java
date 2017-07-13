@@ -1,5 +1,6 @@
 package com.horeca.site.services;
 
+import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.cubilis.CubilisConnectionStatus;
 import com.horeca.site.models.cubilis.CubilisReservation;
 import org.apache.log4j.Logger;
@@ -15,7 +16,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.horeca.site.services.CubilisParserService.*;
@@ -53,7 +53,7 @@ public class CubilisConnectorService {
                 return getReservations(response);
             }
             else {
-                return new ArrayList<>();
+                throw new UnauthorizedException();
             }
         } catch (ParserConfigurationException | TransformerException | SAXException | IOException e) {
             throw new RuntimeException(e);
