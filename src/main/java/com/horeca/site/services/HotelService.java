@@ -414,7 +414,7 @@ public class HotelService {
         Cubilis-related functionality
      */
 
-    public List<Long> getIdsOfCubilisEnabledHotels() {
-        return repository.getIdsOfCubilisEnabledHotels();
+    public List<Long> getIdsOfCubilisEligible() {
+        return repository.getIdsOfCubilisEligible();
     }
 }

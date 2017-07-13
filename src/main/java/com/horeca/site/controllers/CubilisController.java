@@ -1,6 +1,6 @@
 package com.horeca.site.controllers;
 
-import com.horeca.site.models.cubilis.CubilisConnectionStatus;
+import com.horeca.site.models.cubilis.CubilisConnectionStatusView;
 import com.horeca.site.models.cubilis.CubilisReservationUpdate;
 import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.services.CubilisReservationService;
@@ -38,8 +38,8 @@ public class CubilisController {
 
     @RequestMapping(value = "/{hotelId}/cubilis/status", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public CubilisConnectionStatus getStatus(@PathVariable("hotelId") Long hotelId) {
-        return cubilisService.getConnectionStatus(hotelId);
+    public CubilisConnectionStatusView getStatus(@PathVariable("hotelId") Long hotelId) {
+        return cubilisService.getConnectionStatus(hotelId).toView();
     }
 
     @RequestMapping(value = "/{hotelId}/cubilis/reservations", method = RequestMethod.GET,

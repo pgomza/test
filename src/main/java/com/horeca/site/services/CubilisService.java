@@ -6,6 +6,7 @@ import com.horeca.site.models.cubilis.CubilisReservation;
 import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.updates.ChangeInHotelEvent;
+import com.horeca.site.repositories.CubilisConnectionStatusRepository;
 import com.horeca.site.repositories.CubilisSettingsRepository;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +35,9 @@ public class CubilisService {
     private CubilisSettingsRepository settingsRepository;
 
     @Autowired
+    private CubilisConnectionStatusRepository connectionStatusRepository;
+
+    @Autowired
     private HotelService hotelService;
 
     @Autowired
@@ -51,24 +54,38 @@ public class CubilisService {
     public CubilisSettings updateSettings(Long hotelId, CubilisSettings updated) {
         CubilisSettings current = getSettings(hotelId);
         updated.setId(current.getId());
-        return settingsRepository.save(updated);
+        CubilisSettings savedSettings = settingsRepository.save(updated);
+
+        updateConnectionStatus(hotelId);
+
+        return savedSettings;
     }
 
     public CubilisConnectionStatus getConnectionStatus(Long hotelId) {
-        CubilisSettings settings = getSettings(hotelId);
-        if (!settings.isEnabled()) {
-            return new CubilisConnectionStatus(CubilisConnectionStatus.Status.DISABLED);
-        }
-
-        CubilisConnectionStatus.Status status =
-                connectorService.checkConnectionStatus(settings.getLogin(), settings.getPassword());
-
-        return new CubilisConnectionStatus(status);
+        Hotel hotel = hotelService.get(hotelId);
+        return hotel.getCubilisConnectionStatus();
     }
 
-    @Scheduled(fixedRate = 5 * 60 * 1000)
+    @Transactional(timeout = 20) // seconds
+    private CubilisConnectionStatus updateConnectionStatus(Long hoteldId) {
+        CubilisSettings settings = getSettings(hoteldId);
+        CubilisConnectionStatus currentStatus = getConnectionStatus(hoteldId);
+
+        if (!settings.isEnabled()) {
+            currentStatus.setStatus(CubilisConnectionStatus.Status.DISABLED);
+        }
+        else {
+            CubilisConnectionStatus.Status status =
+                    connectorService.checkConnectionStatus(settings.getLogin(), settings.getPassword());
+            currentStatus.setStatus(status);
+        }
+
+        return connectionStatusRepository.save(currentStatus);
+    }
+
+    @Scheduled(fixedDelay = 5 * 60 * 1000)
     public void fetchAndUpdateReservations() {
-        List<Long> hotelIds = hotelService.getIdsOfCubilisEnabledHotels();
+        List<Long> hotelIds = hotelService.getIdsOfCubilisEligible();
         Map<Long, CubilisSettings> hotelIdToSettings = hotelIds.stream()
                 .collect(Collectors.toMap(Function.identity(), this::getSettings));
 
@@ -76,29 +93,23 @@ public class CubilisService {
             Long hotelId = entry.getKey();
             CubilisSettings settings = entry.getValue();
 
-            List<CubilisReservation> fetchedReservations = new ArrayList<>();
             try {
-                fetchedReservations = connectorService.fetchReservations(settings.getLogin(), settings.getPassword());
-            } catch (UnauthorizedException ex) {
-                // disable the integration; otherwise requests with the wrong credentials would be sent
-                // repeatedly causing the associated Cubilis account to become blocked
-                CubilisSettings currentSettings = getSettings(hotelId);
-                currentSettings.setEnabled(false);
-                updateSettings(hotelId, currentSettings);
-            }
+                List<CubilisReservation> fetchedReservations = connectorService.fetchReservations(settings.getLogin(), settings.getPassword());
+                List<CubilisReservation> filteredReservations = filterFetchedReservations(hotelId, fetchedReservations);
 
-            List<CubilisReservation> filteredReservations = filterFetchedReservations(hotelId, fetchedReservations);
+                if (!filteredReservations.isEmpty()) {
+                    setHotelForReservations(hotelId, filteredReservations);
 
-            if (!filteredReservations.isEmpty()) {
-                setHotelForReservations(hotelId, filteredReservations);
+                    if (settings.isMergingEnabled()) {
+                        reservationService.merge(filteredReservations);
+                    } else {
+                        reservationService.save(filteredReservations);
+                    }
 
-                if (settings.isMergingEnabled()) {
-                    reservationService.merge(filteredReservations);
-                } else {
-                    reservationService.save(filteredReservations);
+                    eventPublisher.publishEvent(new ChangeInHotelEvent(this, hotelId));
                 }
-
-                eventPublisher.publishEvent(new ChangeInHotelEvent(this, hotelId));
+            } catch (UnauthorizedException ex) {
+                updateConnectionStatus(hotelId);
             }
         }
     }
