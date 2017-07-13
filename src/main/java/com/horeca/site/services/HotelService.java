@@ -4,6 +4,7 @@ import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.extractors.HotelDataExtractor;
 import com.horeca.site.models.Currency;
+import com.horeca.site.models.cubilis.CubilisConnectionStatus;
 import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
@@ -117,10 +118,10 @@ public class HotelService {
         // don't let this update overwrite info about the guests - ignore whatever has been set in newOne as 'guests'
         // there's a different endpoint specifically intended for managing the guests
         newOne.setGuests(current.getGuests());
-        // the same applies for the notification settings
+        // the same applies for a few other fields
         newOne.setNotificationSettings(current.getNotificationSettings());
-        // and the Cubilis settings
         newOne.setCubilisSettings(current.getCubilisSettings());
+        newOne.setCubilisConnectionStatus(current.getCubilisConnectionStatus());
 
         return update(id, newOne);
     }
@@ -245,6 +246,12 @@ public class HotelService {
             settings.setLogin("someone@example.com");
             settings.setPassword("pass123");
             hotel.setCubilisSettings(settings);
+        }
+
+        if (hotel.getCubilisConnectionStatus() == null) {
+            CubilisConnectionStatus connectionStatus = new CubilisConnectionStatus();
+            connectionStatus.setStatus(CubilisConnectionStatus.Status.DISABLED);
+            hotel.setCubilisConnectionStatus(connectionStatus);
         }
 
         update(hotelId, hotel);

@@ -1,5 +1,9 @@
 package com.horeca.site.models.cubilis;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+@Entity
 public class CubilisConnectionStatus {
 
     public enum Status {
@@ -20,12 +24,20 @@ public class CubilisConnectionStatus {
         }
     }
 
-    private Status status;
-    private String message;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public CubilisConnectionStatus(Status status) {
-        this.status = status;
-        this.message = status.toString();
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Status getStatus() {
@@ -36,11 +48,7 @@ public class CubilisConnectionStatus {
         this.status = status;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+    public CubilisConnectionStatusView toView() {
+        return new CubilisConnectionStatusView(getStatus());
     }
 }
