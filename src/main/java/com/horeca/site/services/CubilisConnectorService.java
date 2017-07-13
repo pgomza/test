@@ -3,7 +3,6 @@ package com.horeca.site.services;
 import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.cubilis.CubilisConnectionStatus;
 import com.horeca.site.models.cubilis.CubilisReservation;
-import org.apache.log4j.Logger;
 import org.joda.time.LocalDate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,13 +23,9 @@ import static com.horeca.site.services.CubilisParserService.*;
 @Transactional
 public class CubilisConnectorService {
 
-    private static final Logger logger = Logger.getLogger(CubilisConnectorService.class);
-
     private static final String RESERVATIONS_URL = "https://cubilis.eu/plugins/pms_ota/reservations.aspx";
     private static final String CONFIRMATIONS_URL = "https://cubilis.eu/plugins/pms_ota/confirmreservations.aspx";
     private static final int FETCH_TIME_SPAN = 10; // fetch reservations from the last 10 days
-
-    private final CubilisParserService parserService = new CubilisParserService();
 
     public CubilisConnectionStatus.Status checkConnectionStatus(String cubilisLogin, String cubilisPassword) {
         try {
@@ -63,7 +58,7 @@ public class CubilisConnectorService {
     public void confirmReservations(String cubilisLogin, String cubilisPassword, List<Long> ids) {
         try {
             String requestBody = createConfirmationRequest(cubilisLogin, cubilisPassword, ids);
-            postToCubilis(RESERVATIONS_URL, requestBody);
+            postToCubilis(CONFIRMATIONS_URL, requestBody);
         } catch (ParserConfigurationException | TransformerException e) {
             throw new RuntimeException(e);
         }

@@ -106,6 +106,11 @@ public class CubilisService {
                         reservationService.save(filteredReservations);
                     }
 
+                    // either way, confirm the received reservations
+                    List<Long> receivedIds =
+                            filteredReservations.stream().map(CubilisReservation::getId).collect(Collectors.toList());
+                    connectorService.confirmReservations(settings.getLogin(), settings.getPassword(), receivedIds);
+
                     eventPublisher.publishEvent(new ChangeInHotelEvent(this, hotelId));
                 }
             } catch (UnauthorizedException ex) {
