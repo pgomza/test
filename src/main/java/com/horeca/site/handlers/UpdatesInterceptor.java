@@ -24,7 +24,7 @@ public class UpdatesInterceptor extends HandlerInterceptorAdapter {
 
     // there's also the PATCH method but it's not supported by any of the exposed endpoints
     private static final Set<String> updateHttpMethods = new HashSet<>(Arrays.asList(
-           "POST", "PUT", "DELETE"
+           "POST", "PUT", "PATCH", "DELETE"
     ));
 
     // analogous to the above
