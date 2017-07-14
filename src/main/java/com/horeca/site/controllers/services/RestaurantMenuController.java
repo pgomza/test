@@ -3,6 +3,7 @@ package com.horeca.site.controllers.services;
 import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenu;
 import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenuCategory;
 import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenuItem;
+import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenuPATCH;
 import com.horeca.site.services.services.RestaurantMenuService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,18 @@ public class RestaurantMenuController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public RestaurantMenu get(@PathVariable("hotelId") Long hotelId) {
         return service.get(hotelId);
+    }
+
+    @RequestMapping(value = "/{hotelId}/services/restaurantmenu", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestaurantMenu update(@PathVariable("hotelId") Long hotelId, @RequestBody RestaurantMenu menu) {
+        return service.update(hotelId, menu);
+    }
+
+    @RequestMapping(value = "/{hotelId}/services/restaurantmenu", method = RequestMethod.PATCH,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestaurantMenu update(@PathVariable("hotelId") Long hotelId, @RequestBody RestaurantMenuPATCH patch) {
+        return service.patch(hotelId, patch);
     }
 
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu", method = RequestMethod.POST,

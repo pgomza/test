@@ -6,6 +6,7 @@ import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenu;
 import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenuCategory;
 import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenuItem;
+import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenuPATCH;
 import com.horeca.site.repositories.services.RestaurantMenuCategoryRepository;
 import com.horeca.site.repositories.services.RestaurantMenuItemRepository;
 import com.horeca.site.repositories.services.RestaurantMenuRepository;
@@ -42,8 +43,16 @@ public class RestaurantMenuService {
         return services.getRestaurantMenu();
     }
 
-    public RestaurantMenu update(RestaurantMenu updated) {
+    public RestaurantMenu update(Long hotelId, RestaurantMenu updated) {
+        RestaurantMenu menu = get(hotelId);
+        updated.setId(menu.getId());
         return repository.save(updated);
+    }
+
+    public RestaurantMenu patch(Long hotelId, RestaurantMenuPATCH patch) {
+        RestaurantMenu menu = get(hotelId);
+        menu.setDescription(patch.getDescription());
+        return repository.save(menu);
     }
 
     public RestaurantMenu addDefaultRestaurantMenu(Long hotelId) {
@@ -82,7 +91,7 @@ public class RestaurantMenuService {
             throw new BusinessRuleViolationException("A category with such a name already exists");
 
         restaurantMenu.getCategories().add(category);
-        update(restaurantMenu);
+        update(hotelId, restaurantMenu);
         return restaurantMenu.getCategories().stream()
                 .filter(c -> c.getName().equalsIgnoreCase(category.getName()))
                 .findFirst()
@@ -100,7 +109,7 @@ public class RestaurantMenuService {
                 .filter(c -> c.getId() != categoryId)
                 .collect(Collectors.toList());
         menu.setCategories(remainingCategories);
-        update(menu);
+        update(hotelId, menu);
     }
 
     public List<RestaurantMenuItem> getItems(Long hotelId, Long categoryId) {
