@@ -65,11 +65,13 @@ public class ReportGeneratorService {
             Pair<List<ReportOrder>, BigDecimal> reportsAndTotal = getBreakfastReportsAndTotal(orders.getBreakfastOrders(),
                     hotelCurrency);
 
-            ChargeDetails chargeDetails = new ChargeDetails("Breakfast", usageFeeText, reportsAndTotal.getLeft());
-            chargeDetailsList.add(chargeDetails);
+            if (!Objects.equals(usageFee, BigDecimal.ZERO) || !reportsAndTotal.getLeft().isEmpty()) {
+                ChargeDetails chargeDetails = new ChargeDetails("Breakfast", usageFeeText, reportsAndTotal.getLeft());
+                chargeDetailsList.add(chargeDetails);
 
-            totalAmount = totalAmount.add(usageFee);
-            totalAmount = totalAmount.add(reportsAndTotal.getRight());
+                totalAmount = totalAmount.add(usageFee);
+                totalAmount = totalAmount.add(reportsAndTotal.getRight());
+            }
         }
 
         /*
@@ -79,10 +81,12 @@ public class ReportGeneratorService {
             BigDecimal usageFee = priceToValue(availableServices.getCarPark().getPrice());
             String usageFeeText = getUsageFeeText(usageFee, hotelCurrency);
 
-            ChargeDetails chargeDetails = new ChargeDetails("Car park", usageFeeText, Collections.emptyList());
-            chargeDetailsList.add(chargeDetails);
+            if (!Objects.equals(usageFee, BigDecimal.ZERO)) {
+                ChargeDetails chargeDetails = new ChargeDetails("Car park", usageFeeText, Collections.emptyList());
+                chargeDetailsList.add(chargeDetails);
 
-            totalAmount = totalAmount.add(usageFee);
+                totalAmount = totalAmount.add(usageFee);
+            }
         }
 
         /*
@@ -94,11 +98,13 @@ public class ReportGeneratorService {
             Pair<List<ReportOrder>, BigDecimal> reportsAndTotal = getRoomServiceReportsAndTotal(orders.getRoomServiceOrders(),
                     hotelCurrency);
 
-            ChargeDetails chargeDetails = new ChargeDetails("Room service", usageFeeText, reportsAndTotal.getLeft());
-            chargeDetailsList.add(chargeDetails);
+            if (!Objects.equals(usageFee, BigDecimal.ZERO) || !reportsAndTotal.getLeft().isEmpty()) {
+                ChargeDetails chargeDetails = new ChargeDetails("Room service", usageFeeText, reportsAndTotal.getLeft());
+                chargeDetailsList.add(chargeDetails);
 
-            totalAmount = totalAmount.add(usageFee);
-            totalAmount = totalAmount.add(reportsAndTotal.getRight());
+                totalAmount = totalAmount.add(usageFee);
+                totalAmount = totalAmount.add(reportsAndTotal.getRight());
+            }
         }
 
         /*
@@ -110,11 +116,13 @@ public class ReportGeneratorService {
             Pair<List<ReportOrder>, BigDecimal> reportsAndTotal = getPetCareReportsAndTotal(orders.getPetCareOrders(),
                     hotelCurrency);
 
-            ChargeDetails chargeDetails = new ChargeDetails("Pet care", usageFeeText, reportsAndTotal.getLeft());
-            chargeDetailsList.add(chargeDetails);
+            if (!Objects.equals(usageFee, BigDecimal.ZERO) || !reportsAndTotal.getLeft().isEmpty()) {
+                ChargeDetails chargeDetails = new ChargeDetails("Pet care", usageFeeText, reportsAndTotal.getLeft());
+                chargeDetailsList.add(chargeDetails);
 
-            totalAmount = totalAmount.add(usageFee);
-            totalAmount = totalAmount.add(reportsAndTotal.getRight());
+                totalAmount = totalAmount.add(usageFee);
+                totalAmount = totalAmount.add(reportsAndTotal.getRight());
+            }
         }
 
         /*
@@ -124,10 +132,12 @@ public class ReportGeneratorService {
             BigDecimal usageFee = priceToValue(availableServices.getTaxi().getPrice());
             String usageFeeText = getUsageFeeText(usageFee, hotelCurrency);
 
-            ChargeDetails chargeDetails = new ChargeDetails("Taxi", usageFeeText, Collections.emptyList());
-            chargeDetailsList.add(chargeDetails);
+            if (!Objects.equals(usageFee, BigDecimal.ZERO)) {
+                ChargeDetails chargeDetails = new ChargeDetails("Taxi", usageFeeText, Collections.emptyList());
+                chargeDetailsList.add(chargeDetails);
 
-            totalAmount = totalAmount.add(usageFee);
+                totalAmount = totalAmount.add(usageFee);
+            }
         }
 
         /*
@@ -137,10 +147,12 @@ public class ReportGeneratorService {
             BigDecimal usageFee = priceToValue(availableServices.getHousekeeping().getPrice());
             String usageFeeText = getUsageFeeText(usageFee, hotelCurrency);
 
-            ChargeDetails chargeDetails = new ChargeDetails("Housekeeping", usageFeeText, Collections.emptyList());
-            chargeDetailsList.add(chargeDetails);
+            if (!Objects.equals(usageFee, BigDecimal.ZERO)) {
+                ChargeDetails chargeDetails = new ChargeDetails("Housekeeping", usageFeeText, Collections.emptyList());
+                chargeDetailsList.add(chargeDetails);
 
-            totalAmount = totalAmount.add(usageFee);
+                totalAmount = totalAmount.add(usageFee);
+            }
         }
 
         /*
@@ -152,11 +164,13 @@ public class ReportGeneratorService {
             Pair<List<ReportOrder>, BigDecimal> reportsAndTotal = getBarReportsAndTotal(orders.getBarOrders(),
                     hotelCurrency);
 
-            ChargeDetails chargeDetails = new ChargeDetails("Bar", usageFeeText, reportsAndTotal.getLeft());
-            chargeDetailsList.add(chargeDetails);
+            if (!Objects.equals(usageFee, BigDecimal.ZERO) || !reportsAndTotal.getLeft().isEmpty()) {
+                ChargeDetails chargeDetails = new ChargeDetails("Bar", usageFeeText, reportsAndTotal.getLeft());
+                chargeDetailsList.add(chargeDetails);
 
-            totalAmount = totalAmount.add(usageFee);
-            totalAmount = totalAmount.add(reportsAndTotal.getRight());
+                totalAmount = totalAmount.add(usageFee);
+                totalAmount = totalAmount.add(reportsAndTotal.getRight());
+            }
         }
 
         /*
@@ -168,11 +182,13 @@ public class ReportGeneratorService {
             Pair<List<ReportOrder>, BigDecimal> reportsAndTotal = getRentalReportsAndTotal(orders.getRentalOrders(),
                     hotelCurrency);
 
-            ChargeDetails chargeDetails = new ChargeDetails("Rental", usageFeeText, reportsAndTotal.getLeft());
-            chargeDetailsList.add(chargeDetails);
+            if (!Objects.equals(usageFee, BigDecimal.ZERO) || !reportsAndTotal.getLeft().isEmpty()) {
+                ChargeDetails chargeDetails = new ChargeDetails("Rental", usageFeeText, reportsAndTotal.getLeft());
+                chargeDetailsList.add(chargeDetails);
 
-            totalAmount = totalAmount.add(usageFee);
-            totalAmount = totalAmount.add(reportsAndTotal.getRight());
+                totalAmount = totalAmount.add(usageFee);
+                totalAmount = totalAmount.add(reportsAndTotal.getRight());
+            }
         }
 
         return new Report(reportGuest, chargeDetailsList, totalAmount + " " + hotelCurrency);

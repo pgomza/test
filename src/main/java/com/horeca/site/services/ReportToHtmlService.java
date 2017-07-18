@@ -44,6 +44,11 @@ public class ReportToHtmlService {
                     "        </table>\n" +
                     "    </div>\n");
         }
+        else {
+            htmlBuilder.append( "<div class=\"orders\">\n" +
+                    "               <div class=\"header\">There are no orders for this stay</div>\n" +
+                    "           </div>\n");
+        }
 
         htmlBuilder.append("</body>\n" +
                 "</html>\n");
@@ -158,11 +163,13 @@ public class ReportToHtmlService {
                         "            </tr>\n");
             }
 
-            ordersBuilder.append("<tr>\n" +
-                    "                <td></td>\n" +
-                    "                <td>+ fee for using this service</td>\n" +
-                    "                <td>" + chargeDetails.getUsageFee() + "</td>\n" +
-                    "            </tr>\n");
+            if (chargeDetails.getUsageFee() != null) {
+                ordersBuilder.append("<tr>\n" +
+                        "                <td></td>\n" +
+                        "                <td class=\"details\">+ fee for using this service</td>\n" +
+                        "                <td>" + chargeDetails.getUsageFee() + "</td>\n" +
+                        "            </tr>\n");
+            }
         }
         return ordersBuilder.toString();
     }
