@@ -38,6 +38,9 @@ public class ReportGeneratorService {
     @Autowired
     private StayService stayService;
 
+    @Autowired
+    private ReportToHtmlService reportToHtmlService;
+
     public Report generateReport(String pin) {
         Stay stay = stayService.get(pin);
         AvailableServices availableServices = stay.getHotel().getAvailableServices();
@@ -49,7 +52,10 @@ public class ReportGeneratorService {
         Guest guest = stay.getGuest();
         String guestName = guest.getFirstName() + " " + guest.getLastName();
         String roomNumber = stay.getRoomNumber();
-        ReportGuest reportGuest = new ReportGuest(guestName, roomNumber);
+        String arrival = stay.getFromDate().toString("dd-MM-yyyy");
+        String departure = stay.getToDate().toString("dd-MM-yyyy");
+
+        ReportGuest reportGuest = new ReportGuest(guestName, roomNumber, arrival, departure);
 
         Orders orders = stay.getOrders();
 
@@ -173,6 +179,11 @@ public class ReportGeneratorService {
         }
 
         return new Report(reportGuest, chargeDetailsList, totalAmount + " " + hotelCurrency);
+    }
+
+    public String generateReportInHtml(String pin) {
+        Report report = generateReport(pin);
+        return reportToHtmlService.convert(report);
     }
 
     private static Pair<List<ReportOrder>, BigDecimal> getBreakfastReportsAndTotal(Collection<BreakfastOrder> orders,

@@ -138,11 +138,6 @@
             <artifactId>openhtmltopdf-jsoup-dom-converter</artifactId>
             <version>${openhtml.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.openhtmltopdf</groupId>
-            <artifactId>openhtmltopdf-log4j</artifactId>
-            <version>${openhtml.version}</version>
-        </dependency>
     </dependencies>
 
     <build>

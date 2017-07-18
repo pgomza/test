@@ -33,17 +33,17 @@ public class ReportController {
     }
 
     @RequestMapping(value = "/{pin}/report", params = { "pdf"}, method = RequestMethod.GET)
-    public ResponseEntity<byte[]> getPdf(@PathVariable("pin") String pin, @RequestParam(name = "pdf") Boolean isPdf) throws Exception {
+    public ResponseEntity<byte[]> getPdf(@PathVariable("pin") String pin, @RequestParam(name = "pdf") Boolean isPdf)
+            throws Exception {
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/pdf; charset=utf-8");
-        headers.set("Content-Disposition", "attachment; filename=report.pdf");
+        headers.set("Content-Disposition", "inline; filename=report.pdf");
 
-        String sampleHtml = "<html><head><title>abc</title></head><body>ayężąłćźół©ęq mane what up</body></html>";
-        InputStream sampleHtmlStream = new ByteArrayInputStream(sampleHtml.getBytes(StandardCharsets.UTF_8));
-        ByteArrayOutputStream pdfStream = htmlToPdfService.convert(sampleHtmlStream);
+        String html = reportGeneratorService.generateReportInHtml(pin);
+        InputStream htmlStream = new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8));
+        ByteArrayOutputStream pdfStream = htmlToPdfService.convert(htmlStream);
 
         return new ResponseEntity<>(pdfStream.toByteArray(), headers, HttpStatus.OK);
     }
-
-
 }
