@@ -1,7 +1,5 @@
 package com.horeca.site.models.orders.report;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +9,6 @@ public class ChargeDetails {
     @NotNull
     private String serviceName;
 
-    @NotEmpty
     private String usageFee;
 
     @NotNull
