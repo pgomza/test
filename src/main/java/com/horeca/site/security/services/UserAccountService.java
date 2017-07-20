@@ -3,7 +3,9 @@ package com.horeca.site.security.services;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.accounts.UserAccountView;
+import com.horeca.site.repositories.UserAccountRepository;
 import com.horeca.site.security.models.UserAccount;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,14 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class UserAccountService extends AbstractAccountService<UserAccount> {
+
+    @Autowired
+    private UserAccountRepository repository;
+
+    @Override
+    protected UserAccountRepository getRepostiory() {
+        return repository;
+    }
 
     @PostFilter("@accessChecker.checkForUserAccountFromCollection(authentication, filterObject)")
     public Set<UserAccount> getAll() {
@@ -37,7 +47,7 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
 
         UserAccount userAccount = get(username);
         if (BCrypt.checkpw(currentPassword, userAccount.getPassword())) {
-            if (!newPassword.matches(passwordRegex)) {
+            if (!newPassword.matches(PASSWORD_REGEX)) {
                 throw new BusinessRuleViolationException("The new password must contain at least 5 characters");
             }
 
