@@ -61,7 +61,7 @@ public class HotelController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@PathVariable("id") Long id) {
-        service.delete(id);
+        service.markAsDeleted(id);
     }
 
 	@RequestMapping(value = "", params = "name", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

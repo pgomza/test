@@ -13,6 +13,8 @@ import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.information.UsefulInformationHourItem;
 import com.horeca.site.models.notifications.NotificationSettings;
 import com.horeca.site.repositories.HotelRepository;
+import com.horeca.site.security.services.GuestAccountService;
+import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.services.StayService;
 import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,12 @@ public class HotelService {
     @Lazy
     private StayService stayService;
 
+    @Autowired
+    private UserAccountService userAccountService;
+
+    @Autowired
+    private GuestAccountService guestAccountService;
+
     /*
         general actions
      */
@@ -70,8 +78,7 @@ public class HotelService {
             views.add(hotel.toView());
         }
 
-        PageImpl<HotelView> result = new PageImpl<>(views, pageable, repository.getTotalCount());
-        return result;
+        return new PageImpl<>(views, pageable, repository.getTotalCount());
     }
 
     public Hotel get(Long id) {
@@ -161,10 +168,10 @@ public class HotelService {
 
         if (hotel.getImages() != null) {
             List<String> imageFilenames = hotel.getImages().stream()
-                    .map(image -> image.getFilename())
+                    .map(FileLink::getFilename)
                     .collect(Collectors.toList());
 
-            imageFilenames.stream().forEach(filename -> hotelImagesService.delete(hotel.getId(), filename));
+            imageFilenames.forEach(filename -> hotelImagesService.delete(hotel.getId(), filename));
             hotel.getImages().clear();
         }
 
@@ -178,12 +185,18 @@ public class HotelService {
         ensureEnoughInfoAboutHotel(id);
     }
 
-    public void delete(Long id) {
-        Hotel toDelete = get(id);
-        repository.delete(toDelete);
+    public void markAsDeleted(Long id) {
+        Hotel hotel = get(id);
+        hotel.setIsMarkedAsDeleted(true);
+
+        userAccountService.disableAllInHotel(id);
+        Collection<String> staysInHotel = stayService.getByHotelId(id);
+        staysInHotel.forEach(guestAccountService::disableForStay);
+
+        update(id, hotel);
     }
 
-    public void ensureExists(Long hotelId) {
+    void ensureExists(Long hotelId) {
         boolean exists = repository.exists(hotelId);
         if (!exists)
             throw new ResourceNotFoundException("Could not find a hotel with such an id");
@@ -414,7 +427,7 @@ public class HotelService {
         Cubilis-related functionality
      */
 
-    public List<Long> getIdsOfCubilisEligible() {
+    List<Long> getIdsOfCubilisEligible() {
         return repository.getIdsOfCubilisEligible();
     }
 }
