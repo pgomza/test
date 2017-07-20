@@ -14,7 +14,7 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
     private SalesmanAccountRepository repository;
 
     @Override
-    protected SalesmanAccountRepository getRepostiory() {
+    protected SalesmanAccountRepository getRepository() {
         return repository;
     }
 }

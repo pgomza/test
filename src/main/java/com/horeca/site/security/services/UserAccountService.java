@@ -8,12 +8,18 @@ import com.horeca.site.security.models.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.horeca.site.security.OAuth2AuthorizationServerConfig.PANEL_CLIENT_ID;
 
 @Service
 @Transactional
@@ -22,8 +28,11 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
     @Autowired
     private UserAccountRepository repository;
 
+    @Autowired
+    private TokenStore tokenStore;
+
     @Override
-    protected UserAccountRepository getRepostiory() {
+    protected UserAccountRepository getRepository() {
         return repository;
     }
 
@@ -58,6 +67,17 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
         else {
             throw new UnauthorizedException("The provided currentPassword doesn't match the currently logged in " +
                     "user's password");
+        }
+    }
+
+    public void disableAllInHotel(Long hotelId) {
+        List<UserAccount> accountsInHotel = getRepository().findAllByHotelId(hotelId);
+        accountsInHotel.forEach(this::disable);
+
+        for (UserAccount account : accountsInHotel) {
+            Collection<OAuth2AccessToken> tokens =
+                    tokenStore.findTokensByClientIdAndUserName(PANEL_CLIENT_ID, account.getUsername());
+            tokens.forEach(tokenStore::removeAccessToken);
         }
     }
 }

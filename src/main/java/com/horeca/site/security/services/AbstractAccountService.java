@@ -8,14 +8,14 @@ public abstract class AbstractAccountService<T extends AbstractAccount> {
 
     final static String PASSWORD_REGEX = "[^\\s]{5,}";
 
-    abstract protected CrudRepository<T, String> getRepostiory();
+    abstract protected CrudRepository<T, String> getRepository();
 
     public boolean exists(String username) {
-        return getRepostiory().exists(username);
+        return getRepository().exists(username);
     }
 
     public T get(String username) {
-        T account = getRepostiory().findOne(username);
+        T account = getRepository().findOne(username);
         if (account == null) {
             throw new ResourceNotFoundException("Could not find an account with such a username");
         }
@@ -23,11 +23,11 @@ public abstract class AbstractAccountService<T extends AbstractAccount> {
     }
 
     public T save(T account) {
-        return getRepostiory().save(account);
+        return getRepository().save(account);
     }
 
     public void delete(String username) {
-        getRepostiory().delete(username);
+        getRepository().delete(username);
     }
 
     public void disable(T account) {
