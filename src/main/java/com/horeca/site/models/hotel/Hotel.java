@@ -88,6 +88,10 @@ public class Hotel {
 	@NotNull
 	private Boolean isTestHotel;
 
+	@JsonIgnore
+	@NotNull
+	private Boolean isMarkedAsDeleted;
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Currency currency;
@@ -316,6 +320,14 @@ public class Hotel {
 	public Boolean getIsTestHotel() { return isTestHotel; }
 
 	public void setIsTestHotel(Boolean isTestHotel) { this.isTestHotel = isTestHotel; }
+
+	public Boolean getIsMarkedAsDeleted() {
+		return isMarkedAsDeleted;
+	}
+
+	public void setIsMarkedAsDeleted(Boolean markedAsDeleted) {
+		isMarkedAsDeleted = markedAsDeleted;
+	}
 
 	public Currency getCurrency() {
 		return currency;
