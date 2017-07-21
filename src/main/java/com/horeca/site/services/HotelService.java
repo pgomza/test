@@ -185,6 +185,7 @@ public class HotelService {
         ensureEnoughInfoAboutHotel(id);
     }
 
+    @PreAuthorize("hasRole('SALESMAN')")
     public void markAsDeleted(Long id) {
         Hotel hotel = get(id);
         hotel.setIsMarkedAsDeleted(true);
