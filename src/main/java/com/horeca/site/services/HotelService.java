@@ -197,6 +197,18 @@ public class HotelService {
         update(id, hotel);
     }
 
+    @PreAuthorize("hasRole('SALESMAN')")
+    public void restore(Long id) {
+        Hotel hotel = get(id);
+        hotel.setIsMarkedAsDeleted(false);
+
+        userAccountService.enableAllInHotel(id);
+        Collection<String> staysInHotel = stayService.getByHotelId(id);
+        staysInHotel.forEach(guestAccountService::enableForStay);
+
+        update(id, hotel);
+    }
+
     void ensureExists(Long hotelId) {
         boolean exists = repository.exists(hotelId);
         if (!exists)
