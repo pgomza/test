@@ -1,0 +1,1 @@
+ALTER TABLE Hotel ADD isMarkedAsDeleted BIT NOT NULL DEFAULT 0;

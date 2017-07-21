@@ -1,15 +1,12 @@
 package com.horeca.site.security;
 
-import com.horeca.site.exceptions.BadAuthorizationRequestException;
+import com.horeca.site.exceptions.BadAuthenticationRequestException;
 import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.LoginService;
 import com.horeca.site.security.services.PasswordHashingService;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.provider.*;
@@ -49,15 +46,20 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
             String pin = parameters.get("pin");
             if (pin != null) {
                 UserDetails userDetails = getUserDetails(GuestAccount.USERNAME_PREFIX + pin);
-                if (userDetails == null)
+                if (userDetails == null) {
                     throw new BadCredentialsException("Invalid pin");
+                }
+                else if (!userDetails.isEnabled()) {
+                    throw new DisabledException("The account is disabled");
+                }
 
                 Authentication userAuth = getAsAuthenticated(userDetails, parameters);
                 OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
                 return new OAuth2Authentication(storedOAuth2Request, userAuth);
             }
-            else
-                throw new BadAuthorizationRequestException("The pin has to be specified in the request");
+            else {
+                throw new BadAuthenticationRequestException("The pin has to be specified in the request");
+            }
         }
         else if (clientId.equals(OAuth2AuthorizationServerConfig.PANEL_CLIENT_ID)
                 || clientId.equals(OAuth2AuthorizationServerConfig.SALES_CLIENT_ID)) {
@@ -73,19 +75,25 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
                 else
                     userDetails = getUserDetails(SalesmanAccount.USERNAME_PREFIX + login, plainTextPassword);
 
-                if (userDetails == null)
+                if (userDetails == null) {
                     throw new BadCredentialsException("Invalid login/password");
+                }
+                else if (!userDetails.isEnabled()) {
+                    throw new DisabledException("The account is disabled");
+                }
 
                 Authentication userAuth = getAsAuthenticated(userDetails, parameters);
                 OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
                 return new OAuth2Authentication(storedOAuth2Request, userAuth);
             }
-            else
-                throw new BadAuthorizationRequestException("Both the login and the password have to be specified in the request");
+            else {
+                throw new BadAuthenticationRequestException("Both the login and the password have to be specified in the request");
+            }
         }
-        else // should never happen
-            throw new BadAuthorizationRequestException("Unsupported type of client");
-
+        else {
+            // should never happen
+            throw new BadAuthenticationRequestException("Unsupported type of client");
+        }
     }
 
     private Authentication getAsAuthenticated(UserDetails userDetails, Map<String, String> parameters) {
@@ -96,20 +104,24 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
     }
 
     private UserDetails getUserDetails(String username) {
-        if (!loginService.exists(username))
+        if (!loginService.exists(username)) {
             return null;
+        }
 
         return loginService.loadUserByUsername(username);
     }
 
     private UserDetails getUserDetails(String username, String plainTextPassword) {
-        if (!loginService.exists(username))
+        if (!loginService.exists(username)) {
             return null;
+        }
 
         final UserDetails userDetails = loginService.loadUserByUsername(username);
-        if (PasswordHashingService.checkIfPlainEqualToHashed(plainTextPassword, userDetails.getPassword()))
+        if (PasswordHashingService.checkIfPlainEqualToHashed(plainTextPassword, userDetails.getPassword())) {
             return userDetails;
-        else
+        }
+        else {
             return null;
+        }
     }
 }

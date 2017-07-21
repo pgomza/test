@@ -4,6 +4,7 @@ import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.services.HotelService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -61,8 +62,14 @@ public class HotelController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@PathVariable("id") Long id) {
-        service.delete(id);
+        service.markAsDeleted(id);
     }
+
+    @ApiOperation(value = "hotels", hidden = true)
+	@RequestMapping(value = "/restoration", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void restore(@RequestBody Long id) {
+		service.restore(id);
+	}
 
 	@RequestMapping(value = "", params = "name", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<Hotel> getByName(@RequestParam("name") String name, Pageable pageable) {
