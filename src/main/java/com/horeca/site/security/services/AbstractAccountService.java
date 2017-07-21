@@ -30,8 +30,13 @@ public abstract class AbstractAccountService<T extends AbstractAccount> {
         getRepository().delete(username);
     }
 
-    public void disable(T account) {
+    void disable(T account) {
         account.setEnabled(false);
+        save(account);
+    }
+
+    void enable(T account) {
+        account.setEnabled(true);
         save(account);
     }
 }

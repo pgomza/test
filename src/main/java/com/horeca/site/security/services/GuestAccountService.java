@@ -40,4 +40,9 @@ public class GuestAccountService extends AbstractAccountService<GuestAccount> {
                 tokenStore.findTokensByClientIdAndUserName(MOBILE_CLIENT_ID, account.getUsername());
         tokens.forEach(tokenStore::removeAccessToken);
     }
+
+    public void enableForStay(String pin) {
+        GuestAccount account = get(GuestAccount.USERNAME_PREFIX + pin);
+        enable(account);
+    }
 }

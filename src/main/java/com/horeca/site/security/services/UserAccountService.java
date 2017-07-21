@@ -80,4 +80,9 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
             tokens.forEach(tokenStore::removeAccessToken);
         }
     }
+
+    public void enableAllInHotel(Long hotelId) {
+        List<UserAccount> accountsInHotel = getRepository().findAllByHotelId(hotelId);
+        accountsInHotel.forEach(this::enable);
+    }
 }
