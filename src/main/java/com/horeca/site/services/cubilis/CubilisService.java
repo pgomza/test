@@ -1,4 +1,4 @@
-package com.horeca.site.services;
+package com.horeca.site.services.cubilis;
 
 import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.cubilis.CubilisConnectionStatus;
@@ -6,8 +6,9 @@ import com.horeca.site.models.cubilis.CubilisReservation;
 import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.updates.ChangeInHotelEvent;
-import com.horeca.site.repositories.CubilisConnectionStatusRepository;
-import com.horeca.site.repositories.CubilisSettingsRepository;
+import com.horeca.site.repositories.cubilis.CubilisConnectionStatusRepository;
+import com.horeca.site.repositories.cubilis.CubilisSettingsRepository;
+import com.horeca.site.services.HotelService;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -67,7 +68,7 @@ public class CubilisService {
     }
 
     @Transactional(timeout = 20) // seconds
-    private CubilisConnectionStatus updateConnectionStatus(Long hoteldId) {
+    CubilisConnectionStatus updateConnectionStatus(Long hoteldId) {
         CubilisSettings settings = getSettings(hoteldId);
         CubilisConnectionStatus currentStatus = getConnectionStatus(hoteldId);
 

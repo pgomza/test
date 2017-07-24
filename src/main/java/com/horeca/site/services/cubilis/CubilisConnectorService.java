@@ -1,4 +1,4 @@
-package com.horeca.site.services;
+package com.horeca.site.services.cubilis;
 
 import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.cubilis.CubilisConnectionStatus;
@@ -17,7 +17,7 @@ import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.util.List;
 
-import static com.horeca.site.services.CubilisParserService.*;
+import static com.horeca.site.services.cubilis.CubilisParserService.*;
 
 @Service
 @Transactional

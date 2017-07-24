@@ -1,4 +1,4 @@
-package com.horeca.site.services;
+package com.horeca.site.services.cubilis;
 
 import com.horeca.site.models.cubilis.CubilisConnectionStatus;
 import com.horeca.site.models.cubilis.CubilisCustomer;
