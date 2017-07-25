@@ -1,8 +1,6 @@
 package com.horeca.site.services.cubilis;
 
-import com.horeca.site.models.cubilis.CubilisConnectionStatus;
-import com.horeca.site.models.cubilis.CubilisCustomer;
-import com.horeca.site.models.cubilis.CubilisReservation;
+import com.horeca.site.models.cubilis.*;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.w3c.dom.Document;
@@ -28,9 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CubilisParserService {
+class CubilisParserService {
 
-    static String createFetchRequest(String login, String password, LocalDate sinceDate)
+    static String createFetchReservationsRequest(String login, String password, LocalDate sinceDate)
             throws ParserConfigurationException, TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = dbFactory.newDocumentBuilder();
@@ -53,7 +51,7 @@ public class CubilisParserService {
         return elementToString(rootElement);
     }
 
-    static String createConfirmationRequest(String login, String password, List<Long> ids)
+    static String createConfirmReservationsRequest(String login, String password, List<Long> ids)
             throws ParserConfigurationException, TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = dbFactory.newDocumentBuilder();
@@ -82,6 +80,26 @@ public class CubilisParserService {
         hotelNotifReport.appendChild(hotelReservations);
         notifDetails.appendChild(hotelNotifReport);
         rootElement.appendChild(notifDetails);
+
+        return elementToString(rootElement);
+    }
+
+    static String createFetchRoomsRequest(String login, String password) throws ParserConfigurationException, TransformerException {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = dbFactory.newDocumentBuilder();
+        Document doc = builder.newDocument();
+        Element rootElement =
+                doc.createElementNS("http://www.opentravel.org/OTA/2003/05","OTA_HotelRoomListRQ");
+        rootElement.setAttribute("Version", "2.0");
+
+        Element pos = createPOSElement(doc, login, password);
+
+        Element hotelRoomLists = doc.createElement("HotelRoomLists");
+        Element hotelRoomList = doc.createElement("HotelRoomList");
+        hotelRoomLists.appendChild(hotelRoomList);
+
+        rootElement.appendChild(pos);
+        rootElement.appendChild(hotelRoomLists);
 
         return elementToString(rootElement);
     }
@@ -139,6 +157,60 @@ public class CubilisParserService {
         }
 
         return filterReservations(cubilisReservations);
+    }
+
+    static List<CubilisRoomsPerHotel> getRoomsPerHotelList(String body)
+            throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = dbFactory.newDocumentBuilder();
+        Document doc = builder.parse(stringToInputStream(body));
+        doc.getDocumentElement().normalize();
+
+        List<CubilisRoomsPerHotel> roomsPerHotelList = new ArrayList<>();
+        NodeList roomsPerHotelNodes = doc.getElementsByTagName("HotelRoomList");
+        for (int i = 0; i < roomsPerHotelNodes.getLength(); i++) {
+            Element roomsPerHotelNode = (Element) roomsPerHotelNodes.item(i);
+            NodeList roomStayNodeList = roomsPerHotelNode.getElementsByTagName("RoomStay");
+
+            List<CubilisRoom> cubilisRooms = new ArrayList<>();
+            for (int j = 0; j < roomStayNodeList.getLength(); j++) {
+                Element roomStayNode = (Element) roomStayNodeList.item(j);
+
+                // get the available rate plans for each of the rooms
+                List<CubilisRatePlan> cubilisRatePlans = new ArrayList<>();
+                NodeList ratePlanNodeList = roomStayNode.getElementsByTagName("RatePlan");
+                for (int k = 0; k < ratePlanNodeList.getLength(); k++) {
+                    Element ratePlanNode = (Element) ratePlanNodeList.item(k);
+                    CubilisRatePlan ratePlan = new CubilisRatePlan();
+                    ratePlan.setId(Long.valueOf(ratePlanNode.getAttribute("RatePlanID")));
+                    ratePlan.setName(ratePlanNode.getAttribute("RatePlanName"));
+                    cubilisRatePlans.add(ratePlan);
+                }
+
+                // get the basic info about each of the rooms
+                NodeList roomTypeNodeList = roomStayNode.getElementsByTagName("RoomType");
+                for (int k = 0; k < roomTypeNodeList.getLength(); k++) {
+                    Element roomTypeNode = (Element) roomTypeNodeList.item(k);
+                    boolean isRoom = Boolean.valueOf(roomTypeNode.getAttribute("IsRoom"));
+                    if (isRoom) {
+                        CubilisRoom room = new CubilisRoom();
+                        room.setId(Long.valueOf(roomTypeNode.getAttribute("RoomID")));
+                        Element roomDescriptionNode = getFirstElement(roomTypeNode.getElementsByTagName("RoomDescription"));
+                        room.setName(roomDescriptionNode.getAttribute("Name"));
+                        room.setRatePlans(cubilisRatePlans);
+                        cubilisRooms.add(room);
+                    }
+                }
+            }
+
+            // construct an object of type CubilisRoomsPerHotel
+            CubilisRoomsPerHotel roomsPerHotel = new CubilisRoomsPerHotel();
+            roomsPerHotel.setHotelId(Long.valueOf(roomsPerHotelNode.getAttribute("HotelCode")));
+            roomsPerHotel.setRooms(cubilisRooms);
+            roomsPerHotelList.add(roomsPerHotel);
+        }
+
+        return roomsPerHotelList;
     }
 
     static CubilisConnectionStatus.Status getResponseOutcome(String response) throws IOException, SAXException,
