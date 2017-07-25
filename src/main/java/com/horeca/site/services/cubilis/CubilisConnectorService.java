@@ -29,7 +29,7 @@ public class CubilisConnectorService {
 
     public CubilisConnectionStatus.Status checkConnectionStatus(String cubilisLogin, String cubilisPassword) {
         try {
-            String requestBody = createFetchRequest(cubilisLogin, cubilisPassword, LocalDate.now().minusDays(1));
+            String requestBody = createFetchReservationsRequest(cubilisLogin, cubilisPassword, LocalDate.now().minusDays(1));
             String responseRaw = postToCubilis(RESERVATIONS_URL, requestBody);
             String response = responseRaw.replaceAll("ï»¿", "");
             return getResponseOutcome(response);
@@ -40,7 +40,7 @@ public class CubilisConnectorService {
 
     public List<CubilisReservation> fetchReservations(String cubilisLogin, String cubilisPassword) {
         try {
-            String requestBody = createFetchRequest(cubilisLogin, cubilisPassword, LocalDate.now().minusDays(FETCH_TIME_SPAN));
+            String requestBody = createFetchReservationsRequest(cubilisLogin, cubilisPassword, LocalDate.now().minusDays(FETCH_TIME_SPAN));
             String responseRaw = postToCubilis(RESERVATIONS_URL, requestBody);
             String response = responseRaw.replaceAll("ï»¿", "");
             CubilisConnectionStatus.Status responseOutcome = getResponseOutcome(response);
@@ -57,7 +57,7 @@ public class CubilisConnectorService {
 
     public void confirmReservations(String cubilisLogin, String cubilisPassword, List<Long> ids) {
         try {
-            String requestBody = createConfirmationRequest(cubilisLogin, cubilisPassword, ids);
+            String requestBody = createConfirmReservationsRequest(cubilisLogin, cubilisPassword, ids);
             postToCubilis(CONFIRMATIONS_URL, requestBody);
         } catch (ParserConfigurationException | TransformerException e) {
             throw new RuntimeException(e);
