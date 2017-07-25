@@ -3,6 +3,7 @@ package com.horeca.site.services.cubilis;
 import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.cubilis.CubilisConnectionStatus;
 import com.horeca.site.models.cubilis.CubilisReservation;
+import com.horeca.site.models.cubilis.CubilisRoomsPerHotel;
 import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.updates.ChangeInHotelEvent;
@@ -82,6 +83,16 @@ public class CubilisService {
         }
 
         return connectionStatusRepository.save(currentStatus);
+    }
+
+    public List<CubilisRoomsPerHotel> getAvailableRooms(Long hotelId) {
+        CubilisSettings settings = getSettings(hotelId);
+        try {
+            return connectorService.fetchAvailableRooms(settings.getLogin(), settings.getPassword());
+        } catch (UnauthorizedException ex) {
+            updateConnectionStatus(hotelId);
+            throw ex;
+        }
     }
 
     @Scheduled(fixedDelay = 5 * 60 * 1000)
