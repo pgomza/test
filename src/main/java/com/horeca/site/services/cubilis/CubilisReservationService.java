@@ -1,4 +1,4 @@
-package com.horeca.site.services;
+package com.horeca.site.services.cubilis;
 
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.cubilis.CubilisCustomer;
@@ -7,7 +7,8 @@ import com.horeca.site.models.cubilis.CubilisReservationUpdate;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.stay.Stay;
-import com.horeca.site.repositories.CubilisReservationRepository;
+import com.horeca.site.repositories.cubilis.CubilisReservationRepository;
+import com.horeca.site.services.GuestService;
 import com.horeca.site.services.services.StayService;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;

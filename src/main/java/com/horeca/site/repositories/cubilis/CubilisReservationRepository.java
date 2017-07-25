@@ -1,4 +1,4 @@
-package com.horeca.site.repositories;
+package com.horeca.site.repositories.cubilis;
 
 import com.horeca.site.models.cubilis.CubilisReservation;
 import org.springframework.data.jpa.repository.Query;

@@ -440,7 +440,7 @@ public class HotelService {
         Cubilis-related functionality
      */
 
-    List<Long> getIdsOfCubilisEligible() {
+    public List<Long> getIdsOfCubilisEligible() {
         return repository.getIdsOfCubilisEligible();
     }
 }
