@@ -16,8 +16,6 @@ public class OrdersService {
 
     public Orders get(String stayPin) {
         Stay stay = stayService.get(stayPin);
-        Orders orders = stay.getOrders();
-
-        return orders;
+        return stay.getOrders();
     }
 }

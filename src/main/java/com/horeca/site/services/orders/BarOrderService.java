@@ -9,7 +9,6 @@ import com.horeca.site.models.hotel.services.bar.BarCategory;
 import com.horeca.site.models.hotel.services.bar.BarItem;
 import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
-import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.bar.BarOrder;
 import com.horeca.site.models.orders.bar.BarOrderItem;
@@ -20,6 +19,7 @@ import com.horeca.site.repositories.orders.BarOrderRepository;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +29,7 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class BarOrderService {
+public class BarOrderService extends GenericOrderService<BarOrder> {
 
     @Autowired
     private OrdersService ordersService;
@@ -43,25 +43,14 @@ public class BarOrderService {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    public Set<BarOrder> getAll(String stayPin) {
-        Orders orders = ordersService.get(stayPin);
-        Set<BarOrder> breakfastOrders = orders.getBarOrders();
-
-        return breakfastOrders;
+    @Override
+    protected CrudRepository<BarOrder, Long> getRepository() {
+        return repository;
     }
 
-    public BarOrder get(String stayPin, Long id) {
-        BarOrder found = null;
-        for (BarOrder barOrder : getAll(stayPin)) {
-            if (barOrder.getId().equals(id)) {
-                found = barOrder;
-                break;
-            }
-        }
-        if (found == null)
-            throw new ResourceNotFoundException();
-
-        return found;
+    public Set<BarOrder> getAll(String stayPin) {
+        Orders orders = ordersService.get(stayPin);
+        return orders.getBarOrders();
     }
 
     public BarOrder add(String stayPin, BarOrderPOST entity) {
@@ -96,26 +85,6 @@ public class BarOrderService {
         eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.BAR, stay));
 
         return added;
-    }
-
-    public BarOrder update(String stayPin, Long id, BarOrder updated) {
-        BarOrder order = get(stayPin, id);
-        updated.setId(order.getId());
-        return repository.save(updated);
-    }
-
-    public OrderStatusPUT getStatus(String pin, Long id) {
-        OrderStatus status = get(pin, id).getStatus();
-        OrderStatusPUT statusPUT = new OrderStatusPUT();
-        statusPUT.setStatus(status);
-        return statusPUT;
-    }
-
-    public OrderStatusPUT updateStatus(String stayPin, Long id, OrderStatusPUT newStatus) {
-        BarOrder order = get(stayPin, id);
-        order.setStatus(newStatus.getStatus());
-        update(stayPin, order.getId(), order);
-        return newStatus;
     }
 
     private BarItem resolveItemIdToEntity(String stayPin, Long id) {

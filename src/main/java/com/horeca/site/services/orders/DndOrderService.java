@@ -20,9 +20,7 @@ public class DndOrderService {
 
     public DndOrder get(String stayPin) {
         Orders orders = ordersService.get(stayPin);
-        DndOrder dndOrder = orders.getDnd();
-
-        return dndOrder;
+        return orders.getDnd();
     }
 
     public DndOrder update(String stayPin, DndOrderUPDATE updated) {

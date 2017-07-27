@@ -55,7 +55,6 @@ public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrde
     @Override
     public Set<RoomServiceOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
-
         return orders.getRoomServiceOrders();
     }
 
