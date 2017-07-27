@@ -2,7 +2,7 @@ package com.horeca.site.models.orders.breakfast;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Price;
-import com.horeca.site.models.orders.OrderStatus;
+import com.horeca.site.models.orders.Order;
 import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
@@ -11,14 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(indexes = @Index(name = "orders_id_breakfast", columnList = "orders_id_breakfast"))
-public class BreakfastOrder {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotNull
-    private OrderStatus status = OrderStatus.NEW;
+public class BreakfastOrder extends Order {
 
     @NotNull
     private Price total;
@@ -30,22 +23,6 @@ public class BreakfastOrder {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "breakfast_order_id")
     private Set<BreakfastOrderItem> items;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
 
     public Price getTotal() {
         return total;
