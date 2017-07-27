@@ -66,9 +66,7 @@ public class PetCareOrderService extends GenericOrderService<PetCareOrder> {
 
     public PetCareOrder addAndTryToNotify(String stayPin, PetCareOrderPOST entity) {
         PetCareOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.PETCARE, stay));
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.PETCARE, stayPin));
 
         return added;
     }

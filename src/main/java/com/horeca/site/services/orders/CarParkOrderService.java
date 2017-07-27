@@ -65,9 +65,7 @@ public class CarParkOrderService extends GenericOrderService<CarParkOrder> {
 
     public CarParkOrder addAndTryToNotify(String stayPin, CarParkOrderPOST entity) {
         CarParkOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.CARPARK, stay));
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.CARPARK, stayPin));
 
         return added;
     }

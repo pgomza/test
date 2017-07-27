@@ -80,9 +80,7 @@ public class RentalOrderService extends GenericOrderService<RentalOrder> {
 
     public RentalOrder addAndTryToNotify(String stayPin, RentalOrderPOST entity) {
         RentalOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.RENTAL, stay));
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.RENTAL, stayPin));
 
         return added;
     }

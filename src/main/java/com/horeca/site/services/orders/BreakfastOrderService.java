@@ -84,9 +84,7 @@ public class BreakfastOrderService extends GenericOrderService<BreakfastOrder> {
 
     public BreakfastOrder addAndTryToNotify(String stayPin, BreakfastOrderPOST entity) {
         BreakfastOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.BREAKFAST, stay));
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.BREAKFAST, stayPin));
 
         return added;
     }

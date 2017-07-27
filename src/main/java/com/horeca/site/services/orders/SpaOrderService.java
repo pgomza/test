@@ -80,9 +80,7 @@ public class SpaOrderService extends GenericOrderService<SpaOrder> {
 
     public SpaOrder addAndTryToNotify(String stayPin, SpaOrderPOST entity) {
         SpaOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.SPA, stay));
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.SPA, stayPin));
 
         return added;
     }

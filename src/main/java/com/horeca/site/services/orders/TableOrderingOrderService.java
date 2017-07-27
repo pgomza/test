@@ -58,9 +58,7 @@ public class TableOrderingOrderService extends GenericOrderService<TableOrdering
 
     public TableOrderingOrder addAndTryToNotify(String stayPin, TableOrderingOrderPOST entity) {
         TableOrderingOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.TABLEORDERING, stay));
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.TABLEORDERING, stayPin));
 
         return added;
     }

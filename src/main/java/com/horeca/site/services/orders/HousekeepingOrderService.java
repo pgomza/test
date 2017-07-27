@@ -6,7 +6,6 @@ import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
 import com.horeca.site.models.hotel.services.housekeeping.HousekeepingItem;
 import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
-import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.housekeeping.HousekeepingOrder;
 import com.horeca.site.models.orders.housekeeping.HousekeepingOrderPOST;
@@ -72,9 +71,7 @@ public class HousekeepingOrderService extends GenericOrderService<HousekeepingOr
 
     public HousekeepingOrder addAndTryToNotify(String stayPin, HousekeepingOrderPOST entity) {
         HousekeepingOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.HOUSEKEEPING, stay));
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.HOUSEKEEPING, stayPin));
 
         return added;
     }

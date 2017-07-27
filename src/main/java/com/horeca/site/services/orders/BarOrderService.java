@@ -80,9 +80,7 @@ public class BarOrderService extends GenericOrderService<BarOrder> {
 
     public BarOrder addAndTryToNotify(String stayPin, BarOrderPOST entity) {
         BarOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.BAR, stay));
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.BAR, stayPin));
 
         return added;
     }

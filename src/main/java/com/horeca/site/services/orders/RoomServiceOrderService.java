@@ -85,9 +85,7 @@ public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrde
 
     public RoomServiceOrder addAndTryToNotify(String stayPin, RoomServiceOrderPOST entity) {
         RoomServiceOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.ROOMSERVICE, stay));
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.ROOMSERVICE, stayPin));
 
         return added;
     }

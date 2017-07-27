@@ -69,9 +69,7 @@ public class TaxiOrderService extends GenericOrderService<TaxiOrder> {
 
     public TaxiOrder addAndTryToNotify(String stayPin, TaxiOrderPOST entity) {
         TaxiOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.TAXI, stay));
+        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.TAXI, stayPin));
 
         return added;
     }
