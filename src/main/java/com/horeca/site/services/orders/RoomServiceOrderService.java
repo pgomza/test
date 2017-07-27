@@ -15,11 +15,13 @@ import com.horeca.site.models.orders.roomservice.RoomServiceOrderItem;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrderItemPOST;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrderPOST;
 import com.horeca.site.models.stay.Stay;
+import com.horeca.site.repositories.orders.RoomServiceOrderRepository;
 import com.horeca.site.services.services.StayService;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,10 +34,13 @@ import java.util.Set;
 public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrder> {
 
     @Autowired
-    private OrdersService ordersService;
+    private RoomServiceOrderRepository repository;
 
     @Autowired
     private StayService stayService;
+
+    @Autowired
+    private OrdersService ordersService;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -43,11 +48,15 @@ public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrde
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
 
     @Override
+    protected CrudRepository<RoomServiceOrder, Long> getRepository() {
+        return repository;
+    }
+
+    @Override
     public Set<RoomServiceOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
-        Set<RoomServiceOrder> roomServiceOrders = orders.getRoomServiceOrders();
 
-        return roomServiceOrders;
+        return orders.getRoomServiceOrders();
     }
 
     public RoomServiceOrder add(String stayPin, RoomServiceOrderPOST entity) {
