@@ -53,7 +53,9 @@ public class TableOrderingOrderService {
     }
 
     public TableOrderingOrder add(String stayPin, TableOrderingOrderPOST entity) {
-        TableOrderingOrder newOrder = new TableOrderingOrder(entity.time, entity.numberOfPeople);
+        TableOrderingOrder newOrder = new TableOrderingOrder();
+        newOrder.setTime(entity.time);
+        newOrder.setNumberOfPeople(entity.numberOfPeople);
         TableOrderingOrder savedOrder = repository.save(newOrder);
 
         Stay stay = stayService.get(stayPin);

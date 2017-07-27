@@ -1,9 +1,6 @@
 package com.horeca.site.models.orders;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @MappedSuperclass
@@ -14,6 +11,7 @@ public abstract class Order {
     private Long id;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.NEW;
 
     public Long getId() {
