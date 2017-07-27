@@ -16,7 +16,6 @@ public class TaxiOrder {
     private Long id;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     @NotNull
