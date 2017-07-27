@@ -7,9 +7,7 @@ import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spa.SpaItem;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarDay;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
-import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.spa.SpaOrder;
 import com.horeca.site.models.orders.spa.SpaOrderPOST;
@@ -22,6 +20,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +28,7 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class SpaOrderService {
+public class SpaOrderService extends GenericOrderService<SpaOrder> {
 
     @Autowired
     private OrdersService ordersService;
@@ -48,25 +47,14 @@ public class SpaOrderService {
 
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
 
-    public SpaOrder get(String stayPin, Long id) {
-        SpaOrder found = null;
-        for (SpaOrder spaOrder : getAll(stayPin)) {
-            if (spaOrder.getId().equals(id)) {
-                found = spaOrder;
-                break;
-            }
-        }
-        if (found == null)
-            throw new ResourceNotFoundException();
-
-        return found;
+    @Override
+    protected CrudRepository<SpaOrder, Long> getRepository() {
+        return repository;
     }
 
     public Set<SpaOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
-        Set<SpaOrder> spaOrders = orders.getSpaOrders();
-
-        return spaOrders;
+        return orders.getSpaOrders();
     }
 
     public SpaOrder add(String stayPin, SpaOrderPOST entity) {
@@ -89,33 +77,11 @@ public class SpaOrderService {
         return savedOrder;
     }
 
-    public SpaOrder addAndTryToNotify(String stayPin, SpaOrderPOST entity) {
+    public SpaOrder addAndNotify(String stayPin, SpaOrderPOST entity) {
         SpaOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.SPA, stay));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.SPA);
 
         return added;
-    }
-
-    public SpaOrder update(String stayPin, Long id, SpaOrder updated) {
-        SpaOrder order = get(stayPin, id);
-        updated.setId(order.getId());
-        return repository.save(updated);
-    }
-
-    public OrderStatusPUT getStatus(String pin, Long id) {
-        OrderStatus status = get(pin, id).getStatus();
-        OrderStatusPUT statusPUT = new OrderStatusPUT();
-        statusPUT.setStatus(status);
-        return statusPUT;
-    }
-
-    public OrderStatusPUT updateStatus(String stayPin, Long id, OrderStatusPUT newStatus) {
-        SpaOrder order = get(stayPin, id);
-        order.setStatus(newStatus.getStatus());
-        update(stayPin, order.getId(), order);
-        return newStatus;
     }
 
     private SpaItem resolveItemIdToEntity(String stayPin, Long id) {

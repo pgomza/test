@@ -7,7 +7,6 @@ import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.roomservice.RoomService;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceCategory;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceItem;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrder;
@@ -15,11 +14,13 @@ import com.horeca.site.models.orders.roomservice.RoomServiceOrderItem;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrderItemPOST;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrderPOST;
 import com.horeca.site.models.stay.Stay;
+import com.horeca.site.repositories.orders.RoomServiceOrderRepository;
 import com.horeca.site.services.services.StayService;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,10 +33,13 @@ import java.util.Set;
 public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrder> {
 
     @Autowired
-    private OrdersService ordersService;
+    private RoomServiceOrderRepository repository;
 
     @Autowired
     private StayService stayService;
+
+    @Autowired
+    private OrdersService ordersService;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -43,11 +47,14 @@ public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrde
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
 
     @Override
+    protected CrudRepository<RoomServiceOrder, Long> getRepository() {
+        return repository;
+    }
+
+    @Override
     public Set<RoomServiceOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
-        Set<RoomServiceOrder> roomServiceOrders = orders.getRoomServiceOrders();
-
-        return roomServiceOrders;
+        return orders.getRoomServiceOrders();
     }
 
     public RoomServiceOrder add(String stayPin, RoomServiceOrderPOST entity) {
@@ -75,11 +82,9 @@ public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrde
         return savedOrder;
     }
 
-    public RoomServiceOrder addAndTryToNotify(String stayPin, RoomServiceOrderPOST entity) {
+    public RoomServiceOrder addAndNotify(String stayPin, RoomServiceOrderPOST entity) {
         RoomServiceOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.ROOMSERVICE, stay));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.ROOMSERVICE);
 
         return added;
     }

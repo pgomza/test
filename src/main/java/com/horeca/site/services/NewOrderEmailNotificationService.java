@@ -6,6 +6,7 @@ import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.notifications.NotificationSettings;
 import com.horeca.site.models.stay.Stay;
+import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -24,9 +25,13 @@ public class NewOrderEmailNotificationService implements ApplicationListener<New
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    private StayService stayService;
+
     @Override
     public void onApplicationEvent(NewOrderEvent event) {
-        Stay stay = event.getStay();
+        String pin = event.getPin();
+        Stay stay = stayService.getWithoutCheckingStatus(pin);
         NotificationSettings notificationSettings = stay.getHotel().getNotificationSettings();
         if (notificationSettings == null) {
             throw new BusinessRuleViolationException("An email about a new order cannot be send because the " +

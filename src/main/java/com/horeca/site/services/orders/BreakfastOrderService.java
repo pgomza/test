@@ -7,9 +7,7 @@ import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastCategory;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastItem;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
-import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.breakfast.BreakfastOrder;
 import com.horeca.site.models.orders.breakfast.BreakfastOrderItem;
@@ -22,6 +20,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +30,7 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class BreakfastOrderService {
+public class BreakfastOrderService extends GenericOrderService<BreakfastOrder> {
 
     @Autowired
     private OrdersService ordersService;
@@ -47,25 +46,14 @@ public class BreakfastOrderService {
 
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
 
-    public Set<BreakfastOrder> getAll(String stayPin) {
-        Orders orders = ordersService.get(stayPin);
-        Set<BreakfastOrder> breakfastOrders = orders.getBreakfastOrders();
-
-        return breakfastOrders;
+    @Override
+    protected CrudRepository<BreakfastOrder, Long> getRepository() {
+        return repository;
     }
 
-    public BreakfastOrder get(String stayPin, Long id) {
-        BreakfastOrder found = null;
-        for (BreakfastOrder breakfastOrder : getAll(stayPin)) {
-            if (breakfastOrder.getId().equals(id)) {
-                found = breakfastOrder;
-                break;
-            }
-        }
-        if (found == null)
-            throw new ResourceNotFoundException();
-
-        return found;
+    public Set<BreakfastOrder> getAll(String stayPin) {
+        Orders orders = ordersService.get(stayPin);
+        return orders.getBreakfastOrders();
     }
 
     public BreakfastOrder add(String stayPin, BreakfastOrderPOST entity) {
@@ -93,33 +81,11 @@ public class BreakfastOrderService {
         return savedOrder;
     }
 
-    public BreakfastOrder addAndTryToNotify(String stayPin, BreakfastOrderPOST entity) {
+    public BreakfastOrder addAndNotify(String stayPin, BreakfastOrderPOST entity) {
         BreakfastOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.BREAKFAST, stay));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.BREAKFAST);
 
         return added;
-    }
-
-    public BreakfastOrder update(String stayPin, Long id, BreakfastOrder updated) {
-        BreakfastOrder order = get(stayPin, id);
-        updated.setId(order.getId());
-        return repository.save(updated);
-    }
-
-    public OrderStatusPUT getStatus(String pin, Long id) {
-        OrderStatus status = get(pin, id).getStatus();
-        OrderStatusPUT statusPUT = new OrderStatusPUT();
-        statusPUT.setStatus(status);
-        return statusPUT;
-    }
-
-    public OrderStatusPUT updateStatus(String stayPin, Long id, OrderStatusPUT newStatus) {
-        BreakfastOrder order = get(stayPin, id);
-        order.setStatus(newStatus.getStatus());
-        update(stayPin, order.getId(), order);
-        return newStatus;
     }
 
     private BreakfastItem resolveItemIdToEntity(String stayPin, Long id) {

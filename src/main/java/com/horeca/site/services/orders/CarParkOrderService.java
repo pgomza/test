@@ -1,10 +1,7 @@
 package com.horeca.site.services.orders;
 
-import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
-import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.carpark.CarParkOrderPOST;
@@ -15,6 +12,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +20,7 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class CarParkOrderService {
+public class CarParkOrderService extends GenericOrderService<CarParkOrder> {
 
     @Autowired
     private OrdersService ordersService;
@@ -38,25 +36,15 @@ public class CarParkOrderService {
 
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
 
-    public Set<CarParkOrder> getAll(String stayPin) {
-        Orders orders = ordersService.get(stayPin);
-        Set<CarParkOrder> carParkOrders = orders.getCarParkOrders();
-
-        return carParkOrders;
+    @Override
+    protected CrudRepository<CarParkOrder, Long> getRepository() {
+        return repository;
     }
 
-    public CarParkOrder get(String stayPin, Long id) {
-        CarParkOrder found = null;
-        for (CarParkOrder carParkOrder : getAll(stayPin)) {
-            if (carParkOrder.getId().equals(id)) {
-                found = carParkOrder;
-                break;
-            }
-        }
-        if (found == null)
-            throw new ResourceNotFoundException();
-
-        return found;
+    public Set<CarParkOrder> getAll(String stayPin) {
+        notifyAboutNewOrder(stayPin, AvailableServiceType.BAR);
+        Orders orders = ordersService.get(stayPin);
+        return orders.getCarParkOrders();
     }
 
     public CarParkOrder add(String stayPin, CarParkOrderPOST entity) {
@@ -75,32 +63,10 @@ public class CarParkOrderService {
         return savedOrder;
     }
 
-    public CarParkOrder addAndTryToNotify(String stayPin, CarParkOrderPOST entity) {
+    public CarParkOrder addAndNotify(String stayPin, CarParkOrderPOST entity) {
         CarParkOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.CARPARK, stay));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.CARPARK);
 
         return added;
-    }
-
-    public CarParkOrder update(String stayPin, Long id, CarParkOrder updated) {
-        CarParkOrder order = get(stayPin, id);
-        updated.setId(order.getId());
-        return repository.save(updated);
-    }
-
-    public OrderStatusPUT getStatus(String pin, Long id) {
-        OrderStatus status = get(pin, id).getStatus();
-        OrderStatusPUT statusPUT = new OrderStatusPUT();
-        statusPUT.setStatus(status);
-        return statusPUT;
-    }
-
-    public OrderStatusPUT updateStatus(String stayPin, Long id, OrderStatusPUT newStatus) {
-        CarParkOrder order = get(stayPin, id);
-        order.setStatus(newStatus.getStatus());
-        update(stayPin, order.getId(), order);
-        return newStatus;
     }
 }
