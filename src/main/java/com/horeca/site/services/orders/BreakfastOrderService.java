@@ -7,7 +7,6 @@ import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastCategory;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastItem;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.breakfast.BreakfastOrder;
@@ -82,9 +81,9 @@ public class BreakfastOrderService extends GenericOrderService<BreakfastOrder> {
         return savedOrder;
     }
 
-    public BreakfastOrder addAndTryToNotify(String stayPin, BreakfastOrderPOST entity) {
+    public BreakfastOrder addAndNotify(String stayPin, BreakfastOrderPOST entity) {
         BreakfastOrder added = add(stayPin, entity);
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.BREAKFAST, stayPin));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.BREAKFAST);
 
         return added;
     }

@@ -1,7 +1,6 @@
 package com.horeca.site.services.orders;
 
 import com.horeca.site.models.hotel.services.AvailableServiceType;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
@@ -43,6 +42,7 @@ public class CarParkOrderService extends GenericOrderService<CarParkOrder> {
     }
 
     public Set<CarParkOrder> getAll(String stayPin) {
+        notifyAboutNewOrder(stayPin, AvailableServiceType.BAR);
         Orders orders = ordersService.get(stayPin);
         return orders.getCarParkOrders();
     }
@@ -63,9 +63,9 @@ public class CarParkOrderService extends GenericOrderService<CarParkOrder> {
         return savedOrder;
     }
 
-    public CarParkOrder addAndTryToNotify(String stayPin, CarParkOrderPOST entity) {
+    public CarParkOrder addAndNotify(String stayPin, CarParkOrderPOST entity) {
         CarParkOrder added = add(stayPin, entity);
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.CARPARK, stayPin));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.CARPARK);
 
         return added;
     }

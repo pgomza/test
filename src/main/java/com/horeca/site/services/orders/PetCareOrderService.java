@@ -4,7 +4,6 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.petcare.PetCareOrder;
@@ -64,9 +63,9 @@ public class PetCareOrderService extends GenericOrderService<PetCareOrder> {
         return savedOrder;
     }
 
-    public PetCareOrder addAndTryToNotify(String stayPin, PetCareOrderPOST entity) {
+    public PetCareOrder addAndNotify(String stayPin, PetCareOrderPOST entity) {
         PetCareOrder added = add(stayPin, entity);
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.PETCARE, stayPin));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.PETCARE);
 
         return added;
     }

@@ -4,7 +4,6 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
 import com.horeca.site.models.hotel.services.housekeeping.HousekeepingItem;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.housekeeping.HousekeepingOrder;
@@ -69,9 +68,9 @@ public class HousekeepingOrderService extends GenericOrderService<HousekeepingOr
         return savedOrder;
     }
 
-    public HousekeepingOrder addAndTryToNotify(String stayPin, HousekeepingOrderPOST entity) {
+    public HousekeepingOrder addAndNotify(String stayPin, HousekeepingOrderPOST entity) {
         HousekeepingOrder added = add(stayPin, entity);
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.HOUSEKEEPING, stayPin));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.HOUSEKEEPING);
 
         return added;
     }

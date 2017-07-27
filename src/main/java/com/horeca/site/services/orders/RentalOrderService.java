@@ -7,7 +7,6 @@ import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.rental.Rental;
 import com.horeca.site.models.hotel.services.rental.RentalCategory;
 import com.horeca.site.models.hotel.services.rental.RentalItem;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.rental.RentalOrder;
@@ -78,9 +77,9 @@ public class RentalOrderService extends GenericOrderService<RentalOrder> {
         return savedOrder;
     }
 
-    public RentalOrder addAndTryToNotify(String stayPin, RentalOrderPOST entity) {
+    public RentalOrder addAndNotify(String stayPin, RentalOrderPOST entity) {
         RentalOrder added = add(stayPin, entity);
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.RENTAL, stayPin));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.RENTAL);
 
         return added;
     }

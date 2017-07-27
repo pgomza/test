@@ -7,7 +7,6 @@ import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.bar.Bar;
 import com.horeca.site.models.hotel.services.bar.BarCategory;
 import com.horeca.site.models.hotel.services.bar.BarItem;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.bar.BarOrder;
@@ -78,9 +77,9 @@ public class BarOrderService extends GenericOrderService<BarOrder> {
         return savedOrder;
     }
 
-    public BarOrder addAndTryToNotify(String stayPin, BarOrderPOST entity) {
+    public BarOrder addAndNotify(String stayPin, BarOrderPOST entity) {
         BarOrder added = add(stayPin, entity);
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.BAR, stayPin));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.BAR);
 
         return added;
     }

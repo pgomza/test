@@ -37,7 +37,7 @@ public class CarParkOrderController {
     public CarParkOrder add(@PathVariable String pin, @Valid @RequestBody CarParkOrderPOST newOrder,
                             Authentication authentication) {
         if (authentication.getPrincipal() instanceof GuestAccount) {
-            return service.addAndTryToNotify(pin, newOrder);
+            return service.addAndNotify(pin, newOrder);
         }
         else
             throw new AccessDeniedException("You are not allowed to add a new order");

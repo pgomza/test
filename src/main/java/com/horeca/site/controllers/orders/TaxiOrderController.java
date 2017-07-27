@@ -36,7 +36,7 @@ public class TaxiOrderController {
     @RequestMapping(value = "/{pin}/orders/taxi", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public TaxiOrder add(@PathVariable String pin, @Valid @RequestBody TaxiOrderPOST newOrder, Authentication authentication) {
         if (authentication.getPrincipal() instanceof GuestAccount) {
-            return service.addAndTryToNotify(pin, newOrder);
+            return service.addAndNotify(pin, newOrder);
         }
         else
             throw new AccessDeniedException("You are not allowed to add a new order");

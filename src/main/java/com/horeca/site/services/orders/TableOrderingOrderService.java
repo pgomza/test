@@ -1,7 +1,6 @@
 package com.horeca.site.services.orders;
 
 import com.horeca.site.models.hotel.services.AvailableServiceType;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.tableordering.TableOrderingOrder;
 import com.horeca.site.models.orders.tableordering.TableOrderingOrderPOST;
@@ -56,9 +55,9 @@ public class TableOrderingOrderService extends GenericOrderService<TableOrdering
         return savedOrder;
     }
 
-    public TableOrderingOrder addAndTryToNotify(String stayPin, TableOrderingOrderPOST entity) {
+    public TableOrderingOrder addAndNotify(String stayPin, TableOrderingOrderPOST entity) {
         TableOrderingOrder added = add(stayPin, entity);
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.TABLEORDERING, stayPin));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.TABLEORDERING);
 
         return added;
     }

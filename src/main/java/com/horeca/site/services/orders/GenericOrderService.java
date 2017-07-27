@@ -1,15 +1,22 @@
 package com.horeca.site.services.orders;
 
 import com.horeca.site.exceptions.ResourceNotFoundException;
+import com.horeca.site.models.hotel.services.AvailableServiceType;
+import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.Order;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 import java.util.Set;
 
 public abstract class GenericOrderService<T extends Order> {
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     protected abstract CrudRepository<T, Long> getRepository();
 
@@ -38,5 +45,9 @@ public abstract class GenericOrderService<T extends Order> {
         order.setStatus(newStatus.getStatus());
         update(stayPin, order.getId(), order);
         return newStatus;
+    }
+
+    protected void notifyAboutNewOrder(String stayPin, AvailableServiceType serviceType) {
+        eventPublisher.publishEvent(new NewOrderEvent(this, serviceType, stayPin));
     }
 }

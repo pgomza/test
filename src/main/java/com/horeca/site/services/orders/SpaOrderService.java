@@ -7,7 +7,6 @@ import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spa.SpaItem;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarDay;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.spa.SpaOrder;
@@ -78,9 +77,9 @@ public class SpaOrderService extends GenericOrderService<SpaOrder> {
         return savedOrder;
     }
 
-    public SpaOrder addAndTryToNotify(String stayPin, SpaOrderPOST entity) {
+    public SpaOrder addAndNotify(String stayPin, SpaOrderPOST entity) {
         SpaOrder added = add(stayPin, entity);
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.SPA, stayPin));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.SPA);
 
         return added;
     }
