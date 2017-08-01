@@ -152,6 +152,19 @@ class CubilisParserService {
                 cubilisCustomer.setEmail(emailText);
 
                 cubilisReservation.setCustomer(cubilisCustomer);
+
+                // get info about the number of guests
+                Integer guestTotalCount = 0;
+                NodeList roomStayNodes = reservation.getElementsByTagName("RoomStay");
+                for (int j = 0; j < roomStayNodes.getLength(); j++) {
+                    Element roomStay = (Element) roomStayNodes.item(j);
+                    NodeList guestCountNodes = roomStay.getElementsByTagName("GuestCount");
+                    for (int k = 0; k < guestCountNodes.getLength(); k++) {
+                        Element guestCount = (Element) guestCountNodes.item(k);
+                        guestTotalCount += Integer.valueOf(guestCount.getAttribute("Count"));
+                    }
+                }
+                cubilisReservation.setGuestCount(guestTotalCount);
                 cubilisReservations.add(cubilisReservation);
             }
         }

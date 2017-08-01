@@ -1,0 +1,1 @@
+ALTER TABLE CubilisReservation ADD guestCount INT NOT NULL DEFAULT 0;

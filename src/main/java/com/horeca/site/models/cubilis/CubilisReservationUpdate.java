@@ -23,6 +23,9 @@ public class CubilisReservationUpdate {
     @NotNull
     private CubilisCustomer cubilisCustomer;
 
+    @NotNull
+    private Integer guestCount;
+
     public Long getId() {
         return id;
     }
@@ -61,5 +64,13 @@ public class CubilisReservationUpdate {
 
     public void setCubilisCustomer(CubilisCustomer cubilisCustomer) {
         this.cubilisCustomer = cubilisCustomer;
+    }
+
+    public Integer getGuestCount() {
+        return guestCount;
+    }
+
+    public void setGuestCount(Integer guestCount) {
+        this.guestCount = guestCount;
     }
 }

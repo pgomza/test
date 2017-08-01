@@ -43,6 +43,9 @@ public class CubilisReservation {
     @JoinColumn(name = "customer_id")
     private CubilisCustomer customer;
 
+    @NotNull
+    private Integer guestCount;
+
     public Long getId() {
         return id;
     }
@@ -107,6 +110,14 @@ public class CubilisReservation {
         this.customer = customer;
     }
 
+    public Integer getGuestCount() {
+        return guestCount;
+    }
+
+    public void setGuestCount(Integer guestCount) {
+        this.guestCount = guestCount;
+    }
+
     public CubilisReservationUpdate toView() {
         CubilisReservationUpdate view = new CubilisReservationUpdate();
         view.setId(getId());
@@ -116,6 +127,8 @@ public class CubilisReservation {
         if (getGuest() != null) {
             view.setGuestId(getGuest().getId());
         }
+        view.setGuestCount(getGuestCount());
+
         return view;
     }
 }
