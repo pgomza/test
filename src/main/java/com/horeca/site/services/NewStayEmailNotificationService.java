@@ -6,12 +6,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 
 @Service
 public class NewStayEmailNotificationService implements ApplicationListener<NewStayEvent> {
@@ -24,7 +22,7 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
     private String appLinkPlayStore;
 
     @Autowired
-    private JavaMailSender mailSender;
+    private EmailSenderService emailSenderService;
 
     @Override
     public void onApplicationEvent(NewStayEvent event) {
@@ -49,13 +47,13 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
     }
 
     private void prepareAndSendMessage(String recipientEmail, String hotelName, String guestName, String pin)
-            throws MessagingException {
+            throws MessagingException, UnsupportedEncodingException {
+
         boolean hotelNameBeginsWithHotel = false;
         if (hotelName.length() >= 5 && hotelName.substring(0, 5).toLowerCase().equals("hotel"))
             hotelNameBeginsWithHotel = true;
 
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        String messageBody =
+        String content =
                 "<div>" +
                     "Dear " + guestName + "," +
                     "<br/><br/>" +
@@ -83,11 +81,7 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
                     "www.throdi.com" +
                 "</div>";
 
-        mimeMessage.setContent(messageBody, "text/html");
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "utf-8");
-        helper.setTo(recipientEmail);
-        helper.setSubject("Information about your stay");
-        helper.setFrom("Throdi");
-        mailSender.send(mimeMessage);
+        emailSenderService.send("Information about your stay", content, recipientEmail,
+                "no-reply@throdi.com", "Throdi");
     }
 }
