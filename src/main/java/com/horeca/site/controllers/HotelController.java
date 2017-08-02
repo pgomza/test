@@ -13,8 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @Api(value = "hotels")
 @RestController
 @RequestMapping("/api/hotels")
@@ -50,9 +48,9 @@ public class HotelController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Hotel> update(@PathVariable("id") Long id, @Valid @RequestBody Hotel hotel) {
+	public ResponseEntity<Hotel> update(@PathVariable("id") Long id, @RequestBody Hotel hotel) {
         Hotel changed = service.updateFromController(id, hotel);
-		return new ResponseEntity<Hotel>(changed, HttpStatus.OK);
+		return new ResponseEntity<>(changed, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}/reset", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

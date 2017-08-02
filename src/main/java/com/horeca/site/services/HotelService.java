@@ -101,6 +101,8 @@ public class HotelService {
             hotel.setImages(new ArrayList<>());
 
         hotel.setIsThrodiPartner(false);
+        hotel.setIsMarkedAsDeleted(false);
+
         if (hotel.getCurrency() == null)
             hotel.setCurrency(Currency.EURO);
 
@@ -129,6 +131,7 @@ public class HotelService {
         newOne.setNotificationSettings(current.getNotificationSettings());
         newOne.setCubilisSettings(current.getCubilisSettings());
         newOne.setCubilisConnectionStatus(current.getCubilisConnectionStatus());
+        newOne.setIsMarkedAsDeleted(current.getIsMarkedAsDeleted());
 
         return update(id, newOne);
     }
