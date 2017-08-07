@@ -12,7 +12,6 @@ import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.PetCareOrderRepository;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,9 +30,6 @@ public class PetCareOrderService extends GenericOrderService<PetCareOrder> {
 
     @Autowired
     private PetCareOrderRepository repository;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
 
     @Override
     protected CrudRepository<PetCareOrder, Long> getRepository() {

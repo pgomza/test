@@ -19,7 +19,6 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,9 +40,6 @@ public class SpaOrderService extends GenericOrderService<SpaOrder> {
 
     @Autowired
     private SpaOrderRepository repository;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
 
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
 

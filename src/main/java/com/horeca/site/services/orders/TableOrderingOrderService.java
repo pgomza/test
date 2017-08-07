@@ -8,7 +8,6 @@ import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.TableOrderingOrderRepository;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +26,6 @@ public class TableOrderingOrderService extends GenericOrderService<TableOrdering
 
     @Autowired
     private TableOrderingOrderRepository repository;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
 
     @Override
     protected CrudRepository<TableOrderingOrder, Long> getRepository() {
