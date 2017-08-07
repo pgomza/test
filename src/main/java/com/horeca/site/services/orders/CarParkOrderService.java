@@ -38,7 +38,6 @@ public class CarParkOrderService extends GenericOrderService<CarParkOrder> {
     }
 
     public Set<CarParkOrder> getAll(String stayPin) {
-        notifyAboutNewOrder(stayPin, AvailableServiceType.BAR);
         Orders orders = ordersService.get(stayPin);
         return orders.getCarParkOrders();
     }
