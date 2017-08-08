@@ -138,6 +138,11 @@
             <artifactId>openhtmltopdf-jsoup-dom-converter</artifactId>
             <version>${openhtml.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-envers</artifactId>
+            <version>5.0.12.Final</version>
+        </dependency>
     </dependencies>
 
     <build>
