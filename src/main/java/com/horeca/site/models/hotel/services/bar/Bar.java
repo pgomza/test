@@ -2,6 +2,7 @@ package com.horeca.site.models.hotel.services.bar;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Price;
+import org.hibernate.envers.Audited;
 import org.joda.time.LocalTime;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
+@Audited
 public class Bar {
 
     @Id

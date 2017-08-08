@@ -2,6 +2,7 @@ package com.horeca.site.models.orders.carpark;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.orders.Order;
+import org.hibernate.envers.Audited;
 import org.joda.time.LocalDateTime;
 
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(indexes = @Index(name = "orders_id_car_park", columnList = "orders_id_car_park"))
+@Audited
 public class CarParkOrder extends Order {
 
     @NotNull

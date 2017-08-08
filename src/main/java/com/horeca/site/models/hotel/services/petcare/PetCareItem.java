@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.petcare;
 
 import com.horeca.site.models.Price;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Audited
 public class PetCareItem {
 
     @Id

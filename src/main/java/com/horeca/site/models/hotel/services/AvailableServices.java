@@ -14,11 +14,13 @@ import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spacall.SpaCall;
 import com.horeca.site.models.hotel.services.tableordering.TableOrdering;
 import com.horeca.site.models.hotel.services.taxi.Taxi;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
 @Entity
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@Audited
 public class AvailableServices {
 
     @Id

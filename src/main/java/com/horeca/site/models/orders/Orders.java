@@ -13,6 +13,7 @@ import com.horeca.site.models.orders.roomservice.RoomServiceOrder;
 import com.horeca.site.models.orders.spa.SpaOrder;
 import com.horeca.site.models.orders.tableordering.TableOrderingOrder;
 import com.horeca.site.models.orders.taxi.TaxiOrder;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import java.util.Set;
 
 @Entity
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@Audited
 public class Orders {
 
     @Id

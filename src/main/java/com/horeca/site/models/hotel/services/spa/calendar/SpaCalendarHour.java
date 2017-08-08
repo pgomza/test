@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.spa.calendar;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.envers.Audited;
 import org.joda.time.LocalTime;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(indexes = @Index(name = "spa_calendar_day_id", columnList = "spa_calendar_day_id"))
+@Audited
 public class SpaCalendarHour {
 
     @Id

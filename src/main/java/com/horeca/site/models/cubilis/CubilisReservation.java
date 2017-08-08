@@ -3,6 +3,7 @@ package com.horeca.site.models.cubilis;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Audited
 public class CubilisReservation {
 
     @Id

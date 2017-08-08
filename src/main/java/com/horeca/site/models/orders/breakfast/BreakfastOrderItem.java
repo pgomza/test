@@ -1,12 +1,14 @@
 package com.horeca.site.models.orders.breakfast;
 
 import com.horeca.site.models.hotel.services.breakfast.BreakfastItem;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(indexes = @Index(name = "breakfast_order_id", columnList = "breakfast_order_id"))
+@Audited
 public class BreakfastOrderItem {
 
     @Id

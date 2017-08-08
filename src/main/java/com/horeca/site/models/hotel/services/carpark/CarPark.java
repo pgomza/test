@@ -1,11 +1,13 @@
 package com.horeca.site.models.hotel.services.carpark;
 
 import com.horeca.site.models.Price;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Audited
 public class CarPark {
 
     @Id

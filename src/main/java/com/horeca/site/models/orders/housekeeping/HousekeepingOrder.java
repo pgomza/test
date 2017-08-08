@@ -2,11 +2,13 @@ package com.horeca.site.models.orders.housekeeping;
 
 import com.horeca.site.models.hotel.services.housekeeping.HousekeepingItem;
 import com.horeca.site.models.orders.Order;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
+@Audited
 public class HousekeepingOrder extends Order {
 
     private String message;

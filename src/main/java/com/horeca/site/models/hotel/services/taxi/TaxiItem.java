@@ -1,10 +1,13 @@
 package com.horeca.site.models.hotel.services.taxi;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(indexes = @Index(name = "taxi_id", columnList = "taxi_id"))
+@Audited
 public class TaxiItem {
 
     @Id

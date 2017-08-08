@@ -2,6 +2,7 @@ package com.horeca.site.models.hotel.services.spa;
 
 import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendar;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(indexes = @Index(name = "spa_id", columnList = "spa_id"))
+@Audited
 public class SpaItem {
 
     @Id
