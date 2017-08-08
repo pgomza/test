@@ -1,6 +1,7 @@
 package com.horeca.site.security.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -8,6 +9,7 @@ import javax.persistence.FetchType;
 import java.util.List;
 
 @Entity
+@Audited
 public class SalesmanAccount extends AbstractAccount {
 
     public static final String USERNAME_PREFIX = "SALESMAN_";

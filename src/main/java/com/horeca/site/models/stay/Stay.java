@@ -6,6 +6,7 @@ import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.orders.Orders;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.envers.Audited;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.sql.Timestamp;
 
 @Entity
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@Audited
 public class Stay {
 
     @Id

@@ -14,6 +14,7 @@ import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.notifications.NotificationSettings;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
@@ -25,6 +26,7 @@ import java.util.Set;
 
 @Entity
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@Audited
 public class Hotel {
 
 	@Id

@@ -1,9 +1,12 @@
 package com.horeca.site.models.hotel.roomdirectory;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Audited
 public class RoomDirectory {
 
     @Id

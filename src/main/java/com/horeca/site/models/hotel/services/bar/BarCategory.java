@@ -1,12 +1,14 @@
 package com.horeca.site.models.hotel.services.bar;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Table(indexes = @Index(name = "bar_id", columnList = "bar_id"))
+@Audited
 public class BarCategory {
 
     public enum Category {

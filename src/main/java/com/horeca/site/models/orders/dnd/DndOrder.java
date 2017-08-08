@@ -1,11 +1,13 @@
 package com.horeca.site.models.orders.dnd;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Audited
 public class DndOrder {
 
     public enum Status { ENABLED, DISABLED }

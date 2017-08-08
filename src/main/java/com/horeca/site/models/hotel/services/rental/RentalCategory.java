@@ -1,10 +1,13 @@
 package com.horeca.site.models.hotel.services.rental;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Table(indexes = @Index(name = "rental_id", columnList = "rental_id"))
+@Audited
 public class RentalCategory {
 
     public enum Category { MEN, WOMEN, CHILDREN }

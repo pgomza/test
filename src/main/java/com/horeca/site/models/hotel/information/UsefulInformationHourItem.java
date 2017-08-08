@@ -2,6 +2,7 @@ package com.horeca.site.models.hotel.information;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalTime;
 
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
+@Audited
 public class UsefulInformationHourItem {
 
     @Id

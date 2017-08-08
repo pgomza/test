@@ -2,6 +2,7 @@ package com.horeca.site.models.orders.bar;
 
 import com.horeca.site.models.Price;
 import com.horeca.site.models.orders.Order;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(indexes = @Index(name = "orders_id_bar", columnList = "orders_id_bar"))
+@Audited
 public class BarOrder extends Order {
 
     @NotNull

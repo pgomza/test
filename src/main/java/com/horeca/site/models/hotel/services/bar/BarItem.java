@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.bar;
 
 import com.horeca.site.models.Price;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(indexes = @Index(name = "bar_category_id", columnList = "bar_category_id"))
+@Audited
 public class BarItem {
 
     @Id

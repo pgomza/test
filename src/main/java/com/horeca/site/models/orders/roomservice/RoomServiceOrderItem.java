@@ -1,12 +1,14 @@
 package com.horeca.site.models.orders.roomservice;
 
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceItem;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(indexes = @Index(name = "room_service_order_id", columnList = "room_service_order_id"))
+@Audited
 public class RoomServiceOrderItem {
 
     @Id

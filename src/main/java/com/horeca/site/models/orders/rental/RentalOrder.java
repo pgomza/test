@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.orders.Order;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.envers.Audited;
 import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.Set;
 
 @Entity
 @Table(indexes = @Index(name = "orders_id_rental", columnList = "orders_id_rental"))
+@Audited
 public class RentalOrder extends Order {
 
     @NotNull

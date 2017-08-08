@@ -3,6 +3,7 @@ package com.horeca.site.models.orders.roomservice;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.orders.Order;
+import org.hibernate.envers.Audited;
 import org.joda.time.LocalTime;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(indexes = @Index(name = "orders_id_room_service", columnList = "orders_id_room_service"))
+@Audited
 public class RoomServiceOrder extends Order {
 
     @NotNull
