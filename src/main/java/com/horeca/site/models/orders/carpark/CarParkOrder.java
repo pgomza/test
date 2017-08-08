@@ -1,22 +1,17 @@
 package com.horeca.site.models.orders.carpark;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.horeca.site.models.orders.OrderStatus;
+import com.horeca.site.models.orders.Order;
 import org.joda.time.LocalDateTime;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(indexes = @Index(name = "orders_id_car_park", columnList = "orders_id_car_park"))
-public class CarParkOrder {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotNull
-    private OrderStatus status;
+public class CarParkOrder extends Order {
 
     @NotNull
     private String licenseNumber;
@@ -28,22 +23,6 @@ public class CarParkOrder {
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime toDate;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
 
     public String getLicenseNumber() {
         return licenseNumber;

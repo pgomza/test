@@ -36,7 +36,7 @@ public class SpaOrderController {
     @RequestMapping(value = "/{pin}/orders/spa", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public SpaOrder add(@PathVariable String pin, @Valid @RequestBody SpaOrderPOST newOrder, Authentication authentication) {
         if (authentication.getPrincipal() instanceof GuestAccount) {
-            return service.addAndTryToNotify(pin, newOrder);
+            return service.addAndNotify(pin, newOrder);
         }
         else
             throw new AccessDeniedException("You are not allowed to add a new order");

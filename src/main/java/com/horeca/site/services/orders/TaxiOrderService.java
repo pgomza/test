@@ -1,10 +1,7 @@
 package com.horeca.site.services.orders;
 
-import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
-import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.taxi.TaxiOrder;
 import com.horeca.site.models.orders.taxi.TaxiOrderPOST;
@@ -15,7 +12,7 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +20,7 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class TaxiOrderService {
+public class TaxiOrderService extends GenericOrderService<TaxiOrder> {
 
     @Autowired
     private OrdersService ordersService;
@@ -34,30 +31,16 @@ public class TaxiOrderService {
     @Autowired
     private TaxiOrderRepository repository;
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
-
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
+
+    @Override
+    protected CrudRepository<TaxiOrder, Long> getRepository() {
+        return repository;
+    }
 
     public Set<TaxiOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
-        Set<TaxiOrder> taxiOrders = orders.getTaxiOrders();
-
-        return taxiOrders;
-    }
-
-    public TaxiOrder get(String stayPin, Long id) {
-        TaxiOrder found = null;
-        for (TaxiOrder taxiOrder : getAll(stayPin)) {
-            if (taxiOrder.getId().equals(id)) {
-                found = taxiOrder;
-                break;
-            }
-        }
-        if (found == null)
-            throw new ResourceNotFoundException();
-
-        return found;
+        return orders.getTaxiOrders();
     }
 
     public TaxiOrder add(String stayPin, TaxiOrderPOST entity) {
@@ -79,32 +62,10 @@ public class TaxiOrderService {
         return savedOrder;
     }
 
-    public TaxiOrder addAndTryToNotify(String stayPin, TaxiOrderPOST entity) {
+    public TaxiOrder addAndNotify(String stayPin, TaxiOrderPOST entity) {
         TaxiOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.TAXI, stay));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.TAXI);
 
         return added;
-    }
-
-    public TaxiOrder update(String stayPin, Long id, TaxiOrder updated) {
-        TaxiOrder order = get(stayPin, id);
-        updated.setId(order.getId());
-        return repository.save(updated);
-    }
-
-    public OrderStatusPUT getStatus(String pin, Long id) {
-        OrderStatus status = get(pin, id).getStatus();
-        OrderStatusPUT statusPUT = new OrderStatusPUT();
-        statusPUT.setStatus(status);
-        return statusPUT;
-    }
-
-    public OrderStatusPUT updateStatus(String stayPin, Long id, OrderStatusPUT newStatus) {
-        TaxiOrder order = get(stayPin, id);
-        order.setStatus(newStatus.getStatus());
-        update(stayPin, order.getId(), order);
-        return newStatus;
     }
 }

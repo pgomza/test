@@ -4,9 +4,7 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
 import com.horeca.site.models.hotel.services.housekeeping.HousekeepingItem;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
-import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.housekeeping.HousekeepingOrder;
 import com.horeca.site.models.orders.housekeeping.HousekeepingOrderPOST;
@@ -14,7 +12,7 @@ import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.HousekeepingOrderRepository;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +21,7 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class HousekeepingOrderService {
+public class HousekeepingOrderService extends GenericOrderService<HousekeepingOrder> {
 
     @Autowired
     private OrdersService ordersService;
@@ -34,28 +32,14 @@ public class HousekeepingOrderService {
     @Autowired
     private HousekeepingOrderRepository repository;
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    @Override
+    protected CrudRepository<HousekeepingOrder, Long> getRepository() {
+        return repository;
+    }
 
     public Set<HousekeepingOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
-        Set<HousekeepingOrder> housekeepingOrders = orders.getHousekeepingOrders();
-
-        return housekeepingOrders;
-    }
-
-    public HousekeepingOrder get(String stayPin, Long id) {
-        HousekeepingOrder order = null;
-        for (HousekeepingOrder housekeepingOrder : getAll(stayPin)) {
-            if (housekeepingOrder.getId().equals(id)) {
-                order = housekeepingOrder;
-                break;
-            }
-        }
-        if (order == null)
-            throw new ResourceNotFoundException("Could not find an order with such an id");
-
-        return order;
+        return orders.getHousekeepingOrders();
     }
 
     public HousekeepingOrder add(String stayPin, HousekeepingOrderPOST entity) {
@@ -80,33 +64,11 @@ public class HousekeepingOrderService {
         return savedOrder;
     }
 
-    public HousekeepingOrder addAndTryToNotify(String stayPin, HousekeepingOrderPOST entity) {
+    public HousekeepingOrder addAndNotify(String stayPin, HousekeepingOrderPOST entity) {
         HousekeepingOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.HOUSEKEEPING, stay));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.HOUSEKEEPING);
 
         return added;
-    }
-
-    public HousekeepingOrder update(String stayPin, Long id, HousekeepingOrder updated) {
-        HousekeepingOrder order = get(stayPin, id);
-        updated.setId(order.getId());
-        return repository.save(updated);
-    }
-
-    public OrderStatusPUT getStatus(String pin, Long id) {
-        OrderStatus status = get(pin, id).getStatus();
-        OrderStatusPUT statusPUT = new OrderStatusPUT();
-        statusPUT.setStatus(status);
-        return statusPUT;
-    }
-
-    public OrderStatusPUT updateStatus(String stayPin, Long id, OrderStatusPUT newStatus) {
-        HousekeepingOrder order = get(stayPin, id);
-        order.setStatus(newStatus.getStatus());
-        update(stayPin, order.getId(), order);
-        return newStatus;
     }
 
     private HousekeepingItem resolveItemIdToEntity(String stayPin, Long id) {

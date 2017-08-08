@@ -18,4 +18,8 @@ public interface HotelRepository extends PagingAndSortingRepository<Hotel, Long>
     @Query("select h.id as id, h.address as address from Hotel h where lower(h.address) like %:city% and " +
             "h.isTestHotel = :withTestHotels")
     List<Object[]> getCandidatesByCity(@Param("city") String city, @Param("withTestHotels") Boolean withTestHotels);
+
+    @Query("select h.id from Hotel h where h.cubilisSettings.isEnabled = 1 and " +
+            "h.cubilisConnectionStatus.status like 'SUCCESS'")
+    List<Long> getIdsOfCubilisEligible();
 }

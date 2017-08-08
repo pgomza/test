@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.horeca.site.models.Currency;
 import com.horeca.site.models.Price;
+import com.horeca.site.models.cubilis.CubilisConnectionStatus;
+import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
@@ -86,6 +88,10 @@ public class Hotel {
 	@NotNull
 	private Boolean isTestHotel;
 
+	@JsonIgnore
+	@NotNull
+	private Boolean isMarkedAsDeleted;
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Currency currency;
@@ -116,6 +122,16 @@ public class Hotel {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	@JoinColumn(name = "notificationSettings_id")
 	private NotificationSettings notificationSettings;
+
+	@JsonIgnore
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@JoinColumn(name = "cubilisSettings_id")
+	private CubilisSettings cubilisSettings;
+
+	@JsonIgnore
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@JoinColumn(name = "cubilisConnectionStatus_id")
+	private CubilisConnectionStatus cubilisConnectionStatus;
 
 	public Long getId() {
 		return id;
@@ -305,6 +321,14 @@ public class Hotel {
 
 	public void setIsTestHotel(Boolean isTestHotel) { this.isTestHotel = isTestHotel; }
 
+	public Boolean getIsMarkedAsDeleted() {
+		return isMarkedAsDeleted;
+	}
+
+	public void setIsMarkedAsDeleted(Boolean markedAsDeleted) {
+		isMarkedAsDeleted = markedAsDeleted;
+	}
+
 	public Currency getCurrency() {
 		return currency;
 	}
@@ -359,6 +383,22 @@ public class Hotel {
 
 	public void setNotificationSettings(NotificationSettings notificationSettings) {
 		this.notificationSettings = notificationSettings;
+	}
+
+	public CubilisSettings getCubilisSettings() {
+		return cubilisSettings;
+	}
+
+	public void setCubilisSettings(CubilisSettings cubilisSettings) {
+		this.cubilisSettings = cubilisSettings;
+	}
+
+	public CubilisConnectionStatus getCubilisConnectionStatus() {
+		return cubilisConnectionStatus;
+	}
+
+	public void setCubilisConnectionStatus(CubilisConnectionStatus cubilisConnectionStatus) {
+		this.cubilisConnectionStatus = cubilisConnectionStatus;
 	}
 
 	public HotelView toView() {

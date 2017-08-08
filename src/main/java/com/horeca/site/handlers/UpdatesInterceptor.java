@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.horeca.utils.UrlPartExtractors.*;
@@ -23,13 +24,15 @@ public class UpdatesInterceptor extends HandlerInterceptorAdapter {
 
     // there's also the PATCH method but it's not supported by any of the exposed endpoints
     private static final Set<String> updateHttpMethods = new HashSet<>(Arrays.asList(
-           "POST", "PUT", "DELETE"
+           "POST", "PUT", "PATCH", "DELETE"
     ));
 
     // analogous to the above
     private static final Set<Integer> successfulHttpStatuses = new HashSet<>(Arrays.asList(
             200, 201, 202, 204
     ));
+
+    private static final String POSTPONED_PIN_HEADER = "Interceptor";
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -40,8 +43,7 @@ public class UpdatesInterceptor extends HandlerInterceptorAdapter {
         if ("DELETE".equals(method)) {
             String pin = extractStayPinFromServletPath(request.getRequestURI(), stayPinPatternExact);
             if (pin != null) {
-                markAsHandled(response);
-                notifyHotel(pin);
+                setPostponedPin(response, pin);
             }
         }
         return true;
@@ -50,7 +52,12 @@ public class UpdatesInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
-        if (!isAlreadyHandled(response)) {
+        Optional<String> postponedPinOpt = getPostponedPin(response);
+        if (postponedPinOpt.isPresent()) {
+            response.setHeader(POSTPONED_PIN_HEADER, "handled"); // couldn't find a simple way to simply remove it
+            notifyHotel(postponedPinOpt.get());
+        }
+        else {
             Integer statusCode = response.getStatus();
             String method = request.getMethod();
 
@@ -82,12 +89,12 @@ public class UpdatesInterceptor extends HandlerInterceptorAdapter {
         }
     }
 
-    private void markAsHandled(HttpServletResponse response) {
-        response.setHeader("notified", "true");
+    private void setPostponedPin(HttpServletResponse response, String pin) {
+        response.setHeader(POSTPONED_PIN_HEADER, pin);
     }
 
-    private boolean isAlreadyHandled(HttpServletResponse response) {
-        return response.getHeader("notified") != null;
+    private Optional<String> getPostponedPin(HttpServletResponse response) {
+        return Optional.ofNullable(response.getHeader(POSTPONED_PIN_HEADER));
     }
 
     private void notifyHotel(Long hotelId) {

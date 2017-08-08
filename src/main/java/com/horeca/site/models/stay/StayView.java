@@ -23,6 +23,7 @@ public class StayView {
     private Guest guest;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String createdAt;
+    private Long cubilisId;
 
     public String getPin() {
         return pin;
@@ -110,5 +111,13 @@ public class StayView {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Long getCubilisId() {
+        return cubilisId;
+    }
+
+    public void setCubilisId(Long cubilisId) {
+        this.cubilisId = cubilisId;
     }
 }

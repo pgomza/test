@@ -6,15 +6,14 @@ import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.notifications.NotificationSettings;
 import com.horeca.site.models.stay.Stay;
+import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 
 @Service
 public class NewOrderEmailNotificationService implements ApplicationListener<NewOrderEvent> {
@@ -22,11 +21,15 @@ public class NewOrderEmailNotificationService implements ApplicationListener<New
     private static final Logger logger = Logger.getLogger(NewOrderEmailNotificationService.class);
 
     @Autowired
-    private JavaMailSender mailSender;
+    private StayService stayService;
+
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     @Override
     public void onApplicationEvent(NewOrderEvent event) {
-        Stay stay = event.getStay();
+        String pin = event.getPin();
+        Stay stay = stayService.getWithoutCheckingStatus(pin);
         NotificationSettings notificationSettings = stay.getHotel().getNotificationSettings();
         if (notificationSettings == null) {
             throw new BusinessRuleViolationException("An email about a new order cannot be send because the " +
@@ -67,9 +70,9 @@ public class NewOrderEmailNotificationService implements ApplicationListener<New
     }
 
     private void prepareAndSendMessage(String recipientEmail, String service, Guest guest)
-            throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        String messageBody =
+            throws MessagingException, UnsupportedEncodingException {
+
+        String content =
                 "<div>" +
                         "Hi," +
                         "<br/><br/>" +
@@ -81,11 +84,8 @@ public class NewOrderEmailNotificationService implements ApplicationListener<New
                         "<br/>" +
                         "The Throdi Team" +
                         "</div>";
-        mimeMessage.setContent(messageBody, "text/html");
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "utf-8");
-        helper.setTo(recipientEmail);
-        helper.setSubject("A new order in the " + service + " service");
-        helper.setFrom("Throdi");
-        mailSender.send(mimeMessage);
+
+        emailSenderService.send("A new order in the " + service + " service", content, recipientEmail,
+                "no-reply@throdi.com", "Throdi");
     }
 }

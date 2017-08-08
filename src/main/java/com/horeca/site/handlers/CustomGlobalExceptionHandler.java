@@ -1,7 +1,7 @@
 package com.horeca.site.handlers;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.horeca.site.exceptions.BadAuthorizationRequestException;
+import com.horeca.site.exceptions.BadAuthenticationRequestException;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.exceptions.UnauthorizedException;
@@ -16,6 +16,7 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
@@ -61,8 +62,9 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
         BAD_REQUEST_EXCEPTIONS.add(BindException.class);
         BAD_REQUEST_EXCEPTIONS.add(TypeMismatchException.class);
         BAD_REQUEST_EXCEPTIONS.add(MethodArgumentNotValidException.class);
-        BAD_REQUEST_EXCEPTIONS.add(BadAuthorizationRequestException.class);
+        BAD_REQUEST_EXCEPTIONS.add(BadAuthenticationRequestException.class);
         BAD_REQUEST_EXCEPTIONS.add(UnsupportedGrantTypeException.class);
+        BAD_REQUEST_EXCEPTIONS.add(DisabledException.class);
         BAD_REQUEST_EXCEPTIONS.add(IllegalArgumentException.class);
 
         NOT_FOUND_EXCEPTIONS.add(ResourceNotFoundException.class);

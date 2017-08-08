@@ -1,25 +1,24 @@
 package com.horeca.site.models.notifications;
 
 import com.horeca.site.models.hotel.services.AvailableServiceType;
-import com.horeca.site.models.stay.Stay;
 import org.springframework.context.ApplicationEvent;
 
 public class NewOrderEvent extends ApplicationEvent {
 
     private final AvailableServiceType serviceType;
-    private final Stay stay;
+    private final String pin;
 
-    public NewOrderEvent(Object source, AvailableServiceType serviceType, Stay stay) {
+    public NewOrderEvent(Object source, AvailableServiceType serviceType, String pin) {
         super(source);
         this.serviceType = serviceType;
-        this.stay = stay;
+        this.pin = pin;
     }
 
     public AvailableServiceType getServiceType() {
         return serviceType;
     }
 
-    public Stay getStay() {
-        return stay;
+    public String getPin() {
+        return pin;
     }
 }

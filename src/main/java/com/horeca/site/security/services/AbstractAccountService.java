@@ -1,29 +1,42 @@
 package com.horeca.site.security.services;
 
+import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.security.models.AbstractAccount;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 
 public abstract class AbstractAccountService<T extends AbstractAccount> {
 
-    protected final static String passwordRegex = "[^\\s]{5,}";
+    final static String PASSWORD_REGEX = "[^\\s]{5,}";
 
-    @Autowired
-    protected CrudRepository<T, String> repository;
+    abstract protected CrudRepository<T, String> getRepository();
 
     public boolean exists(String username) {
-        return repository.exists(username);
+        return getRepository().exists(username);
     }
 
     public T get(String username) {
-        return repository.findOne(username);
+        T account = getRepository().findOne(username);
+        if (account == null) {
+            throw new ResourceNotFoundException("Could not find an account with such a username");
+        }
+        return account;
     }
 
     public T save(T account) {
-        return repository.save(account);
+        return getRepository().save(account);
     }
 
     public void delete(String username) {
-        repository.delete(username);
+        getRepository().delete(username);
+    }
+
+    void disable(T account) {
+        account.setEnabled(false);
+        save(account);
+    }
+
+    void enable(T account) {
+        account.setEnabled(true);
+        save(account);
     }
 }

@@ -1,21 +1,13 @@
 package com.horeca.site.models.orders.housekeeping;
 
 import com.horeca.site.models.hotel.services.housekeeping.HousekeepingItem;
-import com.horeca.site.models.orders.OrderStatus;
+import com.horeca.site.models.orders.Order;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
-public class HousekeepingOrder {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotNull
-    private OrderStatus status = OrderStatus.NEW;
+public class HousekeepingOrder extends Order {
 
     private String message;
 
@@ -24,22 +16,6 @@ public class HousekeepingOrder {
             joinColumns=@JoinColumn(name="housekeeping_order_id"),
             inverseJoinColumns=@JoinColumn(name="housekeeping_item_id"))
     private Set<HousekeepingItem> items;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
 
     public String getMessage() {
         return message;

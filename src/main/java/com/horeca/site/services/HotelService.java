@@ -4,6 +4,8 @@ import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.extractors.HotelDataExtractor;
 import com.horeca.site.models.Currency;
+import com.horeca.site.models.cubilis.CubilisConnectionStatus;
+import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.hotel.images.FileLink;
@@ -11,6 +13,8 @@ import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.information.UsefulInformationHourItem;
 import com.horeca.site.models.notifications.NotificationSettings;
 import com.horeca.site.repositories.HotelRepository;
+import com.horeca.site.security.services.GuestAccountService;
+import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.services.StayService;
 import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +52,12 @@ public class HotelService {
     @Lazy
     private StayService stayService;
 
+    @Autowired
+    private UserAccountService userAccountService;
+
+    @Autowired
+    private GuestAccountService guestAccountService;
+
     /*
         general actions
      */
@@ -68,8 +78,7 @@ public class HotelService {
             views.add(hotel.toView());
         }
 
-        PageImpl<HotelView> result = new PageImpl<>(views, pageable, repository.getTotalCount());
-        return result;
+        return new PageImpl<>(views, pageable, repository.getTotalCount());
     }
 
     public Hotel get(Long id) {
@@ -92,6 +101,8 @@ public class HotelService {
             hotel.setImages(new ArrayList<>());
 
         hotel.setIsThrodiPartner(false);
+        hotel.setIsMarkedAsDeleted(false);
+
         if (hotel.getCurrency() == null)
             hotel.setCurrency(Currency.EURO);
 
@@ -111,13 +122,16 @@ public class HotelService {
         return repository.save(updated);
     }
 
-    public Hotel updateIgnoringSomeFields(Long id, Hotel newOne) {
+    public Hotel updateFromController(Long id, Hotel newOne) {
         Hotel current = get(id);
         // don't let this update overwrite info about the guests - ignore whatever has been set in newOne as 'guests'
         // there's a different endpoint specifically intended for managing the guests
         newOne.setGuests(current.getGuests());
-        // the same applies for the notification settings
+        // the same applies for a few other fields
         newOne.setNotificationSettings(current.getNotificationSettings());
+        newOne.setCubilisSettings(current.getCubilisSettings());
+        newOne.setCubilisConnectionStatus(current.getCubilisConnectionStatus());
+        newOne.setIsMarkedAsDeleted(current.getIsMarkedAsDeleted());
 
         return update(id, newOne);
     }
@@ -157,10 +171,10 @@ public class HotelService {
 
         if (hotel.getImages() != null) {
             List<String> imageFilenames = hotel.getImages().stream()
-                    .map(image -> image.getFilename())
+                    .map(FileLink::getFilename)
                     .collect(Collectors.toList());
 
-            imageFilenames.stream().forEach(filename -> hotelImagesService.delete(hotel.getId(), filename));
+            imageFilenames.forEach(filename -> hotelImagesService.delete(hotel.getId(), filename));
             hotel.getImages().clear();
         }
 
@@ -174,12 +188,31 @@ public class HotelService {
         ensureEnoughInfoAboutHotel(id);
     }
 
-    public void delete(Long id) {
-        Hotel toDelete = get(id);
-        repository.delete(toDelete);
+    @PreAuthorize("hasRole('SALESMAN')")
+    public void markAsDeleted(Long id) {
+        Hotel hotel = get(id);
+        hotel.setIsMarkedAsDeleted(true);
+
+        userAccountService.disableAllInHotel(id);
+        Collection<String> staysInHotel = stayService.getByHotelId(id);
+        staysInHotel.forEach(guestAccountService::disableForStay);
+
+        update(id, hotel);
     }
 
-    public void ensureExists(Long hotelId) {
+    @PreAuthorize("hasRole('SALESMAN')")
+    public void restore(Long id) {
+        Hotel hotel = get(id);
+        hotel.setIsMarkedAsDeleted(false);
+
+        userAccountService.enableAllInHotel(id);
+        Collection<String> staysInHotel = stayService.getByHotelId(id);
+        staysInHotel.forEach(guestAccountService::enableForStay);
+
+        update(id, hotel);
+    }
+
+    void ensureExists(Long hotelId) {
         boolean exists = repository.exists(hotelId);
         if (!exists)
             throw new ResourceNotFoundException("Could not find a hotel with such an id");
@@ -234,6 +267,20 @@ public class HotelService {
             NotificationSettings settings = new NotificationSettings();
             settings.setEmail("");
             hotel.setNotificationSettings(settings);
+        }
+
+        if (hotel.getCubilisSettings() == null) {
+            CubilisSettings settings = new CubilisSettings();
+            settings.setEnabled(false);
+            settings.setLogin("someone@example.com");
+            settings.setPassword("pass123");
+            hotel.setCubilisSettings(settings);
+        }
+
+        if (hotel.getCubilisConnectionStatus() == null) {
+            CubilisConnectionStatus connectionStatus = new CubilisConnectionStatus();
+            connectionStatus.setStatus(CubilisConnectionStatus.Status.DISABLED);
+            hotel.setCubilisConnectionStatus(connectionStatus);
         }
 
         update(hotelId, hotel);
@@ -390,5 +437,13 @@ public class HotelService {
         hotel.setLongitude(hotelData.longitude);
         hotel.setLatitude(hotelData.latitude);
         return hotel;
+    }
+
+    /*
+        Cubilis-related functionality
+     */
+
+    public List<Long> getIdsOfCubilisEligible() {
+        return repository.getIdsOfCubilisEligible();
     }
 }

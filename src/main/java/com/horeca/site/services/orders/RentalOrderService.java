@@ -7,9 +7,7 @@ import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.rental.Rental;
 import com.horeca.site.models.hotel.services.rental.RentalCategory;
 import com.horeca.site.models.hotel.services.rental.RentalItem;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.OrderStatus;
-import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.rental.RentalOrder;
 import com.horeca.site.models.orders.rental.RentalOrderItem;
@@ -19,7 +17,7 @@ import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.RentalOrderRepository;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +27,7 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class RentalOrderService {
+public class RentalOrderService extends GenericOrderService<RentalOrder> {
 
     @Autowired
     private OrdersService ordersService;
@@ -40,26 +38,14 @@ public class RentalOrderService {
     @Autowired
     private RentalOrderRepository repository;
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    @Override
+    protected CrudRepository<RentalOrder, Long> getRepository() {
+        return repository;
+    }
 
     public Set<RentalOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
         return orders.getRentalOrders();
-    }
-
-    public RentalOrder get(String stayPin, Long id) {
-        RentalOrder found = null;
-        for (RentalOrder order : getAll(stayPin)) {
-            if (order.getId().equals(id)) {
-                found = order;
-                break;
-            }
-        }
-        if (found == null)
-            throw new ResourceNotFoundException();
-
-        return found;
     }
 
     public RentalOrder add(String stayPin, RentalOrderPOST entity) {
@@ -87,33 +73,11 @@ public class RentalOrderService {
         return savedOrder;
     }
 
-    public RentalOrder addAndTryToNotify(String stayPin, RentalOrderPOST entity) {
+    public RentalOrder addAndNotify(String stayPin, RentalOrderPOST entity) {
         RentalOrder added = add(stayPin, entity);
-        Stay stay = stayService.get(stayPin);
-
-        eventPublisher.publishEvent(new NewOrderEvent(this, AvailableServiceType.RENTAL, stay));
+        notifyAboutNewOrder(stayPin, AvailableServiceType.RENTAL);
 
         return added;
-    }
-
-    public RentalOrder update(String stayPin, Long id, RentalOrder updated) {
-        RentalOrder order = get(stayPin, id);
-        updated.setId(order.getId());
-        return repository.save(updated);
-    }
-
-    public OrderStatusPUT getStatus(String pin, Long id) {
-        OrderStatus status = get(pin, id).getStatus();
-        OrderStatusPUT statusPUT = new OrderStatusPUT();
-        statusPUT.setStatus(status);
-        return statusPUT;
-    }
-
-    public OrderStatusPUT updateStatus(String stayPin, Long id, OrderStatusPUT newStatus) {
-        RentalOrder order = get(stayPin, id);
-        order.setStatus(newStatus.getStatus());
-        update(stayPin, order.getId(), order);
-        return newStatus;
     }
 
     private RentalItem resolveItemIdToEntity(String stayPin, Long id) {

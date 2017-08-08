@@ -3,9 +3,7 @@ package com.horeca.site.services.services;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServices;
-import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenu;
-import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenuCategory;
-import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenuItem;
+import com.horeca.site.models.hotel.services.restaurantmenu.*;
 import com.horeca.site.repositories.services.RestaurantMenuCategoryRepository;
 import com.horeca.site.repositories.services.RestaurantMenuItemRepository;
 import com.horeca.site.repositories.services.RestaurantMenuRepository;
@@ -42,8 +40,16 @@ public class RestaurantMenuService {
         return services.getRestaurantMenu();
     }
 
-    public RestaurantMenu update(RestaurantMenu updated) {
+    public RestaurantMenu update(Long hotelId, RestaurantMenu updated) {
+        RestaurantMenu menu = get(hotelId);
+        updated.setId(menu.getId());
         return repository.save(updated);
+    }
+
+    public RestaurantMenu patch(Long hotelId, RestaurantMenuPATCH patch) {
+        RestaurantMenu menu = get(hotelId);
+        menu.setDescription(patch.getDescription());
+        return repository.save(menu);
     }
 
     public RestaurantMenu addDefaultRestaurantMenu(Long hotelId) {
@@ -82,16 +88,23 @@ public class RestaurantMenuService {
             throw new BusinessRuleViolationException("A category with such a name already exists");
 
         restaurantMenu.getCategories().add(category);
-        update(restaurantMenu);
+        update(hotelId, restaurantMenu);
         return restaurantMenu.getCategories().stream()
                 .filter(c -> c.getName().equalsIgnoreCase(category.getName()))
                 .findFirst()
                 .get();
     }
 
-    public RestaurantMenuCategory updateCategory(Long hotelId, RestaurantMenuCategory updated) {
-        getCategory(hotelId, updated.getId());
+    public RestaurantMenuCategory updateCategory(Long hotelId, Long categoryId, RestaurantMenuCategory updated) {
+        getCategory(hotelId, categoryId);
+        updated.setId(categoryId);
         return categoryRepository.save(updated);
+    }
+
+    public RestaurantMenuCategory patchCategory(Long hotelId, Long categoryId, RestaurantMenuCategoryPATCH patch) {
+        RestaurantMenuCategory category = getCategory(hotelId, categoryId);
+        category.setName(patch.getName());
+        return categoryRepository.save(category);
     }
 
     public void deleteCategory(Long hotelId, Long categoryId) {
@@ -100,7 +113,7 @@ public class RestaurantMenuService {
                 .filter(c -> c.getId() != categoryId)
                 .collect(Collectors.toList());
         menu.setCategories(remainingCategories);
-        update(menu);
+        update(hotelId, menu);
     }
 
     public List<RestaurantMenuItem> getItems(Long hotelId, Long categoryId) {
@@ -119,7 +132,7 @@ public class RestaurantMenuService {
         RestaurantMenuCategory category = getCategory(hotelId, categoryId);
         RestaurantMenuItem saved = itemRepository.save(item);
         category.getItems().add(saved);
-        updateCategory(hotelId, category);
+        updateCategory(hotelId, categoryId, category);
         return saved;
     }
 
@@ -134,6 +147,6 @@ public class RestaurantMenuService {
                 .filter(i -> i.getId() != itemId)
                 .collect(Collectors.toList());
         category.setItems(remainingItems);
-        updateCategory(hotelId, category);
+        updateCategory(hotelId, categoryId, category);
     }
 }

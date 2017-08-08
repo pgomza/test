@@ -4,6 +4,7 @@ import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.services.HotelService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @Api(value = "hotels")
 @RestController
@@ -49,9 +48,9 @@ public class HotelController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Hotel> update(@PathVariable("id") Long id, @Valid @RequestBody Hotel hotel) {
-        Hotel changed = service.updateIgnoringSomeFields(id, hotel);
-		return new ResponseEntity<Hotel>(changed, HttpStatus.OK);
+	public ResponseEntity<Hotel> update(@PathVariable("id") Long id, @RequestBody Hotel hotel) {
+        Hotel changed = service.updateFromController(id, hotel);
+		return new ResponseEntity<>(changed, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}/reset", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -61,8 +60,14 @@ public class HotelController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@PathVariable("id") Long id) {
-        service.delete(id);
+        service.markAsDeleted(id);
     }
+
+    @ApiOperation(value = "hotels", hidden = true)
+	@RequestMapping(value = "/restoration", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void restore(@RequestBody Long id) {
+		service.restore(id);
+	}
 
 	@RequestMapping(value = "", params = "name", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<Hotel> getByName(@RequestParam("name") String name, Pageable pageable) {
