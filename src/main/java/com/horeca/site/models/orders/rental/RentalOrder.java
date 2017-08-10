@@ -4,13 +4,11 @@ package com.horeca.site.models.orders.rental;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.orders.Order;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.envers.Audited;
 import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 import java.util.Set;
 
 @Entity
@@ -28,10 +26,6 @@ public class RentalOrder extends Order {
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDateTime time;
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    private Timestamp createdAt;
 
     public Price getTotal() {
         return total;
@@ -55,13 +49,5 @@ public class RentalOrder extends Order {
 
     public void setTime(LocalDateTime time) {
         this.time = time;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
     }
 }
