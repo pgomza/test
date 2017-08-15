@@ -46,8 +46,6 @@ public class CubilisReservation {
     @Id
     private Long id;
 
-    private boolean isRejected;
-
     @NotNull
     @ManyToOne
     @JoinColumn(name = "hotel_id")
@@ -83,14 +81,6 @@ public class CubilisReservation {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public boolean isRejected() {
-        return isRejected;
-    }
-
-    public void setRejected(boolean rejected) {
-        isRejected = rejected;
     }
 
     public Hotel getHotel() {

@@ -39,14 +39,8 @@ public class CubilisReservationService {
         return repository.getByHotelId(hotelId);
     }
 
-    private List<CubilisReservation> getAllNotRejected(Long hotelId) {
-        return getAll(hotelId).stream().filter(r -> !r.isRejected()).collect(Collectors.toList());
-    }
-
-    public List<CubilisReservationUpdate> getAllNotRejectedViews(Long hotelId) {
-        return getAllNotRejected(hotelId).stream()
-                .map(CubilisReservation::toView)
-                .collect(Collectors.toList());
+    public List<CubilisReservationUpdate> getAllViews(Long hotelId) {
+        return getAll(hotelId).stream().map(CubilisReservation::toView).collect(Collectors.toList());
     }
 
     private CubilisReservation get(Long hotelId, Long id) {
@@ -76,24 +70,18 @@ public class CubilisReservationService {
 
     public void confirm(Long hotelId, List<Long> reservationIds) {
         List<CubilisReservation> reservations = getByIds(hotelId, reservationIds);
-        for (CubilisReservation reservation : reservations) {
-            if (reservation.isRejected()) {
-                throw new ResourceNotFoundException();
-            }
-        }
         merge(reservations);
         repository.delete(reservations);
     }
 
     public void reject(Long hotelId, List<Long> reservationIds) {
         List<CubilisReservation> reservations = getByIds(hotelId, reservationIds);
-        reservations.forEach(r -> r.setRejected(true));
-        save(reservations);
+        repository.delete(reservations);
     }
 
     public void deleteOutdated() {
         for (CubilisReservation reservation : repository.findAll()) {
-            if (reservation.isRejected() && isOutdated(reservation)) {
+            if (isOutdated(reservation)) {
                 repository.delete(reservation);
             }
         }
