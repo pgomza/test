@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -107,12 +106,10 @@ public class CubilisService {
 
             try {
                 List<CubilisReservation> fetchedReservations = connectorService.fetchReservations(settings.getLogin(), settings.getPassword());
-                List<CubilisReservation> filteredReservations = filterFetchedReservations(hotelId, fetchedReservations);
+                if (!fetchedReservations.isEmpty()) {
+                    setHotelForReservations(hotelId, fetchedReservations);
 
-                if (!filteredReservations.isEmpty()) {
-                    setHotelForReservations(hotelId, filteredReservations);
-
-                    reservationService.save(filteredReservations);
+                    reservationService.save(fetchedReservations);
 
                     eventPublisher.publishEvent(new ChangeInHotelEvent(this, hotelId));
                 }
@@ -120,17 +117,6 @@ public class CubilisService {
                 updateConnectionStatus(hotelId);
             }
         }
-    }
-
-    private List<CubilisReservation> filterFetchedReservations(Long hotelId, List<CubilisReservation> reservations) {
-        Set<Long> alreadyMergedIds = stayService.getAllCubilisIdsInHotel(hotelId);
-        Set<Long> pendingReservationIds = reservationService.getAll(hotelId).stream()
-                .map(CubilisReservation::getId)
-                .collect(Collectors.toSet());
-
-        alreadyMergedIds.addAll(pendingReservationIds);
-
-        return reservations.stream().filter(r -> !alreadyMergedIds.contains(r.getId())).collect(Collectors.toList());
     }
 
     private void setHotelForReservations(Long hotelId, List<CubilisReservation> reservations) {
