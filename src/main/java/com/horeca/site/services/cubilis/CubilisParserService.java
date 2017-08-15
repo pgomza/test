@@ -120,8 +120,8 @@ class CubilisParserService {
             Long reservationId = Long.valueOf(reservation.getAttribute("CreatorID"));
             cubilisReservation.setId(reservationId);
 
-            String status = reservation.getAttribute("ResStatus");
-            cubilisReservation.setStatus(status);
+            String resStatus = reservation.getAttribute("ResStatus");
+            cubilisReservation.setStatus(CubilisReservation.fromCubilisResStatus(resStatus));
 
             Element timeSpan = getFirstElement(reservation.getElementsByTagName("TimeSpan"));
             String arrivalText = timeSpan.getAttribute("Start");
@@ -264,12 +264,9 @@ class CubilisParserService {
     private static List<CubilisReservation> filterReservations(List<CubilisReservation> reservations) {
         List<CubilisReservation> remaining = new ArrayList<>();
         for (CubilisReservation reservation : reservations) {
-            String status = reservation.getStatus();
-            if ("Reserved".equals(status) || "Modify".equals(status) || "Waitlisted".equals(status)) {
-                LocalDate departure = reservation.getDeparture();
-                if (!departure.isBefore(LocalDate.now())) {
-                    remaining.add(reservation);
-                }
+            LocalDate departure = reservation.getDeparture();
+            if (!departure.isBefore(LocalDate.now())) {
+                remaining.add(reservation);
             }
         }
         return remaining;
