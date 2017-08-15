@@ -102,10 +102,12 @@ public class CubilisService {
 
             try {
                 List<CubilisReservation> fetchedReservations = connectorService.fetchReservations(settings.getLogin(), settings.getPassword());
-                if (!fetchedReservations.isEmpty()) {
-                    setHotelForReservations(hotelId, fetchedReservations);
+                List<CubilisReservation> filteredReservations = filterFetchedReservations(fetchedReservations);
 
-                    reservationService.save(fetchedReservations);
+                if (!filteredReservations.isEmpty()) {
+                    setHotelForReservations(hotelId, filteredReservations);
+
+                    reservationService.save(filteredReservations);
 
                     eventPublisher.publishEvent(new ChangeInHotelEvent(this, hotelId));
                 }
@@ -113,6 +115,12 @@ public class CubilisService {
                 updateConnectionStatus(hotelId);
             }
         }
+    }
+
+    private List<CubilisReservation> filterFetchedReservations(List<CubilisReservation> reservations) {
+        return reservations.stream()
+                .filter(r -> r.getStatus() != CubilisReservation.Status.PENDING)
+                .collect(Collectors.toList());
     }
 
     private void setHotelForReservations(Long hotelId, List<CubilisReservation> reservations) {
