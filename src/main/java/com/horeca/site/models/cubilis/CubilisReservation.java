@@ -145,9 +145,6 @@ public class CubilisReservation {
         view.setArrival(getArrival().toLocalDate());
         view.setDeparture(getDeparture());
         view.setCubilisCustomer(getCustomer());
-        if (getGuest() != null) {
-            view.setGuestId(getGuest().getId());
-        }
         view.setGuestCount(getGuestCount());
 
         return view;

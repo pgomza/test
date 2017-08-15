@@ -53,16 +53,10 @@ public class CubilisReservationService {
 
     public CubilisReservationUpdate update(Long hotelId, Long id, CubilisReservationUpdate updated) {
         CubilisReservation current = get(hotelId, id);
-
-        Guest matchingGuest = null;
-        if (updated.getGuestId() != null) {
-            matchingGuest = guestService.get(hotelId, updated.getGuestId());
-        }
-        current.setGuest(matchingGuest);
-
         current.setArrival(updated.getArrival().toLocalDateTime(LocalTime.MIDNIGHT));
         current.setDeparture(updated.getDeparture());
         current.setCustomer(updated.getCubilisCustomer());
+        current.setGuestCount(updated.getGuestCount());
 
         CubilisReservation saved = repository.save(current);
         return saved.toView();

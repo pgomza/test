@@ -10,8 +10,6 @@ public class CubilisReservationUpdate {
     @NotNull
     private Long id;
 
-    private Long guestId;
-
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate arrival;
@@ -32,14 +30,6 @@ public class CubilisReservationUpdate {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getGuestId() {
-        return guestId;
-    }
-
-    public void setGuestId(Long guestId) {
-        this.guestId = guestId;
     }
 
     public LocalDate getArrival() {
