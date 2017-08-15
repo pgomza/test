@@ -73,35 +73,50 @@ public class CubilisReservationService {
         repository.delete(reservations);
     }
 
-    public void deleteOutdated() {
-        for (CubilisReservation reservation : repository.findAll()) {
-            if (isOutdated(reservation)) {
-                repository.delete(reservation);
-            }
-        }
-    }
-
     void merge(List<CubilisReservation> reservations) {
         for (CubilisReservation reservation : reservations) {
-            Hotel hotel = reservation.getHotel();
 
-            // the guest that has been specified manually takes precedence
-            Guest matchingGuest = reservation.getGuest();
-            if (matchingGuest == null) {
-                CubilisCustomer customer = reservation.getCustomer();
-                matchingGuest = getGuestForCustomer(hotel.getId(), customer);
+            String associatedStayPin = stayService.getByCubilisId(reservation.getId());
+            Stay associatedStay = null;
+            if (associatedStayPin != null) {
+                associatedStay = stayService.getWithoutCheckingStatus(associatedStayPin);
             }
 
-            Stay stay = new Stay();
-            stay.setCubilisId(reservation.getId());
-            stay.setFromDate(reservation.getArrival().toLocalDate());
-            stay.setToDate(reservation.getDeparture());
-            stay.setRoomNumber("");
+            if (associatedStay != null) {
+                if (reservation.getStatus() == CubilisReservation.Status.CANCELLED) {
+                    stayService.delete(associatedStayPin);
+                } else {
+                    CubilisCustomer customer = reservation.getCustomer();
+                    Guest guest = associatedStay.getGuest();
+                    guest.setFirstName(customer.getFirstName());
+                    guest.setLastName(customer.getLastName());
+                    guest.setEmail(customer.getEmail());
 
-            stay.setGuest(matchingGuest);
-            stay.setHotel(hotel);
+                    associatedStay.setFromDate(reservation.getArrival().toLocalDate());
+                    associatedStay.setToDate(reservation.getDeparture());
 
-            stayService.registerNewStay(stay);
+                    stayService.update(associatedStayPin, associatedStay);
+                }
+            }
+            else {
+                if (reservation.getStatus() != CubilisReservation.Status.CANCELLED) {
+                    Hotel hotel = reservation.getHotel();
+
+                    CubilisCustomer customer = reservation.getCustomer();
+                    Guest matchingGuest = getGuestForCustomer(hotel.getId(), customer);
+
+                    Stay stay = new Stay();
+                    stay.setCubilisId(reservation.getId());
+                    stay.setFromDate(reservation.getArrival().toLocalDate());
+                    stay.setToDate(reservation.getDeparture());
+                    stay.setRoomNumber("");
+
+                    stay.setGuest(matchingGuest);
+                    stay.setHotel(hotel);
+
+                    stayService.registerNewStay(stay);
+                }
+            }
         }
     }
 
@@ -137,6 +152,15 @@ public class CubilisReservationService {
         }
 
         return matchingGuest;
+    }
+
+
+    public void deleteOutdated() {
+        for (CubilisReservation reservation : repository.findAll()) {
+            if (isOutdated(reservation)) {
+                repository.delete(reservation);
+            }
+        }
     }
 
     private static boolean isOutdated(CubilisReservation reservation) {

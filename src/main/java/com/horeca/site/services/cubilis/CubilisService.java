@@ -10,7 +10,6 @@ import com.horeca.site.models.updates.ChangeInHotelEvent;
 import com.horeca.site.repositories.cubilis.CubilisConnectionStatusRepository;
 import com.horeca.site.repositories.cubilis.CubilisSettingsRepository;
 import com.horeca.site.services.HotelService;
-import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -40,9 +39,6 @@ public class CubilisService {
 
     @Autowired
     private HotelService hotelService;
-
-    @Autowired
-    private StayService stayService;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
