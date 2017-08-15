@@ -49,7 +49,10 @@ public class CubilisConnectorService {
             List<CubilisReservation> reservations = doFetchReservations(cubilisLogin, cubilisPassword);
             List<Long> receivedIds =
                     reservations.stream().map(CubilisReservation::getId).collect(Collectors.toList());
-            confirmReservations(cubilisLogin, cubilisPassword, receivedIds);
+
+            if (!receivedIds.isEmpty()) {
+                confirmReservations(cubilisLogin, cubilisPassword, receivedIds);
+            }
 
             allReservations.addAll(reservations);
 
