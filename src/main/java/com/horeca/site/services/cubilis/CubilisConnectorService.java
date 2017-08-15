@@ -4,7 +4,6 @@ import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.cubilis.CubilisConnectionStatus;
 import com.horeca.site.models.cubilis.CubilisReservation;
 import com.horeca.site.models.cubilis.CubilisRoomsPerHotel;
-import org.joda.time.LocalDate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,7 +15,9 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.horeca.site.services.cubilis.CubilisParserService.*;
 
@@ -27,11 +28,11 @@ public class CubilisConnectorService {
     private static final String RESERVATIONS_URL = "https://cubilis.eu/plugins/pms_ota/reservations.aspx";
     private static final String CONFIRMATIONS_URL = "https://cubilis.eu/plugins/pms_ota/confirmreservations.aspx";
     private static final String ROOMS_URL = "https://cubilis.eu/plugins/pms_ota/accommodations.aspx";
-    private static final int FETCH_TIME_SPAN = 10; // fetch reservations from the last 10 days
+    private static final int MAX_RESERVATIONS_PER_REQUEST = 25; // limit imposed by Cubilis
 
     CubilisConnectionStatus.Status checkConnectionStatus(String cubilisLogin, String cubilisPassword) {
         try {
-            String requestBody = createFetchReservationsRequest(cubilisLogin, cubilisPassword, LocalDate.now().minusDays(1));
+            String requestBody = createFetchRoomsRequest(cubilisLogin, cubilisPassword);
             String responseRaw = postToCubilis(RESERVATIONS_URL, requestBody);
             String response = responseRaw.replaceAll("ï»¿", "");
             return getResponseOutcome(response);
@@ -41,8 +42,28 @@ public class CubilisConnectorService {
     }
 
     List<CubilisReservation> fetchReservations(String cubilisLogin, String cubilisPassword) {
+        List<CubilisReservation> allReservations = new ArrayList<>();
+        boolean fetchedAll = false;
+
+        while (!fetchedAll) {
+            List<CubilisReservation> reservations = doFetchReservations(cubilisLogin, cubilisPassword);
+            List<Long> receivedIds =
+                    reservations.stream().map(CubilisReservation::getId).collect(Collectors.toList());
+            confirmReservations(cubilisLogin, cubilisPassword, receivedIds);
+
+            allReservations.addAll(reservations);
+
+            if (reservations.size() < MAX_RESERVATIONS_PER_REQUEST) {
+                fetchedAll = true;
+            }
+        }
+
+        return allReservations;
+    }
+
+    private List<CubilisReservation> doFetchReservations(String cubilisLogin, String cubilisPassword) {
         try {
-            String requestBody = createFetchReservationsRequest(cubilisLogin, cubilisPassword, LocalDate.now().minusDays(FETCH_TIME_SPAN));
+            String requestBody = createFetchReservationsRequest(cubilisLogin, cubilisPassword);
             String responseRaw = postToCubilis(RESERVATIONS_URL, requestBody);
             String response = responseRaw.replaceAll("ï»¿", "");
             CubilisConnectionStatus.Status responseOutcome = getResponseOutcome(response);
@@ -57,7 +78,7 @@ public class CubilisConnectorService {
         }
     }
 
-    void confirmReservations(String cubilisLogin, String cubilisPassword, List<Long> ids) {
+    private void confirmReservations(String cubilisLogin, String cubilisPassword, List<Long> ids) {
         try {
             String requestBody = createConfirmReservationsRequest(cubilisLogin, cubilisPassword, ids);
             postToCubilis(CONFIRMATIONS_URL, requestBody);

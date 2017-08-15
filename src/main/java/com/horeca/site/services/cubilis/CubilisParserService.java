@@ -28,7 +28,7 @@ import java.util.Optional;
 
 class CubilisParserService {
 
-    static String createFetchReservationsRequest(String login, String password, LocalDate sinceDate)
+    static String createFetchReservationsRequest(String login, String password)
             throws ParserConfigurationException, TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = dbFactory.newDocumentBuilder();
@@ -42,7 +42,6 @@ class CubilisParserService {
         // create the HotelReservations element
         Element hotelReservations = doc.createElement("HotelReservations");
         Element hotelReservation = doc.createElement("HotelReservation");
-        hotelReservation.setAttribute("PurgeDate", sinceDate.toString("yyyy-MM-dd"));
         hotelReservations.appendChild(hotelReservation);
 
         rootElement.appendChild(pos);
