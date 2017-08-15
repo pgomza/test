@@ -90,7 +90,7 @@ public class CubilisService {
         }
     }
 
-    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    @Scheduled(fixedDelay = 60 * 1000)
     public void fetchAndUpdateReservations() {
         List<Long> hotelIds = hotelService.getIdsOfCubilisEligible();
         Map<Long, CubilisSettings> hotelIdToSettings = hotelIds.stream()
