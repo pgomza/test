@@ -112,13 +112,9 @@ public class CubilisService {
                 if (!filteredReservations.isEmpty()) {
                     setHotelForReservations(hotelId, filteredReservations);
 
-                    if (settings.isMergingEnabled()) {
-                        reservationService.merge(filteredReservations);
-                    } else {
-                        reservationService.save(filteredReservations);
-                    }
+                    reservationService.save(filteredReservations);
 
-                    // either way, confirm the received reservations
+                    // confirm the received reservations
                     List<Long> receivedIds =
                             filteredReservations.stream().map(CubilisReservation::getId).collect(Collectors.toList());
                     connectorService.confirmReservations(settings.getLogin(), settings.getPassword(), receivedIds);
