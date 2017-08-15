@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class CubilisReservationService {
 
-    private static final int OUTDATE_RESERVATION_DAYS = 14;
+    private static final int DAYS_TO_INVALIDATE_RESERVATION = 7;
 
     @Autowired
     private GuestService guestService;
@@ -158,8 +158,8 @@ public class CubilisReservationService {
     }
 
     private static boolean isOutdated(CubilisReservation reservation) {
-        LocalDate todayMinusOutdatedFactor = LocalDate.now().minusDays(OUTDATE_RESERVATION_DAYS);
-        if (reservation.getDeparture().isBefore(todayMinusOutdatedFactor)) {
+        LocalDate todayMinusDaysToInvalidation = LocalDate.now().minusDays(DAYS_TO_INVALIDATE_RESERVATION);
+        if (reservation.getDeparture().isBefore(todayMinusDaysToInvalidation)) {
             return true;
         }
         return false;
