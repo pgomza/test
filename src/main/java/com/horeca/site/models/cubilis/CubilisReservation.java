@@ -27,6 +27,9 @@ public class CubilisReservation {
         @JsonProperty("Cancelled")
         CANCELLED("Cancelled"),
 
+        @JsonProperty("Deleted")
+        DELETED("Deleted"),
+
         @JsonProperty("Undefined")
         UNDEFINED("Undefined");
 
@@ -145,8 +148,8 @@ public class CubilisReservation {
             case "reserved": return Status.NEW;
             case "modify": return Status.MODIFIED;
             case "cancelled": return Status.CANCELLED;
-            case "request denied": return Status.CANCELLED;
-            default: return Status.UNDEFINED;
+            case "request denied": return Status.DELETED;
+            default: return Status.UNDEFINED; // as a fallback - should never happen
         }
     }
 }

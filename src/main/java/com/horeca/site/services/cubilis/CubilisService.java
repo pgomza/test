@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.horeca.site.models.cubilis.CubilisReservation.Status;
+
 @Service
 @Transactional
 public class CubilisService {
@@ -101,7 +103,8 @@ public class CubilisService {
             CubilisSettings settings = entry.getValue();
 
             try {
-                List<CubilisReservation> fetchedReservations = connectorService.fetchReservations(settings.getLogin(), settings.getPassword());
+                List<CubilisReservation> fetchedReservations = connectorService.fetchReservations(settings.getLogin(),
+                        settings.getPassword());
                 List<CubilisReservation> filteredReservations = filterFetchedReservations(fetchedReservations);
 
                 if (!filteredReservations.isEmpty()) {
@@ -119,7 +122,15 @@ public class CubilisService {
 
     private List<CubilisReservation> filterFetchedReservations(List<CubilisReservation> reservations) {
         return reservations.stream()
-                .filter(r -> r.getStatus() != CubilisReservation.Status.PENDING)
+                .filter(r -> {
+                    Status status = r.getStatus();
+                    if ((status == Status.NEW) || (status == Status.MODIFIED) || (status == Status.CANCELLED)) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                })
                 .collect(Collectors.toList());
     }
 
