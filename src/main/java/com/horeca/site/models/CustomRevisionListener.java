@@ -12,7 +12,10 @@ public class CustomRevisionListener implements RevisionListener {
     public void newRevision(Object revisionEntity) {
         CustomRevisionEntity revision = (CustomRevisionEntity) revisionEntity;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication instanceof AnonymousAuthenticationToken) {
+        if (authentication == null) {
+            revision.setUsername("INTERNAL");
+        }
+        else if (authentication instanceof AnonymousAuthenticationToken) {
             revision.setUsername("ANONYMOUS");
         }
         else {
