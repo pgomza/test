@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.services.spacall;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Entity;
@@ -8,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
+@Audited
 public class SpaCall {
 
     @Id

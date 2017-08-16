@@ -1,10 +1,13 @@
 package com.horeca.site.security.models;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.Entity;
 import java.util.Arrays;
 import java.util.Collection;
 
 @Entity
+@Audited
 public class GuestAccount extends AbstractAccount {
 
     public static final String USERNAME_PREFIX = "PIN_";

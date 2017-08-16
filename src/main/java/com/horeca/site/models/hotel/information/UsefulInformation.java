@@ -1,9 +1,12 @@
 package com.horeca.site.models.hotel.information;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
+@Audited
 public class UsefulInformation {
 
     @Id

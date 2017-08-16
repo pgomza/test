@@ -1,0 +1,9 @@
+ALTER TABLE BarOrder ADD createdAt DATETIME2 NOT NULL DEFAULT current_timestamp;
+ALTER TABLE BreakfastOrder ADD createdAt DATETIME2 NOT NULL DEFAULT current_timestamp;
+ALTER TABLE CarParkOrder ADD createdAt DATETIME2 NOT NULL DEFAULT current_timestamp;
+ALTER TABLE HousekeepingOrder ADD createdAt DATETIME2 NOT NULL DEFAULT current_timestamp;
+ALTER TABLE PetCareOrder ADD createdAt DATETIME2 NOT NULL DEFAULT current_timestamp;
+ALTER TABLE RoomServiceOrder ADD createdAt DATETIME2 NOT NULL DEFAULT current_timestamp;
+ALTER TABLE SpaOrder ADD createdAt DATETIME2 NOT NULL DEFAULT current_timestamp;
+ALTER TABLE TableOrderingOrder ADD createdAt DATETIME2 NOT NULL DEFAULT current_timestamp;
+ALTER TABLE TaxiOrder ADD createdAt DATETIME2 NOT NULL DEFAULT current_timestamp;

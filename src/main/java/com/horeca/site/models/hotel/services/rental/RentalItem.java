@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.rental;
 
 import com.horeca.site.models.Price;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(indexes = @Index(name = "rental_category_id", columnList = "rental_category_id"))
+@Audited
 public class RentalItem {
 
     @Id

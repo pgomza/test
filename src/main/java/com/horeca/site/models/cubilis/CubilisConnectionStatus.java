@@ -1,9 +1,12 @@
 package com.horeca.site.models.cubilis;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Audited
 public class CubilisConnectionStatus {
 
     public enum Status {

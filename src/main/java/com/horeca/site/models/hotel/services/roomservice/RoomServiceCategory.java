@@ -1,10 +1,13 @@
 package com.horeca.site.models.hotel.services.roomservice;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Table(indexes = @Index(name = "room_service_id", columnList = "room_service_id"))
+@Audited
 public class RoomServiceCategory {
 
     public enum Category { DRINK, SNACK }

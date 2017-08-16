@@ -1,11 +1,13 @@
 package com.horeca.site.models.hotel.services.housekeeping;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 
 @Entity
 @Table(indexes = @Index(name = "housekeeping_id", columnList = "housekeeping_id"))
+@Audited
 public class HousekeepingItem {
 
     @Id

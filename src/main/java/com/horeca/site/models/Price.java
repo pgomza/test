@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 
 @Embeddable
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-
 public class Price {
 
     private BigDecimal value;

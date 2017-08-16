@@ -18,4 +18,7 @@ public interface StayRepository extends CrudRepository<Stay, String> {
 
     @Query("select s.cubilisId from Stay s where s.cubilisId is not null and s.hotel.id = :hotelId")
     Set<Long> getAllCubilisIdsInHotel(@Param("hotelId") Long hotelId);
+
+    @Query("select s.pin from Stay s where s.cubilisId = :cubilisId")
+    String findByCubilisId(@Param("cubilisId") Long cubilisId);
 }

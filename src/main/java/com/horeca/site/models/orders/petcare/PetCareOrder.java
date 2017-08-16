@@ -3,6 +3,7 @@ package com.horeca.site.models.orders.petcare;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
 import com.horeca.site.models.orders.Order;
+import org.hibernate.envers.Audited;
 import org.joda.time.LocalDate;
 
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Audited
 public class PetCareOrder extends Order {
 
     @OneToOne(fetch = FetchType.EAGER)

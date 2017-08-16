@@ -1,10 +1,13 @@
 package com.horeca.site.models.hotel.services.restaurantmenu;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Audited
 public class RestaurantMenu {
 
     @Id

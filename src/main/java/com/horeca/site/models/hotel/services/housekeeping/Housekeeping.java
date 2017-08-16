@@ -1,12 +1,14 @@
 package com.horeca.site.models.hotel.services.housekeeping;
 
 import com.horeca.site.models.Price;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
+@Audited
 public class Housekeeping {
 
     @Id

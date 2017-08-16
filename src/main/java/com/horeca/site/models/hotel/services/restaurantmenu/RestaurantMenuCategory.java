@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.services.restaurantmenu;
 
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(indexes = @Index(name = "restaurant_menu_id", columnList = "restaurant_menu_id"))
+@Audited
 public class RestaurantMenuCategory {
 
     @Id
