@@ -2,7 +2,6 @@ package com.horeca.site.models.cubilis;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import org.hibernate.envers.Audited;
 import org.joda.time.LocalDate;
@@ -51,10 +50,6 @@ public class CubilisReservation {
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
-    @OneToOne
-    @JoinColumn(name = "guest_id")
-    private Guest guest;
-
     @NotNull
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -89,14 +84,6 @@ public class CubilisReservation {
 
     public void setHotel(Hotel hotel) {
         this.hotel = hotel;
-    }
-
-    public Guest getGuest() {
-        return guest;
-    }
-
-    public void setGuest(Guest guest) {
-        this.guest = guest;
     }
 
     public Status getStatus() {

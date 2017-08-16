@@ -1,0 +1,1 @@
+ALTER TABLE CubilisReservation DROP COLUMN guest_id;
