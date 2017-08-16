@@ -87,6 +87,10 @@ public class StayService {
         return stayRepository.getAllCubilisIdsInHotel(hotelId);
     }
 
+    public String getByCubilisId(Long cubilisId) {
+        return stayRepository.findByCubilisId(cubilisId);
+    }
+
     public Stay update(String pin, Stay updated) {
         ensureEntityExists(pin);
         updated.setPin(pin);

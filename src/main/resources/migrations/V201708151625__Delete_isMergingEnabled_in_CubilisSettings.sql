@@ -1,0 +1,1 @@
+ALTER TABLE CubilisSettings DROP COLUMN isMergingEnabled;

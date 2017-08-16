@@ -28,7 +28,7 @@ import java.util.Optional;
 
 class CubilisParserService {
 
-    static String createFetchReservationsRequest(String login, String password, LocalDate sinceDate)
+    static String createFetchReservationsRequest(String login, String password)
             throws ParserConfigurationException, TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = dbFactory.newDocumentBuilder();
@@ -42,7 +42,6 @@ class CubilisParserService {
         // create the HotelReservations element
         Element hotelReservations = doc.createElement("HotelReservations");
         Element hotelReservation = doc.createElement("HotelReservation");
-        hotelReservation.setAttribute("PurgeDate", sinceDate.toString("yyyy-MM-dd"));
         hotelReservations.appendChild(hotelReservation);
 
         rootElement.appendChild(pos);
@@ -120,8 +119,8 @@ class CubilisParserService {
             Long reservationId = Long.valueOf(reservation.getAttribute("CreatorID"));
             cubilisReservation.setId(reservationId);
 
-            String status = reservation.getAttribute("ResStatus");
-            cubilisReservation.setStatus(status);
+            String resStatus = reservation.getAttribute("ResStatus");
+            cubilisReservation.setStatus(CubilisReservation.fromCubilisResStatus(resStatus));
 
             Element timeSpan = getFirstElement(reservation.getElementsByTagName("TimeSpan"));
             String arrivalText = timeSpan.getAttribute("Start");
@@ -264,12 +263,9 @@ class CubilisParserService {
     private static List<CubilisReservation> filterReservations(List<CubilisReservation> reservations) {
         List<CubilisReservation> remaining = new ArrayList<>();
         for (CubilisReservation reservation : reservations) {
-            String status = reservation.getStatus();
-            if ("Reserved".equals(status) || "Modify".equals(status) || "Waitlisted".equals(status)) {
-                LocalDate departure = reservation.getDeparture();
-                if (!departure.isBefore(LocalDate.now())) {
-                    remaining.add(reservation);
-                }
+            LocalDate departure = reservation.getDeparture();
+            if (!departure.isBefore(LocalDate.now())) {
+                remaining.add(reservation);
             }
         }
         return remaining;

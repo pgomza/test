@@ -52,7 +52,7 @@ public class CubilisController {
     @RequestMapping(value = "/{hotelId}/cubilis/reservations", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CubilisReservationUpdate> getReservations(@PathVariable("hotelId") Long hotelId) {
-        return cubilisReservationService.getAllNotRejectedViews(hotelId);
+        return cubilisReservationService.getAllViews(hotelId);
     }
 
     @RequestMapping(value = "/{hotelId}/cubilis/reservations/{id}", method = RequestMethod.PUT,

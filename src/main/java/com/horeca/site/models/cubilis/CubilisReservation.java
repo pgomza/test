@@ -1,10 +1,9 @@
 package com.horeca.site.models.cubilis;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.horeca.site.models.guest.Guest;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.horeca.site.models.hotel.Hotel;
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
@@ -15,22 +14,45 @@ import javax.validation.constraints.NotNull;
 @Audited
 public class CubilisReservation {
 
+    public enum Status {
+        @JsonProperty("Pending")
+        PENDING("Pending"),
+
+        @JsonProperty("New")
+        NEW("New"),
+
+        @JsonProperty("Modified")
+        MODIFIED("Modified"),
+
+        @JsonProperty("Cancelled")
+        CANCELLED("Cancelled"),
+
+        @JsonProperty("Undefined")
+        UNDEFINED("Undefined");
+
+        private String value;
+
+        Status(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+
     @Id
     private Long id;
-
-    private boolean isRejected;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
-    @OneToOne
-    @JoinColumn(name = "guest_id")
-    private Guest guest;
-
-    @NotEmpty
-    private String status;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MMddTHH:mm:ss")
@@ -56,14 +78,6 @@ public class CubilisReservation {
         this.id = id;
     }
 
-    public boolean isRejected() {
-        return isRejected;
-    }
-
-    public void setRejected(boolean rejected) {
-        isRejected = rejected;
-    }
-
     public Hotel getHotel() {
         return hotel;
     }
@@ -72,19 +86,11 @@ public class CubilisReservation {
         this.hotel = hotel;
     }
 
-    public Guest getGuest() {
-        return guest;
-    }
-
-    public void setGuest(Guest guest) {
-        this.guest = guest;
-    }
-
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -126,11 +132,21 @@ public class CubilisReservation {
         view.setArrival(getArrival().toLocalDate());
         view.setDeparture(getDeparture());
         view.setCubilisCustomer(getCustomer());
-        if (getGuest() != null) {
-            view.setGuestId(getGuest().getId());
-        }
         view.setGuestCount(getGuestCount());
+        view.setStatus(getStatus());
 
         return view;
+    }
+
+    public static Status fromCubilisResStatus(String resStatus) {
+        String resStatusLowerCase = resStatus.toLowerCase();
+        switch (resStatusLowerCase) {
+            case "waitlisted": return Status.PENDING;
+            case "reserved": return Status.NEW;
+            case "modify": return Status.MODIFIED;
+            case "cancelled": return Status.CANCELLED;
+            case "request denied": return Status.CANCELLED;
+            default: return Status.UNDEFINED;
+        }
     }
 }

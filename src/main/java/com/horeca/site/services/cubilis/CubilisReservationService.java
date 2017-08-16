@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class CubilisReservationService {
 
-    private static final int OUTDATE_RESERVATION_DAYS = 14;
+    private static final int DAYS_TO_INVALIDATE_RESERVATION = 7;
 
     @Autowired
     private GuestService guestService;
@@ -39,14 +39,8 @@ public class CubilisReservationService {
         return repository.getByHotelId(hotelId);
     }
 
-    private List<CubilisReservation> getAllNotRejected(Long hotelId) {
-        return getAll(hotelId).stream().filter(r -> !r.isRejected()).collect(Collectors.toList());
-    }
-
-    public List<CubilisReservationUpdate> getAllNotRejectedViews(Long hotelId) {
-        return getAllNotRejected(hotelId).stream()
-                .map(CubilisReservation::toView)
-                .collect(Collectors.toList());
+    public List<CubilisReservationUpdate> getAllViews(Long hotelId) {
+        return getAll(hotelId).stream().map(CubilisReservation::toView).collect(Collectors.toList());
     }
 
     private CubilisReservation get(Long hotelId, Long id) {
@@ -59,16 +53,10 @@ public class CubilisReservationService {
 
     public CubilisReservationUpdate update(Long hotelId, Long id, CubilisReservationUpdate updated) {
         CubilisReservation current = get(hotelId, id);
-
-        Guest matchingGuest = null;
-        if (updated.getGuestId() != null) {
-            matchingGuest = guestService.get(hotelId, updated.getGuestId());
-        }
-        current.setGuest(matchingGuest);
-
         current.setArrival(updated.getArrival().toLocalDateTime(LocalTime.MIDNIGHT));
         current.setDeparture(updated.getDeparture());
         current.setCustomer(updated.getCubilisCustomer());
+        current.setGuestCount(updated.getGuestCount());
 
         CubilisReservation saved = repository.save(current);
         return saved.toView();
@@ -76,50 +64,59 @@ public class CubilisReservationService {
 
     public void confirm(Long hotelId, List<Long> reservationIds) {
         List<CubilisReservation> reservations = getByIds(hotelId, reservationIds);
-        for (CubilisReservation reservation : reservations) {
-            if (reservation.isRejected()) {
-                throw new ResourceNotFoundException();
-            }
-        }
         merge(reservations);
         repository.delete(reservations);
     }
 
     public void reject(Long hotelId, List<Long> reservationIds) {
         List<CubilisReservation> reservations = getByIds(hotelId, reservationIds);
-        reservations.forEach(r -> r.setRejected(true));
-        save(reservations);
-    }
-
-    public void deleteOutdated() {
-        for (CubilisReservation reservation : repository.findAll()) {
-            if (reservation.isRejected() && isOutdated(reservation)) {
-                repository.delete(reservation);
-            }
-        }
+        repository.delete(reservations);
     }
 
     void merge(List<CubilisReservation> reservations) {
         for (CubilisReservation reservation : reservations) {
-            Hotel hotel = reservation.getHotel();
 
-            // the guest that has been specified manually takes precedence
-            Guest matchingGuest = reservation.getGuest();
-            if (matchingGuest == null) {
-                CubilisCustomer customer = reservation.getCustomer();
-                matchingGuest = getGuestForCustomer(hotel.getId(), customer);
+            String associatedStayPin = stayService.getByCubilisId(reservation.getId());
+            Stay associatedStay = null;
+            if (associatedStayPin != null) {
+                associatedStay = stayService.getWithoutCheckingStatus(associatedStayPin);
             }
 
-            Stay stay = new Stay();
-            stay.setCubilisId(reservation.getId());
-            stay.setFromDate(reservation.getArrival().toLocalDate());
-            stay.setToDate(reservation.getDeparture());
-            stay.setRoomNumber("");
+            if (associatedStay != null) {
+                if (reservation.getStatus() == CubilisReservation.Status.CANCELLED) {
+                    stayService.delete(associatedStayPin);
+                } else {
+                    CubilisCustomer customer = reservation.getCustomer();
+                    Guest guest = associatedStay.getGuest();
+                    guest.setFirstName(customer.getFirstName());
+                    guest.setLastName(customer.getLastName());
+                    guest.setEmail(customer.getEmail());
 
-            stay.setGuest(matchingGuest);
-            stay.setHotel(hotel);
+                    associatedStay.setFromDate(reservation.getArrival().toLocalDate());
+                    associatedStay.setToDate(reservation.getDeparture());
 
-            stayService.registerNewStay(stay);
+                    stayService.update(associatedStayPin, associatedStay);
+                }
+            }
+            else {
+                if (reservation.getStatus() != CubilisReservation.Status.CANCELLED) {
+                    Hotel hotel = reservation.getHotel();
+
+                    CubilisCustomer customer = reservation.getCustomer();
+                    Guest matchingGuest = getGuestForCustomer(hotel.getId(), customer);
+
+                    Stay stay = new Stay();
+                    stay.setCubilisId(reservation.getId());
+                    stay.setFromDate(reservation.getArrival().toLocalDate());
+                    stay.setToDate(reservation.getDeparture());
+                    stay.setRoomNumber("");
+
+                    stay.setGuest(matchingGuest);
+                    stay.setHotel(hotel);
+
+                    stayService.registerNewStay(stay);
+                }
+            }
         }
     }
 
@@ -157,9 +154,18 @@ public class CubilisReservationService {
         return matchingGuest;
     }
 
+
+    public void deleteOutdated() {
+        for (CubilisReservation reservation : repository.findAll()) {
+            if (isOutdated(reservation)) {
+                repository.delete(reservation);
+            }
+        }
+    }
+
     private static boolean isOutdated(CubilisReservation reservation) {
-        LocalDate todayMinusOutdatedFactor = LocalDate.now().minusDays(OUTDATE_RESERVATION_DAYS);
-        if (reservation.getDeparture().isBefore(todayMinusOutdatedFactor)) {
+        LocalDate todayMinusDaysToInvalidation = LocalDate.now().minusDays(DAYS_TO_INVALIDATE_RESERVATION);
+        if (reservation.getDeparture().isBefore(todayMinusDaysToInvalidation)) {
             return true;
         }
         return false;

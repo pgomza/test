@@ -1,6 +1,7 @@
 package com.horeca.site.models.cubilis;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
@@ -9,8 +10,6 @@ public class CubilisReservationUpdate {
 
     @NotNull
     private Long id;
-
-    private Long guestId;
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
@@ -26,20 +25,15 @@ public class CubilisReservationUpdate {
     @NotNull
     private Integer guestCount;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private CubilisReservation.Status status;
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getGuestId() {
-        return guestId;
-    }
-
-    public void setGuestId(Long guestId) {
-        this.guestId = guestId;
     }
 
     public LocalDate getArrival() {
@@ -72,5 +66,13 @@ public class CubilisReservationUpdate {
 
     public void setGuestCount(Integer guestCount) {
         this.guestCount = guestCount;
+    }
+
+    public CubilisReservation.Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(CubilisReservation.Status status) {
+        this.status = status;
     }
 }
