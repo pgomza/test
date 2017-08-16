@@ -146,6 +146,7 @@ public class CubilisReservation {
         view.setDeparture(getDeparture());
         view.setCubilisCustomer(getCustomer());
         view.setGuestCount(getGuestCount());
+        view.setStatus(getStatus());
 
         return view;
     }
