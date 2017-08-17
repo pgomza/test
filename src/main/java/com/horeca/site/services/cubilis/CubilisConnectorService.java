@@ -61,7 +61,7 @@ public class CubilisConnectorService {
             }
         }
 
-        return allReservations;
+        return filterReservations(allReservations);
     }
 
     private List<CubilisReservation> doFetchReservations(String cubilisLogin, String cubilisPassword) {
