@@ -33,7 +33,7 @@ public class CubilisConnectorService {
     CubilisConnectionStatus.Status checkConnectionStatus(String cubilisLogin, String cubilisPassword) {
         try {
             String requestBody = createFetchRoomsRequest(cubilisLogin, cubilisPassword);
-            String responseRaw = postToCubilis(RESERVATIONS_URL, requestBody);
+            String responseRaw = postToCubilis(ROOMS_URL, requestBody);
             String response = responseRaw.replaceAll("ï»¿", "");
             return getResponseOutcome(response);
         } catch (ParserConfigurationException | TransformerException | SAXException | IOException e) {
