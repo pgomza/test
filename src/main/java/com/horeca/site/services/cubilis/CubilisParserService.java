@@ -168,7 +168,7 @@ class CubilisParserService {
             }
         }
 
-        return filterReservations(cubilisReservations);
+        return cubilisReservations;
     }
 
     static List<CubilisRoomsPerHotel> getRoomsPerHotelList(String body)
@@ -260,7 +260,7 @@ class CubilisParserService {
         return pos;
     }
 
-    private static List<CubilisReservation> filterReservations(List<CubilisReservation> reservations) {
+    public static List<CubilisReservation> filterReservations(List<CubilisReservation> reservations) {
         List<CubilisReservation> remaining = new ArrayList<>();
         for (CubilisReservation reservation : reservations) {
             LocalDate departure = reservation.getDeparture();
