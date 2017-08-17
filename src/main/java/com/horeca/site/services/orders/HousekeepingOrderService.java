@@ -1,5 +1,6 @@
 package com.horeca.site.services.orders;
 
+import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
@@ -75,8 +76,12 @@ public class HousekeepingOrderService extends GenericOrderService<HousekeepingOr
         Housekeeping housekeeping = stayService.get(stayPin).getHotel().getAvailableServices().getHousekeeping();
 
         for (HousekeepingItem item : housekeeping.getItems()) {
-            if (item.getId().equals(id))
-                return item;
+            if (item.getId().equals(id)) {
+                if (item.isAvailable())
+                    return item;
+                else
+                    throw new BusinessRuleViolationException("Item id == " + id + " is no longer available");
+            }
         }
         throw new ResourceNotFoundException("Could not find an item with such an id");
     }
