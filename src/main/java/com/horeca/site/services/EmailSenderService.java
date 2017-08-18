@@ -19,7 +19,6 @@ import java.util.Map;
 @Service
 public class EmailSenderService {
 
-    private static final String EMAIL_LABS_POST_EMAIL_URL = "https://api.emaillabs.net.pl/api/new_sendmail";
     private static final String EMAIL_LABS_POST_EMAIL_TEMPLATE_URL = "https://api.emaillabs.net.pl/api/sendmail_templates";
 
     @Value("${emailLabs.active}")
@@ -40,7 +39,7 @@ public class EmailSenderService {
     @Autowired
     private JavaMailSender mailSender;
 
-    void send(String subject, String content, String addressTo, String addressFrom, String nameFrom)
+    void sendStandard(String subject, String content, String addressTo, String addressFrom, String nameFrom)
             throws MessagingException, UnsupportedEncodingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         mimeMessage.setContent(content, "text/html");
