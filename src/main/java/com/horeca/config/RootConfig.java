@@ -1,6 +1,7 @@
 package com.horeca.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.horeca.site.handlers.CustomGlobalExceptionHandler;
 import com.horeca.site.handlers.UpdatesInterceptor;
@@ -35,7 +36,13 @@ public class RootConfig extends WebMvcConfigurerAdapter
     @Primary
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
+
         objectMapper.registerModule(new JodaModule());
+
+        Hibernate5Module hibernate5Module = new Hibernate5Module();
+        hibernate5Module.enable(Hibernate5Module.Feature.FORCE_LAZY_LOADING);
+        objectMapper.registerModule(hibernate5Module);
+
         objectMapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss"));
         return objectMapper;
     }
