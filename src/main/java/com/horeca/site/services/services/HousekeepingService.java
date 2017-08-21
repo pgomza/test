@@ -7,14 +7,14 @@ import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
 import com.horeca.site.models.hotel.services.housekeeping.HousekeepingItem;
+import com.horeca.site.repositories.services.HousekeepingItemRepository;
 import com.horeca.site.repositories.services.HousekeepingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -25,6 +25,9 @@ public class HousekeepingService {
 
     @Autowired
     private HousekeepingRepository repository;
+
+    @Autowired
+    private HousekeepingItemRepository itemRepository;
 
     public Housekeeping get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
@@ -57,47 +60,38 @@ public class HousekeepingService {
         return housekeeping.getItems();
     }
 
-    public Housekeeping addItem(Long hotelId, HousekeepingItem item) {
-        Housekeeping housekeeping = get(hotelId);
-        housekeeping.getItems().add(item);
-        return repository.save(housekeeping);
-    }
-
-    public Housekeeping updateItem(Long hotelId, HousekeepingItem item) {
+    public HousekeepingItem getItem(Long hotelId, Long itemId) {
         Housekeeping housekeeping = get(hotelId);
 
-        boolean found = false;
-        for (HousekeepingItem existingItem : housekeeping.getItems()) {
-            if (existingItem.getId().equals(item.getId())) {
-                existingItem.setName(item.getName());
-                found = true;
-                break;
-            }
-        }
+        Optional<HousekeepingItem> matchingItemOptional = housekeeping.getItems().stream()
+                .filter(item -> item.getId().equals(itemId))
+                .findAny();
 
-        if (!found)
+        if (!matchingItemOptional.isPresent())
             throw new ResourceNotFoundException("Could not find an item with such an id");
 
-        return repository.save(housekeeping);
+        return matchingItemOptional.get();
+    }
+
+    public HousekeepingItem addItem(Long hotelId, HousekeepingItem item) {
+        Housekeeping housekeeping = get(hotelId);
+        HousekeepingItem savedItem = itemRepository.save(item);
+        housekeeping.getItems().add(savedItem);
+        repository.save(housekeeping);
+        return savedItem;
+    }
+
+    public HousekeepingItem updateItem(Long hotelId, HousekeepingItem updatedItem) {
+        getItem(hotelId, updatedItem.getId());
+        return itemRepository.save(updatedItem);
     }
 
     public void deleteItem(Long hotelId, Long itemId) {
+        HousekeepingItem item = getItem(hotelId, itemId);
         Housekeeping housekeeping = get(hotelId);
-        Set<HousekeepingItem> remaining = new HashSet<>();
 
-        boolean found = false;
-        for (HousekeepingItem existingItem : housekeeping.getItems()) {
-            if (!existingItem.getId().equals(itemId))
-                remaining.add(existingItem);
-            else
-                found = true;
-        }
+        housekeeping.getItems().remove(item);
 
-        if (!found)
-            throw new ResourceNotFoundException("Could not find an item with such an id");
-
-        housekeeping.getItems().clear();
-        remaining.forEach(item -> housekeeping.getItems().add(item));
         repository.save(housekeeping);
     }
 }
