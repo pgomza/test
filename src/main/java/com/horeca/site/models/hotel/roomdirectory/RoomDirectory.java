@@ -13,7 +13,7 @@ public class RoomDirectory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "room_directory_id")
     @OrderColumn(name = "sections_order")
     private List<Section> sections;

@@ -20,7 +20,7 @@ public class Spa {
     @NotNull
     private Price price;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "spa_id")
     private Set<SpaItem> items;
 

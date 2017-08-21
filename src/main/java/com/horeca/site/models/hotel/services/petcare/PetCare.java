@@ -21,7 +21,7 @@ public class PetCare {
     @NotNull
     private Price price;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_care_id")
     private List<PetCareItem> items = new ArrayList<>();
 

@@ -19,7 +19,7 @@ public class RestaurantMenuCategory {
     @NotEmpty
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_menu_category_id")
     @OrderColumn(name = "item_order")
     private List<RestaurantMenuItem> items = new ArrayList<>();
