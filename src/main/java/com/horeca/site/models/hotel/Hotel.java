@@ -1,7 +1,7 @@
 package com.horeca.site.models.hotel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.horeca.site.models.Currency;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.cubilis.CubilisConnectionStatus;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Audited
 public class Hotel {
 

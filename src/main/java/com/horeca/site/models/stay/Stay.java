@@ -1,7 +1,7 @@
 package com.horeca.site.models.stay;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.orders.Orders;
@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 @Entity
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Audited
 public class Stay {
 

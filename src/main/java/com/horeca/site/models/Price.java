@@ -1,6 +1,6 @@
 package com.horeca.site.models;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -8,7 +8,7 @@ import javax.persistence.Enumerated;
 import java.math.BigDecimal;
 
 @Embeddable
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Price {
 
     private BigDecimal value;

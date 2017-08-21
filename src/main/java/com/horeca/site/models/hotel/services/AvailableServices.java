@@ -1,6 +1,6 @@
 package com.horeca.site.models.hotel.services;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.horeca.site.models.hotel.services.bar.Bar;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
 import com.horeca.site.models.hotel.services.carpark.CarPark;
@@ -19,7 +19,7 @@ import org.hibernate.envers.Audited;
 import javax.persistence.*;
 
 @Entity
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Audited
 public class AvailableServices {
 

@@ -1,7 +1,7 @@
 package com.horeca.site.models.orders;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.horeca.site.models.orders.bar.BarOrder;
 import com.horeca.site.models.orders.breakfast.BreakfastOrder;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Audited
 public class Orders {
 
