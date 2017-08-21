@@ -23,7 +23,7 @@ public class SpaItem {
     @NotNull
     private Price price;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn
     private SpaCalendar calendar;
 

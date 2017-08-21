@@ -12,14 +12,16 @@ import com.horeca.site.services.HotelService;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 import static com.horeca.utils.UrlPartExtractors.*;
 
-@Component
+@Service
+@Transactional
 public class AccessChecker {
 
     @Autowired

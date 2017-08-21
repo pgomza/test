@@ -2,7 +2,6 @@ package com.horeca.site.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.extractors.HotelDataExtractor;
 import com.horeca.site.models.Currency;
 import com.horeca.site.models.cubilis.CubilisConnectionStatus;
 import com.horeca.site.models.cubilis.CubilisSettings;
@@ -413,30 +412,6 @@ public class HotelService {
                     return 0;
             }
         }
-    }
-
-    /*
-        conversion
-     */
-
-    public Hotel convertFromHotelData(HotelDataExtractor.HotelData hotelData) {
-        Hotel hotel = new Hotel();
-        hotel.setName(hotelData.title);
-        hotel.setDescription(hotelData.description);
-        hotel.setAddress(hotelData.addressFull);
-        hotel.setEmail(hotelData.email);
-        hotel.setWebsite(hotelData.website);
-        hotel.setPhone(hotelData.phone);
-        hotel.setFax(hotelData.fax);
-        hotel.setStarRating(hotelData.starRating);
-        hotel.setRooms(hotelData.rooms);
-        hotel.setRatingOverall(hotelData.ratingOverall);
-        hotel.setRatingOverallText(hotelData.ratingOverallText);
-        hotel.setPropertyType(hotelData.propertyType);
-        hotel.setChain(hotelData.chain);
-        hotel.setLongitude(hotelData.longitude);
-        hotel.setLatitude(hotelData.latitude);
-        return hotel;
     }
 
     /*

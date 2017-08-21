@@ -18,7 +18,7 @@ public class SalesmanAccount extends AbstractAccount {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<String> roles;
 
     SalesmanAccount() {

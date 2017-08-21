@@ -66,7 +66,7 @@ public class CubilisReservation {
     private LocalDate departure;
 
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "customer_id")
     private CubilisCustomer customer;
 
