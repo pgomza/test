@@ -165,10 +165,7 @@ public class StayService {
 
     public void notifyGuestAboutStay(String pin) {
         Stay stay = getWithoutCheckingStatus(pin);
-        Guest guest = stay.getGuest();
-        String hotelName = stay.getHotel().getName();
-
-        eventPublisher.publishEvent(new NewStayEvent(this, guest, hotelName, pin));
+        eventPublisher.publishEvent(new NewStayEvent(this, stay));
     }
 
     public Stay registerNewStay(Stay stay) {
