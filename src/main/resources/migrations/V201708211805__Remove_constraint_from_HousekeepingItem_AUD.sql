@@ -1,0 +1,1 @@
+ALTER TABLE audit.HousekeepingItem_AUD ALTER COLUMN available BIT NULL;

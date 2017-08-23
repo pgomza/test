@@ -21,7 +21,7 @@ public class RoomService {
     @Embedded
     private Price price;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "room_service_id")
     private Set<RoomServiceCategory> categories;
 

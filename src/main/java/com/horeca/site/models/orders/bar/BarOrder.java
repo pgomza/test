@@ -20,7 +20,7 @@ public class BarOrder extends Order {
     @NotEmpty
     private String tableNumber;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "bar_order_id")
     private Set<BarOrderItem> items;
 

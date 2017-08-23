@@ -19,7 +19,7 @@ public class RentalCategory {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "rental_category_id")
     private Set<RentalItem> items;
 

@@ -19,7 +19,7 @@ public class RentalOrder extends Order {
     @NotNull
     private Price total;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "rental_order_id")
     private Set<RentalOrderItem> items;
 

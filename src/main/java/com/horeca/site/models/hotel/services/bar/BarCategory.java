@@ -25,7 +25,7 @@ public class BarCategory {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "bar_category_id")
     private Set<BarItem> items;
 

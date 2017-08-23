@@ -18,7 +18,7 @@ public class Taxi {
     @NotNull
     private Price price;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "taxi_id")
     private Set<TaxiItem> items;
 

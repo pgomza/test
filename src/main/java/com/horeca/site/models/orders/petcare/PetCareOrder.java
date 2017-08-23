@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @Audited
 public class PetCareOrder extends Order {
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private PetCareItem item;
 

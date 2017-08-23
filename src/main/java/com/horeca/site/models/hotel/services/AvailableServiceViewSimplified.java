@@ -1,9 +1,9 @@
 package com.horeca.site.models.hotel.services;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.horeca.site.models.Price;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AvailableServiceViewSimplified {
 
     private AvailableServiceType type;

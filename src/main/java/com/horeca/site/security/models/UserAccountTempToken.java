@@ -17,7 +17,7 @@ public class UserAccountTempToken {
     @ManyToOne(optional = false)
     private Hotel hotel;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private Set<String> roles;
 
     @NotNull

@@ -8,22 +8,22 @@ import com.horeca.site.models.notifications.NewStayEvent;
 import com.horeca.site.models.stay.*;
 import com.horeca.site.repositories.services.StayRepository;
 import com.horeca.site.security.models.GuestAccount;
+import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.GuestAccountService;
 import com.horeca.site.services.GuestService;
 import com.horeca.site.services.HotelService;
 import com.horeca.site.services.PinGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -65,31 +65,56 @@ public class StayService {
         return get(pin).toView();
     }
 
-    public Iterable<Stay> getAll() {
-        return stayRepository.findAll();
+    public List<Stay> getAllWithStatuses(Set<StayStatus> statuses) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof GuestAccount) {
+            GuestAccount guestAccount = (GuestAccount) principal;
+            Stay stay = getWithoutCheckingStatus(guestAccount.getPin());
+            if (statuses.contains(stay.getStatus())) {
+                return Collections.singletonList(stay);
+            }
+        }
+        else if (principal instanceof UserAccount) {
+            UserAccount userAccount = (UserAccount) principal;
+            Collection<String> stayPins = stayRepository.findByHotelIdAndStatuses(userAccount.getHotelId(), statuses);
+            List<Stay> stays = new ArrayList<>();
+            stayRepository.findAll(stayPins).forEach(stays::add);
+            return stays;
+        }
+
+        return Collections.emptyList();
     }
 
-    @PostFilter("@accessChecker.checkForStayFromCollection(authentication, filterObject)")
-    public Iterable<StayView> getAllViews() {
-        Iterable<Stay> stays = getAll();
-        List<StayView> views = new ArrayList<>();
-        for (Stay stay : stays) {
-            views.add(stay.toView());
-        }
-        return views;
+    public List<Stay> getAll() {
+        return getAllWithStatuses(new HashSet<>(Arrays.asList(StayStatus.values())));
     }
+
+    public List<StayView> getAllWithStatusesViews(Set<StayStatus> statuses) {
+        return getAllWithStatuses(statuses).stream().map(Stay::toView).collect(Collectors.toList());
+    }
+
+    public List<StayView> getAllViews() {
+        return getAllWithStatusesViews(new HashSet<>(Arrays.asList(StayStatus.values())));
+    }
+
+    /*
+        -------------------------------------------------
+        query methods
+     */
 
     public Collection<String> getByHotelId(Long hotelId) {
         return stayRepository.findByHotelId(hotelId);
     }
 
-    public Set<Long> getAllCubilisIdsInHotel(Long hotelId) {
-        return stayRepository.getAllCubilisIdsInHotel(hotelId);
-    }
-
     public String getByCubilisId(Long cubilisId) {
         return stayRepository.findByCubilisId(cubilisId);
     }
+
+    /*
+        -------------------------------------------------
+     */
 
     public Stay update(String pin, Stay updated) {
         ensureEntityExists(pin);
@@ -165,10 +190,7 @@ public class StayService {
 
     public void notifyGuestAboutStay(String pin) {
         Stay stay = getWithoutCheckingStatus(pin);
-        Guest guest = stay.getGuest();
-        String hotelName = stay.getHotel().getName();
-
-        eventPublisher.publishEvent(new NewStayEvent(this, guest, hotelName, pin));
+        eventPublisher.publishEvent(new NewStayEvent(this, stay));
     }
 
     public Stay registerNewStay(Stay stay) {

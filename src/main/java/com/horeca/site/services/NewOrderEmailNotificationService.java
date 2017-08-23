@@ -32,7 +32,7 @@ public class NewOrderEmailNotificationService implements ApplicationListener<New
         Stay stay = stayService.getWithoutCheckingStatus(pin);
         NotificationSettings notificationSettings = stay.getHotel().getNotificationSettings();
         if (notificationSettings == null) {
-            throw new BusinessRuleViolationException("An email about a new order cannot be send because the " +
+            throw new BusinessRuleViolationException("An email about a new order cannot be sendStandard because the " +
             "notification service's settings haven't been specified");
         }
 
@@ -85,7 +85,7 @@ public class NewOrderEmailNotificationService implements ApplicationListener<New
                         "The Throdi Team" +
                         "</div>";
 
-        emailSenderService.send("A new order in the " + service + " service", content, recipientEmail,
+        emailSenderService.sendStandard("A new order in the " + service + " service", content, recipientEmail,
                 "no-reply@throdi.com", "Throdi");
     }
 }

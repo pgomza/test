@@ -1,0 +1,1 @@
+CREATE INDEX Stay_status_index ON Stay (status);

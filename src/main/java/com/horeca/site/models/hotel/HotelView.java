@@ -1,7 +1,7 @@
 package com.horeca.site.models.hotel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.horeca.site.models.Currency;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.images.FileLink;
@@ -12,7 +12,7 @@ import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
 import java.util.List;
 import java.util.Set;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class HotelView {
 	
 	private Long id;

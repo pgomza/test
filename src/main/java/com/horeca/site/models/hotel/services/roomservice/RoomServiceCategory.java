@@ -19,7 +19,7 @@ public class RoomServiceCategory {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "room_service_category_id")
     private Set<RoomServiceItem> items;
 

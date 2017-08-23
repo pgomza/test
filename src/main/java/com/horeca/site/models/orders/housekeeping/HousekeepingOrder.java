@@ -13,7 +13,7 @@ public class HousekeepingOrder extends Order {
 
     private String message;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name="housekeeping_order_housekeeping_item",
             joinColumns=@JoinColumn(name="housekeeping_order_id"),
             inverseJoinColumns=@JoinColumn(name="housekeeping_item_id"))
