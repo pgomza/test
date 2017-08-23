@@ -13,6 +13,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 
 @Api(value = "stays")
 @RestController
@@ -23,7 +24,7 @@ public class StayController {
     private StayService stayService;
 
     @RequestMapping(value = "/stays", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Iterable<StayView> getAll() {
+    public List<StayView> getAll() {
         return stayService.getAllViews();
     }
 

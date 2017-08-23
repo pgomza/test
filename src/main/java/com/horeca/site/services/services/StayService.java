@@ -7,6 +7,7 @@ import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.notifications.NewStayEvent;
 import com.horeca.site.models.stay.*;
 import com.horeca.site.repositories.services.StayRepository;
+import com.horeca.site.security.AccessChecker;
 import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.services.GuestAccountService;
 import com.horeca.site.services.GuestService;
@@ -14,8 +15,9 @@ import com.horeca.site.services.HotelService;
 import com.horeca.site.services.PinGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -47,6 +50,9 @@ public class StayService {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    private AccessChecker accessChecker;
+
     // used when the information about a given stay has to be returned
     // irrespective of the fact whether it's active or not; for 'internal'
     // use only
@@ -65,18 +71,19 @@ public class StayService {
         return get(pin).toView();
     }
 
-    public Iterable<Stay> getAll() {
-        return stayRepository.findAll();
+    public List<Stay> getAll() {
+        ArrayList<Stay> stays = new ArrayList<>();
+        stayRepository.findAll().forEach(stays::add);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return stays.stream()
+                .filter(stay -> accessChecker.checkForStayFromCollection(authentication, stay))
+                .collect(Collectors.toList());
     }
 
-    @PostFilter("@accessChecker.checkForStayFromCollection(authentication, filterObject)")
-    public Iterable<StayView> getAllViews() {
-        Iterable<Stay> stays = getAll();
-        List<StayView> views = new ArrayList<>();
-        for (Stay stay : stays) {
-            views.add(stay.toView());
-        }
-        return views;
+    public List<StayView> getAllViews() {
+        return getAll().stream().map(Stay::toView).collect(Collectors.toList());
     }
 
     public Collection<String> getByHotelId(Long hotelId) {
