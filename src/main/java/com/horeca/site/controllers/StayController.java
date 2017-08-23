@@ -13,7 +13,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Api(value = "stays")
 @RestController
@@ -24,8 +27,17 @@ public class StayController {
     private StayService stayService;
 
     @RequestMapping(value = "/stays", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<StayView> getAll() {
-        return stayService.getAllViews();
+    public List<StayView> getAll(@RequestParam(value = "status", required = false) List<String> strings) {
+        if (strings != null && !strings.isEmpty()) {
+            Set<StayStatus> statuses = strings.stream()
+                    .map(String::toUpperCase)
+                    .map(StayStatus::valueOf)
+                    .collect(Collectors.toSet());
+            return stayService.getAllWithStatusesViews(new HashSet<>(statuses));
+        }
+        else {
+            return stayService.getAllViews();
+        }
     }
 
     @RequestMapping(value = "/stays", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

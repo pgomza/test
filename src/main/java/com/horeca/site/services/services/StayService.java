@@ -22,10 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,28 +65,38 @@ public class StayService {
         return get(pin).toView();
     }
 
-    public List<Stay> getAll() {
+    public List<Stay> getAllWithStatuses(Set<StayStatus> statuses) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
         if (principal instanceof GuestAccount) {
             GuestAccount guestAccount = (GuestAccount) principal;
-            return Collections.singletonList(getWithoutCheckingStatus(guestAccount.getPin()));
+            Stay stay = getWithoutCheckingStatus(guestAccount.getPin());
+            if (statuses.contains(stay.getStatus())) {
+                return Collections.singletonList(stay);
+            }
         }
         else if (principal instanceof UserAccount) {
             UserAccount userAccount = (UserAccount) principal;
-            Collection<String> stayPins = getByHotelId(userAccount.getHotelId());
+            Collection<String> stayPins = stayRepository.findByHotelIdAndStatuses(userAccount.getHotelId(), statuses);
             List<Stay> stays = new ArrayList<>();
             stayRepository.findAll(stayPins).forEach(stays::add);
             return stays;
         }
-        else {
-            return Collections.emptyList();
-        }
+
+        return Collections.emptyList();
+    }
+
+    public List<Stay> getAll() {
+        return getAllWithStatuses(new HashSet<>(Arrays.asList(StayStatus.values())));
+    }
+
+    public List<StayView> getAllWithStatusesViews(Set<StayStatus> statuses) {
+        return getAllWithStatuses(statuses).stream().map(Stay::toView).collect(Collectors.toList());
     }
 
     public List<StayView> getAllViews() {
-        return getAll().stream().map(Stay::toView).collect(Collectors.toList());
+        return getAllWithStatusesViews(new HashSet<>(Arrays.asList(StayStatus.values())));
     }
 
     /*
