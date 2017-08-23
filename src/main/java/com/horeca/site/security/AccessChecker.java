@@ -35,10 +35,6 @@ public class AccessChecker {
         return checkForHotelHelper(authentication, hotelId);
     }
 
-    public boolean checkForStayFromCollection(Authentication authentication, Stay filterObject) {
-        return checkForStayHelper(authentication, filterObject);
-    }
-
     public boolean checkForStay(Authentication authentication, HttpServletRequest request) {
         String servletPath = request.getServletPath();
         String pin = extractStayPinFromServletPath(servletPath, stayPinPattern);

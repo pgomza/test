@@ -7,8 +7,8 @@ import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.notifications.NewStayEvent;
 import com.horeca.site.models.stay.*;
 import com.horeca.site.repositories.services.StayRepository;
-import com.horeca.site.security.AccessChecker;
 import com.horeca.site.security.models.GuestAccount;
+import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.GuestAccountService;
 import com.horeca.site.services.GuestService;
 import com.horeca.site.services.HotelService;
@@ -22,10 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,9 +47,6 @@ public class StayService {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    @Autowired
-    private AccessChecker accessChecker;
-
     // used when the information about a given stay has to be returned
     // irrespective of the fact whether it's active or not; for 'internal'
     // use only
@@ -72,14 +66,23 @@ public class StayService {
     }
 
     public List<Stay> getAll() {
-        ArrayList<Stay> stays = new ArrayList<>();
-        stayRepository.findAll().forEach(stays::add);
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
 
-        return stays.stream()
-                .filter(stay -> accessChecker.checkForStayFromCollection(authentication, stay))
-                .collect(Collectors.toList());
+        if (principal instanceof GuestAccount) {
+            GuestAccount guestAccount = (GuestAccount) principal;
+            return Collections.singletonList(getWithoutCheckingStatus(guestAccount.getPin()));
+        }
+        else if (principal instanceof UserAccount) {
+            UserAccount userAccount = (UserAccount) principal;
+            Collection<String> stayPins = getByHotelId(userAccount.getHotelId());
+            List<Stay> stays = new ArrayList<>();
+            stayRepository.findAll(stayPins).forEach(stays::add);
+            return stays;
+        }
+        else {
+            return Collections.emptyList();
+        }
     }
 
     public List<StayView> getAllViews() {
