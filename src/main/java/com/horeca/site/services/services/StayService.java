@@ -22,7 +22,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -89,17 +92,22 @@ public class StayService {
         return getAll().stream().map(Stay::toView).collect(Collectors.toList());
     }
 
+    /*
+        -------------------------------------------------
+        query methods
+     */
+
     public Collection<String> getByHotelId(Long hotelId) {
         return stayRepository.findByHotelId(hotelId);
-    }
-
-    public Set<Long> getAllCubilisIdsInHotel(Long hotelId) {
-        return stayRepository.getAllCubilisIdsInHotel(hotelId);
     }
 
     public String getByCubilisId(Long cubilisId) {
         return stayRepository.findByCubilisId(cubilisId);
     }
+
+    /*
+        -------------------------------------------------
+     */
 
     public Stay update(String pin, Stay updated) {
         ensureEntityExists(pin);
