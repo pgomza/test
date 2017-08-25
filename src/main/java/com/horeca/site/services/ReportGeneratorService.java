@@ -39,7 +39,7 @@ public class ReportGeneratorService {
     private ReportToHtmlService reportToHtmlService;
 
     public Report generateReport(String pin) {
-        Stay stay = stayService.get(pin);
+        Stay stay = stayService.getWithoutCheckingStatus(pin);
         AvailableServices availableServices = stay.getHotel().getAvailableServices();
         String hotelCurrency = stay.getHotel().getCurrency().toString();
 
