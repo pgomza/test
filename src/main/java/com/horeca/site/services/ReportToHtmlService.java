@@ -96,15 +96,21 @@ public class ReportToHtmlService {
                 "            width: 90%;\n" +
                 "            text-align: center;\n" +
                 "            margin: 0 auto;\n" +
+                "            page-break-inside: auto;\n" +
+                "        }\n" +
+                "\n" +
+                "       tr {" +
+                "           page-break-inside: avoid;" +
+                "           page-break-after: auto;" +
+                "       }\n" +
+                "\n" +
+                "        tr:nth-child(even) {\n" +
+                "            background-color: #F0F0F0;\n" +
                 "        }\n" +
                 "\n" +
                 "        td, th {\n" +
                 "            border: 1px solid #dddddd;\n" +
                 "            padding: 8px;\n" +
-                "        }\n" +
-                "\n" +
-                "        tr:nth-child(even) {\n" +
-                "            background-color: #F0F0F0;\n" +
                 "        }\n" +
                 "\n" +
                 "        .orders .details {\n" +
