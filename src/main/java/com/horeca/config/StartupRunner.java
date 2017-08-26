@@ -6,6 +6,7 @@ import com.horeca.site.security.services.UserAccountTempTokenService;
 import com.horeca.site.services.HotelService;
 import com.horeca.site.services.cubilis.CubilisReservationService;
 import com.horeca.site.websocket.WebSocketTokenService;
+import com.openhtmltopdf.util.XRLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -39,6 +40,9 @@ public class StartupRunner {
 
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
+        // turn off logging for the html-to-pdf conversion library
+        XRLog.setLoggingEnabled(false);
+
         userAccountTempTokenService.deleteInvalidTokens();
         webSocketTokenService.deleteAll();
         cubilisReservationService.deleteOutdated();
