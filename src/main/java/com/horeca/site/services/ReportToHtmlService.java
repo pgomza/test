@@ -21,28 +21,28 @@ public class ReportToHtmlService {
 
         htmlBuilder.append("<body>\n");
 
-        ReportGuest guest = report.getReportGuest();
+        ReportGuest guest = report.getGuest();
         htmlBuilder.append(getGuest(guest.getName(), guest.getRoomNumber(), guest.getArrival(), guest.getDeparture()));
 
         if (!report.getChargeDetails().isEmpty()) {
             htmlBuilder.append("<div class=\"orders\">\n" +
-                    "        <div class=\"header\">Placed orders</div>\n" +
-                    "        <table>\n" +
-                    "            <tr>\n" +
-                    "                <th>Service</th>\n" +
-                    "                <th>Details</th>\n" +
-                    "                <th>Amount</th>\n" +
-                    "            </tr>\n");
+                    "<div class=\"header\">Placed orders</div>\n" +
+                    "<table>\n" +
+                    "    <tr>\n" +
+                    "        <th>Service</th>\n" +
+                    "        <th>Details</th>\n" +
+                    "        <th>Amount</th>\n" +
+                    "    </tr>\n");
 
             htmlBuilder.append(getOrders(report.getChargeDetails()));
 
             htmlBuilder.append("<tr>\n" +
-                    "                <td class=\"last-row\"></td>\n" +
-                    "                <td class=\"last-row total\">Total</td>\n" +
-                    "                <td>" + report.getTotalAmount() + "</td>\n" +
-                    "            </tr>\n" +
-                    "        </table>\n" +
-                    "    </div>\n");
+                    "            <td class=\"last-row\"></td>\n" +
+                    "            <td class=\"last-row total\">Total</td>\n" +
+                    "            <td>" + report.getTotalAmount() + "</td>\n" +
+                    "        </tr>\n" +
+                    "    </table>\n" +
+                    "</div>\n");
         }
         else {
             htmlBuilder.append( "<div class=\"orders\">\n" +
@@ -60,11 +60,14 @@ public class ReportToHtmlService {
         return "<head>\n" +
                 "    <meta charset=\"UTF-8\">\n" +
                 "    <title>Template</title>\n" +
+                "    <link href=\"https://fonts.googleapis.com/css?family=Lato\" rel=\"stylesheet\">\n" +
                 "    <style>\n" +
                 "        body {\n" +
                 "            margin: 20px;\n" +
+                "            font-family: 'Lato', sans-serif;\n" +
                 "        }\n" +
                 "\n" +
+
                 "        .header {\n" +
                 "            font-size: large;\n" +
                 "            font-weight: bold;\n" +
@@ -91,7 +94,6 @@ public class ReportToHtmlService {
                 "        }\n" +
                 "\n" +
                 "        table {\n" +
-                "            font-family: arial, sans-serif;\n" +
                 "            border-collapse: collapse;\n" +
                 "            width: 90%;\n" +
                 "            text-align: center;\n" +
@@ -132,49 +134,49 @@ public class ReportToHtmlService {
 
     private String getGuest(String name, String roomNumber, String arrival, String departure) {
         return "<div class=\"guest\">\n" +
-                "        <div class=\"header\">Information about the stay</div>\n" +
-                "        <div class=\"entry\">\n" +
-                "            <div class=\"key\">Guest's name:</div>\n" +
-                "            <div class=\"value\">" + name + "</div>\n" +
-                "        </div>\n" +
-                "        <div class=\"entry\">\n" +
-                "            <div class=\"key\">Room number:</div>\n" +
-                "            <div class=\"value\">" + roomNumber + "</div>\n" +
-                "        </div>\n" +
-                "        <div class=\"entry\">\n" +
-                "            <div class=\"key\">Arrival:</div>\n" +
-                "            <div class=\"value\">" + arrival + "</div>\n" +
-                "        </div>\n" +
-                "        <div class=\"entry\">\n" +
-                "            <div class=\"key\">Departure:</div>\n" +
-                "            <div class=\"value\">" + departure + "</div>\n" +
-                "        </div>\n" +
-                "    </div>\n";
+                "   <div class=\"header\">Information about the stay</div>\n" +
+                "   <div class=\"entry\">\n" +
+                "       <div class=\"key\">Guest's name:</div>\n" +
+                "       <div class=\"value\">" + name + "</div>\n" +
+                "   </div>\n" +
+                "   <div class=\"entry\">\n" +
+                "       <div class=\"key\">Room number:</div>\n" +
+                "       <div class=\"value\">" + roomNumber + "</div>\n" +
+                "   </div>\n" +
+                "   <div class=\"entry\">\n" +
+                "       <div class=\"key\">Arrival:</div>\n" +
+                "       <div class=\"value\">" + arrival + "</div>\n" +
+                "   </div>\n" +
+                "   <div class=\"entry\">\n" +
+                "       <div class=\"key\">Departure:</div>\n" +
+                "       <div class=\"value\">" + departure + "</div>\n" +
+                "   </div>\n" +
+                "</div>\n";
     }
 
     private String getOrders(List<ChargeDetails> chargeDetailsList) {
         StringBuilder ordersBuilder = new StringBuilder();
         for (ChargeDetails chargeDetails : chargeDetailsList) {
             ordersBuilder.append("<tr>\n" +
-                    "                <td>" + chargeDetails.getServiceName() + "</td>\n" +
-                    "                <td></td>\n" +
-                    "                <td></td>\n" +
-                    "            </tr>\n");
+                    "    <td style=\"border-top: 2px solid #D3D3D3;\">" + chargeDetails.getServiceName() + "</td>\n" +
+                    "    <td style=\"border-top: 2px solid #D3D3D3;\"></td>\n" +
+                    "    <td style=\"border-top: 2px solid #D3D3D3;\"></td>\n" +
+                    "</tr>\n");
 
-            for (ReportOrder order : chargeDetails.getReportOrders()) {
+            for (ReportOrder order : chargeDetails.getOrders()) {
                 ordersBuilder.append("<tr>\n" +
-                        "                <td></td>\n" +
-                        "                <td class=\"details\">" + order.getDescription() + "</td>\n" +
-                        "                <td>" + order.getAmount() + "</td>\n" +
-                        "            </tr>\n");
+                        "    <td></td>\n" +
+                        "    <td class=\"details\">" + order.getDescription() + "</td>\n" +
+                        "    <td>" + order.getAmount() + "</td>\n" +
+                        "</tr>\n");
             }
 
             if (chargeDetails.getUsageFee() != null) {
                 ordersBuilder.append("<tr>\n" +
-                        "                <td></td>\n" +
-                        "                <td class=\"details\">+ fee for using this service</td>\n" +
-                        "                <td>" + chargeDetails.getUsageFee() + "</td>\n" +
-                        "            </tr>\n");
+                        "    <td></td>\n" +
+                        "    <td class=\"details\" style=\"font-style: italic;\">fee for using this service</td>\n" +
+                        "    <td>" + chargeDetails.getUsageFee() + "</td>\n" +
+                        "</tr>\n");
             }
         }
         return ordersBuilder.toString();
