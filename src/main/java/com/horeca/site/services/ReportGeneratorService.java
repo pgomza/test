@@ -3,6 +3,7 @@ package com.horeca.site.services;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.services.AvailableServices;
+import com.horeca.site.models.hotel.services.petcare.PetCareItem;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.bar.BarOrder;
 import com.horeca.site.models.orders.bar.BarOrderItem;
@@ -267,10 +268,13 @@ public class ReportGeneratorService {
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (PetCareOrder order : orders) {
-            String description = order.getItem().getName();
-            String amount = priceToValue(order.getItem().getPrice()) + " " + hotelCurrency;
+            PetCareItem item = order.getItem();
+            String description = item.getName();
+            String amount = priceToValue(item.getPrice()) + " " + hotelCurrency;
 
             ReportOrder reportOrder = new ReportOrder(description, amount);
+
+            totalAmount = totalAmount.add(item.getPrice().getValue());
             reportOrders.add(reportOrder);
         }
 
