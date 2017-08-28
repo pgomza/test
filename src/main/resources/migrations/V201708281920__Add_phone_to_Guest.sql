@@ -1,0 +1,2 @@
+ALTER TABLE dbo.Guest ADD phone NVARCHAR(255);
+ALTER TABLE audit.Guest_AUD ADD phone NVARCHAR(4000);
