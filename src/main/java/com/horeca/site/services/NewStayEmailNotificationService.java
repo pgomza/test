@@ -6,7 +6,6 @@ import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.notifications.NewStayEvent;
 import com.horeca.site.models.stay.Stay;
-import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +20,7 @@ import java.util.Map;
 @Service
 public class NewStayEmailNotificationService implements ApplicationListener<NewStayEvent> {
 
-    private static final Logger logger = Logger.getLogger(NewOrderEmailNotificationService.class);
+    private static final Logger logger = Logger.getLogger(NewStayEmailNotificationService.class);
 
     private static final String EMAIL_SUBJECT = "Information about your stay";
     private static final String EMAIL_ADDRESS_FROM = "no-reply@throdi.com";
