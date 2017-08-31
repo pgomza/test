@@ -4,7 +4,7 @@ public enum AvailableServiceType {
 
     BREAKFAST("breakfast"), CARPARK("car park"), ROOMSERVICE("room service"), SPA("spa"), PETCARE("pet care"),
     TAXI("taxi"), HOUSEKEEPING("housekeeping"), TABLEORDERING("table ordering"), BAR("bar"), SPACALL("spa call"),
-    HAIRDRESSER("hair dresser"), RENTAL("rental"), RESTAURANTMENU("restaurant menu");
+    HAIRDRESSER("hair dresser"), RENTAL("rental"), RESTAURANTMENU("restaurant menu"), DND("Do Not Disturb");
 
     private final String name;
 
