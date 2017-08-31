@@ -47,10 +47,10 @@ public class OrderEmailNotificationService implements ApplicationListener<OrderE
             try {
                 if (requestedServiceType == AvailableServiceType.DND) {
                     Status currentDndStatus = stay.getOrders().getDnd().getStatus();
-                    sendDndUpdateMessage(guest, currentDndStatus);
+                    sendDndUpdateMessage(guest, currentDndStatus, recipientEmail);
                 }
                 else {
-                    sendNewOrderMessage(guest, requestedServiceType);
+                    sendNewOrderMessage(guest, requestedServiceType, recipientEmail);
                 }
             } catch (Exception e) {
                 logger.error("Error while sending an email about a new order to: " + recipientEmail);
@@ -79,11 +79,10 @@ public class OrderEmailNotificationService implements ApplicationListener<OrderE
         }
     }
 
-    private void sendNewOrderMessage(Guest guest, AvailableServiceType serviceType)
+    private void sendNewOrderMessage(Guest guest, AvailableServiceType serviceType, String recipientEmail)
             throws MessagingException, UnsupportedEncodingException {
 
         String serviceName = serviceType.toString();
-
         String content =
                 "<div>" +
                         "Hi," +
@@ -98,12 +97,13 @@ public class OrderEmailNotificationService implements ApplicationListener<OrderE
                         "</div>";
 
         emailSenderService.sendStandard("A new order in the " + serviceName + " service", content,
-                guest.getEmail(), EMAIL_ADDRESS_FROM, EMAIL_NAME_FROM);
+                recipientEmail, EMAIL_ADDRESS_FROM, EMAIL_NAME_FROM);
     }
 
-    private void sendDndUpdateMessage(Guest guest, Status status) throws UnsupportedEncodingException, MessagingException {
-        String statusString = status == Status.ENABLED ? "enabled" : "disabled";
+    private void sendDndUpdateMessage(Guest guest, Status status, String recipientEmail)
+            throws UnsupportedEncodingException, MessagingException {
 
+        String statusString = status == Status.ENABLED ? "enabled" : "disabled";
         String content =
                 "<div>" +
                 "   Hi," +
@@ -117,7 +117,7 @@ public class OrderEmailNotificationService implements ApplicationListener<OrderE
                 "   The Throdi Team" +
                 "</div>";
 
-        emailSenderService.sendStandard("DND mode change", content, guest.getEmail(), EMAIL_ADDRESS_FROM,
+        emailSenderService.sendStandard("DND mode change", content, recipientEmail, EMAIL_ADDRESS_FROM,
                 EMAIL_NAME_FROM);
     }
 }
