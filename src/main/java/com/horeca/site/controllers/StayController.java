@@ -73,11 +73,6 @@ public class StayController {
         stayService.delete(pin);
     }
 
-    @RequestMapping(value = "/stays", method = RequestMethod.DELETE)
-    public void deleteAll() {
-        stayService.deleteAll();
-    }
-
     @RequestMapping(value = "/check-in/{pin}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public StayView checkIn(@PathVariable String pin) {
         return stayService.checkIn(pin);
