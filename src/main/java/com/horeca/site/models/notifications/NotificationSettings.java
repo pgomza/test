@@ -29,6 +29,7 @@ public class NotificationSettings {
     private boolean tableOrdering;
     private boolean bar;
     private boolean rental;
+    private boolean dnd;
 
     public NotificationSettings() {
     }
@@ -127,5 +128,13 @@ public class NotificationSettings {
 
     public void setRental(boolean rental) {
         this.rental = rental;
+    }
+
+    public boolean isDnd() {
+        return dnd;
+    }
+
+    public void setDnd(boolean dnd) {
+        this.dnd = dnd;
     }
 }
