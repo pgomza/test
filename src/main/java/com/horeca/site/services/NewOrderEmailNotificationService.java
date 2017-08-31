@@ -3,8 +3,8 @@ package com.horeca.site.services;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
-import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.notifications.NotificationSettings;
+import com.horeca.site.models.notifications.OrderEvent;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.services.services.StayService;
 import org.apache.log4j.Logger;
@@ -16,7 +16,7 @@ import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 
 @Service
-public class NewOrderEmailNotificationService implements ApplicationListener<NewOrderEvent> {
+public class NewOrderEmailNotificationService implements ApplicationListener<OrderEvent> {
 
     private static final Logger logger = Logger.getLogger(NewOrderEmailNotificationService.class);
 
@@ -27,7 +27,7 @@ public class NewOrderEmailNotificationService implements ApplicationListener<New
     private EmailSenderService emailSenderService;
 
     @Override
-    public void onApplicationEvent(NewOrderEvent event) {
+    public void onApplicationEvent(OrderEvent event) {
         String pin = event.getPin();
         Stay stay = stayService.getWithoutCheckingStatus(pin);
         NotificationSettings notificationSettings = stay.getHotel().getNotificationSettings();

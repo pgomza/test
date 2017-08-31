@@ -1,9 +1,8 @@
 package com.horeca.site.models.notifications;
 
 import com.horeca.site.models.hotel.services.AvailableServiceType;
-import org.springframework.context.ApplicationEvent;
 
-public class NewOrderEvent extends ApplicationEvent {
+public class NewOrderEvent extends OrderEvent {
 
     private final AvailableServiceType serviceType;
     private final String pin;
@@ -14,10 +13,12 @@ public class NewOrderEvent extends ApplicationEvent {
         this.pin = pin;
     }
 
+    @Override
     public AvailableServiceType getServiceType() {
         return serviceType;
     }
 
+    @Override
     public String getPin() {
         return pin;
     }
