@@ -38,7 +38,7 @@ public class ReportToHtmlService {
 
             htmlBuilder.append("<tr>\n" +
                     "            <td class=\"last-row\"></td>\n" +
-                    "            <td class=\"last-row total\">Total</td>\n" +
+                    "            <td class=\"last-row total\">Total (VAT incl.)</td>\n" +
                     "            <td>" + report.getTotalAmount() + "</td>\n" +
                     "        </tr>\n" +
                     "    </table>\n" +
