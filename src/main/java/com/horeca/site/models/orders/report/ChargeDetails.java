@@ -12,12 +12,12 @@ public class ChargeDetails {
     private String usageFee;
 
     @NotNull
-    private List<ReportOrder> reportOrders = new ArrayList<>();
+    private List<ReportOrder> orders = new ArrayList<>();
 
-    public ChargeDetails(String serviceName, String usageFee, List<ReportOrder> reportOrders) {
+    public ChargeDetails(String serviceName, String usageFee, List<ReportOrder> orders) {
         this.serviceName = serviceName;
         this.usageFee = usageFee;
-        this.reportOrders = reportOrders;
+        this.orders = orders;
     }
 
     public String getServiceName() {
@@ -36,11 +36,11 @@ public class ChargeDetails {
         this.usageFee = usageFee;
     }
 
-    public List<ReportOrder> getReportOrders() {
-        return reportOrders;
+    public List<ReportOrder> getOrders() {
+        return orders;
     }
 
-    public void setReportOrders(List<ReportOrder> reportOrders) {
-        this.reportOrders = reportOrders;
+    public void setOrders(List<ReportOrder> orders) {
+        this.orders = orders;
     }
 }

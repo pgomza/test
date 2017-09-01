@@ -9,7 +9,7 @@ import java.util.List;
 public class Report {
 
     @NotNull
-    private ReportGuest reportGuest;
+    private ReportGuest guest;
 
     @NotNull
     private List<ChargeDetails> chargeDetails = new ArrayList<>();
@@ -17,18 +17,18 @@ public class Report {
     @NotEmpty
     private String totalAmount;
 
-    public Report(ReportGuest reportGuest, List<ChargeDetails> chargeDetails, String totalAmount) {
-        this.reportGuest = reportGuest;
+    public Report(ReportGuest guest, List<ChargeDetails> chargeDetails, String totalAmount) {
+        this.guest = guest;
         this.chargeDetails = chargeDetails;
         this.totalAmount = totalAmount;
     }
 
-    public ReportGuest getReportGuest() {
-        return reportGuest;
+    public ReportGuest getGuest() {
+        return guest;
     }
 
-    public void setReportGuest(ReportGuest reportGuest) {
-        this.reportGuest = reportGuest;
+    public void setGuest(ReportGuest guest) {
+        this.guest = guest;
     }
 
     public List<ChargeDetails> getChargeDetails() {

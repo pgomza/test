@@ -147,10 +147,6 @@ public class StayService {
         stayRepository.delete(pin);
     }
 
-    public void deleteAll() {
-        stayRepository.deleteAll();
-    }
-
     public StayView checkIn(String pin) {
         ensureEntityExists(pin);
         ensureStatusNotFinished(pin);

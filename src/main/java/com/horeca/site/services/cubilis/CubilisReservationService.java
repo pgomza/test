@@ -147,7 +147,7 @@ public class CubilisReservationService {
             guest.setFirstName(customer.getFirstName());
             guest.setLastName(customer.getLastName());
             guest.setEmail(customer.getEmail());
-            guest.setNationality("GB");
+            guest.setNationality("UNSPECIFIED");
             matchingGuest = guestService.save(hotelId, guest);
         }
 
