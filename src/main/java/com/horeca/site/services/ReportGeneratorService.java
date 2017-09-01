@@ -22,11 +22,13 @@ import com.horeca.site.models.stay.Stay;
 import com.horeca.site.services.services.StayService;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -224,7 +226,7 @@ public class ReportGeneratorService {
             String description = String.join(", ", descriptionList);
             String amount = priceToValue(order.getTotal()) + " " + hotelCurrency;
 
-            ReportOrder reportOrder = new ReportOrder(description, amount);
+            ReportOrder reportOrder = new ReportOrder(description, amount, timestampToString(order.getCreatedAt()));
             reportOrders.add(reportOrder);
         }
 
@@ -255,7 +257,7 @@ public class ReportGeneratorService {
             String description = String.join(", ", descriptionList);
             String amount = priceToValue(order.getTotal()) + " " + hotelCurrency;
 
-            ReportOrder reportOrder = new ReportOrder(description, amount);
+            ReportOrder reportOrder = new ReportOrder(description, amount, timestampToString(order.getCreatedAt()));
             reportOrders.add(reportOrder);
         }
 
@@ -272,7 +274,7 @@ public class ReportGeneratorService {
             String description = item.getName();
             String amount = priceToValue(item.getPrice()) + " " + hotelCurrency;
 
-            ReportOrder reportOrder = new ReportOrder(description, amount);
+            ReportOrder reportOrder = new ReportOrder(description, amount, timestampToString(order.getCreatedAt()));
 
             totalAmount = totalAmount.add(item.getPrice().getValue());
             reportOrders.add(reportOrder);
@@ -305,7 +307,7 @@ public class ReportGeneratorService {
             String description = String.join(", ", descriptionList);
             String amount = priceToValue(order.getTotal()) + " " + hotelCurrency;
 
-            ReportOrder reportOrder = new ReportOrder(description, amount);
+            ReportOrder reportOrder = new ReportOrder(description, amount, timestampToString(order.getCreatedAt()));
             reportOrders.add(reportOrder);
         }
 
@@ -336,7 +338,7 @@ public class ReportGeneratorService {
             String description = String.join(", ", descriptionList);
             String amount = priceToValue(order.getTotal()) + " " + hotelCurrency;
 
-            ReportOrder reportOrder = new ReportOrder(description, amount);
+            ReportOrder reportOrder = new ReportOrder(description, amount, timestampToString(order.getCreatedAt()));
             reportOrders.add(reportOrder);
         }
 
@@ -348,6 +350,11 @@ public class ReportGeneratorService {
             return BigDecimal.ZERO;
         }
         return price.getValue();
+    }
+
+    private static String timestampToString(Timestamp timestamp) {
+        DateTime dateTime = new DateTime(timestamp);
+        return dateTime.toString("dd-MM-YYYY");
     }
 
     private static String getUsageFeeText(BigDecimal fee, String hotelCurrency) {

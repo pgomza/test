@@ -10,9 +10,13 @@ public class ReportOrder {
     @NotEmpty
     private String amount;
 
-    public ReportOrder(String description, String amount) {
+    @NotEmpty
+    private String placedAt;
+
+    public ReportOrder(String description, String amount, String placedAt) {
         this.description = description;
         this.amount = amount;
+        this.placedAt = placedAt;
     }
 
     public String getDescription() {
@@ -29,5 +33,13 @@ public class ReportOrder {
 
     public void setAmount(String amount) {
         this.amount = amount;
+    }
+
+    public String getPlacedAt() {
+        return placedAt;
+    }
+
+    public void setPlacedAt(String placedAt) {
+        this.placedAt = placedAt;
     }
 }
