@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.horeca.site.handlers.CustomGlobalExceptionHandler;
+import com.horeca.site.handlers.TimeoutFilter;
 import com.horeca.site.handlers.UpdatesInterceptor;
+import com.horeca.site.repositories.TimeoutSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -15,7 +18,10 @@ import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.resource.ResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
@@ -31,6 +37,9 @@ public class RootConfig extends WebMvcConfigurerAdapter
 {
     @Autowired
     private UpdatesInterceptor updatesInterceptor;
+
+    @Autowired
+    private TimeoutSettingsRepository timeoutSettingsRepository;
 
     @Bean
     @Primary
@@ -137,7 +146,15 @@ public class RootConfig extends WebMvcConfigurerAdapter
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        InterceptorRegistration registration = registry.addInterceptor(updatesInterceptor);
-        registration.addPathPatterns("/api/**");
+        registry.addInterceptor(updatesInterceptor).addPathPatterns("/api/**");
+    }
+
+    @Bean
+    public FilterRegistrationBean timeoutFilter() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new TimeoutFilter(timeoutSettingsRepository));
+        registration.addUrlPatterns("/*");
+        registration.setOrder(Integer.MIN_VALUE);
+        return registration;
     }
 }
