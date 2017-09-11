@@ -46,6 +46,8 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers("/api/updates/**").permitAll();
         http.authorizeRequests().antMatchers("/api/demo/**").permitAll();
 
+        http.authorizeRequests().antMatchers("/api/timeout").permitAll();
+
         // allow anybody to get info about any of the hotels (but not their guests)
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}").permitAll();
