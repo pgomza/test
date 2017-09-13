@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -175,6 +176,19 @@ public class HotelService {
         update(id, hotel);
     }
 
+    public void delete(Long id) {
+        ensureExists(id);
+        Collection<String> associatedStays = stayService.getByHotelId(id);
+        associatedStays.forEach(stayService::delete);
+        repository.delete(id);
+    }
+
+    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
+    public void deleteMarkedAndOutdated() {
+        List<Long> markedAsDeleted = hotelSearchService.getMarkedAndOutdated();
+        markedAsDeleted.forEach(this::delete);
+    }
+
     void ensureExists(Long hotelId) {
         boolean exists = repository.exists(hotelId);
         if (!exists)
@@ -290,7 +304,7 @@ public class HotelService {
         return hotel;
     }
 
-    // The following get* methods exclude hotels that have been marked as deleted
+    // The following get* methods exclude the hotels that have been marked as deleted
     // The methods aren't to be used from anywhere else than the controllers (for most of them
     // it's obvious because they receive an argument of the Pageable type)
 
