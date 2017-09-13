@@ -26,4 +26,7 @@ public interface HotelRepository extends PagingAndSortingRepository<Hotel, Long>
     @Query("select h.id from Hotel h where h.isMarkedAsDeleted = 0 and h.cubilisSettings.isEnabled = 1 and " +
             "h.cubilisConnectionStatus.status like 'SUCCESS'")
     List<Long> getIdsOfCubilisEligible();
+
+    @Query("select h.id from Hotel h where h.isMarkedAsDeleted = 1")
+    List<Long> getAllMarkedAsDeleted();
 }
