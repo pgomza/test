@@ -13,6 +13,10 @@ public class HotelSearchService {
     @Autowired
     private HotelRepository repository;
 
+    public List<Long> getAll() {
+        return repository.getAll();
+    }
+
     public List<Long> getIdsByName(String name) {
         if (name.length() < 3)
             return Collections.emptyList();

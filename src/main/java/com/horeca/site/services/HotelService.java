@@ -57,42 +57,6 @@ public class HotelService {
     @Autowired
     private GuestAccountService guestAccountService;
 
-    /*
-        general actions
-     */
-
-    public Page<Hotel> getAll(Pageable pageable) {
-        Iterable<Hotel> batchIterable = repository.findAll(pageable);
-        List<Hotel> batchList = new ArrayList<>();
-        for (Hotel hotel : batchIterable) {
-            batchList.add(hotel);
-        }
-        return new PageImpl<>(batchList, pageable, repository.getTotalCount());
-    }
-
-    public Page<HotelView> getAllViews(Pageable pageable) {
-        Iterable<Hotel> batch = repository.findAll(pageable);
-        List<HotelView> views = new ArrayList<>();
-        for (Hotel hotel : batch) {
-            views.add(hotel.toView());
-        }
-
-        return new PageImpl<>(views, pageable, repository.getTotalCount());
-    }
-
-    public Hotel get(Long id) {
-        Hotel hotel = repository.findOne(id);
-        if (hotel == null)
-            throw new ResourceNotFoundException();
-
-        return hotel;
-    }
-
-    public HotelView getView(Long id) {
-        Hotel hotel = get(id);
-        return hotel.toView();
-    }
-
     @PreAuthorize("hasRole('SALESMAN')")
     public Hotel add(Hotel hotel) {
         // TODO needs refactoring
@@ -315,8 +279,43 @@ public class HotelService {
     }
 
     /*
-        filtering hotels
+        filtering/retrieval
      */
+
+    public Hotel get(Long id) {
+        Hotel hotel = repository.findOne(id);
+        if (hotel == null)
+            throw new ResourceNotFoundException();
+
+        return hotel;
+    }
+
+    // The following get* methods exclude hotels that have been marked as deleted
+    // The methods aren't to be used from anywhere else than the controllers (for most of them
+    // it's obvious because they receive an argument of the Pageable type)
+
+    public Hotel getIfNotMarkedAsDeleted(Long id) {
+        Hotel hotel = get(id);
+        if (hotel.getIsMarkedAsDeleted()) {
+            throw new ResourceNotFoundException();
+        }
+
+        return hotel;
+    }
+
+    public HotelView getViewIfNotMarkedAsDeleted(Long id) {
+        return getIfNotMarkedAsDeleted(id).toView();
+    }
+
+    public Page<Hotel> getAll(Pageable pageable) {
+        List<Long> foundIds = hotelSearchService.getAll();
+        return getPageOfHotels(foundIds, pageable);
+    }
+
+    public Page<HotelView> getAllViews(Pageable pageable) {
+        List<Long> foundIds = hotelSearchService.getAll();
+        return getPageOfHotelViews(foundIds, pageable);
+    }
 
     public Page<Hotel> getByName(String name, Pageable pageable) {
         List<Long> foundIds = hotelSearchService.getIdsByName(name);
