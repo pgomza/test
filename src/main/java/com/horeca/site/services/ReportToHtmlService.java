@@ -171,15 +171,6 @@ public class ReportToHtmlService {
                         "    <td>" + order.getAmount() + "</td>\n" +
                         "</tr>\n");
             }
-
-            if (chargeDetails.getUsageFee() != null) {
-                ordersBuilder.append("<tr>\n" +
-                        "    <td></td>\n" +
-                        "    <td>&nbsp;&nbsp;&nbsp;</td>\n" +
-                        "    <td><div style=\"font-style: italic;\">fee for using this service</div></td>" +
-                        "    <td>" + chargeDetails.getUsageFee() + "</td>\n" +
-                        "</tr>\n");
-            }
         }
         return ordersBuilder.toString();
     }
