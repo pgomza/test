@@ -1,17 +1,73 @@
 package com.horeca.site.services;
 
+import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.repositories.HotelRepository;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.RevisionType;
+import org.hibernate.envers.query.AuditEntity;
+import org.hibernate.envers.query.AuditQuery;
+import org.joda.time.Duration;
+import org.joda.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.*;
 
 @Service
+@Transactional
 public class HotelSearchService {
 
     @Autowired
     private HotelRepository repository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public List<Long> getAll() {
+        return repository.getAll();
+    }
+
+    /**
+     * Returns ids of the hotels for which 'isMarkedAsDeleted' has been true for at least 7 days
+     */
+    public List<Long> getMarkedAndOutdated() {
+        List<Long> markedAsDeleted = repository.getAllMarkedAsDeleted();
+        AuditReader reader = AuditReaderFactory.get(entityManager);
+
+        final long weekAgoTimestamp = Instant.now().minus(Duration.standardDays(7L)).getMillis();
+
+        List<Long> remaining = new ArrayList<>();
+        for (Long hotelId : markedAsDeleted) {
+            boolean shouldRemainAsOutdated = true;
+
+            AuditQuery query = reader.createQuery()
+                    .forRevisionsOfEntity(Hotel.class, false, false)
+                    .add(AuditEntity.id().eq(hotelId))
+                    .add(AuditEntity.revisionProperty("timestamp").gt(weekAgoTimestamp))
+                    .add(AuditEntity.revisionType().eq(RevisionType.MOD))
+                    .addProjection(AuditEntity.property("isMarkedAsDeleted"));
+
+            List<Object[]> results = (List<Object[]>) query.getResultList();
+            for (Object result : results) {
+                boolean isMarkedAsDeleted = (boolean) result;
+                if (!isMarkedAsDeleted) {
+                    shouldRemainAsOutdated = false;
+                    break;
+                }
+            }
+
+            if (shouldRemainAsOutdated) {
+                remaining.add(hotelId);
+            }
+        }
+
+        return remaining;
+    }
 
     public List<Long> getIdsByName(String name) {
         if (name.length() < 3)

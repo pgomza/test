@@ -30,6 +30,7 @@ public class ReportToHtmlService {
                     "<table>\n" +
                     "    <tr>\n" +
                     "        <th>Service</th>\n" +
+                    "        <th>Date</th>\n" +
                     "        <th>Details</th>\n" +
                     "        <th>Amount</th>\n" +
                     "    </tr>\n");
@@ -37,6 +38,7 @@ public class ReportToHtmlService {
             htmlBuilder.append(getOrders(report.getChargeDetails()));
 
             htmlBuilder.append("<tr>\n" +
+                    "            <td class=\"last-row\"></td>\n" +
                     "            <td class=\"last-row\"></td>\n" +
                     "            <td class=\"last-row total\">Total (VAT incl.)</td>\n" +
                     "            <td>" + report.getTotalAmount() + "</td>\n" +
@@ -116,17 +118,6 @@ public class ReportToHtmlService {
                 "            padding: 8px;\n" +
                 "        }\n" +
                 "\n" +
-                "        .details {\n" +
-                "            text-align: left;\n" +
-                "        }\n" +
-                "\n" +
-                "        .details .date {\n" +
-                "            width: 110px;\n" +
-                "            float: left;\n" +
-                "            font-size: 12px;\n" +
-                "            text-align: center;\n" +
-                "        }\n" +
-                "\n" +
                 "        .orders .last-row {\n" +
                 "            background-color: white;\n" +
                 "            border: none;\n" +
@@ -169,27 +160,15 @@ public class ReportToHtmlService {
                     "    <td style=\"border-top: 2px solid #D0D0D0;\">" + chargeDetails.getServiceName() + "</td>\n" +
                     "    <td style=\"border-top: 2px solid #D0D0D0;\"></td>\n" +
                     "    <td style=\"border-top: 2px solid #D0D0D0;\"></td>\n" +
+                    "    <td style=\"border-top: 2px solid #D0D0D0;\"></td>\n" +
                     "</tr>\n");
 
             for (ReportOrder order : chargeDetails.getOrders()) {
                 ordersBuilder.append("<tr>\n" +
                         "    <td></td>\n" +
-                        "    <td class=\"details\">" +
-                        "       <div class=\"date\">(" + order.getPlacedAt() + ")" + "</div>" +
-                        "       <div>" + order.getDescription() + "</div>" +
-                        "    </td>" +
+                        "    <td>" + order.getPlacedAt() + "</td>" +
+                        "    <td>" + order.getDescription() + "</td>" +
                         "    <td>" + order.getAmount() + "</td>\n" +
-                        "</tr>\n");
-            }
-
-            if (chargeDetails.getUsageFee() != null) {
-                ordersBuilder.append("<tr>\n" +
-                        "    <td></td>\n" +
-                        "    <td class=\"details\">" +
-                        "       <div class=\"date\">&nbsp;&nbsp;&nbsp;</div>" +
-                        "       <div style=\"font-style: italic;\">fee for using this service</div>" +
-                        "    </td>" +
-                        "    <td>" + chargeDetails.getUsageFee() + "</td>\n" +
                         "</tr>\n");
             }
         }

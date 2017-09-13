@@ -1,0 +1,1 @@
+CREATE INDEX Hotel_isMarkedAsDeleted_index ON Hotel (isMarkedAsDeleted);

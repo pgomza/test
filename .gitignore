@@ -3,4 +3,3 @@
 *.iml
 target
 src/main/resources/static
-*.log

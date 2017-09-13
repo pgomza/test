@@ -33,12 +33,12 @@ public class HotelController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Hotel get(@PathVariable("id") Long id) {
-		return service.get(id);
+		return service.getIfNotMarkedAsDeleted(id);
 	}
 
 	@RequestMapping(value = "/{id}", params = "simplified", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public HotelView getView(@PathVariable("id") Long id) {
-		return service.getView(id);
+		return service.getViewIfNotMarkedAsDeleted(id);
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
