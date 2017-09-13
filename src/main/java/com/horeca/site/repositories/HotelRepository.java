@@ -9,17 +9,18 @@ import java.util.List;
 
 public interface HotelRepository extends PagingAndSortingRepository<Hotel, Long> {
 
-    @Query("select count(*) from Hotel")
+    @Query("select count(*) from Hotel h where h.isMarkedAsDeleted = 0")
     Long getTotalCount();
 
-    @Query("select h.id from Hotel h where lower(h.name) like %:name% and h.isTestHotel = :withTestHotels")
+    @Query("select h.id from Hotel h where lower(h.name) like %:name% and h.isMarkedAsDeleted = 0 and " +
+            "h.isTestHotel = :withTestHotels")
     List<Long> getIdsByName(@Param("name") String name, @Param("withTestHotels") Boolean withTestHotels);
 
     @Query("select h.id as id, h.address as address from Hotel h where lower(h.address) like %:city% and " +
-            "h.isTestHotel = :withTestHotels")
+            "h.isMarkedAsDeleted = 0 and h.isTestHotel = :withTestHotels")
     List<Object[]> getCandidatesByCity(@Param("city") String city, @Param("withTestHotels") Boolean withTestHotels);
 
-    @Query("select h.id from Hotel h where h.cubilisSettings.isEnabled = 1 and " +
+    @Query("select h.id from Hotel h where h.isMarkedAsDeleted = 0 and h.cubilisSettings.isEnabled = 1 and " +
             "h.cubilisConnectionStatus.status like 'SUCCESS'")
     List<Long> getIdsOfCubilisEligible();
 }
