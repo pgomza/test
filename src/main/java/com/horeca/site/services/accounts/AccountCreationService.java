@@ -1,11 +1,15 @@
-package com.horeca.site.services;
+package com.horeca.site.services.accounts;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.exceptions.UnauthorizedException;
+import com.horeca.site.models.accounts.*;
 import com.horeca.site.models.hotel.Hotel;
-import com.horeca.site.security.models.*;
-import com.horeca.site.security.services.*;
+import com.horeca.site.security.models.UserAccount;
+import com.horeca.site.security.services.PasswordHashingService;
+import com.horeca.site.security.services.UserAccountEmailService;
+import com.horeca.site.security.services.UserAccountService;
+import com.horeca.site.services.HotelService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

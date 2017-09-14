@@ -1,6 +1,6 @@
 package com.horeca.site.security.services;
 
-import com.horeca.site.security.models.UserAccountPending;
+import com.horeca.site.models.accounts.UserAccountPending;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;

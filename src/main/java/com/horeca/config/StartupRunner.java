@@ -1,6 +1,6 @@
 package com.horeca.config;
 
-import com.horeca.site.security.services.UserAccountTempTokenService;
+import com.horeca.site.services.accounts.UserAccountTempTokenService;
 import com.horeca.site.services.cubilis.CubilisReservationService;
 import com.horeca.site.websocket.WebSocketTokenService;
 import com.openhtmltopdf.util.XRLog;

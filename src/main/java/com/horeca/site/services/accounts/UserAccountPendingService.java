@@ -1,7 +1,7 @@
-package com.horeca.site.security.services;
+package com.horeca.site.services.accounts;
 
-import com.horeca.site.repositories.UserAccountPendingRepository;
-import com.horeca.site.security.models.UserAccountPending;
+import com.horeca.site.models.accounts.UserAccountPending;
+import com.horeca.site.repositories.accounts.UserAccountPendingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

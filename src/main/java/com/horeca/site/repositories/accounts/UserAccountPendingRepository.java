@@ -1,6 +1,6 @@
-package com.horeca.site.repositories;
+package com.horeca.site.repositories.accounts;
 
-import com.horeca.site.security.models.UserAccountPending;
+import com.horeca.site.models.accounts.UserAccountPending;
 import org.springframework.data.repository.CrudRepository;
 
 /**

@@ -1,4 +1,4 @@
-package com.horeca.site.services;
+package com.horeca.site.services.accounts;
 import com.horeca.site.security.models.UserAccount;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;

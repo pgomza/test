@@ -1,13 +1,13 @@
 package com.horeca.site.controllers;
 
+import com.horeca.site.models.accounts.UserAccountPOST;
+import com.horeca.site.models.accounts.UserAccountTempTokenRequest;
+import com.horeca.site.models.accounts.UserAccountTempTokenResponse;
 import com.horeca.site.models.accounts.UserAccountView;
 import com.horeca.site.security.models.UserAccount;
-import com.horeca.site.security.models.UserAccountPOST;
-import com.horeca.site.security.models.UserAccountTempTokenRequest;
-import com.horeca.site.security.models.UserAccountTempTokenResponse;
 import com.horeca.site.security.services.UserAccountService;
-import com.horeca.site.services.AccountCreationService;
-import com.horeca.site.services.AccountQueryService;
+import com.horeca.site.services.accounts.AccountCreationService;
+import com.horeca.site.services.accounts.AccountQueryService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
