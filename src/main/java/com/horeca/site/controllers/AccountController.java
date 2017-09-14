@@ -1,8 +1,10 @@
 package com.horeca.site.controllers;
 
 import com.horeca.site.models.accounts.UserAccountView;
-import com.horeca.site.security.models.*;
-import com.horeca.site.security.services.UserAccountPendingService;
+import com.horeca.site.security.models.UserAccount;
+import com.horeca.site.security.models.UserAccountPOST;
+import com.horeca.site.security.models.UserAccountTempTokenRequest;
+import com.horeca.site.security.models.UserAccountTempTokenResponse;
 import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.AccountCreationService;
 import com.horeca.site.services.AccountQueryService;
@@ -33,9 +35,6 @@ public class AccountController {
     @Autowired
     private UserAccountService userAccountService;
 
-    @Autowired
-    private UserAccountPendingService userAccountPendingService;
-
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<UserAccountView> getUserAccountViews() {
         return userAccountService.getViews();
@@ -62,11 +61,7 @@ public class AccountController {
 
     @RequestMapping(value = "/users/activation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> activateUserAccount(@RequestParam(value = "secret", required = true) String secret) {
-        accountCreationService.activateUserAccount(secret);
-        UserAccountPending userAccountPending = userAccountPendingService.getBySecret(secret);
-        String redirectUrl = userAccountPending.getRedirectUrl();
-        userAccountPendingService.delete(userAccountPending.getEmail());
-
+        String redirectUrl = accountCreationService.activateUserAccountAndGetRedirectUrl(secret);
         MultiValueMap<String, String> headers = new HttpHeaders();
         headers.add("Location", redirectUrl);
         return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);

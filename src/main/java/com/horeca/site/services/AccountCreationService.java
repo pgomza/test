@@ -91,7 +91,15 @@ public class AccountCreationService {
         return saved;
     }
 
-    public void activateUserAccount(String secret) {
+    public String activateUserAccountAndGetRedirectUrl(String secret) {
+        activateUserAccount(secret);
+        UserAccountPending userAccountPending = userAccountPendingService.getBySecret(secret);
+        String redirectUrl = userAccountPending.getRedirectUrl();
+        userAccountPendingService.delete(userAccountPending.getEmail());
+        return redirectUrl;
+    }
+
+    private void activateUserAccount(String secret) {
         UserAccountPending userAccountPending = userAccountPendingService.getBySecret(secret);
         if (userAccountPending == null) {
             throw new BusinessRuleViolationException("Invalid secret");
