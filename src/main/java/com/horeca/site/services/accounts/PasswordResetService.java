@@ -23,13 +23,13 @@ import java.util.UUID;
 public class PasswordResetService {
 
     @Autowired
+    private PasswordResetPendingService passwordResetPendingService;
+
+    @Autowired
     private UserAccountService userAccountService;
 
     @Autowired
     private EmailSenderService emailSenderService;
-
-    @Autowired
-    private PasswordResetPendingRepository pendingRepository;
 
     public void handlePasswordResetRequest(PasswordResetRequest request) {
         String login = request.getLogin();
@@ -50,8 +50,8 @@ public class PasswordResetService {
         String secret = generateSecret();
         Long expirationTimestamp = Instant.now().plus(Duration.standardHours(1L)).getMillis();
 
-        PasswordResetPending recoveryPending = new PasswordResetPending(userAccount, secret, expirationTimestamp);
-        pendingRepository.save(recoveryPending);
+        PasswordResetPending pending = new PasswordResetPending(userAccount, secret, expirationTimestamp);
+        passwordResetPendingService.save(pending);
 
         String finalRedirectUrl = request.getRedirectUrl() + "?secret=" + secret;
         try {
