@@ -12,12 +12,17 @@ import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
+import java.util.Collection;
 import java.util.UUID;
+
+import static com.horeca.site.security.OAuth2AuthorizationServerConfig.PANEL_CLIENT_ID;
 
 @Service
 @Transactional
@@ -33,6 +38,9 @@ public class PasswordResetService {
 
     @Autowired
     private EmailSenderService emailSenderService;
+
+    @Autowired
+    private TokenStore tokenStore;
 
     public void handlePasswordResetRequest(PasswordResetRequest request) {
         String login = request.getLogin();
@@ -81,6 +89,11 @@ public class PasswordResetService {
             String newPassword = confirmation.getNewPassword();
             userAccountService.changePassword(pending.getUsername(), newPassword);
             passwordResetPendingService.delete(pending);
+
+            // delete all the OAuth2 tokens associated with this account
+            Collection<OAuth2AccessToken> tokens = tokenStore.
+                    findTokensByClientIdAndUserName(PANEL_CLIENT_ID, pending.getUsername());
+            tokens.forEach(tokenStore::removeAccessToken);
         }
         else {
             throw new BusinessRuleViolationException(INVALID_SECRET_MESSAGE);
