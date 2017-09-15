@@ -46,7 +46,11 @@ public class PasswordResetService {
         UserAccount userAccount;
         try {
             userAccount = userAccountService.get(UserAccount.USERNAME_PREFIX + login);
+            if (!userAccount.isEnabled()) {
+                throw new ResourceNotFoundException();
+            }
         } catch (ResourceNotFoundException ex) {
+            // the account either has not been found or is disabled, but the user shouldn't know the specifics
             throw new ResourceNotFoundException("Could not find a user that matches the login");
         }
 
