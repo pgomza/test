@@ -1,13 +1,11 @@
 package com.horeca.site.controllers;
 
-import com.horeca.site.models.accounts.UserAccountPOST;
-import com.horeca.site.models.accounts.UserAccountTempTokenRequest;
-import com.horeca.site.models.accounts.UserAccountTempTokenResponse;
-import com.horeca.site.models.accounts.UserAccountView;
+import com.horeca.site.models.accounts.*;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.accounts.AccountCreationService;
 import com.horeca.site.services.accounts.AccountQueryService;
+import com.horeca.site.services.accounts.PasswordResetService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +31,9 @@ public class AccountController {
     private AccountQueryService accountQueryService;
 
     @Autowired
+    private PasswordResetService passwordResetService;
+
+    @Autowired
     private UserAccountService userAccountService;
 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,7 +50,7 @@ public class AccountController {
     public void changePasswordOfCurrentUserAccount(Authentication authentication,
                                                    @RequestBody PasswordChangeRequest request) {
         UserAccount userAccount = accountQueryService.getCurrentUserAccount(authentication);
-        userAccountService.changePassword(userAccount.getUsername(), request.currentPassword, request.newPassword);
+        userAccountService.verifyAndChangePassword(userAccount.getUsername(), request.currentPassword, request.newPassword);
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -75,6 +76,16 @@ public class AccountController {
     @RequestMapping(value = "/users/tokens/{token}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserAccountTempTokenResponse getInfoAboutUserAccountTempToken(@PathVariable("token") String token) {
         return accountCreationService.getInfoAboutUserAccountTempToken(token);
+    }
+
+    @RequestMapping(value = "/users/reset-request", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void handlePasswordResetRequest(@Valid @RequestBody PasswordResetRequest request) {
+        passwordResetService.handlePasswordResetRequest(request);
+    }
+
+    @RequestMapping(value = "/users/reset-confirmation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void confirmPasswordReset(@Valid @RequestBody PasswordResetConfirmation confirmation) {
+        passwordResetService.confirmPasswordReset(confirmation);
     }
 
     public static class ResponseMessage {
