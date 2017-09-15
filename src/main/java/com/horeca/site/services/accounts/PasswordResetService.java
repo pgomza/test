@@ -1,9 +1,10 @@
 package com.horeca.site.services.accounts;
 
+import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
+import com.horeca.site.models.accounts.PasswordResetConfirmation;
 import com.horeca.site.models.accounts.PasswordResetPending;
 import com.horeca.site.models.accounts.PasswordResetRequest;
-import com.horeca.site.repositories.accounts.PasswordResetPendingRepository;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.EmailSenderService;
@@ -21,6 +22,8 @@ import java.util.UUID;
 @Service
 @Transactional
 public class PasswordResetService {
+
+    private static final String INVALID_SECRET_MESSAGE = "The provided secret is invalid";
 
     @Autowired
     private PasswordResetPendingService passwordResetPendingService;
@@ -58,6 +61,25 @@ public class PasswordResetService {
             sendPasswordResetEmail(login, finalRedirectUrl);
         } catch (UnsupportedEncodingException | MessagingException e) {
             throw new RuntimeException("There was a problem while trying to send an email to " + login, e);
+        }
+    }
+
+    public void confirmPasswordReset(PasswordResetConfirmation confirmation) {
+        PasswordResetPending pending;
+        try {
+            String secret = confirmation.getSecret();
+            pending = passwordResetPendingService.getBySecret(secret);
+        } catch (ResourceNotFoundException ex) {
+            throw new BusinessRuleViolationException(INVALID_SECRET_MESSAGE);
+        }
+
+        if (passwordResetPendingService.isValid(pending)) {
+            String newPassword = confirmation.getNewPassword();
+            userAccountService.changePassword(pending.getUsername(), newPassword);
+            passwordResetPendingService.delete(pending);
+        }
+        else {
+            throw new BusinessRuleViolationException(INVALID_SECRET_MESSAGE);
         }
     }
 
