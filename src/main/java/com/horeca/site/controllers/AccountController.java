@@ -81,10 +81,10 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/users/reset-request", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void handlePasswordResetRequest(@Valid @RequestBody PasswordResetRequest request) {
-        PasswordResetPending pending = passwordResetService.handlePasswordResetRequest(request);
+    public void handleResetRequest(@Valid @RequestBody PasswordResetRequest request) {
+        PasswordResetPending pending = passwordResetService.handleRequest(request);
         try {
-            passwordResetService.sendPasswordResetEmail(request.getLogin(), request.getRedirectUrl(), pending.getSecret());
+            passwordResetService.sendEmail(request.getLogin(), request.getRedirectUrl(), pending.getSecret());
         } catch (UnsupportedEncodingException | MessagingException e) {
             throw new RuntimeException("There was a problem while trying to send an email to " + request.getLogin(), e);
         }
@@ -92,7 +92,7 @@ public class AccountController {
 
     @RequestMapping(value = "/users/reset-confirmation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void confirmPasswordReset(@Valid @RequestBody PasswordResetConfirmation confirmation) {
-        passwordResetService.confirmPasswordReset(confirmation);
+        passwordResetService.handleConfirmation(confirmation);
     }
 
     public static class ResponseMessage {

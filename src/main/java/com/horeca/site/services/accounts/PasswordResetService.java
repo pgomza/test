@@ -42,7 +42,7 @@ public class PasswordResetService {
     @Autowired
     private TokenStore tokenStore;
 
-    public PasswordResetPending handlePasswordResetRequest(PasswordResetRequest request) {
+    public PasswordResetPending handleRequest(PasswordResetRequest request) {
         String login = request.getLogin();
         // not sure if the validator is thread-safe; otherwise it would have been declared as a static variable
         EmailValidator emailValidator = new EmailValidator();
@@ -69,7 +69,7 @@ public class PasswordResetService {
         return passwordResetPendingService.save(pending);
     }
 
-    public void confirmPasswordReset(PasswordResetConfirmation confirmation) {
+    public void handleConfirmation(PasswordResetConfirmation confirmation) {
         PasswordResetPending pending;
         try {
             String secret = confirmation.getSecret();
@@ -93,7 +93,7 @@ public class PasswordResetService {
         }
     }
 
-    public void sendPasswordResetEmail(String emailAddress, String redirectUrl, String secret)
+    public void sendEmail(String emailAddress, String redirectUrl, String secret)
             throws UnsupportedEncodingException, MessagingException {
         String finalRedirectUrl = redirectUrl + "?secret=" + secret;
 
