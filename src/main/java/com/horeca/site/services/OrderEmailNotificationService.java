@@ -20,8 +20,6 @@ import java.io.UnsupportedEncodingException;
 public class OrderEmailNotificationService implements ApplicationListener<OrderEvent> {
 
     private static final Logger logger = Logger.getLogger(OrderEmailNotificationService.class);
-    private static final String EMAIL_ADDRESS_FROM = "no-reply@throdi.com";
-    private static final String EMAIL_NAME_FROM = "Throdi";
 
     @Autowired
     private StayService stayService;
@@ -96,8 +94,7 @@ public class OrderEmailNotificationService implements ApplicationListener<OrderE
                         "The Throdi Team" +
                         "</div>";
 
-        emailSenderService.sendStandard("A new order in the " + serviceName + " service", content,
-                recipientEmail, EMAIL_ADDRESS_FROM, EMAIL_NAME_FROM);
+        emailSenderService.sendStandard("A new order in the " + serviceName + " service", content, recipientEmail);
     }
 
     private void sendDndUpdateMessage(Guest guest, Status status, String recipientEmail)
@@ -117,7 +114,6 @@ public class OrderEmailNotificationService implements ApplicationListener<OrderE
                 "   The Throdi Team" +
                 "</div>";
 
-        emailSenderService.sendStandard("DND mode change", content, recipientEmail, EMAIL_ADDRESS_FROM,
-                EMAIL_NAME_FROM);
+        emailSenderService.sendStandard("DND mode change", content, recipientEmail);
     }
 }

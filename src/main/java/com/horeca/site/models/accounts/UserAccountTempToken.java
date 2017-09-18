@@ -1,4 +1,4 @@
-package com.horeca.site.security.models;
+package com.horeca.site.models.accounts;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.hotel.Hotel;

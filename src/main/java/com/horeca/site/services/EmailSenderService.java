@@ -19,7 +19,10 @@ import java.util.Map;
 @Service
 public class EmailSenderService {
 
+    private static final String EMAIL_LABS_POST_EMAIL_URL = "https://api.emaillabs.net.pl/api/new_sendmail";
     private static final String EMAIL_LABS_POST_EMAIL_TEMPLATE_URL = "https://api.emaillabs.net.pl/api/sendmail_templates";
+    private static final String EMAIL_ADDRESS_FROM = "no-reply@throdi.com";
+    private static final String EMAIL_NAME_FROM = "Throdi";
 
     @Value("${emailLabs.active}")
     private Boolean isEmailLabsActive;
@@ -39,27 +42,41 @@ public class EmailSenderService {
     @Autowired
     private JavaMailSender mailSender;
 
-    void sendStandard(String subject, String content, String addressTo, String addressFrom, String nameFrom)
+    public void sendStandard(String subject, String content, String addressTo)
             throws MessagingException, UnsupportedEncodingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        mimeMessage.setContent(content, "text/html");
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "utf-8");
-        helper.setTo(addressTo);
-        if (nameFrom != null) {
-            helper.setFrom(addressFrom, nameFrom);
+        if (isEmailLabsActive) {
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
+
+            // set the basic auth header
+            restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(emailLabsKey, emailLabsSecret));
+
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("to[" + addressTo + "]", addressTo);
+
+            params.add("from", EMAIL_ADDRESS_FROM);
+            params.add("from_name", EMAIL_NAME_FROM);
+            params.add("smtp_account", emailLabsSMTP);
+            params.add("subject", subject);
+            params.add("html", content);
+
+            restTemplate.postForObject(EMAIL_LABS_POST_EMAIL_URL, params, String.class);
         }
         else {
-            helper.setFrom(addressFrom);
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            mimeMessage.setContent(content, "text/html");
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "utf-8");
+            helper.setTo(addressTo);
+            helper.setFrom(EMAIL_ADDRESS_FROM, EMAIL_NAME_FROM);
+            helper.setSubject(subject);
+            mailSender.send(mimeMessage);
         }
-        helper.setSubject(subject);
-        mailSender.send(mimeMessage);
     }
 
-    void sendTemplate(String subject, String addressTo, String addressFrom, String nameFrom,
-                      Map<String, String> variables)
+    public void sendTemplate(String subject, String addressTo, Map<String, String> variables)
             throws MessagingException, UnsupportedEncodingException {
 
-        if (isEmailLabsActive) {
+        if (isEmailLabsActive) { // just to be on the safe side
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
 
@@ -76,8 +93,8 @@ public class EmailSenderService {
                 params.add("to[" + addressTo + "][vars][" + name + "]", value);
             }
 
-            params.add("from", addressFrom);
-            params.add("from_name", nameFrom);
+            params.add("from", EMAIL_ADDRESS_FROM);
+            params.add("from_name", EMAIL_NAME_FROM);
             params.add("smtp_account", emailLabsSMTP);
             params.add("subject", subject);
             params.add("template_id", emailLabsTemplateId);

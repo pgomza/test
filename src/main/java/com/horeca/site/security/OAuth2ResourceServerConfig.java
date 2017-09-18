@@ -45,8 +45,19 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         // don't secure the websocket endpoints
         http.authorizeRequests().antMatchers("/api/updates/**").permitAll();
         http.authorizeRequests().antMatchers("/api/demo/**").permitAll();
-
+        // and the timeout endpoint
         http.authorizeRequests().antMatchers("/api/timeout").permitAll();
+
+        // allow anybody who's in possession of a temp token to add a user account
+        // 'anybody' means people that don't have to go through the OAuth2 authentication process
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/accounts/users").permitAll();
+        // allow anybody to get info about a temp token
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/accounts/users/tokens/{token}").permitAll();
+        // allow anybody (who knows the associated activation secret) to activate their account
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/accounts/users/activation").permitAll();
+        // allow anybody to reset their password
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/accounts/users/reset-request").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/accounts/users/reset-confirmation").permitAll();
 
         // allow anybody to get info about any of the hotels (but not their guests)
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels").permitAll();
@@ -54,17 +65,6 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/services/**").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/images/**").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/notifications/**").permitAll();
-
-        // allow anybody who's in possession of a temp token to add a user account
-        // 'anybody' means people that don't have to go through the OAuth2 authentication process
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/accounts/users").permitAll();
-
-        // allow anybody to get info about a temp token
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/accounts/users/tokens/{token}").permitAll();
-
-        // allow anybody (who knows the associated activation secret) to activate their account
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/accounts/users/activation").permitAll();
-
         // users (and only them) can access the hotel that they're associated with
         http.authorizeRequests().antMatchers("/api/hotels/{\\d+}/**")
                 .access("@accessChecker.checkForHotel(authentication, request)");

@@ -21,10 +21,7 @@ import java.util.Map;
 public class NewStayEmailNotificationService implements ApplicationListener<NewStayEvent> {
 
     private static final Logger logger = Logger.getLogger(NewStayEmailNotificationService.class);
-
     private static final String EMAIL_SUBJECT = "Information about your stay";
-    private static final String EMAIL_ADDRESS_FROM = "no-reply@throdi.com";
-    private static final String EMAIL_NAME_FROM = "Throdi";
 
     @Value("${emailLabs.active}")
     private Boolean isEmailLabsActive;
@@ -114,7 +111,7 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
 
         vars.put("PIN", stay.getPin());
 
-        emailSenderService.sendTemplate(EMAIL_SUBJECT, guestMail, EMAIL_ADDRESS_FROM, EMAIL_NAME_FROM, vars);
+        emailSenderService.sendTemplate(EMAIL_SUBJECT, guestMail, vars);
     }
 
     private void sendStandard(NewStayEvent event) throws UnsupportedEncodingException, MessagingException {
@@ -159,6 +156,6 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
                         "www.throdi.com" +
                         "</div>";
 
-        emailSenderService.sendStandard(EMAIL_SUBJECT, content, guestMail, EMAIL_ADDRESS_FROM, EMAIL_NAME_FROM);
+        emailSenderService.sendStandard(EMAIL_SUBJECT, content, guestMail);
     }
 }

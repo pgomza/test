@@ -1,9 +1,9 @@
-package com.horeca.site.security.services;
+package com.horeca.site.services.accounts;
 
 import com.horeca.site.exceptions.ResourceNotFoundException;
+import com.horeca.site.models.accounts.UserAccountTempToken;
 import com.horeca.site.models.hotel.Hotel;
-import com.horeca.site.repositories.UserAccountTempTokenRepository;
-import com.horeca.site.security.models.UserAccountTempToken;
+import com.horeca.site.repositories.accounts.UserAccountTempTokenRepository;
 import com.horeca.site.services.HotelService;
 import org.apache.log4j.Logger;
 import org.joda.time.LocalDateTime;

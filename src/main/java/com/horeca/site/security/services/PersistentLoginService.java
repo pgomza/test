@@ -1,11 +1,11 @@
 package com.horeca.site.security.services;
 
-import com.horeca.site.repositories.GuestAccountRepository;
-import com.horeca.site.repositories.SalesmanAccountRepository;
-import com.horeca.site.repositories.UserAccountRepository;
 import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.models.UserAccount;
+import com.horeca.site.security.repositories.GuestAccountRepository;
+import com.horeca.site.security.repositories.SalesmanAccountRepository;
+import com.horeca.site.security.repositories.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
