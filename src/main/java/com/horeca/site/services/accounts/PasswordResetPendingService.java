@@ -43,4 +43,12 @@ public class PasswordResetPendingService {
         long currentTimestamp = Instant.now().getMillis();
         return currentTimestamp < pending.getExpirationTimestamp();
     }
+
+    public void deleteAllInvalid() {
+        for (PasswordResetPending pending : repository.findAll()) {
+            if (!isValid(pending)) {
+                repository.delete(pending);
+            }
+        }
+    }
 }
