@@ -29,7 +29,6 @@ public class PasswordResetPending {
     }
 
     public PasswordResetPending(UserAccount account, String secret, Long expirationTimestamp) {
-        this.username = account.getUsername();
         this.account = account;
         this.secret = secret;
         this.expirationTimestamp = expirationTimestamp;

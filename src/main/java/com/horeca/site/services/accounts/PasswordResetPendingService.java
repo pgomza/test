@@ -16,7 +16,15 @@ public class PasswordResetPendingService {
     private PasswordResetPendingRepository repository;
 
     public PasswordResetPending save(PasswordResetPending pending) {
-        return repository.save(pending);
+        PasswordResetPending currentlySaved = repository.findOne(pending.getAccount().getUsername());
+        if (currentlySaved == null) {
+            return repository.save(pending);
+        }
+        else {
+            currentlySaved.setSecret(pending.getSecret());
+            currentlySaved.setExpirationTimestamp(pending.getExpirationTimestamp());
+            return repository.save(currentlySaved);
+        }
     }
 
     public void delete(PasswordResetPending pending) {
