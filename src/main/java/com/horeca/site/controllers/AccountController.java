@@ -16,7 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 import java.util.Set;
 
 @Api(value = "hotels")
@@ -80,7 +82,12 @@ public class AccountController {
 
     @RequestMapping(value = "/users/reset-request", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void handlePasswordResetRequest(@Valid @RequestBody PasswordResetRequest request) {
-        passwordResetService.handlePasswordResetRequest(request);
+        PasswordResetPending pending = passwordResetService.handlePasswordResetRequest(request);
+        try {
+            passwordResetService.sendPasswordResetEmail(request.getLogin(), request.getRedirectUrl(), pending.getSecret());
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            throw new RuntimeException("There was a problem while trying to send an email to " + request.getLogin(), e);
+        }
     }
 
     @RequestMapping(value = "/users/reset-confirmation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

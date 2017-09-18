@@ -42,7 +42,7 @@ public class PasswordResetService {
     @Autowired
     private TokenStore tokenStore;
 
-    public void handlePasswordResetRequest(PasswordResetRequest request) {
+    public PasswordResetPending handlePasswordResetRequest(PasswordResetRequest request) {
         String login = request.getLogin();
         // not sure if the validator is thread-safe; otherwise it would have been declared as a static variable
         EmailValidator emailValidator = new EmailValidator();
@@ -66,14 +66,7 @@ public class PasswordResetService {
         Long expirationTimestamp = Instant.now().plus(Duration.standardHours(1L)).getMillis();
 
         PasswordResetPending pending = new PasswordResetPending(userAccount, secret, expirationTimestamp);
-        passwordResetPendingService.save(pending);
-
-        String finalRedirectUrl = request.getRedirectUrl() + "?secret=" + secret;
-        try {
-            sendPasswordResetEmail(login, finalRedirectUrl);
-        } catch (UnsupportedEncodingException | MessagingException e) {
-            throw new RuntimeException("There was a problem while trying to send an email to " + login, e);
-        }
+        return passwordResetPendingService.save(pending);
     }
 
     public void confirmPasswordReset(PasswordResetConfirmation confirmation) {
@@ -100,17 +93,15 @@ public class PasswordResetService {
         }
     }
 
-    private String generateSecret() {
-        return UUID.randomUUID().toString();
-    }
+    public void sendPasswordResetEmail(String emailAddress, String redirectUrl, String secret)
+            throws UnsupportedEncodingException, MessagingException {
+        String finalRedirectUrl = redirectUrl + "?secret=" + secret;
 
-    private void sendPasswordResetEmail(String emailAddress, String redirectUrl) throws UnsupportedEncodingException,
-            MessagingException {
         String content =
                 "<div>" +
                         "Hi," +
                         "<br/><br/>" +
-                        "to proceed with resetting your password, please click the link below:<br/>" + redirectUrl +
+                        "to proceed with resetting your password, please click the link below:<br/>" + finalRedirectUrl +
                         "<br/><br/>" +
                         "Regards," +
                         "<br/>" +
@@ -119,5 +110,9 @@ public class PasswordResetService {
 
         emailSenderService.sendStandard("Password reset", content, emailAddress,
                 "throdi.auto@gmail.com", "Throdi");
+    }
+
+    private String generateSecret() {
+        return UUID.randomUUID().toString();
     }
 }
