@@ -1,8 +1,8 @@
 package com.horeca.site.security.services;
 
 import com.horeca.site.models.stay.Stay;
-import com.horeca.site.repositories.GuestAccountRepository;
 import com.horeca.site.security.models.GuestAccount;
+import com.horeca.site.security.repositories.GuestAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;

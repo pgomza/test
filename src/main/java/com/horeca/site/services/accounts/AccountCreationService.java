@@ -1,16 +1,18 @@
-package com.horeca.site.services;
+package com.horeca.site.services.accounts;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.exceptions.UnauthorizedException;
+import com.horeca.site.models.accounts.*;
 import com.horeca.site.models.hotel.Hotel;
-import com.horeca.site.security.models.*;
-import com.horeca.site.security.services.*;
+import com.horeca.site.security.models.UserAccount;
+import com.horeca.site.security.services.PasswordHashingService;
+import com.horeca.site.security.services.UserAccountEmailService;
+import com.horeca.site.security.services.UserAccountService;
+import com.horeca.site.services.HotelService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +20,9 @@ import java.util.*;
 
 @Service
 @Transactional
-public class AccountService {
+public class AccountCreationService {
 
-    private static final Logger logger = Logger.getLogger(AccountService.class.getName());
+    private static final Logger logger = Logger.getLogger(AccountCreationService.class.getName());
 
     @Autowired
     private UserAccountService userAccountService;
@@ -36,17 +38,6 @@ public class AccountService {
 
     @Autowired
     private HotelService hotelService;
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public UserAccount getCurrentUserAccount(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserAccount) {
-            UserAccount userAccount = (UserAccount) principal;
-            return userAccount;
-        }
-        else
-            throw new AccessDeniedException("Access denied");
-    }
 
     @PreAuthorize("hasRole('ROLE_SALESMAN')")
     public UserAccountTempTokenResponse getTempTokenForNewUserAccount(UserAccountTempTokenRequest request) {
@@ -104,7 +95,15 @@ public class AccountService {
         return saved;
     }
 
-    public void activateUserAccount(String secret) {
+    public String activateUserAccountAndGetRedirectUrl(String secret) {
+        activateUserAccount(secret);
+        UserAccountPending userAccountPending = userAccountPendingService.getBySecret(secret);
+        String redirectUrl = userAccountPending.getRedirectUrl();
+        userAccountPendingService.delete(userAccountPending.getEmail());
+        return redirectUrl;
+    }
+
+    private void activateUserAccount(String secret) {
         UserAccountPending userAccountPending = userAccountPendingService.getBySecret(secret);
         if (userAccountPending == null) {
             throw new BusinessRuleViolationException("Invalid secret");

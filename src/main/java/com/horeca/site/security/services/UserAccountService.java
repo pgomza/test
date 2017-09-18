@@ -3,11 +3,10 @@ package com.horeca.site.security.services;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.accounts.UserAccountView;
-import com.horeca.site.repositories.UserAccountRepository;
 import com.horeca.site.security.models.UserAccount;
+import com.horeca.site.security.repositories.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
@@ -46,28 +45,30 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
     }
 
     public Set<UserAccountView> getViews() {
-        return getAll().stream().map(userAccount -> userAccount.toView()).collect(Collectors.toSet());
+        return getAll().stream().map(UserAccount::toView).collect(Collectors.toSet());
     }
 
-    public void changePassword(String username, String currentPassword, String newPassword) {
+    public void verifyAndChangePassword(String username, String currentPassword, String newPassword) {
         if (currentPassword.equals(newPassword)) {
             throw new BusinessRuleViolationException("The new password must be different from the current one");
         }
 
         UserAccount userAccount = get(username);
-        if (BCrypt.checkpw(currentPassword, userAccount.getPassword())) {
-            if (!newPassword.matches(PASSWORD_REGEX)) {
-                throw new BusinessRuleViolationException("The new password must contain at least 5 characters");
-            }
+        if (!PasswordHashingService.checkIfPlainEqualToHashed(currentPassword, userAccount.getPassword())) {
+            throw new UnauthorizedException("The provided currentPassword doesn't match the actual one");
+        }
+    }
 
-            String hashedPassword = PasswordHashingService.getHashedFromPlain(newPassword);
-            userAccount.setPassword(hashedPassword);
-            save(userAccount);
+    public void changePassword(String username, String newPassword) {
+        if (!newPassword.matches(PASSWORD_REGEX)) {
+            throw new BusinessRuleViolationException("The new password must contain at least 5 non-whitespace " +
+                    "characters");
         }
-        else {
-            throw new UnauthorizedException("The provided currentPassword doesn't match the currently logged in " +
-                    "user's password");
-        }
+
+        String hashedPassword = PasswordHashingService.getHashedFromPlain(newPassword);
+        UserAccount userAccount = get(username);
+        userAccount.setPassword(hashedPassword);
+        save(userAccount);
     }
 
     public void disableAllInHotel(Long hotelId) {

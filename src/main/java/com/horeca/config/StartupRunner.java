@@ -1,6 +1,7 @@
 package com.horeca.config;
 
-import com.horeca.site.security.services.UserAccountTempTokenService;
+import com.horeca.site.services.accounts.PasswordResetPendingService;
+import com.horeca.site.services.accounts.UserAccountTempTokenService;
 import com.horeca.site.services.cubilis.CubilisReservationService;
 import com.horeca.site.websocket.WebSocketTokenService;
 import com.openhtmltopdf.util.XRLog;
@@ -20,6 +21,9 @@ public class StartupRunner {
     private UserAccountTempTokenService userAccountTempTokenService;
 
     @Autowired
+    private PasswordResetPendingService passwordResetPendingService;
+
+    @Autowired
     private WebSocketTokenService webSocketTokenService;
 
     @Autowired
@@ -33,5 +37,6 @@ public class StartupRunner {
         userAccountTempTokenService.deleteInvalidTokens();
         webSocketTokenService.deleteAll();
         cubilisReservationService.deleteOutdated();
+        passwordResetPendingService.deleteAllInvalid();
     }
 }

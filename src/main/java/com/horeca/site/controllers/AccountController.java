@@ -1,10 +1,11 @@
 package com.horeca.site.controllers;
 
-import com.horeca.site.models.accounts.UserAccountView;
-import com.horeca.site.security.models.*;
-import com.horeca.site.security.services.UserAccountPendingService;
+import com.horeca.site.models.accounts.*;
+import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.UserAccountService;
-import com.horeca.site.services.AccountService;
+import com.horeca.site.services.accounts.AccountCreationService;
+import com.horeca.site.services.accounts.AccountQueryService;
+import com.horeca.site.services.accounts.PasswordResetService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 import java.util.Set;
 
 @Api(value = "hotels")
@@ -24,13 +27,16 @@ import java.util.Set;
 public class AccountController {
 
     @Autowired
-    private AccountService service;
+    private AccountCreationService accountCreationService;
+
+    @Autowired
+    private AccountQueryService accountQueryService;
+
+    @Autowired
+    private PasswordResetService passwordResetService;
 
     @Autowired
     private UserAccountService userAccountService;
-
-    @Autowired
-    private UserAccountPendingService userAccountPendingService;
 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<UserAccountView> getUserAccountViews() {
@@ -39,30 +45,26 @@ public class AccountController {
 
     @RequestMapping(value = "/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserAccountView getCurrentUserAccount(Authentication authentication) {
-        return service.getCurrentUserAccount(authentication).toView();
+        return accountQueryService.getCurrentUserAccount(authentication).toView();
     }
 
     @RequestMapping(value = "/users/current/password", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public void changePasswordOfCurrentUserAccount(Authentication authentication,
                                                    @RequestBody PasswordChangeRequest request) {
-        UserAccount userAccount = service.getCurrentUserAccount(authentication);
-        userAccountService.changePassword(userAccount.getUsername(), request.currentPassword, request.newPassword);
+        UserAccount userAccount = accountQueryService.getCurrentUserAccount(authentication);
+        userAccountService.verifyAndChangePassword(userAccount.getUsername(), request.currentPassword, request.newPassword);
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseMessage addUserAccountPending(@RequestHeader(name = "Temp-Token", required = true) String token,
                                                  @RequestBody @Valid UserAccountPOST userAccountPOST) {
-        service.addUserAccountPending(token, userAccountPOST);
+        accountCreationService.addUserAccountPending(token, userAccountPOST);
         return new ResponseMessage("The activation link has been sent to " + userAccountPOST.getEmail());
     }
 
     @RequestMapping(value = "/users/activation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> activateUserAccount(@RequestParam(value = "secret", required = true) String secret) {
-        service.activateUserAccount(secret);
-        UserAccountPending userAccountPending = userAccountPendingService.getBySecret(secret);
-        String redirectUrl = userAccountPending.getRedirectUrl();
-        userAccountPendingService.delete(userAccountPending.getEmail());
-
+        String redirectUrl = accountCreationService.activateUserAccountAndGetRedirectUrl(secret);
         MultiValueMap<String, String> headers = new HttpHeaders();
         headers.add("Location", redirectUrl);
         return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
@@ -70,12 +72,27 @@ public class AccountController {
 
     @RequestMapping(value = "/users/tokens", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserAccountTempTokenResponse getTempTokenForNewUserAccount(@RequestBody UserAccountTempTokenRequest request) {
-        return service.getTempTokenForNewUserAccount(request);
+        return accountCreationService.getTempTokenForNewUserAccount(request);
     }
 
     @RequestMapping(value = "/users/tokens/{token}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserAccountTempTokenResponse getInfoAboutUserAccountTempToken(@PathVariable("token") String token) {
-        return service.getInfoAboutUserAccountTempToken(token);
+        return accountCreationService.getInfoAboutUserAccountTempToken(token);
+    }
+
+    @RequestMapping(value = "/users/reset-request", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void handleResetRequest(@Valid @RequestBody PasswordResetRequest request) {
+        PasswordResetPending pending = passwordResetService.handleRequest(request);
+        try {
+            passwordResetService.sendEmail(request.getLogin(), request.getRedirectUrl(), pending.getSecret());
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            throw new RuntimeException("There was a problem while trying to send an email to " + request.getLogin(), e);
+        }
+    }
+
+    @RequestMapping(value = "/users/reset-confirmation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void confirmPasswordReset(@Valid @RequestBody PasswordResetConfirmation confirmation) {
+        passwordResetService.handleConfirmation(confirmation);
     }
 
     public static class ResponseMessage {

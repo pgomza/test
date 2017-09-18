@@ -39,7 +39,7 @@ public class EmailSenderService {
     @Autowired
     private JavaMailSender mailSender;
 
-    void sendStandard(String subject, String content, String addressTo, String addressFrom, String nameFrom)
+    public void sendStandard(String subject, String content, String addressTo, String addressFrom, String nameFrom)
             throws MessagingException, UnsupportedEncodingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         mimeMessage.setContent(content, "text/html");
@@ -55,7 +55,7 @@ public class EmailSenderService {
         mailSender.send(mimeMessage);
     }
 
-    void sendTemplate(String subject, String addressTo, String addressFrom, String nameFrom,
+    public void sendTemplate(String subject, String addressTo, String addressFrom, String nameFrom,
                       Map<String, String> variables)
             throws MessagingException, UnsupportedEncodingException {
 
