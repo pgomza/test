@@ -7,22 +7,22 @@ import com.horeca.site.models.accounts.*;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.PasswordHashingService;
-import com.horeca.site.security.services.UserAccountEmailService;
 import com.horeca.site.security.services.UserAccountService;
+import com.horeca.site.services.EmailSenderService;
 import com.horeca.site.services.HotelService;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 @Service
 @Transactional
 public class AccountCreationService {
-
-    private static final Logger logger = Logger.getLogger(AccountCreationService.class.getName());
 
     @Autowired
     private UserAccountService userAccountService;
@@ -34,18 +34,21 @@ public class AccountCreationService {
     private UserAccountTempTokenService userAccountTempTokenService;
 
     @Autowired
-    private UserAccountEmailService userAccountEmailService;
+    private HotelService hotelService;
 
     @Autowired
-    private HotelService hotelService;
+    private EmailSenderService emailSenderService;
+
+    @Value("${activation.url}")
+    private String activationUrl;
 
     @PreAuthorize("hasRole('ROLE_SALESMAN')")
     public UserAccountTempTokenResponse getTempTokenForNewUserAccount(UserAccountTempTokenRequest request) {
-        Set<String> roles = new HashSet<>(Arrays.asList(UserAccount.DEFAULT_ROLE));
+        Set<String> roles = new HashSet<>(Collections.singletonList(UserAccount.DEFAULT_ROLE));
         UserAccountTempToken tempToken = userAccountTempTokenService.generateTempToken(request.getHotelId(), roles);
 
         Integer expiresIn = userAccountTempTokenService.getSecondsUntilExpiration(tempToken);
-        return new UserAccountTempTokenResponse(tempToken.getToken(), request.getHotelId(), expiresIn.intValue());
+        return new UserAccountTempTokenResponse(tempToken.getToken(), request.getHotelId(), expiresIn);
     }
 
     public UserAccountTempTokenResponse getInfoAboutUserAccountTempToken(String token) {
@@ -80,15 +83,6 @@ public class AccountCreationService {
                 new UserAccountPending(userAccountPOST.getEmail(), hashedPassword, tempToken.getHotel().getId(), secret, redirectUrl);
         UserAccountPending saved = userAccountPendingService.save(userAccountPending);
 
-        try {
-            userAccountEmailService.sendActivation(userAccountPending);
-        } catch (Exception e) {
-            logger.error("Exception while sending an activation email to " + userAccountPending.getEmail());
-            logger.error("Exception message: " + e.getMessage());
-            logger.error("Exception cause: " + e.getCause());
-            throw new RuntimeException("There was a problem while trying to send the activation email", e);
-        }
-
         // to prevent people from creating several user accounts with the same temp token, invalidate it
         userAccountTempTokenService.invalidate(tempToken);
 
@@ -109,7 +103,7 @@ public class AccountCreationService {
             throw new BusinessRuleViolationException("Invalid secret");
         }
 
-        List<String> roles = new ArrayList<>(Arrays.asList(UserAccount.DEFAULT_ROLE));
+        List<String> roles = new ArrayList<>(Collections.singletonList(UserAccount.DEFAULT_ROLE));
         UserAccount userAccount =
                 new UserAccount(userAccountPending.getEmail(), userAccountPending.getPassword(),
                         userAccountPending.getHotelId(), roles);
@@ -122,5 +116,21 @@ public class AccountCreationService {
         Hotel hotel = hotelService.get(userAccount.getHotelId());
         hotel.setIsThrodiPartner(true);
         hotelService.update(hotel.getId(), hotel);
+    }
+
+    public void sendActivationEmail(UserAccountPending account) throws MessagingException, UnsupportedEncodingException {
+        String link = activationUrl + account.getSecret();
+        String messageBody =
+                "<div>" +
+                        "Hi," +
+                        "<br /><br />" +
+                        "please click on the following link to activate your account: " + link +
+                        "<br/><br />" +
+                        "Cheers," +
+                        "<br/>" +
+                        "The Throdi Team" +
+                        "</div>";
+
+        emailSenderService.sendStandard("Account activation", messageBody, account.getEmail());
     }
 }

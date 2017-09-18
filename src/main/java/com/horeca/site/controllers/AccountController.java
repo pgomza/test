@@ -58,7 +58,13 @@ public class AccountController {
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseMessage addUserAccountPending(@RequestHeader(name = "Temp-Token", required = true) String token,
                                                  @RequestBody @Valid UserAccountPOST userAccountPOST) {
-        accountCreationService.addUserAccountPending(token, userAccountPOST);
+        UserAccountPending pending = accountCreationService.addUserAccountPending(token, userAccountPOST);
+        try {
+            accountCreationService.sendActivationEmail(pending);
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            throw new RuntimeException("There was a problem while trying to send an email to " + pending.getEmail(), e);
+        }
+
         return new ResponseMessage("The activation link has been sent to " + userAccountPOST.getEmail());
     }
 
