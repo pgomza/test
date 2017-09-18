@@ -108,8 +108,7 @@ public class PasswordResetService {
                         "The Throdi Team" +
                         "</div>";
 
-        emailSenderService.sendStandard("Password reset", content, emailAddress,
-                "throdi.auto@gmail.com", "Throdi");
+        emailSenderService.sendStandard("Password reset", content, emailAddress);
     }
 
     private String generateSecret() {
