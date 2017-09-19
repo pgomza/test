@@ -4,6 +4,7 @@ import com.horeca.site.models.updates.ChangeInHotelEvent;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -28,7 +29,8 @@ public class WebSocketUpdatesService implements ApplicationListener<ChangeInHote
     }
 
     public synchronized void deregisterSession(WebSocketSession session) {
-        // since the number of hotels should not be very big, this is an acceptable solution
+        // since the number of hotels maintaining an active connection should not be very big
+        // this is an acceptable solution
         for (Long hotelId : hotelToSessions.keySet()) {
             Set<WebSocketSession> sessionSet = hotelToSessions.get(hotelId);
             if (sessionSet.contains(session)) {
@@ -36,6 +38,23 @@ public class WebSocketUpdatesService implements ApplicationListener<ChangeInHote
                 hotelToSessions.put(hotelId, sessionSet);
             }
         }
+    }
+
+    public synchronized void closeAllConnectionsForHotel(Long hotelId) {
+        Set<WebSocketSession> sessionsForHotel = hotelToSessions.getOrDefault(hotelId, new HashSet<>());
+        for (WebSocketSession session : sessionsForHotel) {
+            try {
+                session.close(CloseStatus.NORMAL);
+            } catch (IOException e) {
+                logger.error("Exception while trying to close a ws session for hotelId: " + hotelId + " sessionId: "
+                        + session.getId());
+                logger.error("Exception message: " + e.getMessage());
+                logger.error("Exception cause: " + e.getCause());
+            }
+        }
+        // can't simultaneously modify and iterate over the same collection
+        HashSet<WebSocketSession> sessionsForHotelCopy = new HashSet<>(sessionsForHotel);
+        sessionsForHotelCopy.forEach(this::deregisterSession);
     }
 
     @Override
@@ -52,8 +71,8 @@ public class WebSocketUpdatesService implements ApplicationListener<ChangeInHote
                 } catch (IOException e) {
                     logger.error("Exception while sending " + UPDATE_MESSAGE_TEXT + " to hotelId: " + hotelId +
                             " sessionId: " + s.getId());
-                    logger.error("Exception's message: " + e.getMessage());
-                    logger.error("Exception's cause: " + e.getCause());
+                    logger.error("Exception message: " + e.getMessage());
+                    logger.error("Exception cause: " + e.getCause());
                 }
             });
         }
