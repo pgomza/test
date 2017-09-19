@@ -178,8 +178,17 @@ public class HotelService {
 
     public void delete(Long id) {
         ensureExists(id);
+
+        // delete all accounts and stays associated with this hotel
+        userAccountService.deleteAllInHotel(id);
         Collection<String> associatedStays = stayService.getByHotelId(id);
-        associatedStays.forEach(stayService::delete);
+        associatedStays.forEach(pin -> {
+            stayService.delete(pin);
+            guestAccountService.deleteForStay(pin);
+        });
+
+
+
         repository.delete(id);
     }
 

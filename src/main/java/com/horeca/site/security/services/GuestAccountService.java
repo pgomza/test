@@ -45,4 +45,10 @@ public class GuestAccountService extends AbstractAccountService<GuestAccount> {
         GuestAccount account = get(GuestAccount.USERNAME_PREFIX + pin);
         enable(account);
     }
+
+    public void deleteForStay(String pin) {
+        disableForStay(pin);
+        GuestAccount account = get(GuestAccount.USERNAME_PREFIX + pin);
+        getRepository().delete(account);
+    }
 }
