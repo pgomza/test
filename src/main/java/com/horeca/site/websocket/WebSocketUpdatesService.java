@@ -1,11 +1,7 @@
 package com.horeca.site.websocket;
 
 import com.horeca.site.models.updates.ChangeInHotelEvent;
-import com.horeca.site.models.updates.ChangeInStayEvent;
-import com.horeca.site.repositories.services.StayRepository;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -18,15 +14,12 @@ import java.util.Map;
 import java.util.Set;
 
 @Service
-public class WebSocketUpdatesService implements ApplicationListener {
+public class WebSocketUpdatesService implements ApplicationListener<ChangeInHotelEvent> {
 
     private static final Logger logger = Logger.getLogger(WebSocketUpdatesService.class);
 
     public static final String UPDATE_MESSAGE_TEXT = "UPDATE";
     private final Map<Long, Set<WebSocketSession>> hotelToSessions = new HashMap<>();
-
-    @Autowired
-    private StayRepository stayRepository;
 
     public synchronized void registerSessionForHotel(Long hotelId, WebSocketSession session) {
         Set<WebSocketSession> existingSessions = hotelToSessions.getOrDefault(hotelId, new HashSet<>());
@@ -46,22 +39,8 @@ public class WebSocketUpdatesService implements ApplicationListener {
     }
 
     @Override
-    public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof ChangeInStayEvent) {
-            ChangeInStayEvent changeInStay = (ChangeInStayEvent) event;
-            handleChangeInStay(changeInStay.getPin());
-        }
-        else if (event instanceof ChangeInHotelEvent) {
-            ChangeInHotelEvent changeInHotel = (ChangeInHotelEvent) event;
-            handleChangeInHotel(changeInHotel.getHotelId());
-        }
-    }
-
-    private void handleChangeInStay(String pin) {
-        Long hotelId = stayRepository.getHotelIdOfStay(pin);
-        if (hotelId != null) {
-            handleChangeInHotel(hotelId);
-        }
+    public void onApplicationEvent(ChangeInHotelEvent event) {
+        handleChangeInHotel(event.getHotelId());
     }
 
     private void handleChangeInHotel(Long hotelId) {
