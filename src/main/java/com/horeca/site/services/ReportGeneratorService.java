@@ -2,12 +2,15 @@ package com.horeca.site.services;
 
 import com.horeca.site.models.Price;
 import com.horeca.site.models.guest.Guest;
+import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.models.hotel.services.carpark.CarPark;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.bar.BarOrder;
 import com.horeca.site.models.orders.bar.BarOrderItem;
 import com.horeca.site.models.orders.breakfast.BreakfastOrder;
 import com.horeca.site.models.orders.breakfast.BreakfastOrderItem;
+import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.petcare.PetCareOrder;
 import com.horeca.site.models.orders.rental.RentalOrder;
 import com.horeca.site.models.orders.rental.RentalOrderItem;
@@ -22,6 +25,7 @@ import com.horeca.site.services.services.StayService;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +48,8 @@ public class ReportGeneratorService {
 
     public Report generateReport(String pin) {
         Stay stay = stayService.getWithoutCheckingStatus(pin);
-        String hotelCurrency = stay.getHotel().getCurrency().toString();
+        Hotel hotel = stay.getHotel();
+        String hotelCurrency = hotel.getCurrency().toString();
 
         List<ChargeDetails> chargeDetailsList = new ArrayList<>();
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -128,6 +133,23 @@ public class ReportGeneratorService {
 
             if (!reportsAndTotal.getLeft().isEmpty()) {
                 ChargeDetails chargeDetails = new ChargeDetails("Rental", reportsAndTotal.getLeft());
+                chargeDetailsList.add(chargeDetails);
+
+                totalAmount = totalAmount.add(reportsAndTotal.getRight());
+            }
+        }
+
+        /*
+            Car park
+         */
+        if (!orders.getCarParkOrders().isEmpty()) {
+            CarPark carPark = hotel.getAvailableServices().getCarPark();
+            Price pricePerDay = carPark.getPrice();
+            Pair<List<ReportOrder>, BigDecimal> reportsAndTotal =
+                    getCarParkReportsAndTotal(pricePerDay, orders.getCarParkOrders(), hotelCurrency);
+
+            if (!reportsAndTotal.getLeft().isEmpty()) {
+                ChargeDetails chargeDetails = new ChargeDetails("Car park", reportsAndTotal.getLeft());
                 chargeDetailsList.add(chargeDetails);
 
                 totalAmount = totalAmount.add(reportsAndTotal.getRight());
@@ -279,6 +301,33 @@ public class ReportGeneratorService {
             String amount = priceToValue(order.getTotal()) + " " + hotelCurrency;
 
             ReportOrder reportOrder = new ReportOrder(description, amount, timestampToString(order.getCreatedAt()));
+            reportOrders.add(reportOrder);
+        }
+
+        return new ImmutablePair<>(reportOrders, totalAmount);
+    }
+
+    private static Pair<List<ReportOrder>, BigDecimal> getCarParkReportsAndTotal(Price pricePerDay,
+                                                                                 Collection<CarParkOrder> orders,
+                                                                                 String hotelCurrency) {
+        List<ReportOrder> reportOrders = new ArrayList<>();
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        for (CarParkOrder order : orders) {
+            int days = new Period(order.getFromDate(), order.getToDate()).getDays() + 1;
+            BigDecimal cost = BigDecimal.valueOf(days).multiply(pricePerDay.getValue());
+            String amount = cost + " " + hotelCurrency;
+            String description;
+            if (days == 1) {
+                description = "1 day";
+            }
+            else {
+                description = days + " days";
+            }
+
+            ReportOrder reportOrder = new ReportOrder(description, amount, timestampToString(order.getCreatedAt()));
+
+            totalAmount = totalAmount.add(cost);
             reportOrders.add(reportOrder);
         }
 
