@@ -90,7 +90,7 @@ public class OrderEmailNotificationService implements ApplicationListener<OrderE
                         + guest.getFirstName() + " " + guest.getLastName() +
                         "</b> has just placed an order through our <b>" + serviceName + "</b> service." +
                         "<br/><br/>" +
-                        "Cheers," +
+                        "Regards," +
                         "<br/>" +
                         "The Throdi Team" +
                         "</div>";

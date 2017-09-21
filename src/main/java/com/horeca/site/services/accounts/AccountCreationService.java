@@ -124,9 +124,9 @@ public class AccountCreationService {
                 "<div>" +
                         "Hi," +
                         "<br /><br />" +
-                        "please click on the following link to activate your account: " + link +
+                        "to activate your account, please click the link below:<br/>" + link +
                         "<br/><br />" +
-                        "Cheers," +
+                        "Regards," +
                         "<br/>" +
                         "The Throdi Team" +
                         "</div>";
