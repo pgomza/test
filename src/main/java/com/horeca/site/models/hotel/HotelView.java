@@ -40,6 +40,7 @@ public class HotelView {
 	private Boolean isThrodiPartner;
 	private Boolean isTestHotel;
 	private Currency currency;
+	private List<String> tvChannels;
 	private UsefulInformation usefulInformation;
 	private RoomDirectory roomDirectory;
 	private List<AvailableServiceViewSimplified> services;
@@ -242,6 +243,14 @@ public class HotelView {
 
 	public void setCurrency(Currency currency) {
 		this.currency = currency;
+	}
+
+	public List<String> getTvChannels() {
+		return tvChannels;
+	}
+
+	public void setTvChannels(List<String> tvChannels) {
+		this.tvChannels = tvChannels;
 	}
 
 	public UsefulInformation getUsefulInformation() {

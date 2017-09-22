@@ -445,6 +445,7 @@ public class Hotel {
 		hotelView.setIsThrodiPartner(getIsThrodiPartner());
 		hotelView.setIsTestHotel(getIsTestHotel());
 		hotelView.setCurrency(getCurrency());
+		hotelView.setTvChannels(getTvChannels());
 		hotelView.setUsefulInformation(getUsefulInformation());
 		hotelView.setRoomDirectory(getRoomDirectory());
 		hotelView.setGuests(getGuests());
