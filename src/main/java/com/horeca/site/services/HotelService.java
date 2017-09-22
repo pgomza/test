@@ -100,6 +100,10 @@ public class HotelService {
         return update(id, newOne);
     }
 
+    public List<String> getTVChannels(Long id) {
+        return get(id).getTvChannels();
+    }
+
     public List<String> updateTVChannels(Long id, List<String> updated) {
         Hotel hotel = get(id);
         hotel.setTvChannels(updated);
