@@ -8,12 +8,9 @@ import com.horeca.site.services.accounts.AccountQueryService;
 import com.horeca.site.services.accounts.PasswordResetService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -37,6 +34,9 @@ public class AccountController {
 
     @Autowired
     private UserAccountService userAccountService;
+
+    @Value("${activation.redirectUrl}")
+    private String activationRedirectUrl;
 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<UserAccountView> getUserAccountViews() {
@@ -68,12 +68,19 @@ public class AccountController {
         return new ResponseMessage("The activation link has been sent to " + userAccountPOST.getEmail());
     }
 
-    @RequestMapping(value = "/users/activation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> activateUserAccount(@RequestParam(value = "secret", required = true) String secret) {
-        String redirectUrl = accountCreationService.activateUserAccountAndGetRedirectUrl(secret);
-        MultiValueMap<String, String> headers = new HttpHeaders();
-        headers.add("Location", redirectUrl);
-        return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
+    @RequestMapping(value = "/users/activation", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public String activateUserAccount(@RequestParam(value = "secret") String secret) {
+        String outcome = "Activation successful";
+        try {
+            boolean activationStatus = accountCreationService.activateUserAccount(secret);
+            if (!activationStatus) {
+                outcome = "Activation failed - invalid link";
+            }
+        } catch (RuntimeException ex) {
+            outcome = "Activation failed";
+        }
+
+        return getRedirectPage(outcome, activationRedirectUrl);
     }
 
     @RequestMapping(value = "/users/tokens", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -99,6 +106,40 @@ public class AccountController {
     @RequestMapping(value = "/users/reset-confirmation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void confirmPasswordReset(@Valid @RequestBody PasswordResetConfirmation confirmation) {
         passwordResetService.handleConfirmation(confirmation);
+    }
+
+    private String getRedirectPage(String outcome, String redirectUrl) {
+        return "<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <title>Account activation</title>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <b>" + outcome + "</b>; redirecting to <a href=\"" + redirectUrl + "\">" + redirectUrl + "</a> in \n" +
+                "    <span id=\"counter\">5</span><span id=\"counter-text\"> seconds</span>\n" +
+                "\n" +
+                "    <script>\n" +
+                "        setInterval(function() {\n" +
+                "            var counterSpan = document.querySelector(\"#counter\");\n" +
+                "            var counterTextSpan = document.querySelector(\"#counter-text\");\n" +
+                "\n" +
+                "            var count = counterSpan.textContent * 1 - 1;\n" +
+                "\n" +
+                "            if (count === 1) {\n" +
+                "                counterTextSpan.textContent = \" second\"\n" +
+                "            }\n" +
+                "\n" +
+                "            if (count > 0) {\n" +
+                "                counterSpan.textContent = count;\n" +
+                "            }\n" +
+                "            else {\n" +
+                "                window.location.href=\"" + redirectUrl + "\";\n" +
+                "            }\n" +
+                "        }, 1000);\n" +
+                "    </script>\n" +
+                "</body>\n" +
+                "</html>";
     }
 
     public static class ResponseMessage {
