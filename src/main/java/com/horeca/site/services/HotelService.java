@@ -100,6 +100,13 @@ public class HotelService {
         return update(id, newOne);
     }
 
+    public List<String> updateTVChannels(Long id, List<String> updated) {
+        Hotel hotel = get(id);
+        hotel.setTvChannels(updated);
+        update(id, hotel);
+        return hotel.getTvChannels();
+    }
+
     public void reset(Long id) {
         Hotel hotel = get(id);
         if (!hotel.getIsTestHotel()) {
