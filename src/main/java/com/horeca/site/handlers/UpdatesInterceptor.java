@@ -1,7 +1,7 @@
 package com.horeca.site.handlers;
 
 import com.horeca.site.models.updates.ChangeInHotelEvent;
-import com.horeca.site.models.updates.ChangeInStayEvent;
+import com.horeca.site.repositories.services.StayRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -22,7 +22,6 @@ public class UpdatesInterceptor extends HandlerInterceptorAdapter {
 
     private static final Logger logger = Logger.getLogger(UpdatesInterceptor.class);
 
-    // there's also the PATCH method but it's not supported by any of the exposed endpoints
     private static final Set<String> updateHttpMethods = new HashSet<>(Arrays.asList(
            "POST", "PUT", "PATCH", "DELETE"
     ));
@@ -32,7 +31,10 @@ public class UpdatesInterceptor extends HandlerInterceptorAdapter {
             200, 201, 202, 204
     ));
 
-    private static final String POSTPONED_PIN_HEADER = "Interceptor";
+    private static final String POSTPONED_HOTEL_ID_HEADER = "Interceptor";
+
+    @Autowired
+    private StayRepository stayRepository;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -43,7 +45,8 @@ public class UpdatesInterceptor extends HandlerInterceptorAdapter {
         if ("DELETE".equals(method)) {
             String pin = extractStayPinFromServletPath(request.getRequestURI(), stayPinPatternExact);
             if (pin != null) {
-                setPostponedPin(response, pin);
+                Optional<Long> hotelIdOpt = getHotelIdFromPin(pin);
+                hotelIdOpt.ifPresent(hotelId -> setPostponedHotelId(response, hotelId));
             }
         }
         return true;
@@ -52,17 +55,15 @@ public class UpdatesInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
-        Optional<String> postponedPinOpt = getPostponedPin(response);
-        if (postponedPinOpt.isPresent()) {
-            response.setHeader(POSTPONED_PIN_HEADER, "handled"); // couldn't find a simple way to simply remove it
-            notifyHotel(postponedPinOpt.get());
-        }
-        else {
-            Integer statusCode = response.getStatus();
-            String method = request.getMethod();
+        Optional<Long> postponedHotelIdOpt = getPostponedHotelId(response);
+        Integer statusCode = response.getStatus();
+        String method = request.getMethod();
 
-            if (successfulHttpStatuses.contains(statusCode) && updateHttpMethods.contains(method)) {
-
+        if (successfulHttpStatuses.contains(statusCode) && updateHttpMethods.contains(method)) {
+            if (postponedHotelIdOpt.isPresent()) {
+                notifyHotel(postponedHotelIdOpt.get());
+            }
+            else {
                 String uri = request.getRequestURI();
                 // since the patterns are already precompiled the extractions should be really fast
                 String pin = extractStayPinFromServletPath(uri, stayPinPattern);
@@ -70,13 +71,15 @@ public class UpdatesInterceptor extends HandlerInterceptorAdapter {
                 pin = (pin != null) ? pin : extractStayPinFromServletPath(uri, checkOutPattern);
 
                 if (pin != null) {
-                    notifyHotel(pin);
+                    Optional<Long> hotelIdOpt = getHotelIdFromPin(pin);
+                    hotelIdOpt.ifPresent(this::notifyHotel);
                 } else if ("/api/stays".equals(uri)) {
                     String location = response.getHeader("Location");
                     if (location != null) {
                         pin = extractStayPinFromServletPath(location, stayPinPattern);
                         if (pin != null) {
-                            notifyHotel(pin);
+                            Optional<Long> hotelIdOpt = getHotelIdFromPin(pin);
+                            hotelIdOpt.ifPresent(this::notifyHotel);
                         }
                     }
                 } else {
@@ -89,21 +92,30 @@ public class UpdatesInterceptor extends HandlerInterceptorAdapter {
         }
     }
 
-    private void setPostponedPin(HttpServletResponse response, String pin) {
-        response.setHeader(POSTPONED_PIN_HEADER, pin);
-    }
-
-    private Optional<String> getPostponedPin(HttpServletResponse response) {
-        return Optional.ofNullable(response.getHeader(POSTPONED_PIN_HEADER));
-    }
-
     private void notifyHotel(Long hotelId) {
         logger.debug("Change in hotel: " + hotelId);
         eventPublisher.publishEvent(new ChangeInHotelEvent(this, hotelId));
     }
 
-    private void notifyHotel(String pin) {
-        logger.debug("Change in stay: " + pin);
-        eventPublisher.publishEvent(new ChangeInStayEvent(this, pin));
+    private Optional<Long> getHotelIdFromPin(String pin) {
+        Long hotelId = stayRepository.getHotelIdOfStay(pin);
+        return Optional.ofNullable(hotelId);
+    }
+
+    private void setPostponedHotelId(HttpServletResponse response, Long hotelId) {
+        response.setHeader(POSTPONED_HOTEL_ID_HEADER, hotelId.toString());
+    }
+
+    private Optional<Long> getPostponedHotelId(HttpServletResponse response) {
+        String header = response.getHeader(POSTPONED_HOTEL_ID_HEADER);
+        Optional<Long> result;
+        if (header != null) {
+            result = Optional.of(Long.valueOf(header));
+        }
+        else {
+            result = Optional.empty();
+        }
+        response.setHeader(POSTPONED_HOTEL_ID_HEADER, "handled");
+        return result;
     }
 }

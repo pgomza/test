@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Api(value = "hotels")
 @RestController
 @RequestMapping("/api/hotels")
@@ -51,6 +53,16 @@ public class HotelController {
 	public ResponseEntity<Hotel> update(@PathVariable("id") Long id, @RequestBody Hotel hotel) {
         Hotel changed = service.updateFromController(id, hotel);
 		return new ResponseEntity<>(changed, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{id}/tv-channels", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<String> getTvChannels(@PathVariable("id") Long id) {
+		return service.getTVChannels(id);
+	}
+
+	@RequestMapping(value = "/{id}/tv-channels", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<String> updateTvChannels(@PathVariable("id") Long id, @RequestBody List<String> tvChannels) {
+		return service.updateTVChannels(id, tvChannels);
 	}
 
 	@RequestMapping(value = "/{id}/reset", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

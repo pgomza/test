@@ -89,24 +89,16 @@ public class AccountCreationService {
         return saved;
     }
 
-    public String activateUserAccountAndGetRedirectUrl(String secret) {
-        activateUserAccount(secret);
-        UserAccountPending userAccountPending = userAccountPendingService.getBySecret(secret);
-        String redirectUrl = userAccountPending.getRedirectUrl();
-        userAccountPendingService.delete(userAccountPending.getEmail());
-        return redirectUrl;
-    }
-
-    private void activateUserAccount(String secret) {
-        UserAccountPending userAccountPending = userAccountPendingService.getBySecret(secret);
-        if (userAccountPending == null) {
-            throw new BusinessRuleViolationException("Invalid secret");
+    public boolean activateUserAccount(String secret) {
+        UserAccountPending pending;
+        try {
+            pending = userAccountPendingService.getBySecret(secret);
+        } catch (ResourceNotFoundException ex) {
+            return false;
         }
 
         List<String> roles = new ArrayList<>(Collections.singletonList(UserAccount.DEFAULT_ROLE));
-        UserAccount userAccount =
-                new UserAccount(userAccountPending.getEmail(), userAccountPending.getPassword(),
-                        userAccountPending.getHotelId(), roles);
+        UserAccount userAccount = new UserAccount(pending.getEmail(), pending.getPassword(), pending.getHotelId(), roles);
         userAccountService.save(userAccount);
 
         // this may be the first user for this hotel
@@ -116,6 +108,10 @@ public class AccountCreationService {
         Hotel hotel = hotelService.get(userAccount.getHotelId());
         hotel.setIsThrodiPartner(true);
         hotelService.update(hotel.getId(), hotel);
+
+        userAccountPendingService.delete(pending.getEmail());
+
+        return true;
     }
 
     public void sendActivationEmail(UserAccountPending account) throws MessagingException, UnsupportedEncodingException {
@@ -124,9 +120,9 @@ public class AccountCreationService {
                 "<div>" +
                         "Hi," +
                         "<br /><br />" +
-                        "please click on the following link to activate your account: " + link +
+                        "to activate your account, please click the link below:<br/>" + link +
                         "<br/><br />" +
-                        "Cheers," +
+                        "Regards," +
                         "<br/>" +
                         "The Throdi Team" +
                         "</div>";

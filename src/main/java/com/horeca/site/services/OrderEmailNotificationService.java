@@ -44,8 +44,9 @@ public class OrderEmailNotificationService implements ApplicationListener<OrderE
 
             try {
                 if (requestedServiceType == AvailableServiceType.DND) {
+                    String roomNumber = stay.getRoomNumber();
                     Status currentDndStatus = stay.getOrders().getDnd().getStatus();
-                    sendDndUpdateMessage(guest, currentDndStatus, recipientEmail);
+                    sendDndUpdateMessage(guest, roomNumber, currentDndStatus, recipientEmail);
                 }
                 else {
                     sendNewOrderMessage(guest, requestedServiceType, recipientEmail);
@@ -89,7 +90,7 @@ public class OrderEmailNotificationService implements ApplicationListener<OrderE
                         + guest.getFirstName() + " " + guest.getLastName() +
                         "</b> has just placed an order through our <b>" + serviceName + "</b> service." +
                         "<br/><br/>" +
-                        "Cheers," +
+                        "Regards," +
                         "<br/>" +
                         "The Throdi Team" +
                         "</div>";
@@ -97,23 +98,26 @@ public class OrderEmailNotificationService implements ApplicationListener<OrderE
         emailSenderService.sendStandard("A new order in the " + serviceName + " service", content, recipientEmail);
     }
 
-    private void sendDndUpdateMessage(Guest guest, Status status, String recipientEmail)
+    private void sendDndUpdateMessage(Guest guest, String roomNumber, Status status, String recipientEmail)
             throws UnsupportedEncodingException, MessagingException {
 
-        String statusString = status == Status.ENABLED ? "enabled" : "disabled";
+        String statusStringSubject = status == Status.ENABLED ? "started" : "finished";
+        String statusStringContent = status == Status.ENABLED ? "enabled" : "disabled";
+
         String content =
                 "<div>" +
                 "   Hi," +
                 "   <br/><br/>" +
                 "   we would like to inform you that <b>"
                     + guest.getFirstName() + " " + guest.getLastName() +
-                "   </b> has just  <b>" + statusString + " </b> the Do Not Disturb mode." +
+                "   </b> has just  <b>" + statusStringContent + " </b> the Do Not Disturb mode." +
                 "   <br/><br/>" +
-                "   Cheers," +
+                "   Regards," +
                 "   <br/>" +
                 "   The Throdi Team" +
                 "</div>";
 
-        emailSenderService.sendStandard("DND mode change", content, recipientEmail);
+        emailSenderService.sendStandard("Do not disturb in room " + roomNumber + " " + statusStringSubject,
+                content, recipientEmail);
     }
 }

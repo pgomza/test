@@ -98,6 +98,13 @@ public class Hotel {
 	@Enumerated(EnumType.STRING)
 	private Currency currency;
 
+	@NotNull
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(name = "TVChannel", joinColumns = @JoinColumn(name = "hotel_id"))
+	@Column(name = "name")
+	@OrderColumn(name = "name_order")
+	private List<String> tvChannels = new ArrayList<>();
+
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn
 	private UsefulInformation usefulInformation;
@@ -339,6 +346,14 @@ public class Hotel {
 		this.currency = currency;
 	}
 
+	public List<String> getTvChannels() {
+		return tvChannels;
+	}
+
+	public void setTvChannels(List<String> tvChannels) {
+		this.tvChannels = tvChannels;
+	}
+
 	public UsefulInformation getUsefulInformation() {
 		return usefulInformation;
 	}
@@ -430,6 +445,7 @@ public class Hotel {
 		hotelView.setIsThrodiPartner(getIsThrodiPartner());
 		hotelView.setIsTestHotel(getIsTestHotel());
 		hotelView.setCurrency(getCurrency());
+		hotelView.setTvChannels(getTvChannels());
 		hotelView.setUsefulInformation(getUsefulInformation());
 		hotelView.setRoomDirectory(getRoomDirectory());
 		hotelView.setGuests(getGuests());

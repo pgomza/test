@@ -1,5 +1,6 @@
 package com.horeca.site.services.accounts;
 
+import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.accounts.UserAccountPending;
 import com.horeca.site.repositories.accounts.UserAccountPendingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,13 @@ public class UserAccountPendingService {
         return repository.findOne(email);
     }
 
-    public UserAccountPending getBySecret(String secret) { return repository.findBySecret(secret); }
+    public UserAccountPending getBySecret(String secret) {
+        UserAccountPending pending = repository.findBySecret(secret);
+        if (pending == null) {
+            throw new ResourceNotFoundException();
+        }
+        return pending;
+    }
 
     public UserAccountPending save(UserAccountPending account) {
         return repository.save(account);

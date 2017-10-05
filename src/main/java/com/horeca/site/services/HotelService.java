@@ -100,6 +100,17 @@ public class HotelService {
         return update(id, newOne);
     }
 
+    public List<String> getTVChannels(Long id) {
+        return get(id).getTvChannels();
+    }
+
+    public List<String> updateTVChannels(Long id, List<String> updated) {
+        Hotel hotel = get(id);
+        hotel.setTvChannels(updated);
+        update(id, hotel);
+        return hotel.getTvChannels();
+    }
+
     public void reset(Long id) {
         Hotel hotel = get(id);
         if (!hotel.getIsTestHotel()) {
@@ -178,8 +189,17 @@ public class HotelService {
 
     public void delete(Long id) {
         ensureExists(id);
+
+        // delete all accounts and stays associated with this hotel
+        userAccountService.deleteAllInHotel(id);
         Collection<String> associatedStays = stayService.getByHotelId(id);
-        associatedStays.forEach(stayService::delete);
+        associatedStays.forEach(pin -> {
+            stayService.delete(pin);
+            guestAccountService.deleteForStay(pin);
+        });
+
+
+
         repository.delete(id);
     }
 

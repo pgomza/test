@@ -1,13 +1,10 @@
 package com.horeca.site.websocket;
 
 import com.horeca.site.models.updates.ChangeInHotelEvent;
-import com.horeca.site.models.updates.ChangeInStayEvent;
-import com.horeca.site.repositories.services.StayRepository;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -18,15 +15,12 @@ import java.util.Map;
 import java.util.Set;
 
 @Service
-public class WebSocketUpdatesService implements ApplicationListener {
+public class WebSocketUpdatesService implements ApplicationListener<ChangeInHotelEvent> {
 
     private static final Logger logger = Logger.getLogger(WebSocketUpdatesService.class);
 
     public static final String UPDATE_MESSAGE_TEXT = "UPDATE";
     private final Map<Long, Set<WebSocketSession>> hotelToSessions = new HashMap<>();
-
-    @Autowired
-    private StayRepository stayRepository;
 
     public synchronized void registerSessionForHotel(Long hotelId, WebSocketSession session) {
         Set<WebSocketSession> existingSessions = hotelToSessions.getOrDefault(hotelId, new HashSet<>());
@@ -35,7 +29,8 @@ public class WebSocketUpdatesService implements ApplicationListener {
     }
 
     public synchronized void deregisterSession(WebSocketSession session) {
-        // since the number of hotels should not be very big, this is an acceptable solution
+        // since the number of hotels maintaining an active connection should not be very big
+        // this is an acceptable solution
         for (Long hotelId : hotelToSessions.keySet()) {
             Set<WebSocketSession> sessionSet = hotelToSessions.get(hotelId);
             if (sessionSet.contains(session)) {
@@ -45,23 +40,26 @@ public class WebSocketUpdatesService implements ApplicationListener {
         }
     }
 
-    @Override
-    public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof ChangeInStayEvent) {
-            ChangeInStayEvent changeInStay = (ChangeInStayEvent) event;
-            handleChangeInStay(changeInStay.getPin());
+    public synchronized void closeAllConnectionsForHotel(Long hotelId) {
+        Set<WebSocketSession> sessionsForHotel = hotelToSessions.getOrDefault(hotelId, new HashSet<>());
+        for (WebSocketSession session : sessionsForHotel) {
+            try {
+                session.close(CloseStatus.NORMAL);
+            } catch (IOException e) {
+                logger.error("Exception while trying to close a ws session for hotelId: " + hotelId + " sessionId: "
+                        + session.getId());
+                logger.error("Exception message: " + e.getMessage());
+                logger.error("Exception cause: " + e.getCause());
+            }
         }
-        else if (event instanceof ChangeInHotelEvent) {
-            ChangeInHotelEvent changeInHotel = (ChangeInHotelEvent) event;
-            handleChangeInHotel(changeInHotel.getHotelId());
-        }
+        // can't simultaneously modify and iterate over the same collection
+        HashSet<WebSocketSession> sessionsForHotelCopy = new HashSet<>(sessionsForHotel);
+        sessionsForHotelCopy.forEach(this::deregisterSession);
     }
 
-    private void handleChangeInStay(String pin) {
-        Long hotelId = stayRepository.getHotelIdOfStay(pin);
-        if (hotelId != null) {
-            handleChangeInHotel(hotelId);
-        }
+    @Override
+    public void onApplicationEvent(ChangeInHotelEvent event) {
+        handleChangeInHotel(event.getHotelId());
     }
 
     private void handleChangeInHotel(Long hotelId) {
@@ -73,8 +71,8 @@ public class WebSocketUpdatesService implements ApplicationListener {
                 } catch (IOException e) {
                     logger.error("Exception while sending " + UPDATE_MESSAGE_TEXT + " to hotelId: " + hotelId +
                             " sessionId: " + s.getId());
-                    logger.error("Exception's message: " + e.getMessage());
-                    logger.error("Exception's cause: " + e.getCause());
+                    logger.error("Exception message: " + e.getMessage());
+                    logger.error("Exception cause: " + e.getCause());
                 }
             });
         }

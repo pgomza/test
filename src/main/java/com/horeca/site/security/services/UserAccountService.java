@@ -86,4 +86,10 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
         List<UserAccount> accountsInHotel = getRepository().findAllByHotelId(hotelId);
         accountsInHotel.forEach(this::enable);
     }
+
+    public void deleteAllInHotel(Long hotelId) {
+        disableAllInHotel(hotelId);
+        List<UserAccount> accountsInHotel = getRepository().findAllByHotelId(hotelId);
+        getRepository().delete(accountsInHotel);
+    }
 }
