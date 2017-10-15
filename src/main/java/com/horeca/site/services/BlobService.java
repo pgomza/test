@@ -44,12 +44,10 @@ public class BlobService {
         try {
             CloudBlobContainer container = blobClient.getContainerReference(containerName);
             for (ListBlobItem item : container.listBlobs(filename)) {
-                String itemUrl = item.getUri().toString();
-                int containerIndex = itemUrl.indexOf(containerName + "/");
-                if (containerIndex != -1) {
-                    String itemFilename = itemUrl.substring(containerIndex + (containerName + "/").length());
-                    if (filename.equals(itemFilename)) {
-                        return Optional.of(itemUrl);
+                if (item instanceof CloudBlob) {
+                    CloudBlob blob = (CloudBlob) item;
+                    if (filename.equals(blob.getName())) {
+                        return Optional.of(blob.getUri().toString());
                     }
                 }
             }
