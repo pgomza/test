@@ -5,9 +5,9 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.repositories.FileLinkRepository;
-import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.blob.*;
+import com.microsoft.azure.storage.blob.BlobContainerPermissions;
+import com.microsoft.azure.storage.blob.BlobContainerPublicAccessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,26 +33,20 @@ public class HotelImagesService {
     @Autowired
     private HotelService hotelService;
     @Autowired
+    private BlobService blobService;
+    @Autowired
     private FileLinkRepository repository;
-    private CloudBlobContainer container;
 
-    @Value("${storage.connectionString}")
-    private String storageConnectionString;
-    @Value("${storage.containerName}")
+    @Value("${storage.images.containerName}")
     private String containerName;
     @Value("${storage.maxImagesPerHotel}")
     private Integer maxImagesPerHotel;
 
     @PostConstruct
-    void initStorageContainer() throws URISyntaxException, InvalidKeyException, StorageException {
-        CloudStorageAccount account = CloudStorageAccount.parse(storageConnectionString);
-        CloudBlobClient serviceClient = account.createCloudBlobClient();
-        container = serviceClient.getContainerReference(containerName);
-        container.createIfNotExists();
-
+    void registerImagesContainer() throws URISyntaxException, StorageException {
         BlobContainerPermissions containerPermissions = new BlobContainerPermissions();
         containerPermissions.setPublicAccess(BlobContainerPublicAccessType.CONTAINER);
-        container.uploadPermissions(containerPermissions);
+        blobService.registerContainer(containerName, containerPermissions);
     }
 
     public FileLink get(Long hotelId, String filename) {
@@ -93,14 +86,15 @@ public class HotelImagesService {
 
         // before uploading the file to GAE make it unique
         String uniqueFilename = "hotels/" + hotelId + "/" + filename;
-        String url = uploadToContainer(uniqueFilename, imageStream);
+        String url = blobService.upload(containerName, uniqueFilename, imageStream);
         FileLink fileLink = new FileLink();
         fileLink.setFilename(filename);
         fileLink.setUrl(url);
 
         // TODO check this chunk of code - it can probably be removed
-        if (findByFilename(hotelId, filename) != null)
+        if (findByFilename(hotelId, filename) != null) {
             delete(hotelId, filename);
+        }
 
         FileLink savedFileLink = repository.save(fileLink);
         hotelImages.add(fileLink);
@@ -114,31 +108,11 @@ public class HotelImagesService {
             throw new ResourceNotFoundException("An image with such a filename could not be found");
 
         String uniqueFilename = "hotels/" + hotelId + "/" + filename;
-        deleteFromContainer(uniqueFilename);
+        blobService.delete(containerName, uniqueFilename);
 
         Hotel hotel = hotelService.get(hotelId);
         hotel.getImages().remove(foundLink);
         hotelService.update(hotel.getId(), hotel);
-    }
-
-    private String uploadToContainer(String filename, InputStream imageStream) {
-        try {
-            CloudBlockBlob blob = container.getBlockBlobReference(filename);
-            blob.upload(imageStream, -1);
-            CloudBlob uploadedBlob = container.getBlobReferenceFromServer(filename);
-            return uploadedBlob.getUri().toString();
-        } catch (URISyntaxException | StorageException | IOException e) {
-            throw new RuntimeException("There was an error while trying to upload this file to Azure Storage");
-        }
-    }
-
-    private void deleteFromContainer(String filename) {
-        try {
-            CloudBlob blob = container.getBlobReferenceFromServer(filename);
-            blob.delete();
-        } catch (URISyntaxException | StorageException e) {
-            throw new RuntimeException("There was an error while trying to delete this file from Azure Storage");
-        }
     }
 
     private FileLink findByFilename(Long hotelId, String filename) {
