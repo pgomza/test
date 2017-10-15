@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -36,25 +37,24 @@ public class BlobService {
         container.uploadPermissions(permissions);
     }
 
-    public boolean doesExist(String containerName, String filename) {
+    public Optional<String> getLink(String containerName, String filename) {
         if (!doesContainerExist(containerName)) {
             throw new BusinessRuleViolationException("No such container exist");
         }
         try {
             CloudBlobContainer container = blobClient.getContainerReference(containerName);
-            Set<ListBlobItem> blobs = new HashSet<>();
-            container.listBlobs(containerName).forEach(blobs::add);
-            return blobs.stream().anyMatch(item -> {
+            for (ListBlobItem item : container.listBlobs(filename)) {
                 String itemUrl = item.getUri().toString();
                 int containerIndex = itemUrl.indexOf(containerName + "/");
                 if (containerIndex != -1) {
                     String itemFilename = itemUrl.substring(containerIndex + (containerName + "/").length());
-                    return itemFilename.equals(filename);
+                    if (filename.equals(itemFilename)) {
+                        return Optional.of(itemUrl);
+                    }
                 }
-                else {
-                    return false;
-                }
-            });
+            }
+            return Optional.empty();
+
         } catch (URISyntaxException | StorageException e) {
             throw new RuntimeException("There was an problem while trying to list all blobs in the container " +
                     containerName, e);
