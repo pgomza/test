@@ -89,6 +89,23 @@ public class BlobService {
         }
     }
 
+    public void deleteAll(String containerName, String directory) {
+        if (!doesContainerExist(containerName)) {
+            throw new BusinessRuleViolationException("No such container exist");
+        }
+        try {
+            CloudBlobContainer container = blobClient.getContainerReference(containerName);
+            for (ListBlobItem item : container.listBlobs(directory + "/")) {
+                if (item instanceof CloudBlob) {
+                    CloudBlob blob = (CloudBlob) item;
+                    blob.delete();
+                }
+            }
+        } catch (StorageException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
     private boolean doesContainerExist(String containerName) {
         Set<CloudBlobContainer> containers = new HashSet<>();
         blobClient.listContainers(containerName).forEach(containers::add);
