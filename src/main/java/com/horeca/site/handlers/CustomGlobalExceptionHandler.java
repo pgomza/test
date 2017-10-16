@@ -26,6 +26,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
@@ -58,6 +59,7 @@ public class CustomGlobalExceptionHandler extends AbstractHandlerExceptionResolv
         BAD_REQUEST_EXCEPTIONS.add(MultipartException.class);
         BAD_REQUEST_EXCEPTIONS.add(JsonMappingException.class);
         BAD_REQUEST_EXCEPTIONS.add(MissingServletRequestParameterException.class);
+        BAD_REQUEST_EXCEPTIONS.add(UnsatisfiedServletRequestParameterException.class);
         BAD_REQUEST_EXCEPTIONS.add(ServletRequestBindingException.class);
         BAD_REQUEST_EXCEPTIONS.add(BindException.class);
         BAD_REQUEST_EXCEPTIONS.add(TypeMismatchException.class);
