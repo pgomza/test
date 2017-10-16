@@ -45,6 +45,7 @@ public class HotelView {
 	private RoomDirectory roomDirectory;
 	private List<AvailableServiceViewSimplified> services;
 	private List<FileLink> images;
+	private List<Link> links;
 
 	@JsonIgnore
 	private Set<Guest> guests;
@@ -291,5 +292,13 @@ public class HotelView {
 
 	public void setGuests(Set<Guest> guests) {
 		this.guests = guests;
+	}
+
+	public List<Link> getLinks() {
+		return links;
+	}
+
+	public void setLinks(List<Link> links) {
+		this.links = links;
 	}
 }

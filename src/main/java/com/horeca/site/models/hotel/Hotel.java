@@ -122,6 +122,11 @@ public class Hotel {
 	@OrderColumn(name = "filelink_order")
 	private List<FileLink> images;
 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@JoinColumn(name = "hotel_id")
+	@OrderColumn(name = "link_order")
+	private List<Link> links;
+
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "Hotel_id")
@@ -384,6 +389,14 @@ public class Hotel {
 
 	public void setImages(List<FileLink> images) {
 		this.images = images;
+	}
+
+	public List<Link> getLinks() {
+		return links;
+	}
+
+	public void setLinks(List<Link> links) {
+		this.links = links;
 	}
 
 	public Set<Guest> getGuests() {
