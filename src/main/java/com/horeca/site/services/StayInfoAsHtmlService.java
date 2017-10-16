@@ -8,7 +8,6 @@ import com.microsoft.azure.storage.blob.BlobContainerPermissions;
 import com.microsoft.azure.storage.blob.BlobContainerPublicAccessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -129,8 +128,8 @@ public class StayInfoAsHtmlService {
                 "\n" +
                 "        .pin img {\n" +
                 "            display: inline-block;\n" +
-                "            width: 256px;\n" +
-                "            height: 256px;\n" +
+                "            width: 160px;\n" +
+                "            height: 160px;\n" +
                 "        }\n" +
                 "    </style>\n" +
                 "</head>";
@@ -183,8 +182,7 @@ public class StayInfoAsHtmlService {
         }
     }
 
-    @Scheduled(initialDelay = 60 * 1000, fixedDelay = 24 * 60 * 60 * 1000)
-    void deleteAllCodeImages() {
+    public void deleteAllCodeImages() {
         blobService.deleteAll(containerName, QR_CODES_DIRECTORY);
     }
 }

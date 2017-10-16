@@ -10,7 +10,7 @@ import java.io.ByteArrayOutputStream;
 public class QRCodeService {
 
     public byte[] generate(String text) {
-        ByteArrayOutputStream qrStream = QRCode.from(text).to(ImageType.JPG).stream();
+        ByteArrayOutputStream qrStream = QRCode.from(text).withSize(160, 160).to(ImageType.JPG).stream();
         return qrStream.toByteArray();
     }
 }
