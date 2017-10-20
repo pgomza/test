@@ -1,31 +1,49 @@
 package com.horeca.site.services;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class DeepCopyService {
 
-    private static final Logger logger = Logger.getLogger(DeepCopyService.class);
-
     @Autowired
-    private MappingJackson2HttpMessageConverter converter;
+    private ObjectMapper objectMapper;
 
-    public synchronized <T> T deepCopy(T source) {
-        ObjectMapper mapper = converter.getObjectMapper();
-        Class<T> sourceClass = (Class<T>) source.getClass();
+    public <T> T copy(T source) {
+        Class<?> sourceClass = source.getClass();
+
+        JavaType javaType = null;
+        if (Collection.class.isAssignableFrom(sourceClass)) {
+            Collection<?> collection = (Collection<?>) source;
+            Class<?> elementType = CollectionTypeGuesser.guessElementType(collection);
+
+            if (List.class.isAssignableFrom(sourceClass)) {
+                javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, elementType);
+            }
+            else if (Set.class.isAssignableFrom(sourceClass)) {
+                javaType = objectMapper.getTypeFactory().constructCollectionType(Set.class, elementType);
+            }
+            else {
+                throw new RuntimeException("Unsupported type of collection");
+            }
+        }
         try {
-            String serialized = mapper.writeValueAsString(source);
-            T copy = mapper.readValue(serialized, sourceClass);
-            return copy;
+            String serialized = objectMapper.writeValueAsString(source);
+            if (javaType != null) {
+                return (T) objectMapper.readValue(serialized, javaType);
+            }
+            else {
+                return  (T) objectMapper.readValue(serialized, sourceClass);
+            }
         } catch (IOException e) {
-            logger.warn("There was a problem while serializing an object of class " + sourceClass, e);
-            return null;
+            throw new RuntimeException("Could not copy object " + source, e);
         }
     }
 }
