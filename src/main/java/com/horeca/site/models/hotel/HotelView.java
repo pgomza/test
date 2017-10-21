@@ -8,6 +8,7 @@ import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
 import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
+import com.horeca.site.models.hotel.translation.Translatable;
 
 import java.util.List;
 import java.util.Set;
@@ -16,35 +17,73 @@ import java.util.Set;
 public class HotelView {
 	
 	private Long id;
+
 	private String name;
+
+	@Translatable
 	private String description;
+
 	private String address;
+
 	private String email;
+
 	private String website;
+
 	private String phone;
+
 	private String bookingUrl;
+
 	private String shopsUrl;
+
 	private String restaurantsUrl;
+
 	private String interestingPlacesUrl;
+
 	private String eventsUrl;
+
 	private String meteoUrl;
+
 	private String fax;
+
 	private Float starRating;
+
 	private Integer rooms;
+
 	private Float ratingOverall;
+
+	@Translatable
 	private String ratingOverallText;
+
+	@Translatable
 	private String propertyType;
+
+	@Translatable
 	private String chain;
+
 	private Double longitude;
+
 	private Double latitude;
+
 	private Boolean isThrodiPartner;
+
 	private Boolean isTestHotel;
+
 	private Currency currency;
+
 	private List<String> tvChannels;
+
+	@Translatable
 	private UsefulInformation usefulInformation;
+
+	@Translatable
 	private RoomDirectory roomDirectory;
+
+	@Translatable
 	private List<AvailableServiceViewSimplified> services;
+
 	private List<FileLink> images;
+
+	@Translatable
 	private List<Link> links;
 
 	@JsonIgnore

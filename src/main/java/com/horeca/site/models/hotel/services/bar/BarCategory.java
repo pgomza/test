@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.bar;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -25,6 +26,7 @@ public class BarCategory {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "bar_category_id")
     private Set<BarItem> items;

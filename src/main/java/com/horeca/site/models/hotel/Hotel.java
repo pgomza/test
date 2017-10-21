@@ -35,9 +35,9 @@ public class Hotel {
 	private Long id;
 
 	@NotEmpty
-	@Translatable
 	private String name;
 
+	@Translatable
 	@Column(columnDefinition = "nvarchar(4000)")
 	public String description;
 
@@ -77,10 +77,13 @@ public class Hotel {
 
 	private Float ratingOverall;
 
+	@Translatable
 	private String ratingOverallText;
 
+	@Translatable
 	private String propertyType;
 
+	@Translatable
 	private String chain;
 
 	private Double longitude;
@@ -107,14 +110,17 @@ public class Hotel {
 	@OrderColumn(name = "name_order")
 	private List<String> tvChannels = new ArrayList<>();
 
+	@Translatable
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn
 	private UsefulInformation usefulInformation;
 
+	@Translatable
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn
 	private RoomDirectory roomDirectory;
 
+	@Translatable
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn
 	private AvailableServices availableServices;
@@ -124,6 +130,7 @@ public class Hotel {
 	@OrderColumn(name = "filelink_order")
 	private List<FileLink> images;
 
+	@Translatable
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "hotel_id")
 	@OrderColumn(name = "link_order")

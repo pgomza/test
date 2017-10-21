@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.petcare;
 
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -16,11 +17,13 @@ public class PetCare {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     private String description;
 
     @NotNull
     private Price price;
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_care_id")
     private List<PetCareItem> items = new ArrayList<>();

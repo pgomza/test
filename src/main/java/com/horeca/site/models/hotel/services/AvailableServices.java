@@ -14,6 +14,7 @@ import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spacall.SpaCall;
 import com.horeca.site.models.hotel.services.tableordering.TableOrdering;
 import com.horeca.site.models.hotel.services.taxi.Taxi;
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -27,14 +28,17 @@ public class AvailableServices {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn
     private Breakfast breakfast;
 
+    @Translatable
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn
     private CarPark carPark;
 
+    @Translatable
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn
     private Housekeeping housekeeping;
@@ -43,38 +47,47 @@ public class AvailableServices {
     @JoinColumn
     private Spa spa;
 
+    @Translatable
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn
     private PetCare petCare;
 
+    @Translatable
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn
     private Taxi taxi;
 
+    @Translatable
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn
     private RoomService roomService;
 
+    @Translatable
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn
     private TableOrdering tableOrdering;
 
+    @Translatable
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn
     private Bar bar;
 
+    @Translatable
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn
     private SpaCall spaCall;
 
+    @Translatable
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn
     private HairDresser hairDresser;
 
+    @Translatable
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn
     private Rental rental;
 
+    @Translatable
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn
     private RestaurantMenu restaurantMenu;

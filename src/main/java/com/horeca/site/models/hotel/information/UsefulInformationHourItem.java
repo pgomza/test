@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.information;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.horeca.site.models.hotel.translation.Translatable;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -19,6 +20,7 @@ public class UsefulInformationHourItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     @NotEmpty
     private String name;
 

@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.roomdirectory;
 
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ public class RoomDirectory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "room_directory_id")
     @OrderColumn(name = "sections_order")

@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.spa;
 
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -15,11 +16,13 @@ public class Spa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     private String description;
 
     @NotNull
     private Price price;
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "spa_id")
     private Set<SpaItem> items;
