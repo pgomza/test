@@ -97,17 +97,23 @@ public class TranslationService {
                     Class<?> fieldType = field.getType();
                     if (fieldType == String.class) {
                         String toTranslate = (String) field.get(object);
-                        String translated = translateString(toTranslate, translations);
-                        field.set(object, translated);
+                        if (toTranslate != null) {
+                            String translated = translateString(toTranslate, translations);
+                            field.set(object, translated);
+                        }
                     }
                     else if (Collection.class.isAssignableFrom(fieldType)) {
                         Collection<?> collection = (Collection<?>) field.get(object);
-                        Collection<?> translated = introspectCollection(collection, introspected, translations);
-                        field.set(object, translated);
+                        if (collection != null) {
+                            Collection<?> translated = introspectCollection(collection, introspected, translations);
+                            field.set(object, translated);
+                        }
                     }
                     else if (!isPrimitiveOrPrimitiveWrapper(fieldType)) {
                         Object fieldValue = field.get(object);
-                        introspect(fieldValue, introspected, translations);
+                        if (fieldValue != null) {
+                            introspect(fieldValue, introspected, translations);
+                        }
                     }
                 }
             }
@@ -137,19 +143,25 @@ public class TranslationService {
             if (elementClass == String.class) {
                 for (Object element : collection) {
                     String toTranslate = (String) element;
-                    String translated = translateString(toTranslate, translations);
-                    translatedCopy.add((T) translated);
+                    if (toTranslate != null) {
+                        String translated = translateString(toTranslate, translations);
+                        translatedCopy.add((T) translated);
+                    }
                 }
             }
             else if (Collection.class.isAssignableFrom(elementClass)) {
                 for (Object element : collection) {
                     Collection<?> subCollection = (Collection<?>) element;
-                    translatedCopy.add((T) introspectCollection(subCollection, introspected, translations));
+                    if (subCollection != null) {
+                        translatedCopy.add((T) introspectCollection(subCollection, introspected, translations));
+                    }
                 }
             }
             else if (!isPrimitiveOrPrimitiveWrapper(elementClass)) {
                 for (Object element : collection) {
-                    introspect(element, introspected, translations);
+                    if (element != null) {
+                        introspect(element, introspected, translations);
+                    }
                 }
                 return collection;
             }
@@ -187,15 +199,22 @@ public class TranslationService {
 
                     Class<?> fieldType = field.getType();
                     if (fieldType == String.class) {
-                        results.add((String) field.get(object));
+                        String text = (String) field.get(object);
+                        if (text != null) {
+                            results.add(text);
+                        }
                     }
                     else if (Collection.class.isAssignableFrom(fieldType)) {
                         Collection<?> collection = (Collection<?>) field.get(object);
-                        collectPropsFromCollection(collection, introspected, results);
+                        if (collection != null) {
+                            collectPropsFromCollection(collection, introspected, results);
+                        }
                     }
                     else if (!isPrimitiveOrPrimitiveWrapper(fieldType)) {
                         Object fieldValue = field.get(object);
-                        collectProps(fieldValue, introspected, results);
+                        if (fieldValue != null) {
+                            collectProps(fieldValue, introspected, results);
+                        }
                     }
                 }
             }
@@ -215,18 +234,25 @@ public class TranslationService {
             Class<?> elementClass = CollectionTypeGuesser.guessElementType(collection);
             if (elementClass == String.class) {
                 for (Object element : collection) {
-                    results.add((String) element);
+                    String text = (String) element;
+                    if (text != null) {
+                        results.add(text);
+                    }
                 }
             }
             else if (Collection.class.isAssignableFrom(elementClass)) {
                 for (Object element : collection) {
                     Collection<?> subCollection = (Collection<?>) element;
-                    collectPropsFromCollection(subCollection, introspected, results);
+                    if (subCollection != null) {
+                        collectPropsFromCollection(subCollection, introspected, results);
+                    }
                 }
             }
             else if (!isPrimitiveOrPrimitiveWrapper(elementClass)) {
                 for (Object element : collection) {
-                    collectProps(element, introspected, results);
+                    if (element != null) {
+                        collectProps(element, introspected, results);
+                    }
                 }
             }
         }
