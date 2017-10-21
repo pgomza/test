@@ -1,7 +1,6 @@
 package com.horeca.site.services.translation;
 
 import com.horeca.site.models.hotel.translation.Translatable;
-import com.horeca.site.models.hotel.translation.Untranslatable;
 import com.horeca.site.services.CollectionTypeGuesser;
 import com.horeca.site.services.DeepCopyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,35 +84,33 @@ public class TranslationService {
 
             introspected.add(objectClass);
 
-            boolean annotated = objectClass.isAnnotationPresent(Translatable.class);
-            if (annotated) {
-                Field[] fields = objectClass.getDeclaredFields();
-                for (Field field : fields) {
-                    field.setAccessible(true);
-                    if (field.isAnnotationPresent(Untranslatable.class)) {
-                        continue;
-                    }
+            Field[] fields = objectClass.getDeclaredFields();
+            for (Field field : fields) {
 
-                    Class<?> fieldType = field.getType();
-                    if (fieldType == String.class) {
-                        String toTranslate = (String) field.get(object);
-                        if (toTranslate != null) {
-                            String translated = translateString(toTranslate, translations);
-                            field.set(object, translated);
-                        }
+                field.setAccessible(true);
+                if (!field.isAnnotationPresent(Translatable.class)) {
+                    continue;
+                }
+
+                Class<?> fieldType = field.getType();
+                if (fieldType == String.class) {
+                    String toTranslate = (String) field.get(object);
+                    if (toTranslate != null) {
+                        String translated = translateString(toTranslate, translations);
+                        field.set(object, translated);
                     }
-                    else if (Collection.class.isAssignableFrom(fieldType)) {
-                        Collection<?> collection = (Collection<?>) field.get(object);
-                        if (collection != null) {
-                            Collection<?> translated = introspectCollection(collection, introspected, translations);
-                            field.set(object, translated);
-                        }
+                }
+                else if (Collection.class.isAssignableFrom(fieldType)) {
+                    Collection<?> collection = (Collection<?>) field.get(object);
+                    if (collection != null) {
+                        Collection<?> translated = introspectCollection(collection, introspected, translations);
+                        field.set(object, translated);
                     }
-                    else if (!isPrimitiveOrPrimitiveWrapper(fieldType)) {
-                        Object fieldValue = field.get(object);
-                        if (fieldValue != null) {
-                            introspect(fieldValue, introspected, translations);
-                        }
+                }
+                else if (!isPrimitiveOrPrimitiveWrapper(fieldType)) {
+                    Object fieldValue = field.get(object);
+                    if (fieldValue != null) {
+                        introspect(fieldValue, introspected, translations);
                     }
                 }
             }
@@ -188,33 +185,30 @@ public class TranslationService {
 
             introspected.add(objectClass);
 
-            boolean annotated = objectClass.isAnnotationPresent(Translatable.class);
-            if (annotated) {
-                Field[] fields = objectClass.getDeclaredFields();
-                for (Field field : fields) {
-                    field.setAccessible(true);
-                    if (field.isAnnotationPresent(Untranslatable.class)) {
-                        continue;
-                    }
+            Field[] fields = objectClass.getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                if (!field.isAnnotationPresent(Translatable.class)) {
+                    continue;
+                }
 
-                    Class<?> fieldType = field.getType();
-                    if (fieldType == String.class) {
-                        String text = (String) field.get(object);
-                        if (text != null) {
-                            results.add(text);
-                        }
+                Class<?> fieldType = field.getType();
+                if (fieldType == String.class) {
+                    String text = (String) field.get(object);
+                    if (text != null) {
+                        results.add(text);
                     }
-                    else if (Collection.class.isAssignableFrom(fieldType)) {
-                        Collection<?> collection = (Collection<?>) field.get(object);
-                        if (collection != null) {
-                            collectPropsFromCollection(collection, introspected, results);
-                        }
+                }
+                else if (Collection.class.isAssignableFrom(fieldType)) {
+                    Collection<?> collection = (Collection<?>) field.get(object);
+                    if (collection != null) {
+                        collectPropsFromCollection(collection, introspected, results);
                     }
-                    else if (!isPrimitiveOrPrimitiveWrapper(fieldType)) {
-                        Object fieldValue = field.get(object);
-                        if (fieldValue != null) {
-                            collectProps(fieldValue, introspected, results);
-                        }
+                }
+                else if (!isPrimitiveOrPrimitiveWrapper(fieldType)) {
+                    Object fieldValue = field.get(object);
+                    if (fieldValue != null) {
+                        collectProps(fieldValue, introspected, results);
                     }
                 }
             }

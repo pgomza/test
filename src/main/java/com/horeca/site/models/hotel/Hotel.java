@@ -13,6 +13,7 @@ import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
 import com.horeca.site.models.hotel.services.AvailableServices;
+import com.horeca.site.models.hotel.translation.Translatable;
 import com.horeca.site.models.notifications.NotificationSettings;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -34,6 +35,7 @@ public class Hotel {
 	private Long id;
 
 	@NotEmpty
+	@Translatable
 	private String name;
 
 	@Column(columnDefinition = "nvarchar(4000)")
