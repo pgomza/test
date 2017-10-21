@@ -121,6 +121,13 @@ public class HotelTranslationService {
     public HotelTranslation update(Long hotelId, LanguageCode languageCode, Set<TranslationEntry> translationEntries) {
         Hotel hotel = hotelService.get(hotelId);
         HotelTranslation updatedTranslation = new HotelTranslation(languageCode, hotel, translationEntries);
+        Optional<HotelTranslation> existingTranslationOpt = get(hotelId, languageCode);
+        if (existingTranslationOpt.isPresent()) {
+            HotelTranslation existingTranslation = existingTranslationOpt.get();
+            existingTranslation.getEntries().clear();
+            existingTranslation.getEntries().addAll(updatedTranslation.getEntries());
+            return repository.save(existingTranslation);
+        }
         return repository.save(updatedTranslation);
     }
 }
