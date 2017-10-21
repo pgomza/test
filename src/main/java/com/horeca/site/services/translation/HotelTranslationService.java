@@ -80,7 +80,9 @@ public class HotelTranslationService {
     public HotelTranslationView getView(Long hotelId, LanguageCode languageCode) {
         Optional<HotelTranslation> translationOpt = get(hotelId, languageCode);
         if (!translationOpt.isPresent()) {
-            throw new RuntimeException("Cannot find a translation for this this language code");
+            Hotel hotel = hotelService.get(hotelId);
+            HotelTranslation emptyHotelTranslation = new HotelTranslation(languageCode, hotel, new HashSet<>());
+            return getView(emptyHotelTranslation);
         }
         return getView(translationOpt.get());
     }
@@ -120,13 +122,5 @@ public class HotelTranslationService {
         Hotel hotel = hotelService.get(hotelId);
         HotelTranslation updatedTranslation = new HotelTranslation(languageCode, hotel, translationEntries);
         return repository.save(updatedTranslation);
-    }
-
-    public void delete(Long hotelId, LanguageCode languageCode) {
-        Optional<HotelTranslation> translation = get(hotelId, languageCode);
-        if (!translation.isPresent()) {
-            throw new RuntimeException("Cannot find a translation for this this language code");
-        }
-        repository.delete(translation.get());
     }
 }
