@@ -42,11 +42,11 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        // don't secure the websocket endpoints
+        // UNSECURED ENDPOINTS
         http.authorizeRequests().antMatchers("/api/updates/**").permitAll();
         http.authorizeRequests().antMatchers("/api/demo/**").permitAll();
-        // and the timeout endpoint
         http.authorizeRequests().antMatchers("/api/timeout").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/languages").permitAll();
 
         // allow anybody who's in possession of a temp token to add a user account
         // 'anybody' means people that don't have to go through the OAuth2 authentication process
