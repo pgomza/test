@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.horeca.site.handlers.CustomGlobalExceptionHandler;
+import com.horeca.site.handlers.LanguageCodeArgumentResolver;
 import com.horeca.site.handlers.TimeoutFilter;
 import com.horeca.site.handlers.UpdatesInterceptor;
 import com.horeca.site.repositories.TimeoutSettingsRepository;
@@ -17,6 +18,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.StringUtils;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -67,6 +69,11 @@ public class RootConfig extends WebMvcConfigurerAdapter
                 .addResourceLocations("classpath:/static/")
                 .resourceChain(true)
                 .addResolver(new PushStateResourceResolver());
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(new LanguageCodeArgumentResolver());
     }
 
     private class PushStateResourceResolver implements ResourceResolver {
