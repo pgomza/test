@@ -2,7 +2,9 @@ package com.horeca.site.controllers;
 
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
+import com.horeca.site.models.hotel.translation.LanguageCode;
 import com.horeca.site.services.HotelService;
+import com.horeca.site.services.translation.HotelTranslationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class HotelController {
 	@Autowired
 	private HotelService service;
 
+	@Autowired
+	private HotelTranslationService hotelTranslationService;
+
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<Hotel> getAll(Pageable pageable) {
 		return service.getAll(pageable);
@@ -34,13 +39,15 @@ public class HotelController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Hotel get(@PathVariable("id") Long id) {
-		return service.getIfNotMarkedAsDeleted(id);
+	public Hotel get(@PathVariable("id") Long id, LanguageCode languageCode) {
+		Hotel hotel = service.getIfNotMarkedAsDeleted(id);
+		return hotelTranslationService.translate(hotel, hotel.getId(), languageCode);
 	}
 
 	@RequestMapping(value = "/{id}", params = "simplified", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public HotelView getView(@PathVariable("id") Long id) {
-		return service.getViewIfNotMarkedAsDeleted(id);
+	public HotelView getView(@PathVariable("id") Long id, LanguageCode languageCode) {
+		HotelView hotelView = service.getViewIfNotMarkedAsDeleted(id);
+		return hotelTranslationService.translate(hotelView, hotelView.getId(), languageCode);
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -56,8 +63,9 @@ public class HotelController {
 	}
 
 	@RequestMapping(value = "/{id}/tv-channels", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<String> getTvChannels(@PathVariable("id") Long id) {
-		return service.getTVChannels(id);
+	public List<String> getTvChannels(@PathVariable("id") Long id, LanguageCode languageCode) {
+		List<String> tvChannels = service.getTVChannels(id);
+		return hotelTranslationService.translate(tvChannels, id, languageCode);
 	}
 
 	@RequestMapping(value = "/{id}/tv-channels", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
