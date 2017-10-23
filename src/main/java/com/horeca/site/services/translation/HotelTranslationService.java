@@ -1,6 +1,7 @@
 package com.horeca.site.services.translation;
 
 import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.hotel.translation.HotelTranslation;
 import com.horeca.site.models.hotel.translation.HotelTranslationView;
 import com.horeca.site.models.hotel.translation.LanguageCode;
@@ -11,6 +12,9 @@ import com.horeca.site.services.HotelService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,6 +74,26 @@ public class HotelTranslationService {
             translated = deepCopyService.copy(object);
         }
         return translated;
+    }
+
+    public Page<Hotel> translateHotelPage(Page<Hotel> hotelPage, LanguageCode languageCode) {
+        List<Hotel> hotels = hotelPage.getContent();
+        List<Hotel> translatedHotels = hotels.stream()
+                .map(hotel -> translate(hotel, hotel.getId(), languageCode))
+                .collect(Collectors.toList());
+
+        Pageable resultPageable = new PageRequest(hotelPage.getNumber(), hotelPage.getSize());
+        return new PageImpl<>(translatedHotels, resultPageable, hotelPage.getTotalElements());
+    }
+
+    public Page<HotelView> translateHotelViewPage(Page<HotelView> hotelViewPage, LanguageCode languageCode) {
+        List<HotelView> hotels = hotelViewPage.getContent();
+        List<HotelView> translatedHotels = hotels.stream()
+                .map(hotel -> translate(hotel, hotel.getId(), languageCode))
+                .collect(Collectors.toList());
+
+        Pageable resultPageable = new PageRequest(hotelViewPage.getNumber(), hotelViewPage.getSize());
+        return new PageImpl<>(translatedHotels, resultPageable, hotelViewPage.getTotalElements());
     }
 
     private Optional<HotelTranslation> get(Long hotelId, LanguageCode languageCode) {

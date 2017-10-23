@@ -29,13 +29,15 @@ public class HotelController {
 	private HotelTranslationService hotelTranslationService;
 
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<Hotel> getAll(Pageable pageable) {
-		return service.getAll(pageable);
+	public Page<Hotel> getAll(Pageable pageable, LanguageCode languageCode) {
+        Page<Hotel> hotelPage = service.getAll(pageable);
+        return hotelTranslationService.translateHotelPage(hotelPage, languageCode);
 	}
 
     @RequestMapping(value = "", params = "simplified", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<HotelView> getAllViews(Pageable pageable) {
-        return service.getAllViews(pageable);
+	public Page<HotelView> getAllViews(Pageable pageable, LanguageCode languageCode) {
+        Page<HotelView> hotelViewPage = service.getAllViews(pageable);
+        return hotelTranslationService.translateHotelViewPage(hotelViewPage, languageCode);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,36 +92,44 @@ public class HotelController {
 	}
 
 	@RequestMapping(value = "", params = "name", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<Hotel> getByName(@RequestParam("name") String name, Pageable pageable) {
-		return service.getByName(name, pageable);
+	public Page<Hotel> getByName(@RequestParam("name") String name, Pageable pageable, LanguageCode languageCode) {
+        Page<Hotel> hotelPage = service.getByName(name, pageable);
+        return hotelTranslationService.translateHotelPage(hotelPage, languageCode);
 	}
 
 	@RequestMapping(value = "", params = { "name", "simplified" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<HotelView> getViewsByName(@RequestParam("name") String name, Pageable pageable) {
-		return service.getViewsByName(name, pageable);
+	public Page<HotelView> getViewsByName(@RequestParam("name") String name, Pageable pageable, LanguageCode languageCode) {
+        Page<HotelView> hotelViewPage = service.getViewsByName(name, pageable);
+        return hotelTranslationService.translateHotelViewPage(hotelViewPage, languageCode);
 	}
 
 	@RequestMapping(value = "", params = "city", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<Hotel> getByCity(@RequestParam("city") String city, Pageable pageable) {
-		return service.getByCity(city, pageable);
-	}
+	public Page<Hotel> getByCity(@RequestParam("city") String city, Pageable pageable, LanguageCode languageCode) {
+        Page<Hotel> hotelPage = service.getByCity(city, pageable);
+        return hotelTranslationService.translateHotelPage(hotelPage, languageCode);
+    }
 
 	@RequestMapping(value = "", params = { "city", "simplified" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Page<HotelView> getViewsByCity(@RequestParam("city") String city, Pageable pageable) {
-		return service.getViewsByCity(city, pageable);
-	}
+	public Page<HotelView> getViewsByCity(@RequestParam("city") String city, Pageable pageable, LanguageCode languageCode) {
+        Page<HotelView> hotelViewPage = service.getViewsByCity(city, pageable);
+        return hotelTranslationService.translateHotelViewPage(hotelViewPage, languageCode);
+    }
 
 	@RequestMapping(value = "", params = { "name", "city" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<Hotel> getByNameAndCity(@RequestParam("name") String name,
 										@RequestParam("city") String city,
-										Pageable pageable) {
-		return service.getByNameAndCity(name, city, pageable);
-	}
+										Pageable pageable,
+                                        LanguageCode languageCode) {
+        Page<Hotel> hotelPage = service.getByNameAndCity(name, city, pageable);
+        return hotelTranslationService.translateHotelPage(hotelPage, languageCode);
+    }
 
 	@RequestMapping(value = "", params = { "name", "city", "simplified" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Page<HotelView> getByViewsNameAndCity(@RequestParam("name") String name,
 												 @RequestParam("city") String city,
-													Pageable pageable) {
-		return service.getViewsByNameAndCity(name, city, pageable);
-	}
+													Pageable pageable,
+                                                 LanguageCode languageCode) {
+        Page<HotelView> hotelViewPage = service.getViewsByNameAndCity(name, city, pageable);
+        return hotelTranslationService.translateHotelViewPage(hotelViewPage, languageCode);
+    }
 }
