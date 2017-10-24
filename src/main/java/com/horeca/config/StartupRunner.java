@@ -1,5 +1,6 @@
 package com.horeca.config;
 
+import com.horeca.site.services.StayInfoAsHtmlService;
 import com.horeca.site.services.accounts.PasswordResetPendingService;
 import com.horeca.site.services.accounts.UserAccountTempTokenService;
 import com.horeca.site.services.cubilis.CubilisReservationService;
@@ -29,6 +30,9 @@ public class StartupRunner {
     @Autowired
     private CubilisReservationService cubilisReservationService;
 
+    @Autowired
+    private StayInfoAsHtmlService stayInfoAsHtmlService;
+
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
         // turn off logging for the html-to-pdf conversion library
@@ -38,5 +42,6 @@ public class StartupRunner {
         webSocketTokenService.deleteAll();
         cubilisReservationService.deleteOutdated();
         passwordResetPendingService.deleteAllInvalid();
+        stayInfoAsHtmlService.deleteAllCodeImages();
     }
 }

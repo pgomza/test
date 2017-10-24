@@ -1,0 +1,114 @@
+package com.horeca.site.services;
+
+import com.horeca.site.exceptions.BusinessRuleViolationException;
+import com.microsoft.azure.storage.CloudStorageAccount;
+import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.blob.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
+@Service
+public class BlobService {
+
+    private CloudBlobClient blobClient;
+
+    @Value("${storage.connectionString}")
+    private String storageConnectionString;
+
+    @PostConstruct
+    void initStorageContainer() throws URISyntaxException, InvalidKeyException, StorageException {
+        CloudStorageAccount account = CloudStorageAccount.parse(storageConnectionString);
+        blobClient = account.createCloudBlobClient();
+    }
+
+    public void registerContainer(String containerName, BlobContainerPermissions permissions) throws URISyntaxException,
+            StorageException {
+        CloudBlobContainer container = blobClient.getContainerReference(containerName);
+        container.createIfNotExists();
+        container.uploadPermissions(permissions);
+    }
+
+    public Optional<String> getLink(String containerName, String filename) {
+        if (!doesContainerExist(containerName)) {
+            throw new BusinessRuleViolationException("No such container exist");
+        }
+        try {
+            CloudBlobContainer container = blobClient.getContainerReference(containerName);
+            for (ListBlobItem item : container.listBlobs(filename)) {
+                if (item instanceof CloudBlob) {
+                    CloudBlob blob = (CloudBlob) item;
+                    if (filename.equals(blob.getName())) {
+                        return Optional.of(blob.getUri().toString());
+                    }
+                }
+            }
+            return Optional.empty();
+
+        } catch (URISyntaxException | StorageException e) {
+            throw new RuntimeException("There was an problem while trying to list all blobs in the container " +
+                    containerName, e);
+        }
+    }
+
+    public String upload(String containerName, String filename, InputStream inputStream) {
+        if (!doesContainerExist(containerName)) {
+            throw new BusinessRuleViolationException("No such container exist");
+        }
+        try {
+            CloudBlobContainer container = blobClient.getContainerReference(containerName);
+            CloudBlockBlob blob = container.getBlockBlobReference(filename);
+            blob.upload(inputStream, -1);
+            CloudBlob uploadedBlob = container.getBlobReferenceFromServer(filename);
+            return uploadedBlob.getUri().toString();
+        } catch (URISyntaxException | StorageException | IOException e) {
+            throw new RuntimeException("There was an error while trying to upload file " + filename +
+                    " to Azure Storage", e);
+        }
+    }
+
+    public void delete(String containerName, String filename) {
+        if (!doesContainerExist(containerName)) {
+            throw new BusinessRuleViolationException("No such container exist");
+        }
+        try {
+            CloudBlobContainer container = blobClient.getContainerReference(containerName);
+            CloudBlob blob = container.getBlobReferenceFromServer(filename);
+            blob.delete();
+        } catch (URISyntaxException | StorageException e) {
+            throw new RuntimeException("There was an error while trying to delete file " + filename +
+                    " from Azure Storage", e);
+        }
+    }
+
+    public void deleteAll(String containerName, String directory) {
+        if (!doesContainerExist(containerName)) {
+            throw new BusinessRuleViolationException("No such container exist");
+        }
+        try {
+            CloudBlobContainer container = blobClient.getContainerReference(containerName);
+            for (ListBlobItem item : container.listBlobs(directory + "/")) {
+                if (item instanceof CloudBlob) {
+                    CloudBlob blob = (CloudBlob) item;
+                    blob.delete();
+                }
+            }
+        } catch (StorageException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean doesContainerExist(String containerName) {
+        Set<CloudBlobContainer> containers = new HashSet<>();
+        blobClient.listContainers(containerName).forEach(containers::add);
+        return containers.stream().anyMatch(c -> c.getName().equals(containerName));
+    }
+}

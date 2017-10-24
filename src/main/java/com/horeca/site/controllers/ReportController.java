@@ -42,7 +42,7 @@ public class ReportController {
 
         String html = reportGeneratorService.generateReportInHtml(pin);
         InputStream htmlStream = new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8));
-        ByteArrayOutputStream pdfStream = htmlToPdfService.convert(htmlStream);
+        ByteArrayOutputStream pdfStream = htmlToPdfService.convert(htmlStream, 11.69f, 8.27f);
 
         return new ResponseEntity<>(pdfStream.toByteArray(), headers, HttpStatus.OK);
     }
