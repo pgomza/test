@@ -53,6 +53,14 @@ public class LinkService {
         }
     }
 
+    public List<Link> save(Long hotelId, List<Link> links) {
+        Hotel hotel = hotelService.get(hotelId);
+        hotel.getLinks().clear();
+        hotel.getLinks().addAll(links);
+        hotelService.update(hotelId, hotel);
+        return hotel.getLinks();
+    }
+
     public void delete(Long hotelId, Long id) {
         get(hotelId, id);
         Hotel hotel = hotelService.get(hotelId);

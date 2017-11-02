@@ -30,6 +30,11 @@ public class LinkController {
         return service.save(hotelId, link);
     }
 
+    @RequestMapping(value = "/{hotelId}/links", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Link> add(@PathVariable("hotelId") Long hotelId, @RequestBody List<Link> links) {
+        return service.save(hotelId, links);
+    }
+
     @RequestMapping(value = "/{hotelId}/links/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Link update(@PathVariable("hotelId") Long hotelId, @PathVariable("id") Long id, @RequestBody Link link) {
         link.setId(id);
