@@ -2,7 +2,6 @@ package com.horeca.site.services;
 
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.StaticTranslation;
-import com.horeca.site.models.StaticTranslationEntry;
 import com.horeca.site.repositories.StaticTranslationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +32,10 @@ public class StaticTranslationService {
     }
 
     public StaticTranslation update(StaticTranslation updated) {
+        String language = updated.getLanguage();
+        if (repository.exists(language)) {
+            repository.delete(language);
+        }
         return repository.save(updated);
     }
 
