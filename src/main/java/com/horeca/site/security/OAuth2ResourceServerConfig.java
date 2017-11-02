@@ -47,6 +47,8 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers("/api/demo/**").permitAll();
         // and the timeout endpoint
         http.authorizeRequests().antMatchers("/api/timeout").permitAll();
+        // TODO needs to be secured
+        http.authorizeRequests().antMatchers("/api/static-translations/**").permitAll();
 
         // allow anybody who's in possession of a temp token to add a user account
         // 'anybody' means people that don't have to go through the OAuth2 authentication process
