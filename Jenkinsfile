@@ -28,7 +28,12 @@ pipeline {
           #!/bin/sh
 
           az webapp stop --resource-group Throdi --name ThrodiBackend --slot staging
-          sleep 10
+
+          if [ ${BRANCH_NAME} != "master" ]; then
+              az webapp config appsettings set --resource-group Throdi --name ThrodiBackend --slot staging --settings JAVA_OPTS=-Dspring.profiles.active=development
+          else
+              az webapp config appsettings set --resource-group Throdi --name ThrodiBackend --slot staging --settings JAVA_OPTS=-Dspring.profiles.active=production
+          fi
 
           custom_dir=/var/lib/jenkins/custom
 
