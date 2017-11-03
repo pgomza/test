@@ -6,34 +6,33 @@ import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.LoginService;
 import com.horeca.site.security.services.PasswordHashingService;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.provider.*;
-import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter;
+import org.springframework.security.oauth2.provider.token.AbstractTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
+public class CustomTokenGranter extends AbstractTokenGranter {
 
     private static final String GRANT_TYPE = "password-like";
     private final LoginService loginService;
-    private final AuthenticationManager authenticationManager;
 
-    public CustomTokenGranter(AuthenticationManager authenticationManager, AuthorizationServerTokenServices tokenServices,
-                              ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory,
-                              LoginService loginService) {
-        this(authenticationManager, tokenServices, clientDetailsService, requestFactory, GRANT_TYPE, loginService);
+    private CustomTokenGranter(Builder builder) {
+        super(builder.tokenServices, builder.clientDetailsService, builder.requestFactory, GRANT_TYPE);
+        loginService = builder.loginService;
     }
 
-    protected CustomTokenGranter(AuthenticationManager authenticationManager, AuthorizationServerTokenServices tokenServices,
-                                 ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory,
-                                 String grantType, LoginService loginService) {
-        super(authenticationManager, tokenServices, clientDetailsService, requestFactory, grantType);
-        this.authenticationManager = authenticationManager;
-        this.loginService = loginService;
+    private CustomTokenGranter(AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService,
+                               OAuth2RequestFactory requestFactory, String grantType) {
+        super(tokenServices, clientDetailsService, requestFactory, grantType);
+        throw new IllegalStateException();
     }
 
     @Override
@@ -122,6 +121,37 @@ public class CustomTokenGranter extends ResourceOwnerPasswordTokenGranter {
         }
         else {
             return null;
+        }
+    }
+
+    public static class Builder {
+        private AuthorizationServerTokenServices tokenServices;
+        private ClientDetailsService clientDetailsService;
+        private OAuth2RequestFactory requestFactory;
+        private LoginService loginService;
+
+        public Builder setTokenServices(AuthorizationServerTokenServices tokenServices) {
+            this.tokenServices = tokenServices;
+            return this;
+        }
+
+        public Builder setClientDetailsService(ClientDetailsService clientDetailsService) {
+            this.clientDetailsService = clientDetailsService;
+            return this;
+        }
+
+        public Builder setRequestFactory(OAuth2RequestFactory requestFactory) {
+            this.requestFactory = requestFactory;
+            return this;
+        }
+
+        public Builder setLoginService(LoginService loginService) {
+            this.loginService = loginService;
+            return this;
+        }
+
+        public CustomTokenGranter build() {
+            return new CustomTokenGranter(this);
         }
     }
 }
