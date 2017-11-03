@@ -103,7 +103,7 @@ pipeline {
           if [ ${BRANCH_NAME} != "master" ]; then
             /var/lib/jenkins/custom/send_email "Successful deployment to devel" ${BUILD_URL}
           else
-            /var/lib/jenkins/custom/send_email "Successful deployment to master" ${BUILD_URL}
+            /var/lib/jenkins/custom/send_email "Successful deployment to production" ${BUILD_URL}
           fi
         '''
     }
@@ -112,7 +112,7 @@ pipeline {
           if [ ${BRANCH_NAME} != "master" ]; then
             /var/lib/jenkins/custom/send_email "Failed deployment to devel" ${BUILD_URL}
           else
-            /var/lib/jenkins/custom/send_email "Failed deployment to master" ${BUILD_URL}
+            /var/lib/jenkins/custom/send_email "Failed deployment to production" ${BUILD_URL}
           fi
         '''
     }
