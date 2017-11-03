@@ -33,23 +33,23 @@ pipeline {
           custom_dir=/var/lib/jenkins/custom
 
           # check if the app.log file exists
-          lftp -c "open -u ThrodiBackend__staging\\\\\\$ThrodiBackend__staging,cQjl0F3nKw9k4Lmiho5YHZTxSkauRHt0EKe4Qo6ZfRZhxfdlgeBfMoFwGjqS ftp://waws-prod-am2-121.ftp.azurewebsites.windows.net/site/wwwroot; ls app.log" > /tmp/result 2> /dev/null
-
+          lftp -c "open -u ThrodiBackend__staging\\\\\\$ThrodiBackend__staging,cQjl0F3nKw9k4Lmiho5YHZTxSkauRHt0EKe4Qo6ZfRZhxfdlgeBfMoFwGjqS ftp://waws-prod-am2-121.ftp.azurewebsites.windows.net/site/wwwroot; ls app.log" > /tmp/result 2> /dev/null || :
           log_exists=0
           if [[ -s /tmp/result ]]; then
+              rm /tmp/result
               log_exists=1
           fi
 
           if ((log_exists == 1)); then
               lftp -c "open -u ThrodiBackend__staging\\\\\\$ThrodiBackend__staging,cQjl0F3nKw9k4Lmiho5YHZTxSkauRHt0EKe4Qo6ZfRZhxfdlgeBfMoFwGjqS ftp://waws-prod-am2-121.ftp.azurewebsites.windows.net/site/wwwroot;
-                       get -E -e app.log -o ${custom_dir}/logs_devel/app.log;
+                       get -E -e app.log -o ${custom_dir}/app.log;
                        mrm webapps/*;
                        put ${WORKSPACE}/target/ROOT.war -o webapps/ROOT.war"
 
               if [ ${BRANCH_NAME} != "master" ]; then
-                  mv ${custom_dir}/logs_devel/app.log ${custom_dir}/logs_devel/$(date -u +"%FT%H%MZ").log
+                  mv ${custom_dir}/app.log ${custom_dir}/logs_devel/$(date -u +"%FT%H%MZ").log
               else
-                  mv ${custom_dir}/logs_prod/app.log ${custom_dir}/logs_prod/$(date -u +"%FT%H%MZ").log
+                  mv ${custom_dir}/app.log ${custom_dir}/logs_prod/$(date -u +"%FT%H%MZ").log
               fi
           else
               lftp -c "open -u ThrodiBackend__staging\\\\\\$ThrodiBackend__staging,cQjl0F3nKw9k4Lmiho5YHZTxSkauRHt0EKe4Qo6ZfRZhxfdlgeBfMoFwGjqS ftp://waws-prod-am2-121.ftp.azurewebsites.windows.net/site/wwwroot;
