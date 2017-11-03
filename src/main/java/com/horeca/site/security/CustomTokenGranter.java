@@ -1,9 +1,7 @@
 package com.horeca.site.security;
 
 import com.horeca.site.exceptions.BadAuthenticationRequestException;
-import com.horeca.site.security.models.GuestAccount;
-import com.horeca.site.security.models.SalesmanAccount;
-import com.horeca.site.security.models.UserAccount;
+import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.services.LoginService;
 import com.horeca.site.security.services.PasswordHashingService;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -37,14 +35,14 @@ public class CustomTokenGranter extends AbstractTokenGranter {
 
     @Override
     protected OAuth2Authentication getOAuth2Authentication(ClientDetails client, TokenRequest tokenRequest) {
-        Map<String, String> parameters = new LinkedHashMap<String, String>(tokenRequest.getRequestParameters());
+        Map<String, String> parameters = new LinkedHashMap<>(tokenRequest.getRequestParameters());
         final String clientId = client.getClientId();
 
         if (clientId.equals(OAuth2AuthorizationServerConfig.MOBILE_CLIENT_ID)) {
             // authenticate using the pin only
             String pin = parameters.get("pin");
             if (pin != null) {
-                UserDetails userDetails = getUserDetails(GuestAccount.USERNAME_PREFIX + pin);
+                UserDetails userDetails = getUserDetails(AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX + pin);
                 if (userDetails == null) {
                     throw new BadCredentialsException("Invalid pin");
                 }
@@ -69,10 +67,10 @@ public class CustomTokenGranter extends AbstractTokenGranter {
             if (login != null && plainTextPassword != null) {
                 UserDetails userDetails;
                 if (clientId.equals(OAuth2AuthorizationServerConfig.PANEL_CLIENT_ID)) {
-                    userDetails = getUserDetails(UserAccount.USERNAME_PREFIX + login, plainTextPassword);
+                    userDetails = getUserDetails(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login, plainTextPassword);
                 }
                 else
-                    userDetails = getUserDetails(SalesmanAccount.USERNAME_PREFIX + login, plainTextPassword);
+                    userDetails = getUserDetails(AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login, plainTextPassword);
 
                 if (userDetails == null) {
                     throw new BadCredentialsException("Invalid login/password");

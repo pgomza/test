@@ -9,8 +9,6 @@ import java.util.List;
 @Entity
 public class RootAccount extends AbstractAccount {
 
-    public static final String USERNAME_PREFIX = "USER_";
-
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
@@ -24,7 +22,7 @@ public class RootAccount extends AbstractAccount {
 
     @Override
     public String getUsernamePrefix() {
-        return USERNAME_PREFIX;
+        return AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX;
     }
 
     @Override

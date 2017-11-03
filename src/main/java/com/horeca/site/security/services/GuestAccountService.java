@@ -1,6 +1,7 @@
 package com.horeca.site.security.services;
 
 import com.horeca.site.models.stay.Stay;
+import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.repositories.GuestAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,12 @@ public class GuestAccountService extends AbstractAccountService<GuestAccount> {
     }
 
     public void registerGuest(Stay stay) {
-        GuestAccount guestAccount = new GuestAccount(GuestAccount.USERNAME_PREFIX + stay.getPin());
+        GuestAccount guestAccount = new GuestAccount(AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX + stay.getPin());
         save(guestAccount);
     }
 
     public void disableForStay(String pin) {
-        GuestAccount account = get(GuestAccount.USERNAME_PREFIX + pin);
+        GuestAccount account = get(AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX + pin);
         disable(account);
         Collection<OAuth2AccessToken> tokens =
                 tokenStore.findTokensByClientIdAndUserName(MOBILE_CLIENT_ID, account.getUsername());
@@ -42,13 +43,13 @@ public class GuestAccountService extends AbstractAccountService<GuestAccount> {
     }
 
     public void enableForStay(String pin) {
-        GuestAccount account = get(GuestAccount.USERNAME_PREFIX + pin);
+        GuestAccount account = get(AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX + pin);
         enable(account);
     }
 
     public void deleteForStay(String pin) {
         disableForStay(pin);
-        GuestAccount account = get(GuestAccount.USERNAME_PREFIX + pin);
+        GuestAccount account = get(AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX + pin);
         getRepository().delete(account);
     }
 }

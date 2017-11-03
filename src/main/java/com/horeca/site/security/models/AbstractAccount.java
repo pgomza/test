@@ -14,6 +14,10 @@ import java.util.List;
 @MappedSuperclass
 public abstract class AbstractAccount implements UserDetails {
 
+    public static final String MOBILE_CLIENT_USERNAME_PREFIX = "PIN_";
+    public static final String PANEL_CLIENT_USERNAME_PREFIX = "USER_";
+    public static final String SALES_CLIENT_USERNAME_PREFIX = "SALESMAN_";
+
     @Id
     private String username;
 
