@@ -90,6 +90,10 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
         UserAccount userAccount = get(login);
         userAccount.setPassword(hashedPassword);
         save(userAccount);
+
+        Collection<OAuth2AccessToken> tokens = tokenStore
+                .findTokensByClientIdAndUserName(PANEL_CLIENT_ID, userAccount.getUsername());
+        tokens.forEach(tokenStore::removeAccessToken);
     }
 
     public void disableAllInHotel(Long hotelId) {
