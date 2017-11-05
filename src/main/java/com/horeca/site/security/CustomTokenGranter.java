@@ -27,12 +27,6 @@ public class CustomTokenGranter extends AbstractTokenGranter {
         loginService = builder.loginService;
     }
 
-    private CustomTokenGranter(AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService,
-                               OAuth2RequestFactory requestFactory, String grantType) {
-        super(tokenServices, clientDetailsService, requestFactory, grantType);
-        throw new IllegalStateException();
-    }
-
     @Override
     protected OAuth2Authentication getOAuth2Authentication(ClientDetails client, TokenRequest tokenRequest) {
         Map<String, String> parameters = new LinkedHashMap<>(tokenRequest.getRequestParameters());
