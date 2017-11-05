@@ -7,7 +7,6 @@ import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.notifications.NewStayEvent;
 import com.horeca.site.models.stay.*;
 import com.horeca.site.repositories.services.StayRepository;
-import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.GuestAccountService;
@@ -202,7 +201,7 @@ public class StayService {
 
     private void deregisterStay(String pin) {
         try {
-            guestAccountService.delete(AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX + pin);
+            guestAccountService.delete(pin);
         }
         catch (UsernameNotFoundException ex) {
             throw new RuntimeException("No corresponding token has been found for this stay in the database");
