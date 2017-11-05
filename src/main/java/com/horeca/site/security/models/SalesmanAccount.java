@@ -28,8 +28,8 @@ public class SalesmanAccount extends AbstractAccount {
     }
 
     @Override
-    public String getUsernamePrefix() {
-        return AbstractAccount.SALES_CLIENT_USERNAME_PREFIX;
+    public String getLogin() {
+        return getUsername().substring(SALES_CLIENT_USERNAME_PREFIX.length());
     }
 
     @Override

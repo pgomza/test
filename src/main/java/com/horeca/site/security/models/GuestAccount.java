@@ -19,13 +19,13 @@ public class GuestAccount extends AbstractAccount {
         super(username);
     }
 
-    @Override
-    public String getUsernamePrefix() {
-        return AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX;
+    public String getPin() {
+        return getLogin();
     }
 
-    public String getPin() {
-        return getUsername().substring(getUsernamePrefix().length());
+    @Override
+    public String getLogin() {
+        return getUsername().substring(MOBILE_CLIENT_USERNAME_PREFIX.length());
     }
 
     @Override

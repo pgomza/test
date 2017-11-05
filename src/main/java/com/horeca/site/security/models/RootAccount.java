@@ -21,8 +21,8 @@ public class RootAccount extends AbstractAccount {
     }
 
     @Override
-    public String getUsernamePrefix() {
-        return AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX;
+    public String getLogin() {
+        return getUsername().substring(PANEL_CLIENT_USERNAME_PREFIX.length());
     }
 
     @Override

@@ -33,13 +33,10 @@ public abstract class AbstractAccount implements UserDetails {
     }
 
     public AbstractAccount(String username) {
-        if (!username.startsWith(getUsernamePrefix())) {
-            username = getUsernamePrefix() + username;
-        }
         this.username = username;
     }
 
-    public abstract String getUsernamePrefix();
+    public abstract String getLogin();
 
     @Override
     public String getUsername() {
