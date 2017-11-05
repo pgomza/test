@@ -76,6 +76,8 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
         if (!PasswordHashingService.checkIfPlainEqualToHashed(currentPassword, userAccount.getPassword())) {
             throw new UnauthorizedException("The provided currentPassword doesn't match the actual one");
         }
+
+        changePassword(login, newPassword);
     }
 
     public void changePassword(String login, String newPassword) {
