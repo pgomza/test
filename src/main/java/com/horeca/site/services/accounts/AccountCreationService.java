@@ -5,6 +5,7 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.accounts.*;
 import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.PasswordHashingService;
 import com.horeca.site.security.services.UserAccountService;
@@ -68,7 +69,7 @@ public class AccountCreationService {
             throw new UnauthorizedException(ex); // in that case this exception makes more sense
         }
 
-        String username = UserAccount.USERNAME_PREFIX + userAccountPOST.getEmail();
+        String username = AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + userAccountPOST.getEmail();
         if (userAccountService.exists(username)) {
             throw new BusinessRuleViolationException("A user with such an email already exists");
         }

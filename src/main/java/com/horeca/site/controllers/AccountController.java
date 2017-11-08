@@ -52,7 +52,7 @@ public class AccountController {
     public void changePasswordOfCurrentUserAccount(Authentication authentication,
                                                    @RequestBody PasswordChangeRequest request) {
         UserAccount userAccount = accountQueryService.getCurrentUserAccount(authentication);
-        userAccountService.verifyAndChangePassword(userAccount.getUsername(), request.currentPassword, request.newPassword);
+        userAccountService.verifyAndChangePassword(userAccount.getLogin(), request.currentPassword, request.newPassword);
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

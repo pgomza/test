@@ -13,7 +13,6 @@ import java.util.List;
 @Audited
 public class UserAccount extends AbstractAccount {
 
-    public static final String USERNAME_PREFIX = "USER_";
     public static final String DEFAULT_ROLE = "ROLE_ADMIN";
 
     private Long hotelId;
@@ -35,8 +34,8 @@ public class UserAccount extends AbstractAccount {
     }
 
     @Override
-    public String getUsernamePrefix() {
-        return USERNAME_PREFIX;
+    public String getLogin() {
+        return getUsername().substring(PANEL_CLIENT_USERNAME_PREFIX.length());
     }
 
     @Override
@@ -66,7 +65,7 @@ public class UserAccount extends AbstractAccount {
 
     public UserAccountView toView() {
         UserAccountView view = new UserAccountView();
-        view.setLogin(getUsername().substring(getUsernamePrefix().length()));
+        view.setLogin(getLogin());
         view.setHotelId(getHotelId());
         view.setRoles(getRoles());
         view.setAccountNonExpired(isAccountNonExpired());

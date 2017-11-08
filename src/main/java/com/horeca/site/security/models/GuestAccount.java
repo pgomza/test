@@ -10,7 +10,6 @@ import java.util.Collection;
 @Audited
 public class GuestAccount extends AbstractAccount {
 
-    public static final String USERNAME_PREFIX = "PIN_";
     public static final String DEFAULT_ROLE = "ROLE_GUEST";
 
     GuestAccount() {
@@ -20,13 +19,13 @@ public class GuestAccount extends AbstractAccount {
         super(username);
     }
 
-    @Override
-    public String getUsernamePrefix() {
-        return USERNAME_PREFIX;
+    public String getPin() {
+        return getLogin();
     }
 
-    public String getPin() {
-        return getUsername().substring(getUsernamePrefix().length());
+    @Override
+    public String getLogin() {
+        return getUsername().substring(MOBILE_CLIENT_USERNAME_PREFIX.length());
     }
 
     @Override
