@@ -22,7 +22,7 @@ public class DemoHandler extends TextWebSocketHandler {
 
         if (principal instanceof UserAccount) {
             UserAccount userAccount = (UserAccount) principal;
-            String login = userAccount.getUsername().substring(userAccount.getUsernamePrefix().length());
+            String login = userAccount.getLogin();
 
             // for testing purposes
             int k = 0;

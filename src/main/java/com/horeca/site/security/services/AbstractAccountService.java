@@ -1,6 +1,5 @@
 package com.horeca.site.security.services;
 
-import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.security.models.AbstractAccount;
 import org.springframework.data.repository.CrudRepository;
 
@@ -10,24 +9,14 @@ public abstract class AbstractAccountService<T extends AbstractAccount> {
 
     abstract protected CrudRepository<T, String> getRepository();
 
-    public boolean exists(String username) {
-        return getRepository().exists(username);
-    }
+    abstract public boolean exists(String login);
 
-    public T get(String username) {
-        T account = getRepository().findOne(username);
-        if (account == null) {
-            throw new ResourceNotFoundException("Could not find an account with such a username");
-        }
-        return account;
-    }
+    abstract public T get(String login);
+
+    abstract public void delete(String login);
 
     public T save(T account) {
         return getRepository().save(account);
-    }
-
-    public void delete(String username) {
-        getRepository().delete(username);
     }
 
     void disable(T account) {

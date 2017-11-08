@@ -14,6 +14,10 @@ import java.util.List;
 @MappedSuperclass
 public abstract class AbstractAccount implements UserDetails {
 
+    public static final String MOBILE_CLIENT_USERNAME_PREFIX = "PIN_";
+    public static final String PANEL_CLIENT_USERNAME_PREFIX = "USER_";
+    public static final String SALES_CLIENT_USERNAME_PREFIX = "SALESMAN_";
+
     @Id
     private String username;
 
@@ -29,13 +33,10 @@ public abstract class AbstractAccount implements UserDetails {
     }
 
     public AbstractAccount(String username) {
-        if (!username.startsWith(getUsernamePrefix())) {
-            username = getUsernamePrefix() + username;
-        }
         this.username = username;
     }
 
-    public abstract String getUsernamePrefix();
+    public abstract String getLogin();
 
     @Override
     public String getUsername() {

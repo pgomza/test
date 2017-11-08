@@ -53,7 +53,7 @@ public class PasswordResetService {
 
         UserAccount userAccount;
         try {
-            userAccount = userAccountService.get(UserAccount.USERNAME_PREFIX + login);
+            userAccount = userAccountService.get(login);
             if (!userAccount.isEnabled()) {
                 throw new ResourceNotFoundException();
             }
