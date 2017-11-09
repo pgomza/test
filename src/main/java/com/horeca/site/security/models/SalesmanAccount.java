@@ -1,6 +1,7 @@
 package com.horeca.site.security.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.horeca.site.models.accounts.SalesmanAccountView;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.ElementCollection;
@@ -47,5 +48,16 @@ public class SalesmanAccount extends AbstractAccount {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public SalesmanAccountView toView() {
+        SalesmanAccountView view = new SalesmanAccountView();
+        view.setLogin(getLogin());
+        view.setRoles(getRoles());
+        view.setAccountNonExpired(isAccountNonExpired());
+        view.setAccountNonLocked(isAccountNonLocked());
+        view.setCredentialsNonExpired(isCredentialsNonExpired());
+        view.setEnabled(isEnabled());
+        return view;
     }
 }
