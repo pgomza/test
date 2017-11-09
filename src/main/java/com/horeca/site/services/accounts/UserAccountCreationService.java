@@ -23,7 +23,7 @@ import java.util.*;
 
 @Service
 @Transactional
-public class AccountCreationService {
+public class UserAccountCreationService {
 
     @Autowired
     private UserAccountService userAccountService;

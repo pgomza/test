@@ -3,9 +3,9 @@ package com.horeca.site.controllers;
 import com.horeca.site.models.accounts.*;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.UserAccountService;
-import com.horeca.site.services.accounts.AccountCreationService;
 import com.horeca.site.services.accounts.AccountQueryService;
 import com.horeca.site.services.accounts.PasswordResetService;
+import com.horeca.site.services.accounts.UserAccountCreationService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,7 @@ import java.util.Set;
 public class AccountController {
 
     @Autowired
-    private AccountCreationService accountCreationService;
+    private UserAccountCreationService userAccountCreationService;
 
     @Autowired
     private AccountQueryService accountQueryService;
@@ -58,9 +58,9 @@ public class AccountController {
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseMessage addUserAccountPending(@RequestHeader(name = "Temp-Token", required = true) String token,
                                                  @RequestBody @Valid UserAccountPOST userAccountPOST) {
-        UserAccountPending pending = accountCreationService.addUserAccountPending(token, userAccountPOST);
+        UserAccountPending pending = userAccountCreationService.addUserAccountPending(token, userAccountPOST);
         try {
-            accountCreationService.sendActivationEmail(pending);
+            userAccountCreationService.sendActivationEmail(pending);
         } catch (UnsupportedEncodingException | MessagingException e) {
             throw new RuntimeException("There was a problem while trying to send an email to " + pending.getEmail(), e);
         }
@@ -72,7 +72,7 @@ public class AccountController {
     public String activateUserAccount(@RequestParam(value = "secret") String secret) {
         String outcome = "Activation successful";
         try {
-            boolean activationStatus = accountCreationService.activateUserAccount(secret);
+            boolean activationStatus = userAccountCreationService.activateUserAccount(secret);
             if (!activationStatus) {
                 outcome = "Activation failed - invalid link";
             }
@@ -85,12 +85,12 @@ public class AccountController {
 
     @RequestMapping(value = "/users/tokens", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserAccountTempTokenResponse getTempTokenForNewUserAccount(@RequestBody UserAccountTempTokenRequest request) {
-        return accountCreationService.getTempTokenForNewUserAccount(request);
+        return userAccountCreationService.getTempTokenForNewUserAccount(request);
     }
 
     @RequestMapping(value = "/users/tokens/{token}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserAccountTempTokenResponse getInfoAboutUserAccountTempToken(@PathVariable("token") String token) {
-        return accountCreationService.getInfoAboutUserAccountTempToken(token);
+        return userAccountCreationService.getInfoAboutUserAccountTempToken(token);
     }
 
     @RequestMapping(value = "/users/reset-request", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
