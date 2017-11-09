@@ -1,4 +1,4 @@
-package com.horeca.site.controllers;
+package com.horeca.site.controllers.accounts;
 
 import com.horeca.site.models.accounts.*;
 import com.horeca.site.security.models.UserAccount;
@@ -21,7 +21,7 @@ import java.util.Set;
 @Api(value = "hotels")
 @RestController
 @RequestMapping("/api/accounts")
-public class AccountController {
+public class UserAccountController {
 
     @Autowired
     private UserAccountCreationService userAccountCreationService;
