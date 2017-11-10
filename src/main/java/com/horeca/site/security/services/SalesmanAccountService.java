@@ -1,5 +1,6 @@
 package com.horeca.site.security.services;
 
+import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.SalesmanAccount;
@@ -55,6 +56,9 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
     }
 
     public SalesmanAccount create(String login, String plainPassword) {
+        if (exists(login)) {
+            throw new BusinessRuleViolationException("Such a salesman already exists");
+        }
         String hashedPassword = PasswordHashingService.getHashedFromPlain(plainPassword);
         SalesmanAccount account = new SalesmanAccount(AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login,
                 hashedPassword, Collections.singletonList(SalesmanAccount.DEFAULT_ROLE));
