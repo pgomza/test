@@ -48,7 +48,9 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         // and the timeout endpoint
         http.authorizeRequests().antMatchers("/api/timeout").permitAll();
 
-        http.authorizeRequests().antMatchers("/api/static-translations/**").hasRole("ROOT");
+        // allow everybody but anons to access static translations
+        http.authorizeRequests().antMatchers("/api/static-translations/**")
+                .hasAnyRole("ROOT", "SALESMAN", "ADMIN", "GUEST");
 
         // allow anybody who's in possession of a temp token to add a user account
         // 'anybody' means people that don't have to go through the OAuth2 authentication process
