@@ -42,6 +42,13 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
         return account;
     }
 
+    public List<SalesmanAccount> getAll() {
+        List<SalesmanAccount> result = new ArrayList<>();
+        getRepository().findAll().forEach(result::add);
+        result.sort(Comparator.comparing(AbstractAccount::getUsername));
+        return result;
+    }
+
     @Override
     public void delete(String login) {
         getRepository().delete(login);
