@@ -30,7 +30,7 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
 
     @Override
     public boolean exists(String login) {
-        return loginService.exists(login);
+        return loginService.exists(AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login);
     }
 
     @Override

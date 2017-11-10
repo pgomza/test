@@ -35,7 +35,7 @@ public class GuestAccountService extends AbstractAccountService<GuestAccount> {
 
     @Override
     public boolean exists(String login) {
-        return loginService.exists(login);
+        return loginService.exists(AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX + login);
     }
 
     @Override
