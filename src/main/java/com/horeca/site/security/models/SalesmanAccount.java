@@ -13,6 +13,8 @@ import java.util.List;
 @Audited
 public class SalesmanAccount extends AbstractAccount {
 
+    public static final String DEFAULT_ROLE = "ROLE_SALESMAN";
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 

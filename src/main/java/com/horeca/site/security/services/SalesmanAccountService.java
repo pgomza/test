@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+
 @Service
 @Transactional
 public class SalesmanAccountService extends AbstractAccountService<SalesmanAccount> {
@@ -35,5 +37,12 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
     @Override
     public void delete(String login) {
         getRepository().delete(login);
+    }
+
+    public SalesmanAccount create(String login, String plainPassword) {
+        String hashedPassword = PasswordHashingService.getHashedFromPlain(plainPassword);
+        SalesmanAccount account = new SalesmanAccount(AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login,
+                hashedPassword, Collections.singletonList(SalesmanAccount.DEFAULT_ROLE));
+        return save(account);
     }
 }
