@@ -1,5 +1,6 @@
 package com.horeca.site.security.services;
 
+import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.security.models.AbstractAccount;
 import org.springframework.data.repository.CrudRepository;
 
@@ -11,7 +12,7 @@ public abstract class AbstractAccountService<T extends AbstractAccount> {
 
     abstract public boolean exists(String login);
 
-    abstract public T get(String login);
+    abstract public T get(String login) throws ResourceNotFoundException;
 
     abstract public void delete(String login);
 

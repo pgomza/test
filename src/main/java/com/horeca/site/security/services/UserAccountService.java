@@ -1,6 +1,7 @@
 package com.horeca.site.security.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
+import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.accounts.UserAccountView;
 import com.horeca.site.security.models.AbstractAccount;
@@ -46,7 +47,11 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
 
     @Override
     public UserAccount get(String login) {
-        return getRepository().findOne(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login);
+        UserAccount account = getRepository().findOne(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login);
+        if (account == null) {
+            throw new ResourceNotFoundException();
+        }
+        return account;
     }
 
     @Override

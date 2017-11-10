@@ -1,5 +1,6 @@
 package com.horeca.site.security.services;
 
+import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.RootAccount;
 import com.horeca.site.security.repositories.RootAccountRepository;
@@ -30,7 +31,11 @@ public class RootAccountService extends AbstractAccountService<RootAccount> {
 
     @Override
     public RootAccount get(String login) {
-        return getRepository().findOne(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login);
+        RootAccount account = getRepository().findOne(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login);
+        if (account == null) {
+            throw new ResourceNotFoundException();
+        }
+        return account;
     }
 
     @Override

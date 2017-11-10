@@ -1,5 +1,6 @@
 package com.horeca.site.security.services;
 
+import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.GuestAccount;
@@ -39,7 +40,11 @@ public class GuestAccountService extends AbstractAccountService<GuestAccount> {
 
     @Override
     public GuestAccount get(String login) {
-        return getRepository().findOne(AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX + login);
+        GuestAccount account = getRepository().findOne(AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX + login);
+        if (account == null) {
+            throw new ResourceNotFoundException();
+        }
+        return account;
     }
 
     @Override

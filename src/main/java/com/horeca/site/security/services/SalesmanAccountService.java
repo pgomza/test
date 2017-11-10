@@ -1,5 +1,6 @@
 package com.horeca.site.security.services;
 
+import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.repositories.SalesmanAccountRepository;
@@ -7,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 @Transactional
@@ -31,7 +35,11 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
 
     @Override
     public SalesmanAccount get(String login) {
-        return getRepository().findOne(AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login);
+        SalesmanAccount account = getRepository().findOne(AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login);
+        if (account == null) {
+            throw new ResourceNotFoundException();
+        }
+        return account;
     }
 
     @Override
