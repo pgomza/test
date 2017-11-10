@@ -26,13 +26,18 @@ public class SalesmanAccountController {
         return service.getAll().stream().map(SalesmanAccount::toView).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/salesmen", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public SalesmanAccountView create(@RequestBody @Valid SalesmanAccountPOST accountPOST) {
+        return service.create(accountPOST.getLogin(), accountPOST.getPassword()).toView();
+    }
+
     @RequestMapping(value = "/salesmen/{login}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public SalesmanAccountView get(@PathVariable("login") String login) {
         return service.get(login).toView();
     }
 
-    @RequestMapping(value = "/salesmen", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public SalesmanAccountView create(@RequestBody @Valid SalesmanAccountPOST accountPOST) {
-        return service.create(accountPOST.getLogin(), accountPOST.getPassword()).toView();
+    @RequestMapping(value = "/salesmen/{login}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@PathVariable("login") String login) {
+        service.delete(login);
     }
 }
