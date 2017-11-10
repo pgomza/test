@@ -29,6 +29,9 @@ public abstract class AbstractAccountService<T extends AbstractAccount> {
     }
 
     public void delete(String login) {
+        if (!exists(login)) {
+            throw new ResourceNotFoundException();
+        }
         getRepository().delete(loginToUsername(login));
     }
 
