@@ -1,7 +1,6 @@
 package com.horeca.site.security.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
-import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.repositories.SalesmanAccountRepository;
@@ -21,26 +20,14 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
     @Autowired
     private SalesmanAccountRepository repository;
 
-    @Autowired
-    private LoginService loginService;
-
     @Override
     protected SalesmanAccountRepository getRepository() {
         return repository;
     }
 
     @Override
-    public boolean exists(String login) {
-        return loginService.exists(AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login);
-    }
-
-    @Override
-    public SalesmanAccount get(String login) {
-        SalesmanAccount account = getRepository().findOne(AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login);
-        if (account == null) {
-            throw new ResourceNotFoundException();
-        }
-        return account;
+    protected String loginToUsername(String login) {
+        return AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login;
     }
 
     public List<SalesmanAccount> getAll() {
@@ -48,11 +35,6 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
         getRepository().findAll().forEach(result::add);
         result.sort(Comparator.comparing(AbstractAccount::getUsername));
         return result;
-    }
-
-    @Override
-    public void delete(String login) {
-        getRepository().delete(login);
     }
 
     public SalesmanAccount create(String login, String plainPassword) {

@@ -1,7 +1,6 @@
 package com.horeca.site.security.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
-import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.accounts.UserAccountView;
 import com.horeca.site.security.models.AbstractAccount;
@@ -30,9 +29,6 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
     private UserAccountRepository repository;
 
     @Autowired
-    private LoginService loginService;
-
-    @Autowired
     private TokenStore tokenStore;
 
     @Override
@@ -41,22 +37,8 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
     }
 
     @Override
-    public boolean exists(String login) {
-        return loginService.exists(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login);
-    }
-
-    @Override
-    public UserAccount get(String login) {
-        UserAccount account = getRepository().findOne(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login);
-        if (account == null) {
-            throw new ResourceNotFoundException();
-        }
-        return account;
-    }
-
-    @Override
-    public void delete(String login) {
-        getRepository().delete(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login);
+    protected String loginToUsername(String login) {
+        return AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login;
     }
 
     @PostFilter("@accessChecker.checkForUserAccountFromCollection(authentication, filterObject)")
