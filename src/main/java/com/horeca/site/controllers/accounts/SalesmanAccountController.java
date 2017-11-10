@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Api(value = "hotels")
 @RestController
@@ -20,6 +21,11 @@ public class SalesmanAccountController {
 
     @Autowired
     private SalesmanAccountService service;
+
+    @RequestMapping(value = "/salesmen", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<SalesmanAccountView> getAll() {
+
+    }
 
     @RequestMapping(value = "/salesmen", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public SalesmanAccountView create(@RequestBody @Valid SalesmanAccountPOST accountPOST) {
