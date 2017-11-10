@@ -3,13 +3,13 @@ package com.horeca.site.controllers.accounts;
 import com.horeca.site.models.accounts.*;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.UserAccountService;
-import com.horeca.site.services.accounts.AccountQueryService;
 import com.horeca.site.services.accounts.PasswordResetService;
 import com.horeca.site.services.accounts.UserAccountCreationService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +27,6 @@ public class UserAccountController {
     private UserAccountCreationService userAccountCreationService;
 
     @Autowired
-    private AccountQueryService accountQueryService;
-
-    @Autowired
     private PasswordResetService passwordResetService;
 
     @Autowired
@@ -44,14 +41,14 @@ public class UserAccountController {
     }
 
     @RequestMapping(value = "/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserAccountView getCurrentUserAccount(Authentication authentication) {
-        return accountQueryService.getCurrentUserAccount(authentication).toView();
+    public UserAccountView getCurrentView(Authentication authentication) {
+        return authenticationToUserAccount(authentication).toView();
     }
 
     @RequestMapping(value = "/users/current/password", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public void changePasswordOfCurrentUserAccount(Authentication authentication,
                                                    @RequestBody PasswordChangeRequest request) {
-        UserAccount userAccount = accountQueryService.getCurrentUserAccount(authentication);
+        UserAccount userAccount = authenticationToUserAccount(authentication);
         userAccountService.verifyAndChangePassword(userAccount.getLogin(), request.currentPassword, request.newPassword);
     }
 
@@ -106,6 +103,15 @@ public class UserAccountController {
     @RequestMapping(value = "/users/reset-confirmation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void confirmPasswordReset(@Valid @RequestBody PasswordResetConfirmation confirmation) {
         passwordResetService.handleConfirmation(confirmation);
+    }
+
+    private UserAccount authenticationToUserAccount(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserAccount) {
+            return (UserAccount) principal;
+        }
+        else
+            throw new AccessDeniedException("Access denied");
     }
 
     private String getRedirectPage(String outcome, String redirectUrl) {
