@@ -1,6 +1,8 @@
 package com.horeca.site.security;
 
 import com.horeca.site.handlers.CustomOAuth2ExceptionRenderer;
+import com.horeca.site.security.models.RootAccount;
+import com.horeca.site.security.models.SalesmanAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -48,7 +50,12 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         // and the timeout endpoint
         http.authorizeRequests().antMatchers("/api/timeout").permitAll();
 
-        http.authorizeRequests().antMatchers("/api/static-translations/**").hasRole("ROOT");
+        http.authorizeRequests().antMatchers("/api/static-translations/**").hasAuthority(RootAccount.DEFAULT_ROLE);
+
+        // salesmen can access their profile
+        http.authorizeRequests().antMatchers("/api/accounts/salesmen/current/**").hasAuthority(SalesmanAccount.DEFAULT_ROLE);
+        // but only roots can manage salesmen
+        http.authorizeRequests().antMatchers("/api/accounts/salesmen/**").hasAuthority(RootAccount.DEFAULT_ROLE);
 
         // allow anybody who's in possession of a temp token to add a user account
         // 'anybody' means people that don't have to go through the OAuth2 authentication process

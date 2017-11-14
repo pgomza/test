@@ -9,6 +9,8 @@ import java.util.List;
 @Entity
 public class RootAccount extends AbstractAccount {
 
+    public static final String DEFAULT_ROLE = "ROLE_ROOT";
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
