@@ -1,61 +1,42 @@
 package com.horeca.site.models.accounts;
 
 import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Audited
-public class UserAccountPending {
-
-    @Id
-    @Email
-    private String email;
-
-    @NotEmpty
-    private String password;
+public class UserAccountPending extends AccountPending {
 
     @NotNull
     private Long hotelId;
 
     @NotEmpty
-    private String secret;
-
-    @NotEmpty
     private String redirectUrl;
 
-    UserAccountPending() {
-    }
+    UserAccountPending() {}
 
     public UserAccountPending(String email, String password, Long hotelId, String secret, String redirectUrl) {
-        this.email = email;
-        this.password = password;
+        super(email, password, secret);
         this.hotelId = hotelId;
-        this.secret = secret;
         this.redirectUrl = redirectUrl;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public Long getHotelId() {
         return hotelId;
     }
 
-    public String getSecret() {
-        return secret;
+    public void setHotelId(Long hotelId) {
+        this.hotelId = hotelId;
     }
 
     public String getRedirectUrl() {
         return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
     }
 }
