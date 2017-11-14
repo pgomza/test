@@ -7,6 +7,8 @@ import com.horeca.site.security.services.SalesmanAccountService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,6 +33,11 @@ public class SalesmanAccountController {
         return service.create(accountPOST.getLogin(), accountPOST.getPassword()).toView();
     }
 
+    @RequestMapping(value = "/salesmen/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public SalesmanAccountView getCurrentView(Authentication authentication) {
+        return authenticationToSalesmanAccount(authentication).toView();
+    }
+
     @RequestMapping(value = "/salesmen/{login}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public SalesmanAccountView get(@PathVariable("login") String login) {
         return service.get(login).toView();
@@ -39,5 +46,14 @@ public class SalesmanAccountController {
     @RequestMapping(value = "/salesmen/{login}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@PathVariable("login") String login) {
         service.delete(login);
+    }
+
+    private SalesmanAccount authenticationToSalesmanAccount(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof SalesmanAccount) {
+            return (SalesmanAccount) principal;
+        }
+        else
+            throw new AccessDeniedException("Access denied");
     }
 }
