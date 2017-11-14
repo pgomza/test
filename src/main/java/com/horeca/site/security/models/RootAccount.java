@@ -3,7 +3,7 @@ package com.horeca.site.security.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -37,6 +37,6 @@ public class RootAccount extends AbstractAccount {
     }
 
     public List<String> getRoles() {
-        return Collections.singletonList("ROLE_ROOT");
+        return Arrays.asList(DEFAULT_ROLE, SalesmanAccount.DEFAULT_ROLE);
     }
 }
