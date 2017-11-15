@@ -52,7 +52,7 @@ public abstract class AccountPendingService<T extends AccountPending> {
     }
 
     public static ResponseMessage prepareResponseMessage(String email) {
-        return new ResponseMessage(email);
+        return new ResponseMessage("The activation link has been sent to " + email);
     }
 
     public String prepareRedirectPage(String outcome) {
