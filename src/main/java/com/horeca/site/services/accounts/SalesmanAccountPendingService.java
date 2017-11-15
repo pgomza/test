@@ -5,9 +5,10 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.accounts.AccountPOST;
 import com.horeca.site.models.accounts.AccountPending;
 import com.horeca.site.models.accounts.SalesmanAccountPending;
-import com.horeca.site.repositories.accounts.SalesmanAccountPendingRepository;
+import com.horeca.site.repositories.accounts.AccountPendingRepository;
 import com.horeca.site.security.services.PasswordHashingService;
 import com.horeca.site.security.services.SalesmanAccountService;
+import com.horeca.site.services.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,25 +18,17 @@ import java.util.UUID;
 
 @Service
 @Transactional
-public class SalesmanAccountPendingService extends AccountPendingService {
+public class SalesmanAccountPendingService extends AccountPendingService<SalesmanAccountPending> {
+
+    private final SalesmanAccountService accountService;
 
     @Autowired
-    private SalesmanAccountPendingRepository repository;
-
-    @Autowired
-    private SalesmanAccountService accountService;
-
-    @Value("${activation.url.salesmen}")
-    private String activationUrl;
-
-    @Override
-    protected String getActivationUrl() {
-        return activationUrl;
-    }
-
-    @Override
-    protected SalesmanAccountPendingRepository getRepository() {
-        return repository;
+    public SalesmanAccountPendingService(EmailSenderService emailSenderService,
+                                         AccountPendingRepository<SalesmanAccountPending> pendingRepository,
+                                         @Value("${activation.url.salesmen}") String activationUrl,
+                                         SalesmanAccountService accountService) {
+        super(emailSenderService, pendingRepository, activationUrl);
+        this.accountService = accountService;
     }
 
     @Override
@@ -51,7 +44,7 @@ public class SalesmanAccountPendingService extends AccountPendingService {
         String secret = UUID.randomUUID().toString();
 
         SalesmanAccountPending accountPending = new SalesmanAccountPending(email, hashedPassword, secret);
-        return getRepository().save(accountPending);
+        return repository.save(accountPending);
     }
 
     @Override

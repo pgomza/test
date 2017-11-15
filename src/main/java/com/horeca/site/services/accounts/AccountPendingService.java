@@ -5,26 +5,28 @@ import com.horeca.site.models.accounts.AccountPOST;
 import com.horeca.site.models.accounts.AccountPending;
 import com.horeca.site.repositories.accounts.AccountPendingRepository;
 import com.horeca.site.services.EmailSenderService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 
 public abstract class AccountPendingService<T extends AccountPending> {
 
-    @Autowired
-    private EmailSenderService emailSenderService;
+    private final EmailSenderService emailSenderService;
+    protected final AccountPendingRepository<T> repository;
+    protected final String activationUrl;
 
-    protected abstract AccountPendingRepository<T> getRepository();
-
-    protected abstract String getActivationUrl();
+    public AccountPendingService(EmailSenderService emailSenderService, AccountPendingRepository<T> repository, String activationUrl) {
+        this.emailSenderService = emailSenderService;
+        this.repository = repository;
+        this.activationUrl = activationUrl;
+    }
 
     public abstract AccountPending add(AccountPOST accountPOST);
 
     public abstract void activate(String secret);
 
     protected T getBySecret(String secret) {
-        T pending = getRepository().findBySecret(secret);
+        T pending = repository.findBySecret(secret);
         if (pending == null) {
             throw new ResourceNotFoundException();
         }
@@ -32,7 +34,7 @@ public abstract class AccountPendingService<T extends AccountPending> {
     }
 
     public void sendActivationEmail(AccountPending account) throws UnsupportedEncodingException, MessagingException {
-        String link = getActivationUrl() + account.getSecret();
+        String link = activationUrl + account.getSecret();
         String messageBody =
                 "<div>" +
                         "Hi," +
