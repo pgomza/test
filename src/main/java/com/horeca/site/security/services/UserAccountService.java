@@ -54,6 +54,15 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
         return getAll().stream().map(UserAccount::toView).collect(Collectors.toSet());
     }
 
+    public UserAccount create(String login, String plainPassword, Long hotelId) {
+        if (exists(login)) {
+            throw new BusinessRuleViolationException("Such a user already exists");
+        }
+        String hashedPassword = PasswordHashingService.getHashedFromPlain(plainPassword);
+        UserAccount account = new UserAccount(loginToUsername(login), hashedPassword, hotelId);
+        return save(account);
+    }
+
     public void verifyAndChangePassword(String login, String currentPassword, String newPassword) {
         if (currentPassword.equals(newPassword)) {
             throw new BusinessRuleViolationException("The new password must be different from the current one");

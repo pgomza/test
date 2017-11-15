@@ -1,7 +1,6 @@
 package com.horeca.site.security.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
-import com.horeca.site.repositories.accounts.SalesmanAccountPendingRepository;
 import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.repositories.SalesmanAccountRepository;
@@ -20,9 +19,6 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
 
     @Autowired
     private SalesmanAccountRepository repository;
-
-    @Autowired
-    private SalesmanAccountPendingRepository pendingRepository;
 
     @Override
     protected SalesmanAccountRepository getRepository() {
