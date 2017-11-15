@@ -3,6 +3,7 @@ package com.horeca.site.security.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.horeca.site.models.accounts.UserAccountView;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import java.util.Collections;
@@ -24,6 +25,7 @@ public class UserAccount extends AbstractAccount {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
+    @NotAudited
     @ElementCollection
     @CollectionTable(name = "UserProfileData", joinColumns = @JoinColumn(name = "username"))
     @MapKeyColumn(name="name")

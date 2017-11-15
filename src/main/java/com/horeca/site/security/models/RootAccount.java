@@ -1,6 +1,7 @@
 package com.horeca.site.security.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ public class RootAccount extends AbstractAccount {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @NotAudited
     @ElementCollection
     @CollectionTable(name = "RootProfileData", joinColumns = @JoinColumn(name = "username"))
     @MapKeyColumn(name="name")
