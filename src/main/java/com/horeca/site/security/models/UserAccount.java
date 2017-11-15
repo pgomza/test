@@ -33,19 +33,19 @@ public class UserAccount extends AbstractAccount {
     UserAccount() {
     }
 
-    public UserAccount(String username, Long hotelId, String password) {
-        this(username, hotelId, password, Collections.singletonList(DEFAULT_ROLE), new HashMap<>());
+    public UserAccount(String username, String password, Long hotelId) {
+        this(username, password, hotelId, Collections.singletonList(DEFAULT_ROLE), new HashMap<>());
     }
 
-    public UserAccount(String username, Long hotelId, String password, List<String> roles) {
-        this(username, hotelId, password, roles, new HashMap<>());
+    public UserAccount(String username, String password, Long hotelId, List<String> roles) {
+        this(username, password, hotelId, roles, new HashMap<>());
     }
 
-    public UserAccount(String username, Long hotelId, String password, Map<String, String> profileData) {
-        this(username, hotelId, password, Collections.singletonList(DEFAULT_ROLE), profileData);
+    public UserAccount(String username, String password, Long hotelId, Map<String, String> profileData) {
+        this(username, password, hotelId, Collections.singletonList(DEFAULT_ROLE), profileData);
     }
 
-    public UserAccount(String username, Long hotelId, String password, List<String> roles, Map<String, String> profileData) {
+    public UserAccount(String username, String password, Long hotelId, List<String> roles, Map<String, String> profileData) {
         super(username);
         this.hotelId = hotelId;
         this.password = password;

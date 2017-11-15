@@ -84,7 +84,7 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
         }
 
         List<String> roles = new ArrayList<>(Collections.singletonList(UserAccount.DEFAULT_ROLE));
-        UserAccount userAccount = new UserAccount(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + pending.getEmail(), pending.getPassword(), pending.getHotelId(), roles);
+        UserAccount userAccount = new UserAccount(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + pending.getEmail(), pending.getPassword(), pending.getHotelId());
         userAccountService.save(userAccount);
 
         // this may be the first user for this hotel
