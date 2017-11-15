@@ -5,12 +5,13 @@ import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.accounts.PasswordResetService;
 import com.horeca.site.services.accounts.UserAccountCreationService;
+import com.horeca.site.services.accounts.UserAccountPendingService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -18,22 +19,25 @@ import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.util.Set;
 
+import static com.horeca.site.services.accounts.AccountPendingService.ResponseMessage;
+import static com.horeca.site.services.accounts.AccountPendingService.prepareResponseMessage;
+
 @Api(value = "hotels")
 @RestController
 @RequestMapping("/api/accounts")
 public class UserAccountController {
 
     @Autowired
+    private UserAccountService userAccountService;
+
+    @Autowired
     private UserAccountCreationService userAccountCreationService;
 
     @Autowired
-    private PasswordResetService passwordResetService;
+    private UserAccountPendingService userAccountPendingService;
 
     @Autowired
-    private UserAccountService userAccountService;
-
-    @Value("${activation.redirectionUrl}")
-    private String redirectionUrl;
+    private PasswordResetService passwordResetService;
 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<UserAccountView> getUserAccountViews() {
@@ -52,32 +56,30 @@ public class UserAccountController {
         userAccountService.verifyAndChangePassword(userAccount.getLogin(), request.currentPassword, request.newPassword);
     }
 
+    @Transactional
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseMessage addUserAccountPending(@RequestHeader(name = "Temp-Token", required = true) String token,
-                                                 @RequestBody @Valid UserAccountPOST userAccountPOST) {
-        UserAccountPending pending = userAccountCreationService.addUserAccountPending(token, userAccountPOST);
+                                                                       @RequestBody @Valid UserAccountPOST userAccountPOST) {
+        AccountPending pending = userAccountPendingService.verifyAndAdd(token, userAccountPOST);
         try {
-            userAccountCreationService.sendActivationEmail(pending);
+            userAccountPendingService.sendActivationEmail(pending);
         } catch (UnsupportedEncodingException | MessagingException e) {
             throw new RuntimeException("There was a problem while trying to send an email to " + pending.getEmail(), e);
         }
 
-        return new ResponseMessage("The activation link has been sent to " + userAccountPOST.getEmail());
+        return prepareResponseMessage(pending.getEmail());
     }
 
     @RequestMapping(value = "/users/activation", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String activateUserAccount(@RequestParam(value = "secret") String secret) {
         String outcome = "Activation successful";
         try {
-            boolean activationStatus = userAccountCreationService.activateUserAccount(secret);
-            if (!activationStatus) {
-                outcome = "Activation failed - invalid link";
-            }
+            userAccountPendingService.activate(secret);
         } catch (RuntimeException ex) {
             outcome = "Activation failed";
         }
 
-        return getRedirectPage(outcome, redirectionUrl);
+        return userAccountPendingService.prepareRedirectPage(outcome);
     }
 
     @RequestMapping(value = "/users/tokens", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -112,56 +114,6 @@ public class UserAccountController {
         }
         else
             throw new AccessDeniedException("Access denied");
-    }
-
-    private String getRedirectPage(String outcome, String redirectUrl) {
-        return "<!DOCTYPE html>\n" +
-                "<html lang=\"en\">\n" +
-                "<head>\n" +
-                "    <meta charset=\"UTF-8\">\n" +
-                "    <title>Account activation</title>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "    <b>" + outcome + "</b>; redirecting to <a href=\"" + redirectUrl + "\">" + redirectUrl + "</a> in \n" +
-                "    <span id=\"counter\">5</span><span id=\"counter-text\"> seconds</span>\n" +
-                "\n" +
-                "    <script>\n" +
-                "        setInterval(function() {\n" +
-                "            var counterSpan = document.querySelector(\"#counter\");\n" +
-                "            var counterTextSpan = document.querySelector(\"#counter-text\");\n" +
-                "\n" +
-                "            var count = counterSpan.textContent * 1 - 1;\n" +
-                "\n" +
-                "            if (count === 1) {\n" +
-                "                counterTextSpan.textContent = \" second\"\n" +
-                "            }\n" +
-                "\n" +
-                "            if (count > 0) {\n" +
-                "                counterSpan.textContent = count;\n" +
-                "            }\n" +
-                "            else {\n" +
-                "                window.location.href=\"" + redirectUrl + "\";\n" +
-                "            }\n" +
-                "        }, 1000);\n" +
-                "    </script>\n" +
-                "</body>\n" +
-                "</html>";
-    }
-
-    public static class ResponseMessage {
-        private String message;
-
-        public ResponseMessage(String message) {
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
     }
 
     public static class PasswordChangeRequest {
