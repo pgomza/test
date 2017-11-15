@@ -40,7 +40,7 @@ public class UserAccountCreationService {
     @Autowired
     private EmailSenderService emailSenderService;
 
-    @Value("${activation.url}")
+    @Value("${activation.url.users}")
     private String activationUrl;
 
     @PreAuthorize("hasRole('ROLE_SALESMAN')")
