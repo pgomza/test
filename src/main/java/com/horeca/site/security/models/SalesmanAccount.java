@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.horeca.site.models.accounts.SalesmanAccountView;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.*;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Audited
@@ -21,13 +22,32 @@ public class SalesmanAccount extends AbstractAccount {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
+    @ElementCollection
+    @CollectionTable(name = "SalesmanProfileData", joinColumns = @JoinColumn(name = "username"))
+    @MapKeyColumn(name="name")
+    @Column(name="value")
+    private Map<String, String> profileData = new HashMap<>();
+
     SalesmanAccount() {
     }
 
+    public SalesmanAccount(String username, String password) {
+        this(username, password, Collections.singletonList(DEFAULT_ROLE), new HashMap<>());
+    }
+
     public SalesmanAccount(String username, String password, List<String> roles) {
+        this(username, password, roles, new HashMap<>());
+    }
+
+    public SalesmanAccount(String username, String password, Map<String, String> profileData) {
+        this(username, password, Collections.singletonList(DEFAULT_ROLE), profileData);
+    }
+
+    public SalesmanAccount(String username, String password, List<String> roles, Map<String, String> profileData) {
         super(username);
         this.password = password;
         this.roles = roles;
+        this.profileData = profileData;
     }
 
     @Override
@@ -50,6 +70,16 @@ public class SalesmanAccount extends AbstractAccount {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    @Override
+    public Map<String, String> getProfileData() {
+        return profileData;
+    }
+
+    @Override
+    public void setProfileData(Map<String, String> profileData) {
+        this.profileData = profileData;
     }
 
     public SalesmanAccountView toView() {
