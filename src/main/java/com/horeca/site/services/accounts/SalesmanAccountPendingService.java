@@ -26,8 +26,9 @@ public class SalesmanAccountPendingService extends AccountPendingService<Salesma
     public SalesmanAccountPendingService(EmailSenderService emailSenderService,
                                          AccountPendingRepository<SalesmanAccountPending> pendingRepository,
                                          @Value("${activation.url.salesmen}") String activationUrl,
+                                         @Value("${activation.redirectionUrl}") String redirectionUrl,
                                          SalesmanAccountService accountService) {
-        super(emailSenderService, pendingRepository, activationUrl);
+        super(emailSenderService, pendingRepository, activationUrl, redirectionUrl);
         this.accountService = accountService;
     }
 

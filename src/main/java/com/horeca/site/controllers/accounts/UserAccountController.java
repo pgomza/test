@@ -32,8 +32,8 @@ public class UserAccountController {
     @Autowired
     private UserAccountService userAccountService;
 
-    @Value("${activation.redirectUrl}")
-    private String activationRedirectUrl;
+    @Value("${activation.redirectionUrl}")
+    private String redirectionUrl;
 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<UserAccountView> getUserAccountViews() {
@@ -77,7 +77,7 @@ public class UserAccountController {
             outcome = "Activation failed";
         }
 
-        return getRedirectPage(outcome, activationRedirectUrl);
+        return getRedirectPage(outcome, redirectionUrl);
     }
 
     @RequestMapping(value = "/users/tokens", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
