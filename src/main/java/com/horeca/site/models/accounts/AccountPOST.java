@@ -3,7 +3,7 @@ package com.horeca.site.models.accounts;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class SalesmanAccountPOST {
+public class AccountPOST {
 
     @NotEmpty
     @Email
