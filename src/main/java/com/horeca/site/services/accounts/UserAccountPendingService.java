@@ -34,11 +34,11 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
     public UserAccountPendingService(EmailSenderService emailSenderService,
                                      AccountPendingRepository<UserAccountPending> repository,
                                      @Value("${activation.url.users}") String activationUrl,
-                                     @Value("${activation.redirectionUrl}") String redirectionUrl,
                                      UserAccountService userAccountService,
                                      UserAccountTempTokenService userAccountTempTokenService,
                                      HotelService hotelService) {
-        super(emailSenderService, repository, activationUrl, redirectionUrl);
+
+        super(emailSenderService, repository, activationUrl);
         this.userAccountService = userAccountService;
         this.userAccountTempTokenService = userAccountTempTokenService;
         this.hotelService = hotelService;

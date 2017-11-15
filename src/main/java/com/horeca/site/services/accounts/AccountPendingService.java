@@ -4,6 +4,7 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.accounts.AccountPending;
 import com.horeca.site.repositories.accounts.AccountPendingRepository;
 import com.horeca.site.services.EmailSenderService;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
@@ -13,14 +14,15 @@ public abstract class AccountPendingService<T extends AccountPending> {
     private final EmailSenderService emailSenderService;
     protected final AccountPendingRepository<T> repository;
     protected final String activationUrl;
-    protected final String redirectionUrl;
+
+    @Value("${activation.redirectionUrl}")
+    protected String redirectionUrl;
 
     public AccountPendingService(EmailSenderService emailSenderService, AccountPendingRepository<T> repository,
-                                 String activationUrl, String redirectionUrl) {
+                                 String activationUrl) {
         this.emailSenderService = emailSenderService;
         this.repository = repository;
         this.activationUrl = activationUrl;
-        this.redirectionUrl = redirectionUrl;
     }
 
     public abstract void activate(String secret);
