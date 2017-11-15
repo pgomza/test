@@ -50,7 +50,7 @@ public class SalesmanAccountController {
     }
 
     @RequestMapping(value = "/salesmen/activation", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-    public String activatePending(@RequestParam(value = "secret") String secret) {
+    public String activate(@RequestParam(value = "secret") String secret) {
         String outcome = "Activation successful";
         try {
             pendingService.activate(secret);

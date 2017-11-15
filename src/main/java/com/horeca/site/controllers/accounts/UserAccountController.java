@@ -40,7 +40,7 @@ public class UserAccountController {
     private PasswordResetService passwordResetService;
 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<UserAccountView> getUserAccountViews() {
+    public Set<UserAccountView> getViews() {
         return userAccountService.getViews();
     }
 
@@ -50,16 +50,16 @@ public class UserAccountController {
     }
 
     @RequestMapping(value = "/users/current/password", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void changePasswordOfCurrentUserAccount(Authentication authentication,
-                                                   @RequestBody PasswordChangeRequest request) {
+    public void changePasswordOfCurrentAccount(Authentication authentication,
+                                               @RequestBody PasswordChangeRequest request) {
         UserAccount userAccount = authenticationToUserAccount(authentication);
         userAccountService.verifyAndChangePassword(userAccount.getLogin(), request.currentPassword, request.newPassword);
     }
 
     @Transactional
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseMessage addUserAccountPending(@RequestHeader(name = "Temp-Token", required = true) String token,
-                                                                       @RequestBody @Valid UserAccountPOST userAccountPOST) {
+    public ResponseMessage addPending(@RequestHeader(name = "Temp-Token", required = true) String token,
+                                      @RequestBody @Valid UserAccountPOST userAccountPOST) {
         AccountPending pending = userAccountPendingService.verifyAndAdd(token, userAccountPOST);
         try {
             userAccountPendingService.sendActivationEmail(pending);
@@ -71,7 +71,7 @@ public class UserAccountController {
     }
 
     @RequestMapping(value = "/users/activation", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-    public String activateUserAccount(@RequestParam(value = "secret") String secret) {
+    public String activate(@RequestParam(value = "secret") String secret) {
         String outcome = "Activation successful";
         try {
             userAccountPendingService.activate(secret);
@@ -83,12 +83,12 @@ public class UserAccountController {
     }
 
     @RequestMapping(value = "/users/tokens", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserAccountTempTokenResponse getTempTokenForNewUserAccount(@RequestBody UserAccountTempTokenRequest request) {
+    public UserAccountTempTokenResponse getNewTempToken(@RequestBody UserAccountTempTokenRequest request) {
         return userAccountCreationService.getTempTokenForNewUserAccount(request);
     }
 
     @RequestMapping(value = "/users/tokens/{token}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserAccountTempTokenResponse getInfoAboutUserAccountTempToken(@PathVariable("token") String token) {
+    public UserAccountTempTokenResponse getInfoAboutToken(@PathVariable("token") String token) {
         return userAccountCreationService.getInfoAboutUserAccountTempToken(token);
     }
 
