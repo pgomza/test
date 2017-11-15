@@ -32,7 +32,6 @@ public class SalesmanAccountPendingService extends AccountPendingService<Salesma
         this.accountService = accountService;
     }
 
-    @Override
     public AccountPending add(AccountPOST accountPOST) {
         String email = accountPOST.getEmail();
         String plainTextPassword = accountPOST.getPassword();

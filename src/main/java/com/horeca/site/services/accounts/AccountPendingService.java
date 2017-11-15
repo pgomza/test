@@ -1,7 +1,6 @@
 package com.horeca.site.services.accounts;
 
 import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.models.accounts.AccountPOST;
 import com.horeca.site.models.accounts.AccountPending;
 import com.horeca.site.repositories.accounts.AccountPendingRepository;
 import com.horeca.site.services.EmailSenderService;
@@ -23,8 +22,6 @@ public abstract class AccountPendingService<T extends AccountPending> {
         this.activationUrl = activationUrl;
         this.redirectionUrl = redirectionUrl;
     }
-
-    public abstract AccountPending add(AccountPOST accountPOST);
 
     public abstract void activate(String secret);
 
