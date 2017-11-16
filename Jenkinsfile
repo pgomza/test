@@ -70,7 +70,7 @@ pipeline {
             response=$(curl "https://throdibackend-staging.azurewebsites.net/api/hotels/1" | /var/lib/jenkins/custom/check_app)
             attempts=1
 
-            while (( attempts < 5 && response == 0 )); do
+            while (( attempts < 7 && response == 0 )); do
                 sleep 60
                 echo "Trying for $((attempts + 1)) time"
 
