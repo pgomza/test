@@ -10,7 +10,6 @@ import com.horeca.site.services.accounts.SalesmanAccountPendingService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +18,7 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Api(value = "hotels")
@@ -63,7 +63,20 @@ public class SalesmanAccountController {
 
     @RequestMapping(value = "/salesmen/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public SalesmanAccountView getCurrentView(Authentication authentication) {
-        return authenticationToSalesmanAccount(authentication).toView();
+        return accountService.getFromAuthentication(authentication).toView();
+    }
+
+    @RequestMapping(value = "/salesmen/current/profile-data", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> getProfileOfCurrentAccount(Authentication authentication) {
+        SalesmanAccount salesmanAccount = accountService.getFromAuthentication(authentication);
+        return salesmanAccount.toView().getProfileData();
+    }
+
+    @RequestMapping(value = "/salesmen/current/profile-data", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> updateProfileDataOfCurrentAccount(Authentication authentication,
+                                                                 @RequestBody Map<String, String> profileData) {
+        SalesmanAccount salesmanAccount = accountService.getFromAuthentication(authentication);
+        return accountService.updateProfileData(salesmanAccount.getLogin(), profileData);
     }
 
     @RequestMapping(value = "/salesmen/{login}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,14 +87,5 @@ public class SalesmanAccountController {
     @RequestMapping(value = "/salesmen/{login}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void delete(@PathVariable("login") String login) {
         accountService.delete(login);
-    }
-
-    private SalesmanAccount authenticationToSalesmanAccount(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof SalesmanAccount) {
-            return (SalesmanAccount) principal;
-        }
-        else
-            throw new AccessDeniedException("Access denied");
     }
 }

@@ -92,6 +92,7 @@ public class SalesmanAccount extends AbstractAccount {
         view.setAccountNonLocked(isAccountNonLocked());
         view.setCredentialsNonExpired(isCredentialsNonExpired());
         view.setEnabled(isEnabled());
+        view.setProfileData(getProfileData());
         return view;
     }
 }
