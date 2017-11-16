@@ -1,6 +1,7 @@
 package com.horeca.site.security.models;
 
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import java.util.Arrays;
@@ -14,6 +15,7 @@ public class GuestAccount extends AbstractAccount {
 
     public static final String DEFAULT_ROLE = "ROLE_GUEST";
 
+    @NotAudited
     @ElementCollection
     @CollectionTable(name = "GuestProfileData", joinColumns = @JoinColumn(name = "username"))
     @MapKeyColumn(name="name")

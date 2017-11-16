@@ -1,7 +1,9 @@
 package com.horeca.site.security.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.horeca.site.models.accounts.SalesmanAccountView;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import java.util.Collections;
@@ -21,6 +23,7 @@ public class SalesmanAccount extends AbstractAccount {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
+    @NotAudited
     @ElementCollection
     @CollectionTable(name = "SalesmanProfileData", joinColumns = @JoinColumn(name = "username"))
     @MapKeyColumn(name="name")
@@ -79,5 +82,17 @@ public class SalesmanAccount extends AbstractAccount {
     @Override
     public void setProfileData(Map<String, String> profileData) {
         this.profileData = profileData;
+    }
+
+    public SalesmanAccountView toView() {
+        SalesmanAccountView view = new SalesmanAccountView();
+        view.setLogin(getLogin());
+        view.setRoles(getRoles());
+        view.setAccountNonExpired(isAccountNonExpired());
+        view.setAccountNonLocked(isAccountNonLocked());
+        view.setCredentialsNonExpired(isCredentialsNonExpired());
+        view.setEnabled(isEnabled());
+        view.setProfileData(getProfileData());
+        return view;
     }
 }

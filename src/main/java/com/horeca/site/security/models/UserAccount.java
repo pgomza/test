@@ -3,6 +3,7 @@ package com.horeca.site.security.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.horeca.site.models.accounts.UserAccountView;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import java.util.Collections;
@@ -24,6 +25,7 @@ public class UserAccount extends AbstractAccount {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
+    @NotAudited
     @ElementCollection
     @CollectionTable(name = "UserProfileData", joinColumns = @JoinColumn(name = "username"))
     @MapKeyColumn(name="name")
@@ -33,19 +35,19 @@ public class UserAccount extends AbstractAccount {
     UserAccount() {
     }
 
-    public UserAccount(String username, Long hotelId, String password) {
-        this(username, hotelId, password, Collections.singletonList(DEFAULT_ROLE), new HashMap<>());
+    public UserAccount(String username, String password, Long hotelId) {
+        this(username, password, hotelId, Collections.singletonList(DEFAULT_ROLE), new HashMap<>());
     }
 
-    public UserAccount(String username, Long hotelId, String password, List<String> roles) {
-        this(username, hotelId, password, roles, new HashMap<>());
+    public UserAccount(String username, String password, Long hotelId, List<String> roles) {
+        this(username, password, hotelId, roles, new HashMap<>());
     }
 
-    public UserAccount(String username, Long hotelId, String password, Map<String, String> profileData) {
-        this(username, hotelId, password, Collections.singletonList(DEFAULT_ROLE), profileData);
+    public UserAccount(String username, String password, Long hotelId, Map<String, String> profileData) {
+        this(username, password, hotelId, Collections.singletonList(DEFAULT_ROLE), profileData);
     }
 
-    public UserAccount(String username, Long hotelId, String password, List<String> roles, Map<String, String> profileData) {
+    public UserAccount(String username, String password, Long hotelId, List<String> roles, Map<String, String> profileData) {
         super(username);
         this.hotelId = hotelId;
         this.password = password;
@@ -102,6 +104,7 @@ public class UserAccount extends AbstractAccount {
         view.setAccountNonLocked(isAccountNonLocked());
         view.setCredentialsNonExpired(isCredentialsNonExpired());
         view.setEnabled(isEnabled());
+        view.setProfileData(getProfileData());
         return view;
     }
 }

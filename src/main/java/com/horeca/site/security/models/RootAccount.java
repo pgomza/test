@@ -1,9 +1,10 @@
 package com.horeca.site.security.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ public class RootAccount extends AbstractAccount {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @NotAudited
     @ElementCollection
     @CollectionTable(name = "RootProfileData", joinColumns = @JoinColumn(name = "username"))
     @MapKeyColumn(name="name")
@@ -50,7 +52,7 @@ public class RootAccount extends AbstractAccount {
     }
 
     public List<String> getRoles() {
-        return Collections.singletonList("ROLE_ROOT");
+        return Arrays.asList(DEFAULT_ROLE, SalesmanAccount.DEFAULT_ROLE);
     }
 
     @Override

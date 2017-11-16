@@ -3,10 +3,9 @@ package com.horeca.site.models.accounts;
 import java.util.List;
 import java.util.Map;
 
-public class UserAccountView {
+public class SalesmanAccountView {
 
     private String login;
-    private Long hotelId;
     private List<String> roles;
     private boolean accountNonExpired;
     private boolean accountNonLocked;
@@ -20,14 +19,6 @@ public class UserAccountView {
 
     public void setLogin(String login) {
         this.login = login;
-    }
-
-    public Long getHotelId() {
-        return hotelId;
-    }
-
-    public void setHotelId(Long hotelId) {
-        this.hotelId = hotelId;
     }
 
     public List<String> getRoles() {

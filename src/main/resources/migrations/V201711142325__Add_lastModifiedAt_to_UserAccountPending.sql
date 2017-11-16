@@ -1,0 +1,1 @@
+ALTER TABLE UserAccountPending ADD lastModifiedAt BIGINT NOT NULL DEFAULT DATEDIFF(ss, '1970-01-01', SYSDATETIMEOFFSET() at time zone 'UTC');
