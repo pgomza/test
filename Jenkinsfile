@@ -47,22 +47,19 @@ pipeline {
 
           if ((log_exists == 1)); then
               lftp -c "open -u ThrodiBackend__staging\\\\\\$ThrodiBackend__staging,cQjl0F3nKw9k4Lmiho5YHZTxSkauRHt0EKe4Qo6ZfRZhxfdlgeBfMoFwGjqS ftp://waws-prod-am2-121.ftp.azurewebsites.windows.net/site/wwwroot;
-                       get -E -e app.log -o ${custom_dir}/app.log;
-                       mrm webapps/*;
-                       put ${WORKSPACE}/target/ROOT.war -o webapps/ROOT.war"
+                       get -E -e app.log -o ${custom_dir}/app.log"
 
               if [ ${BRANCH_NAME} != "master" ]; then
                   mv ${custom_dir}/app.log ${custom_dir}/logs_devel/$(date -u +"%FT%H%MZ").log
               else
                   mv ${custom_dir}/app.log ${custom_dir}/logs_prod/$(date -u +"%FT%H%MZ").log
               fi
-          else
-              lftp -c "open -u ThrodiBackend__staging\\\\\\$ThrodiBackend__staging,cQjl0F3nKw9k4Lmiho5YHZTxSkauRHt0EKe4Qo6ZfRZhxfdlgeBfMoFwGjqS ftp://waws-prod-am2-121.ftp.azurewebsites.windows.net/site/wwwroot;
-                       mrm webapps/*;
-                       put ${WORKSPACE}/target/ROOT.war -o webapps/ROOT.war"
           fi
 
           az webapp start --resource-group Throdi --name ThrodiBackend --slot staging
+
+          lftp -c "open -u ThrodiBackend__staging\\\\\\$ThrodiBackend__staging,cQjl0F3nKw9k4Lmiho5YHZTxSkauRHt0EKe4Qo6ZfRZhxfdlgeBfMoFwGjqS ftp://waws-prod-am2-121.ftp.azurewebsites.windows.net/site/wwwroot;
+              put ${WORKSPACE}/target/ROOT.war -o webapps/ROOT.war"
         '''
       }
     }
