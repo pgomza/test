@@ -3,6 +3,7 @@ package com.horeca.site.security;
 import com.horeca.site.handlers.CustomOAuth2ExceptionRenderer;
 import com.horeca.site.security.models.RootAccount;
 import com.horeca.site.security.models.SalesmanAccount;
+import com.horeca.site.security.models.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -124,6 +125,8 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         // but only roots can manage salesmen
         http.authorizeRequests().antMatchers("/api/accounts/salesmen/**").hasAuthority(RootAccount.DEFAULT_ROLE);
 
+        // users can access their profile
+        http.authorizeRequests().antMatchers("/api/accounts/users/current/**").hasAuthority(UserAccount.DEFAULT_ROLE);
         // only accounts with the 'SALESMAN' role can manage all the users
         http.authorizeRequests().antMatchers("/api/accounts/users/**").hasAuthority(SalesmanAccount.DEFAULT_ROLE);
 
