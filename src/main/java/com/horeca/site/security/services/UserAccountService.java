@@ -7,7 +7,9 @@ import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.repositories.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
@@ -52,6 +54,17 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
 
     public Set<UserAccountView> getViews() {
         return getAll().stream().map(UserAccount::toView).collect(Collectors.toSet());
+    }
+
+    public UserAccount getFromAuthentication(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserAccount) {
+            UserAccount userAccount = (UserAccount) principal;
+            // this is necessary because the instance obtained from 'authentication' isn't fully initialized
+            return get(userAccount.getLogin());
+        }
+        else
+            throw new AccessDeniedException("Access denied");
     }
 
     public UserAccount create(String login, String plainPassword, Long hotelId) {

@@ -9,7 +9,6 @@ import com.horeca.site.services.accounts.UserAccountPendingService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 import java.util.Set;
 
 import static com.horeca.site.services.accounts.AccountPendingService.ResponseMessage;
@@ -46,14 +46,27 @@ public class UserAccountController {
 
     @RequestMapping(value = "/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserAccountView getCurrentView(Authentication authentication) {
-        return authenticationToUserAccount(authentication).toView();
+        return userAccountService.getFromAuthentication(authentication).toView();
     }
 
     @RequestMapping(value = "/users/current/password", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public void changePasswordOfCurrentAccount(Authentication authentication,
                                                @RequestBody PasswordChangeRequest request) {
-        UserAccount userAccount = authenticationToUserAccount(authentication);
+        UserAccount userAccount = userAccountService.getFromAuthentication(authentication);
         userAccountService.verifyAndChangePassword(userAccount.getLogin(), request.currentPassword, request.newPassword);
+    }
+
+    @RequestMapping(value = "/users/current/profile-data", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> getProfileOfCurrentAccount(Authentication authentication) {
+        UserAccount userAccount = userAccountService.getFromAuthentication(authentication);
+        return userAccountService.getProfileData(userAccount.getLogin());
+    }
+
+    @RequestMapping(value = "/users/current/profile-data", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> updateProfileDataOfCurrentAccount(Authentication authentication,
+                                                                 @RequestBody Map<String, String> profileData) {
+        UserAccount userAccount = userAccountService.getFromAuthentication(authentication);
+        return userAccountService.updateProfileData(userAccount.getLogin(), profileData);
     }
 
     @Transactional
@@ -105,15 +118,6 @@ public class UserAccountController {
     @RequestMapping(value = "/users/reset-confirmation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void confirmPasswordReset(@Valid @RequestBody PasswordResetConfirmation confirmation) {
         passwordResetService.handleConfirmation(confirmation);
-    }
-
-    private UserAccount authenticationToUserAccount(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserAccount) {
-            return (UserAccount) principal;
-        }
-        else
-            throw new AccessDeniedException("Access denied");
     }
 
     public static class PasswordChangeRequest {

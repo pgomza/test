@@ -1,6 +1,7 @@
 package com.horeca.site.models.accounts;
 
 import java.util.List;
+import java.util.Map;
 
 public class UserAccountView {
 
@@ -11,6 +12,7 @@ public class UserAccountView {
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
     private boolean enabled;
+    private Map<String, String> profileData;
 
     public String getLogin() {
         return login;
@@ -66,5 +68,13 @@ public class UserAccountView {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Map<String, String> getProfileData() {
+        return profileData;
+    }
+
+    public void setProfileData(Map<String, String> profileData) {
+        this.profileData = profileData;
     }
 }
