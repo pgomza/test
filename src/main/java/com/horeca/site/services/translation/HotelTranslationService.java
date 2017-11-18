@@ -1,5 +1,6 @@
 package com.horeca.site.services.translation;
 
+import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.hotel.translation.HotelTranslation;
@@ -104,9 +105,7 @@ public class HotelTranslationService {
     public HotelTranslationView getView(Long hotelId, LanguageCode languageCode) {
         Optional<HotelTranslation> translationOpt = get(hotelId, languageCode);
         if (!translationOpt.isPresent()) {
-            Hotel hotel = hotelService.get(hotelId);
-            HotelTranslation emptyHotelTranslation = new HotelTranslation(languageCode, hotel, new HashSet<>());
-            return getView(emptyHotelTranslation);
+            throw new ResourceNotFoundException();
         }
         return getView(translationOpt.get());
     }
