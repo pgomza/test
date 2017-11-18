@@ -1,7 +1,9 @@
 package com.horeca.site.controllers;
 
+import com.horeca.site.models.hotel.translation.LanguageCode;
 import com.horeca.site.models.stay.*;
 import com.horeca.site.services.services.StayService;
+import com.horeca.site.services.translation.HotelTranslationService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -26,18 +28,27 @@ public class StayController {
     @Autowired
     private StayService stayService;
 
+    @Autowired
+    private HotelTranslationService translationService;
+
     @RequestMapping(value = "/stays", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<StayView> getAll(@RequestParam(value = "status", required = false) List<String> strings) {
+    public List<StayView> getAll(@RequestParam(value = "status", required = false) List<String> strings,
+                                 LanguageCode languageCode) {
+        List<StayView> stays;
         if (strings != null && !strings.isEmpty()) {
             Set<StayStatus> statuses = strings.stream()
                     .map(String::toUpperCase)
                     .map(StayStatus::valueOf)
                     .collect(Collectors.toSet());
-            return stayService.getAllWithStatusesViews(new HashSet<>(statuses));
+            stays = stayService.getAllWithStatusesViews(new HashSet<>(statuses));
         }
         else {
-            return stayService.getAllViews();
+            stays = stayService.getAllViews();
         }
+
+        return stays.stream()
+                .map(stay -> translationService.translate(stay, stay.getHotel().getId(), languageCode))
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/stays", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,8 +65,9 @@ public class StayController {
     }
 
     @RequestMapping(value = "/stays/{pin}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public StayView get(@PathVariable String pin) {
-        return stayService.getView(pin);
+    public StayView get(@PathVariable String pin, LanguageCode languageCode) {
+        StayView view = stayService.getView(pin);
+        return translationService.translate(view, view.getHotel().getId(), languageCode);
     }
 
     @RequestMapping(value = "/stays/{pin}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
