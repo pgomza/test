@@ -182,4 +182,12 @@ public class HotelTranslationService {
 
         return repository.save(existingTranslation);
     }
+
+    public void delete(Long hotelId, LanguageCode languageCode) {
+        Optional<HotelTranslation> existingTranslationOpt = get(hotelId, languageCode);
+        if (!existingTranslationOpt.isPresent()) {
+            throw new ResourceNotFoundException();
+        }
+        repository.delete(existingTranslationOpt.get());
+    }
 }

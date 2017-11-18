@@ -44,6 +44,14 @@ public class HotelTranslationController {
         return service.getView(hotelId, languageCodeFromString(languageCode));
     }
 
+    @RequestMapping(value = "/{hotelId}/translations/{languageCode}", method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public void delete(@PathVariable("hotelId") Long hotelId,
+                                       @PathVariable("languageCode") String languageCode) {
+
+        service.delete(hotelId, languageCodeFromString(languageCode));
+    }
+
     @RequestMapping(value = "/{hotelId}/translations/{languageCode}/entries", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public HotelTranslationView merge(@PathVariable("hotelId") Long hotelId,
