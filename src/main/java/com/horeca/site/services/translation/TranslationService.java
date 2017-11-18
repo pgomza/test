@@ -95,7 +95,7 @@ public class TranslationService {
                 Class<?> fieldType = field.getType();
                 if (fieldType == String.class) {
                     String toTranslate = (String) field.get(object);
-                    if (toTranslate != null) {
+                    if (isStringEligible(toTranslate)) {
                         String translated = translateString(toTranslate, translations);
                         field.set(object, translated);
                     }
@@ -140,7 +140,7 @@ public class TranslationService {
             if (elementClass == String.class) {
                 for (Object element : collection) {
                     String toTranslate = (String) element;
-                    if (toTranslate != null) {
+                    if (isStringEligible(toTranslate)) {
                         String translated = translateString(toTranslate, translations);
                         translatedCopy.add((T) translated);
                     }
@@ -168,7 +168,7 @@ public class TranslationService {
 
     private static String translateString(String toTranslate, Map<String, String> translations) {
         String translation = translations.get(toTranslate);
-        if (translation == null || translation.isEmpty()) {
+        if (translation == null || translation.trim().isEmpty()) {
             return toTranslate;
         }
         else {
@@ -195,7 +195,7 @@ public class TranslationService {
                 Class<?> fieldType = field.getType();
                 if (fieldType == String.class) {
                     String text = (String) field.get(object);
-                    if (text != null) {
+                    if (isStringEligible(text)) {
                         results.add(text);
                     }
                 }
@@ -229,7 +229,7 @@ public class TranslationService {
             if (elementClass == String.class) {
                 for (Object element : collection) {
                     String text = (String) element;
-                    if (text != null) {
+                    if (isStringEligible(text)) {
                         results.add(text);
                     }
                 }
@@ -256,5 +256,9 @@ public class TranslationService {
         return type.isPrimitive() || type == Double.class || type == Float.class || type == Long.class ||
                 type == Integer.class || type == Short.class || type == Character.class || type == Byte.class ||
                 type == Boolean.class;
+    }
+
+    private static boolean isStringEligible(String text) {
+        return text != null && !text.trim().isEmpty();
     }
 }
