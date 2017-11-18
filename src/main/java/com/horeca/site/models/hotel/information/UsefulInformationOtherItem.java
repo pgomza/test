@@ -21,6 +21,7 @@ public class UsefulInformationOtherItem {
     @NotEmpty
     private String name;
 
+    @Translatable
     @NotEmpty
     private String value;
 

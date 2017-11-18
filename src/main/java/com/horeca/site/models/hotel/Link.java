@@ -1,6 +1,5 @@
 package com.horeca.site.models.hotel;
 
-import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
@@ -18,7 +17,6 @@ public class Link {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Translatable
     @NotEmpty
     private String name;
 

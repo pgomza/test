@@ -23,6 +23,7 @@ public class PetCareItem {
     @NotEmpty
     private String name;
 
+    @Translatable
     private String description;
 
     @NotNull

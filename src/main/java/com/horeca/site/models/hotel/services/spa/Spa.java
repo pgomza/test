@@ -22,7 +22,6 @@ public class Spa {
     @NotNull
     private Price price;
 
-    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "spa_id")
     private Set<SpaItem> items;

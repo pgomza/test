@@ -34,6 +34,7 @@ public class Hotel {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Translatable
 	@NotEmpty
 	private String name;
 
@@ -41,6 +42,7 @@ public class Hotel {
 	@Column(columnDefinition = "nvarchar(4000)")
 	public String description;
 
+	@Translatable
 	@NotEmpty
 	@Column(columnDefinition = "nvarchar(4000)")
 	private String address;
@@ -103,6 +105,7 @@ public class Hotel {
 	@Enumerated(EnumType.STRING)
 	private Currency currency;
 
+	@Translatable
 	@NotNull
 	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(name = "TVChannel", joinColumns = @JoinColumn(name = "hotel_id"))
@@ -130,7 +133,6 @@ public class Hotel {
 	@OrderColumn(name = "filelink_order")
 	private List<FileLink> images;
 
-	@Translatable
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "hotel_id")
 	@OrderColumn(name = "link_order")
