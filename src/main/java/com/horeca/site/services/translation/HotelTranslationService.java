@@ -158,4 +158,28 @@ public class HotelTranslationService {
         }
         return repository.save(updatedTranslation);
     }
+
+    public HotelTranslation merge(Long hotelId, LanguageCode languageCode, TranslationEntry entry) {
+        Optional<HotelTranslation> existingTranslationOpt = get(hotelId, languageCode);
+        if (!existingTranslationOpt.isPresent()) {
+            throw new ResourceNotFoundException();
+        }
+
+        HotelTranslation existingTranslation = existingTranslationOpt.get();
+        boolean foundMatch = false;
+        Iterator<TranslationEntry> iterator = existingTranslation.getEntries().iterator();
+        while (iterator.hasNext() && !foundMatch) {
+            TranslationEntry current = iterator.next();
+            if (current.getOriginal().equals(entry.getOriginal())) {
+                current.setTranslated(entry.getTranslated());
+                foundMatch = true;
+            }
+        }
+
+        if (!foundMatch) {
+            existingTranslation.getEntries().add(entry);
+        }
+
+        return repository.save(existingTranslation);
+    }
 }

@@ -44,6 +44,16 @@ public class HotelTranslationController {
         return service.getView(hotelId, languageCodeFromString(languageCode));
     }
 
+    @RequestMapping(value = "/{hotelId}/translations/{languageCode}/entries", method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public HotelTranslationView merge(@PathVariable("hotelId") Long hotelId,
+                                       @PathVariable("languageCode") String languageCode,
+                                       @RequestBody TranslationEntry entry) {
+
+        service.merge(hotelId, languageCodeFromString(languageCode), entry);
+        return service.getView(hotelId, languageCodeFromString(languageCode));
+    }
+
     private static LanguageCode languageCodeFromString(String value) {
         try {
             return LanguageCode.valueOf(value.toUpperCase());
