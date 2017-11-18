@@ -18,11 +18,13 @@ public class HotelView {
 	
 	private Long id;
 
+	@Translatable
 	private String name;
 
 	@Translatable
 	private String description;
 
+	@Translatable
 	private String address;
 
 	private String email;
@@ -70,6 +72,7 @@ public class HotelView {
 
 	private Currency currency;
 
+	@Translatable
 	private List<String> tvChannels;
 
 	@Translatable
