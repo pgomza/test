@@ -110,6 +110,11 @@ public class HotelTranslationService {
         return getView(translationOpt.get());
     }
 
+    public List<HotelTranslationView> getAllViews(Long hotelId) {
+        List<HotelTranslation> translations = repository.findByHotelId(hotelId);
+        return translations.stream().map(this::getView).collect(Collectors.toList());
+    }
+
     private HotelTranslationView getView(HotelTranslation translation) {
         Set<String> namesToTranslate;
         try {

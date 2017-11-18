@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -17,6 +18,13 @@ public class HotelTranslationController {
 
     @Autowired
     private HotelTranslationService service;
+
+    @RequestMapping(value = "/{hotelId}/translations", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<HotelTranslationView> getAll(@PathVariable("hotelId") Long hotelId) {
+
+        return service.getAllViews(hotelId);
+    }
 
     @RequestMapping(value = "/{hotelId}/translations/{languageCode}", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
