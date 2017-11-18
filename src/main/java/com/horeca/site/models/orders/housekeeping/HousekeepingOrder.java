@@ -1,6 +1,7 @@
 package com.horeca.site.models.orders.housekeeping;
 
 import com.horeca.site.models.hotel.services.housekeeping.HousekeepingItem;
+import com.horeca.site.models.hotel.translation.Translatable;
 import com.horeca.site.models.orders.Order;
 import org.hibernate.envers.Audited;
 
@@ -13,6 +14,7 @@ public class HousekeepingOrder extends Order {
 
     private String message;
 
+    @Translatable
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="housekeeping_order_housekeeping_item",
             joinColumns=@JoinColumn(name="housekeeping_order_id"),

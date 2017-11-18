@@ -4,25 +4,39 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.HotelView;
+import com.horeca.site.models.hotel.translation.Translatable;
 import com.horeca.site.models.orders.Orders;
 import org.joda.time.LocalDate;
 
 public class StayView {
 
     private String pin;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate fromDate;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate toDate;
+
     private String roomNumber;
+
     private String wifiPassword;
+
     private String doorKey;
+
     private StayStatus status;
+
+    @Translatable
     private Orders orders;
+
+    @Translatable
     private HotelView hotel;
+
     private Guest guest;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String createdAt;
+
     private Long cubilisId;
 
     public String getPin() {
