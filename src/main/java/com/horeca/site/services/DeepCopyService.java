@@ -2,6 +2,7 @@ package com.horeca.site.services;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +20,12 @@ public class DeepCopyService {
     private ObjectMapper objectMapper;
 
     public <T> T copy(T source) {
-        Class<?> sourceClass = source.getClass();
+        T realSource = getRealObjectFromProxy(source);
+        Class<?> sourceClass = realSource.getClass();
 
         JavaType javaType = null;
         if (Collection.class.isAssignableFrom(sourceClass)) {
-            Collection<?> collection = (Collection<?>) source;
+            Collection<?> collection = (Collection<?>) realSource;
             Class<?> elementType = CollectionTypeGuesser.guessElementType(collection);
 
             if (List.class.isAssignableFrom(sourceClass)) {
@@ -37,7 +39,7 @@ public class DeepCopyService {
             }
         }
         try {
-            String serialized = objectMapper.writeValueAsString(source);
+            String serialized = objectMapper.writeValueAsString(realSource);
             if (javaType != null) {
                 return (T) objectMapper.readValue(serialized, javaType);
             }
@@ -45,7 +47,14 @@ public class DeepCopyService {
                 return  (T) objectMapper.readValue(serialized, sourceClass);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Could not copy object " + source, e);
+            throw new RuntimeException("Could not copy object " + realSource, e);
         }
+    }
+
+    private static <T> T getRealObjectFromProxy(T proxy) {
+        if (proxy instanceof HibernateProxy) {
+            return  (T) ((HibernateProxy) proxy).getHibernateLazyInitializer().getImplementation();
+        }
+        return proxy;
     }
 }
