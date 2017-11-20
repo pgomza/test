@@ -1,5 +1,7 @@
 package com.horeca.site.controllers.services;
 
+import com.horeca.site.handlers.HotelId;
+import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.bar.Bar;
 import com.horeca.site.models.hotel.services.bar.BarItem;
 import com.horeca.site.models.hotel.services.bar.BarItemUpdate;
@@ -19,8 +21,9 @@ public class BarController {
     @Autowired
     private BarService service;
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/bar", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Bar get(@PathVariable("hotelId") Long hotelId) {
+    public Bar get(@HotelId @PathVariable("hotelId") Long hotelId) {
         return service.get(hotelId);
     }
 
