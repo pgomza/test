@@ -8,6 +8,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 public class LanguageCodeArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -21,7 +22,11 @@ public class LanguageCodeArgumentResolver implements HandlerMethodArgumentResolv
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        String language = request.getLocale().getLanguage();
+        return resolveFromLocale(request.getLocale());
+    }
+
+    public static LanguageCode resolveFromLocale(Locale locale) {
+        String language = locale.getLanguage();
 
         LanguageCode languageCode = null;
         if (!language.isEmpty()) {
