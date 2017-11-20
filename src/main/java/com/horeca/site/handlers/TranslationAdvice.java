@@ -1,6 +1,7 @@
 package com.horeca.site.handlers;
 
 import com.horeca.site.models.hotel.translation.LanguageCode;
+import com.horeca.site.repositories.services.StayRepository;
 import com.horeca.site.services.translation.HotelTranslationService;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -25,6 +26,9 @@ public class TranslationAdvice {
     @Autowired
     private HotelTranslationService translationService;
 
+    @Autowired
+    private StayRepository stayRepository;
+
     @Around(value = "@annotation(TranslateReturnValue)")
     public Object translate(ProceedingJoinPoint joinPoint) throws Throwable {
         Object objectToTranslate = joinPoint.proceed();
@@ -32,25 +36,31 @@ public class TranslationAdvice {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                 .getRequest();
 
+        Object[] methodArgs = joinPoint.getArgs();
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         Parameter[] parameters = method.getParameters();
 
-        int hotelIdIndex = 0;
-        while (hotelIdIndex < parameters.length) {
-            Parameter current = parameters[hotelIdIndex];
-            if (current.getAnnotation(HotelId.class) != null) {
-                break;
+        boolean foundHotelId = false;
+        Long hotelId = null;
+        int i = 0;
+        while (i < parameters.length && !foundHotelId) {
+            Parameter param = parameters[i];
+            if (param.getAnnotation(HotelId.class) != null) {
+                hotelId = (Long) methodArgs[i];
+                foundHotelId = true;
             }
-            hotelIdIndex++;
+            else if (param.getAnnotation(StayPin.class) != null) {
+                String pin = (String) methodArgs[i];
+                hotelId = stayRepository.getHotelIdOfStay(pin);
+                foundHotelId = true;
+            }
+            i++;
         }
 
-        if (hotelIdIndex == parameters.length) {
+        if (!foundHotelId) {
             logger.error("Couldn't extract hotelId when processing " + request.getRequestURI());
             return objectToTranslate;
         }
-
-        Object[] args = joinPoint.getArgs();
-        Long hotelId = (Long) args[hotelIdIndex];
 
         LanguageCode languageCode = LanguageCodeArgumentResolver.resolveFromLocale(request.getLocale());
         try {
