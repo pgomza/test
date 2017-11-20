@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.models.hotel.translation.Translatable;
 import com.horeca.site.models.orders.Orders;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.envers.Audited;
@@ -38,10 +39,12 @@ public class Stay {
     @Enumerated(EnumType.STRING)
     private StayStatus status = StayStatus.NEW;
 
+    @Translatable
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn
     private Orders orders = new Orders();
 
+    @Translatable
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn

@@ -1,5 +1,7 @@
 package com.horeca.site.controllers.services;
 
+import com.horeca.site.handlers.HotelId;
+import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.carpark.CarPark;
 import com.horeca.site.services.services.CarParkService;
 import io.swagger.annotations.Api;
@@ -18,8 +20,9 @@ public class CarParkController {
     @Autowired
     private CarParkService carParkService;
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/carpark", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CarPark get(@PathVariable("hotelId") Long hotelId) {
+    public CarPark get(@HotelId @PathVariable("hotelId") Long hotelId) {
         return carParkService.get(hotelId);
     }
 

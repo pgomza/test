@@ -1,5 +1,7 @@
 package com.horeca.site.controllers.services;
 
+import com.horeca.site.handlers.HotelId;
+import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastItemUpdate;
 import com.horeca.site.services.services.BreakfastService;
@@ -18,8 +20,9 @@ public class BreakfastController {
     @Autowired
     private BreakfastService breakfastService;
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/breakfast", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Breakfast get(@PathVariable("hotelId") Long hotelId) {
+    public Breakfast get(@HotelId @PathVariable("hotelId") Long hotelId) {
         return breakfastService.get(hotelId);
     }
 

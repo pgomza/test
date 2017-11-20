@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.services.tableordering;
 
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ public class TableOrdering {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     private String description;
 
     TableOrdering() {

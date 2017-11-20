@@ -1,6 +1,7 @@
 package com.horeca.site.models.orders.bar;
 
 import com.horeca.site.models.hotel.services.bar.BarItem;
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ public class BarOrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private BarItem item;

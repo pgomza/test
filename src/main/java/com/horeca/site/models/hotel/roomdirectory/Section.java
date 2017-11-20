@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.roomdirectory;
 
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;
@@ -15,8 +16,10 @@ public class Section {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     private String heading;
 
+    @Translatable
     private String text;
 
     public Long getId() {

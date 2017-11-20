@@ -1,5 +1,7 @@
 package com.horeca.site.controllers.services;
 
+import com.horeca.site.handlers.HotelId;
+import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.restaurantmenu.*;
 import com.horeca.site.services.services.RestaurantMenuService;
 import io.swagger.annotations.Api;
@@ -17,9 +19,10 @@ public class RestaurantMenuController {
     @Autowired
     private RestaurantMenuService service;
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestaurantMenu get(@PathVariable("hotelId") Long hotelId) {
+    public RestaurantMenu get(@HotelId @PathVariable("hotelId") Long hotelId) {
         return service.get(hotelId);
     }
 
@@ -41,9 +44,10 @@ public class RestaurantMenuController {
         return service.addDefaultRestaurantMenu(hotelId);
     }
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu/categories", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<RestaurantMenuCategory> getCategories(@PathVariable("hotelId") Long hotelId) {
+    public List<RestaurantMenuCategory> getCategories(@HotelId @PathVariable("hotelId") Long hotelId) {
         return service.getCategories(hotelId);
     }
 
@@ -53,9 +57,10 @@ public class RestaurantMenuController {
         return service.addCategory(hotelId, category);
     }
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu/categories/{categoryId}", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestaurantMenuCategory getCategory(@PathVariable("hotelId") Long hotelId,
+    public RestaurantMenuCategory getCategory(@HotelId @PathVariable("hotelId") Long hotelId,
                                                 @PathVariable("categoryId") Long categoryId) {
         return service.getCategory(hotelId, categoryId);
     }
@@ -83,9 +88,10 @@ public class RestaurantMenuController {
         service.deleteCategory(hotelId, categoryId);
     }
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu/categories/{categoryId}/items",
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<RestaurantMenuItem> getItems(@PathVariable("hotelId") Long hotelId,
+    public List<RestaurantMenuItem> getItems(@HotelId @PathVariable("hotelId") Long hotelId,
                                             @PathVariable("categoryId") Long categoryId) {
 
         return service.getItems(hotelId, categoryId);
@@ -100,9 +106,10 @@ public class RestaurantMenuController {
         return service.addItem(hotelId, categoryId, item);
     }
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu/categories/{categoryId}/items/{itemId}",
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestaurantMenuItem getItem(@PathVariable("hotelId") Long hotelId,
+    public RestaurantMenuItem getItem(@HotelId @PathVariable("hotelId") Long hotelId,
                                   @PathVariable("categoryId") Long categoryId,
                                   @PathVariable("itemId") Long itemId) {
 

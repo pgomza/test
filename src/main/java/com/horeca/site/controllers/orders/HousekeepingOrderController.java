@@ -1,5 +1,7 @@
 package com.horeca.site.controllers.orders;
 
+import com.horeca.site.handlers.StayPin;
+import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.housekeeping.HousekeepingOrder;
 import com.horeca.site.models.orders.housekeeping.HousekeepingOrderPOST;
@@ -23,13 +25,15 @@ public class HousekeepingOrderController {
     @Autowired
     private HousekeepingOrderService service;
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{pin}/orders/housekeeping", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<HousekeepingOrder> getAll(@PathVariable String pin) {
+    public Set<HousekeepingOrder> getAll(@StayPin @PathVariable String pin) {
         return service.getAll(pin);
     }
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{pin}/orders/housekeeping/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public HousekeepingOrder get(@PathVariable String pin, @PathVariable Long id) {
+    public HousekeepingOrder get(@StayPin @PathVariable String pin, @PathVariable Long id) {
         return service.get(pin, id);
     }
 

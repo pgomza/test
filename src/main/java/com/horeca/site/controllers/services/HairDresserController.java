@@ -1,5 +1,7 @@
 package com.horeca.site.controllers.services;
 
+import com.horeca.site.handlers.HotelId;
+import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.hairdresser.HairDresser;
 import com.horeca.site.services.services.HairDresserService;
 import io.swagger.annotations.Api;
@@ -18,8 +20,9 @@ public class HairDresserController {
     @Autowired
     private HairDresserService service;
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/hairdresser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public HairDresser get(@PathVariable("hotelId") Long hotelId) {
+    public HairDresser get(@HotelId @PathVariable("hotelId") Long hotelId) {
         return service.get(hotelId);
     }
 

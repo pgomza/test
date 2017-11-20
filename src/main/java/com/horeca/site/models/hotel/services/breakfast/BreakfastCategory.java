@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.services.breakfast;
 
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -19,6 +20,7 @@ public class BreakfastCategory {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "breakfast_category_id")
     private Set<BreakfastItem> items;

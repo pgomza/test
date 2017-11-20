@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.information;
 
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -16,9 +17,11 @@ public class UsefulInformationOtherItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     @NotEmpty
     private String name;
 
+    @Translatable
     @NotEmpty
     private String value;
 

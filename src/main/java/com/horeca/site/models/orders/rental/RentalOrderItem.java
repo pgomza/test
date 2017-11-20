@@ -1,6 +1,7 @@
 package com.horeca.site.models.orders.rental;
 
 import com.horeca.site.models.hotel.services.rental.RentalItem;
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ public class RentalOrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private RentalItem item;
