@@ -1,5 +1,7 @@
 package com.horeca.site.controllers.orders;
 
+import com.horeca.site.handlers.StayPin;
+import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.orders.OrderStatusPUT;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrder;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrderPOST;
@@ -23,13 +25,15 @@ public class RoomServiceOrderController {
     @Autowired
     private RoomServiceOrderService service;
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{pin}/orders/roomservice", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<RoomServiceOrder> getAll(@PathVariable String pin) {
+    public Set<RoomServiceOrder> getAll(@StayPin @PathVariable String pin) {
         return service.getAll(pin);
     }
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{pin}/orders/roomservice/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public RoomServiceOrder get(@PathVariable String pin, @PathVariable Long id) {
+    public RoomServiceOrder get(@StayPin @PathVariable String pin, @PathVariable Long id) {
         return service.get(pin, id);
     }
 

@@ -1,5 +1,7 @@
 package com.horeca.site.controllers.orders;
 
+import com.horeca.site.handlers.StayPin;
+import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.orders.dnd.DndOrder;
 import com.horeca.site.models.orders.dnd.DndOrderUPDATE;
 import com.horeca.site.services.orders.DndOrderService;
@@ -18,8 +20,9 @@ public class DndOrderController {
     @Autowired
     private DndOrderService service;
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{pin}/orders/dnd", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public DndOrder get(@PathVariable String pin) {
+    public DndOrder get(@StayPin @PathVariable String pin) {
         return service.get(pin);
     }
 
