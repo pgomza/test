@@ -6,16 +6,13 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 @Audited
 public class SalesmanAccount extends AbstractAccount {
 
-    public static final String DEFAULT_ROLE = "ROLE_SALESMAN";
+    public static final String ROLE_DEFAULT = "ROLE_SALESMAN";
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -34,7 +31,7 @@ public class SalesmanAccount extends AbstractAccount {
     }
 
     public SalesmanAccount(String username, String password) {
-        this(username, password, Collections.singletonList(DEFAULT_ROLE), new HashMap<>());
+        this(username, password, Collections.singletonList(ROLE_DEFAULT), new HashMap<>());
     }
 
     public SalesmanAccount(String username, String password, List<String> roles) {
@@ -42,7 +39,8 @@ public class SalesmanAccount extends AbstractAccount {
     }
 
     public SalesmanAccount(String username, String password, Map<String, String> profileData) {
-        this(username, password, Collections.singletonList(DEFAULT_ROLE), profileData);
+        this(username, password, Arrays.asList(ROLE_DEFAULT, UserAccount.ROLE_HOTEL_BASIC, UserAccount.ROLE_HOTEL_FULL),
+                profileData);
     }
 
     public SalesmanAccount(String username, String password, List<String> roles, Map<String, String> profileData) {

@@ -12,7 +12,7 @@ import java.util.Map;
 @Entity
 public class RootAccount extends AbstractAccount {
 
-    public static final String DEFAULT_ROLE = "ROLE_ROOT";
+    public static final String ROLE_DEFAULT = "ROLE_ROOT";
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -52,7 +52,8 @@ public class RootAccount extends AbstractAccount {
     }
 
     public List<String> getRoles() {
-        return Arrays.asList(DEFAULT_ROLE, SalesmanAccount.DEFAULT_ROLE);
+        return Arrays.asList(ROLE_DEFAULT, SalesmanAccount.ROLE_DEFAULT, UserAccount.ROLE_DEFAULT, UserAccount.ROLE_HOTEL_BASIC,
+                UserAccount.ROLE_HOTEL_FULL);
     }
 
     @Override

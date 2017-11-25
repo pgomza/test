@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -55,8 +54,7 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
             throw new BusinessRuleViolationException("Such a salesman already exists");
         }
         String hashedPassword = PasswordHashingService.getHashedFromPlain(plainPassword);
-        SalesmanAccount account = new SalesmanAccount(AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login,
-                hashedPassword, Collections.singletonList(SalesmanAccount.DEFAULT_ROLE));
+        SalesmanAccount account = new SalesmanAccount(AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login, hashedPassword);
         return save(account);
     }
 }

@@ -1,6 +1,7 @@
 package com.horeca.site.security;
 
 import com.horeca.site.handlers.CustomOAuth2ExceptionRenderer;
+import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.models.RootAccount;
 import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.models.UserAccount;
@@ -61,7 +62,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 
         // allow everybody but anons to access static translations
         http.authorizeRequests().antMatchers("/api/static-translations/**")
-                .hasAnyRole("ROOT", "SALESMAN", "ADMIN", "GUEST");
+                .hasAnyRole(UserAccount.ROLE_HOTEL_FULL, GuestAccount.ROLE_DEFAULT);
 
         // allow anybody who's in possession of a temp token to add a user account
         // 'anybody' means people that don't have to go through the OAuth2 authentication process
@@ -118,17 +119,15 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         *******************************************************************************
          */
 
-        http.authorizeRequests().antMatchers("/api/static-translations/**").hasAuthority(RootAccount.DEFAULT_ROLE);
-
         // salesmen can access their profile
-        http.authorizeRequests().antMatchers("/api/accounts/salesmen/current/**").hasAuthority(SalesmanAccount.DEFAULT_ROLE);
+        http.authorizeRequests().antMatchers("/api/accounts/salesmen/current/**").hasAuthority(SalesmanAccount.ROLE_DEFAULT);
         // but only roots can manage salesmen
-        http.authorizeRequests().antMatchers("/api/accounts/salesmen/**").hasAuthority(RootAccount.DEFAULT_ROLE);
+        http.authorizeRequests().antMatchers("/api/accounts/salesmen/**").hasAuthority(RootAccount.ROLE_DEFAULT);
 
         // users can access their profile
-        http.authorizeRequests().antMatchers("/api/accounts/users/current/**").hasAuthority(UserAccount.DEFAULT_ROLE);
+        http.authorizeRequests().antMatchers("/api/accounts/users/current/**").hasAuthority(UserAccount.ROLE_DEFAULT);
         // only accounts with the 'SALESMAN' role can manage all the users
-        http.authorizeRequests().antMatchers("/api/accounts/users/**").hasAuthority(SalesmanAccount.DEFAULT_ROLE);
+        http.authorizeRequests().antMatchers("/api/accounts/users/**").hasAuthority(SalesmanAccount.ROLE_DEFAULT);
 
 
         /*

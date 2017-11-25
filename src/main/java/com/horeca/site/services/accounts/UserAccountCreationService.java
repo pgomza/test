@@ -22,7 +22,7 @@ public class UserAccountCreationService {
 
     @PreAuthorize("hasRole('ROLE_SALESMAN')")
     public UserAccountTempTokenResponse getTempTokenForNewUserAccount(UserAccountTempTokenRequest request) {
-        Set<String> roles = new HashSet<>(Collections.singletonList(UserAccount.DEFAULT_ROLE));
+        Set<String> roles = new HashSet<>(Collections.singletonList(UserAccount.ROLE_DEFAULT));
         UserAccountTempToken tempToken = userAccountTempTokenService.generateTempToken(request.getHotelId(), roles);
 
         Integer expiresIn = userAccountTempTokenService.getSecondsUntilExpiration(tempToken);
