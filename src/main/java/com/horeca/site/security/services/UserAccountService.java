@@ -67,12 +67,12 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
             throw new AccessDeniedException("Access denied");
     }
 
-    public UserAccount create(String login, String plainPassword, Long hotelId) {
+    public UserAccount create(String login, String plainPassword, Long hotelId, List<String> roles) {
         if (exists(login)) {
             throw new BusinessRuleViolationException("Such a user already exists");
         }
         String hashedPassword = PasswordHashingService.getHashedFromPlain(plainPassword);
-        UserAccount account = new UserAccount(loginToUsername(login), hashedPassword, hotelId);
+        UserAccount account = new UserAccount(loginToUsername(login), hashedPassword, hotelId, roles);
         return save(account);
     }
 

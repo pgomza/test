@@ -7,6 +7,7 @@ import com.horeca.site.models.accounts.UserAccountPOST;
 import com.horeca.site.models.accounts.UserAccountPending;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.repositories.accounts.AccountPendingRepository;
+import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.PasswordHashingService;
 import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.EmailSenderService;
@@ -14,6 +15,9 @@ import com.horeca.site.services.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class UserAccountPendingService extends AccountPendingService<UserAccountPending> {
@@ -36,11 +40,12 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
     public AccountPending add(UserAccountPOST accountPOST) {
         String email = accountPOST.getEmail();
         String plainTextPassword = accountPOST.getPassword();
+        Long hotelId = accountPOST.getHotelId();
+        Boolean fullAccess = accountPOST.getFullAccess();
 
         String hashedPassword = PasswordHashingService.getHashedFromPlain(plainTextPassword);
         String secret = generateSecret();
-        UserAccountPending userAccountPending =
-                new UserAccountPending(email, hashedPassword, accountPOST.getHotelId(), secret);
+        UserAccountPending userAccountPending = new UserAccountPending(email, hashedPassword, secret, hotelId, fullAccess);
 
         return repository.save(userAccountPending);
     }
@@ -57,8 +62,13 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
         String email = pending.getEmail();
         String password = pending.getPassword();
         Long hotelId = pending.getHotelId();
+        Boolean fullAccess = pending.getFullAccess();
 
-        userAccountService.create(email, password, hotelId);
+        List<String> roles = Collections.singletonList(UserAccount.ROLE_HOTEL_BASIC);
+        if (fullAccess) {
+            roles.add(UserAccount.ROLE_HOTEL_FULL);
+        }
+        userAccountService.create(email, password, hotelId, roles);
 
         // this may be the first user for this hotel
         // make sure that the hotel contains enough information
