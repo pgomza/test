@@ -81,7 +81,7 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
         String password = pending.getPassword();
         Long hotelId = pending.getHotelId();
 
-        userAccountService.create(email, password, hotelId);
+        userAccountService.create(email, password, true, hotelId);
 
         // this may be the first user for this hotel
         // make sure that the hotel contains enough information
