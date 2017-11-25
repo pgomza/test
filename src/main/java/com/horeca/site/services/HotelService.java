@@ -6,7 +6,6 @@ import com.horeca.site.models.Currency;
 import com.horeca.site.models.cubilis.CubilisConnectionStatus;
 import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.models.hotel.Hotel;
-import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.information.UsefulInformationHourItem;
@@ -19,7 +18,6 @@ import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,14 +37,14 @@ public class HotelService {
     @Autowired
     private HotelRepository repository;
 
+    @Autowired
+    private HotelQueryService hotelQueryService;
+
     // TODO avoid a circular dependency: HotelImagesService is dependent on HotelService
     // for now, @Lazy is used as a workaround
     @Autowired
     @Lazy
     private HotelImagesService hotelImagesService;
-
-    @Autowired
-    private HotelSearchService hotelSearchService;
 
     @Autowired
     @Lazy
@@ -57,6 +55,20 @@ public class HotelService {
 
     @Autowired
     private GuestAccountService guestAccountService;
+
+    /*
+        Expose these two methods in this service to prevent clients
+        from autowiring the query service just to use them; the 'get' method
+        is by far the most popular one
+     */
+    public Hotel get(Long id) {
+        return hotelQueryService.get(id);
+    }
+
+    public Page<Hotel> getAll(Pageable pageable) {
+        return hotelQueryService.getAll(pageable);
+    }
+
 
     @PreAuthorize("hasRole('SALESMAN')")
     public Hotel add(Hotel hotel) {
@@ -73,7 +85,7 @@ public class HotelService {
         repository.save(hotel);
         ensureEnoughInfoAboutHotel(hotel.getId());
 
-        return get(hotel.getId());
+        return hotelQueryService.get(hotel.getId());
     }
 
     public Iterable<Hotel> addAll(Iterable<Hotel> hotels) {
@@ -87,7 +99,7 @@ public class HotelService {
     }
 
     public Hotel updateFromController(Long id, Hotel newOne) {
-        Hotel current = get(id);
+        Hotel current = hotelQueryService.get(id);
         // don't let this update overwrite info about the guests - ignore whatever has been set in newOne as 'guests'
         // there's a different endpoint specifically intended for managing the guests
         newOne.setGuests(current.getGuests());
@@ -100,19 +112,15 @@ public class HotelService {
         return update(id, newOne);
     }
 
-    public List<String> getTVChannels(Long id) {
-        return get(id).getTvChannels();
-    }
-
     public List<String> updateTVChannels(Long id, List<String> updated) {
-        Hotel hotel = get(id);
+        Hotel hotel = hotelQueryService.get(id);
         hotel.setTvChannels(updated);
         update(id, hotel);
         return hotel.getTvChannels();
     }
 
     public void reset(Long id) {
-        Hotel hotel = get(id);
+        Hotel hotel = hotelQueryService.get(id);
         if (!hotel.getIsTestHotel()) {
             throw new BusinessRuleViolationException("You mustn't reset a non-test hotel");
         }
@@ -165,7 +173,7 @@ public class HotelService {
 
     @PreAuthorize("hasRole('SALESMAN')")
     public void markAsDeleted(Long id) {
-        Hotel hotel = get(id);
+        Hotel hotel = hotelQueryService.get(id);
         hotel.setIsMarkedAsDeleted(true);
 
         userAccountService.disableAllInHotel(id);
@@ -177,7 +185,7 @@ public class HotelService {
 
     @PreAuthorize("hasRole('SALESMAN')")
     public void restore(Long id) {
-        Hotel hotel = get(id);
+        Hotel hotel = hotelQueryService.get(id);
         hotel.setIsMarkedAsDeleted(false);
 
         userAccountService.enableAllInHotel(id);
@@ -188,7 +196,7 @@ public class HotelService {
     }
 
     public void delete(Long id) {
-        ensureExists(id);
+        hotelQueryService.get(id);
 
         // delete all accounts and stays associated with this hotel
         userAccountService.deleteAllInHotel(id);
@@ -205,14 +213,8 @@ public class HotelService {
 
     @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
     public void deleteMarkedAndOutdated() {
-        List<Long> markedAsDeleted = hotelSearchService.getMarkedAndOutdated();
+        List<Long> markedAsDeleted = hotelQueryService.getMarkedAndOutdated();
         markedAsDeleted.forEach(this::delete);
-    }
-
-    void ensureExists(Long hotelId) {
-        boolean exists = repository.exists(hotelId);
-        if (!exists)
-            throw new ResourceNotFoundException("Could not find a hotel with such an id");
     }
 
     /**
@@ -222,7 +224,7 @@ public class HotelService {
      * name in case it hasn't been specified
      */
     public void ensureEnoughInfoAboutHotel(Long hotelId) {
-        Hotel hotel = get(hotelId);
+        Hotel hotel = hotelQueryService.get(hotelId);
         if (hotel.getDescription() == null)
             hotel.setDescription("");
 
@@ -288,7 +290,7 @@ public class HotelService {
      * Only a change in their order is allowed
      */
     private void checkImagesOnUpdate(Hotel updatedHotel) {
-        Hotel currentHotel = get(updatedHotel.getId());
+        Hotel currentHotel = hotelQueryService.get(updatedHotel.getId());
         if (currentHotel.getImages() != null) {
             Set<FileLink> currentImages = new HashSet<>(currentHotel.getImages());
             Set<FileLink> updatedImages = null;
@@ -310,148 +312,5 @@ public class HotelService {
             throw new BusinessRuleViolationException("Only a change in the order of the existing hotel images is allowed. " +
                     "To add or delete an image use the ~/api/hotels/" + updatedHotel.getId() + "/images endpoint");
         }
-    }
-
-    /*
-        filtering/retrieval
-     */
-
-    public Hotel get(Long id) {
-        Hotel hotel = repository.findOne(id);
-        if (hotel == null)
-            throw new ResourceNotFoundException();
-
-        return hotel;
-    }
-
-    // The following get* methods exclude the hotels that have been marked as deleted
-    // The methods aren't to be used from anywhere else than the controllers (for most of them
-    // it's obvious because they receive an argument of the Pageable type)
-
-    public Hotel getIfNotMarkedAsDeleted(Long id) {
-        Hotel hotel = get(id);
-        if (hotel.getIsMarkedAsDeleted()) {
-            throw new ResourceNotFoundException();
-        }
-
-        return hotel;
-    }
-
-    public HotelView getViewIfNotMarkedAsDeleted(Long id) {
-        return getIfNotMarkedAsDeleted(id).toView();
-    }
-
-    public Page<Hotel> getAll(Pageable pageable) {
-        List<Long> foundIds = hotelSearchService.getAll();
-        return getPageOfHotels(foundIds, pageable);
-    }
-
-    public Page<HotelView> getAllViews(Pageable pageable) {
-        List<Long> foundIds = hotelSearchService.getAll();
-        return getPageOfHotelViews(foundIds, pageable);
-    }
-
-    public Page<Hotel> getByName(String name, Pageable pageable) {
-        List<Long> foundIds = hotelSearchService.getIdsByName(name);
-        return getPageOfHotels(foundIds, pageable);
-    }
-
-    public Page<HotelView> getViewsByName(String name, Pageable pageable) {
-        List<Long> foundIds = hotelSearchService.getIdsByName(name);
-        return getPageOfHotelViews(foundIds, pageable);
-    }
-
-    public Page<Hotel> getByCity(String city, Pageable pageable) {
-        List<Long> foundIds = hotelSearchService.getIdsByCity(city);
-        return getPageOfHotels(foundIds, pageable);
-    }
-
-    public Page<HotelView> getViewsByCity(String city, Pageable pageable) {
-        List<Long> foundIds = hotelSearchService.getIdsByCity(city);
-        return getPageOfHotelViews(foundIds, pageable);
-    }
-
-    public Page<Hotel> getByNameAndCity(String name, String city, Pageable pageable) {
-        if (name.isEmpty() && city.isEmpty())
-            return getEmptyPage(pageable);
-        else if (name.isEmpty())
-            return getByCity(city, pageable);
-        else if (city.isEmpty())
-            return getByName(name, pageable);
-        else {
-            List<Long> foundIds = hotelSearchService.getIdsByNameAndCity(name, city);
-            return getPageOfHotels(foundIds, pageable);
-        }
-    }
-
-    public Page<HotelView> getViewsByNameAndCity(String name, String city, Pageable pageable) {
-        if (name.isEmpty() && city.isEmpty())
-            return getEmptyPage(pageable);
-        else if (name.isEmpty())
-            return getViewsByCity(city, pageable);
-        else if (city.isEmpty())
-            return getViewsByName(name, pageable);
-        else {
-            List<Long> foundIds = hotelSearchService.getIdsByNameAndCity(name, city);
-            return getPageOfHotelViews(foundIds, pageable);
-        }
-    }
-
-    private Page<Hotel> getPageOfHotels(List<Long> hotelIds, Pageable pageable) {
-        List<Hotel> hotels = fetchBatchAndSort(hotelIds, pageable);
-        return getPageForContent(hotels, pageable, hotelIds.size());
-    }
-
-    private Page<HotelView> getPageOfHotelViews(List<Long> hotelIds, Pageable pageable) {
-        List<Hotel> hotels = fetchBatchAndSort(hotelIds, pageable);
-        List<HotelView> views = hotels.stream().map(hotel -> hotel.toView()).collect(Collectors.toList());
-        return getPageForContent(views, pageable, hotelIds.size());
-    }
-
-    private static <T> Page<T> getEmptyPage(Pageable pageable) {
-        return new PageImpl<>(new ArrayList<>(), pageable, 0L);
-    }
-
-    private static <T> Page<T> getPageForContent(List<T> content, Pageable pageable, int totalCount) {
-        return new PageImpl<>(content, pageable, totalCount);
-    }
-
-    private List<Hotel> fetchBatchAndSort(List<Long> hotelIds, Pageable pageable) {
-        int totalCount = hotelIds.size();
-        int pageNumber = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
-        int fromIndex = Math.max(pageNumber * pageSize, 0);
-        int toIndex = Math.max(Math.min(fromIndex + pageSize, totalCount), 0);
-
-        List<Long> idsToFetch = hotelIds.subList(fromIndex, toIndex);
-        List<Hotel> fetched = idsToFetch.stream().map(id -> repository.findOne(id)).collect(Collectors.toList());
-        Collections.sort(fetched, new HotelComparator());
-        return fetched;
-    }
-
-    private static class HotelComparator implements Comparator<Hotel> {
-        @Override
-        public int compare(Hotel hotel1, Hotel hotel2) {
-            if (hotel1.getIsThrodiPartner() && (!hotel2.getIsThrodiPartner()))
-                return -1;
-            else if ((!hotel1.getIsThrodiPartner()) && hotel2.getIsThrodiPartner())
-                return 1;
-            else { // simply sort by id
-                if (hotel1.getId() < hotel2.getId())
-                    return -1;
-                else if (hotel1.getId() > hotel2.getId())
-                    return 1;
-                else
-                    return 0;
-            }
-        }
-    }
-
-    /*
-        Cubilis-related functionality
-     */
-
-    public List<Long> getIdsOfCubilisEligible() {
-        return repository.getIdsOfCubilisEligible();
     }
 }

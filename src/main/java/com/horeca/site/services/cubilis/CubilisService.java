@@ -9,7 +9,7 @@ import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.updates.ChangeInHotelEvent;
 import com.horeca.site.repositories.cubilis.CubilisConnectionStatusRepository;
 import com.horeca.site.repositories.cubilis.CubilisSettingsRepository;
-import com.horeca.site.services.HotelService;
+import com.horeca.site.services.HotelQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -40,13 +40,13 @@ public class CubilisService {
     private CubilisConnectionStatusRepository connectionStatusRepository;
 
     @Autowired
-    private HotelService hotelService;
+    private HotelQueryService hotelQueryService;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
     public CubilisSettings getSettings(Long hotelId) {
-        Hotel hotel = hotelService.get(hotelId);
+        Hotel hotel = hotelQueryService.get(hotelId);
         return hotel.getCubilisSettings();
     }
 
@@ -61,7 +61,7 @@ public class CubilisService {
     }
 
     public CubilisConnectionStatus getConnectionStatus(Long hotelId) {
-        Hotel hotel = hotelService.get(hotelId);
+        Hotel hotel = hotelQueryService.get(hotelId);
         return hotel.getCubilisConnectionStatus();
     }
 
@@ -94,7 +94,7 @@ public class CubilisService {
 
     @Scheduled(fixedDelay = 5 * 60 * 1000)
     public void fetchAndUpdateReservations() {
-        List<Long> hotelIds = hotelService.getIdsOfCubilisEligible();
+        List<Long> hotelIds = hotelQueryService.getIdsOfCubilisEligible();
         Map<Long, CubilisSettings> hotelIdToSettings = hotelIds.stream()
                 .collect(Collectors.toMap(Function.identity(), this::getSettings));
 
@@ -135,7 +135,7 @@ public class CubilisService {
     }
 
     private void setHotelForReservations(Long hotelId, List<CubilisReservation> reservations) {
-        Hotel hotel = hotelService.get(hotelId);
+        Hotel hotel = hotelQueryService.get(hotelId);
         for (CubilisReservation reservation : reservations) {
             reservation.setHotel(hotel);
         }
