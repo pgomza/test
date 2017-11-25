@@ -53,7 +53,7 @@ public class GuestService {
     }
 
     public void delete(Long hotelId, Long id) {
-        hotelService.ensureExists(hotelId);
+        hotelService.get(hotelId);
         repository.delete(id);
     }
 }
