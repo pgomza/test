@@ -2,11 +2,9 @@ package com.horeca.site.services.accounts;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.exceptions.UnauthorizedException;
-import com.horeca.site.models.accounts.AccountPOST;
 import com.horeca.site.models.accounts.AccountPending;
+import com.horeca.site.models.accounts.UserAccountPOST;
 import com.horeca.site.models.accounts.UserAccountPending;
-import com.horeca.site.models.accounts.UserAccountTempToken;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.repositories.accounts.AccountPendingRepository;
 import com.horeca.site.security.services.PasswordHashingService;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Service;
 public class UserAccountPendingService extends AccountPendingService<UserAccountPending> {
 
     private final UserAccountService userAccountService;
-    private final UserAccountTempTokenService userAccountTempTokenService;
     private final HotelService hotelService;
 
     @Autowired
@@ -29,43 +26,23 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
                                      AccountPendingRepository<UserAccountPending> repository,
                                      @Value("${activation.url.users}") String activationUrl,
                                      UserAccountService userAccountService,
-                                     UserAccountTempTokenService userAccountTempTokenService,
                                      HotelService hotelService) {
 
         super(emailSenderService, repository, activationUrl);
         this.userAccountService = userAccountService;
-        this.userAccountTempTokenService = userAccountTempTokenService;
         this.hotelService = hotelService;
     }
 
-    public AccountPending verifyAndAdd(String token, AccountPOST accountPOST) {
+    public AccountPending add(UserAccountPOST accountPOST) {
         String email = accountPOST.getEmail();
         String plainTextPassword = accountPOST.getPassword();
-        final String DUMMY_REDIRECTION_URL = "https://example.com";
-
-        UserAccountTempToken tempToken;
-        try {
-            tempToken = userAccountTempTokenService.get(token);
-            userAccountTempTokenService.ensureValidity(tempToken);
-        }
-        catch (ResourceNotFoundException ex) {
-            throw new UnauthorizedException(ex); // in that case this exception makes more sense
-        }
-
-        if (userAccountService.exists(email)) {
-            throw new BusinessRuleViolationException("A user with such an email already exists");
-        }
 
         String hashedPassword = PasswordHashingService.getHashedFromPlain(plainTextPassword);
-        String secret = userAccountTempTokenService.generateRandomString();
+        String secret = generateSecret();
         UserAccountPending userAccountPending =
-                new UserAccountPending(email, hashedPassword, tempToken.getHotel().getId(), secret, DUMMY_REDIRECTION_URL);
-        UserAccountPending saved = repository.save(userAccountPending);
+                new UserAccountPending(email, hashedPassword, accountPOST.getHotelId(), secret);
 
-        // to prevent people from creating several user accounts with the same temp token, invalidate it
-        userAccountTempTokenService.invalidate(tempToken);
-
-        return saved;
+        return repository.save(userAccountPending);
     }
 
     @Override

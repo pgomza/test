@@ -64,11 +64,6 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers("/api/static-translations/**")
                 .hasAnyRole(UserAccount.ROLE_HOTEL_FULL, GuestAccount.ROLE_DEFAULT);
 
-        // allow anybody who's in possession of a temp token to add a user account
-        // 'anybody' means people that don't have to go through the OAuth2 authentication process
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/accounts/users").permitAll();
-        // allow anybody to get info about a temp token
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/accounts/users/tokens/{token}").permitAll();
         // allow anybody to activate their account
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/accounts/users/activation").permitAll();
         // allow anybody to reset their password

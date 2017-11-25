@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
 @Service
 @Transactional
 public class SalesmanAccountPendingService extends AccountPendingService<SalesmanAccountPending> {
@@ -40,7 +38,7 @@ public class SalesmanAccountPendingService extends AccountPendingService<Salesma
         }
 
         String hashedPassword = PasswordHashingService.getHashedFromPlain(plainTextPassword);
-        String secret = UUID.randomUUID().toString();
+        String secret = generateSecret();
 
         SalesmanAccountPending accountPending = new SalesmanAccountPending(email, hashedPassword, secret);
         return repository.save(accountPending);

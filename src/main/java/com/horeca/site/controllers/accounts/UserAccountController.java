@@ -4,7 +4,6 @@ import com.horeca.site.models.accounts.*;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.accounts.PasswordResetService;
-import com.horeca.site.services.accounts.UserAccountCreationService;
 import com.horeca.site.services.accounts.UserAccountPendingService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +28,6 @@ public class UserAccountController {
 
     @Autowired
     private UserAccountService userAccountService;
-
-    @Autowired
-    private UserAccountCreationService userAccountCreationService;
 
     @Autowired
     private UserAccountPendingService userAccountPendingService;
@@ -71,9 +67,8 @@ public class UserAccountController {
 
     @Transactional
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseMessage addPending(@RequestHeader(name = "Temp-Token", required = true) String token,
-                                      @RequestBody @Valid UserAccountPOST userAccountPOST) {
-        AccountPending pending = userAccountPendingService.verifyAndAdd(token, userAccountPOST);
+    public ResponseMessage addPending(@RequestBody @Valid UserAccountPOST userAccountPOST) {
+        AccountPending pending = userAccountPendingService.add(userAccountPOST);
         try {
             userAccountPendingService.sendActivationEmail(pending);
         } catch (UnsupportedEncodingException | MessagingException e) {
@@ -93,16 +88,6 @@ public class UserAccountController {
         }
 
         return userAccountPendingService.prepareRedirectPage(outcome);
-    }
-
-    @RequestMapping(value = "/users/tokens", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserAccountTempTokenResponse getNewTempToken(@RequestBody UserAccountTempTokenRequest request) {
-        return userAccountCreationService.getTempTokenForNewUserAccount(request);
-    }
-
-    @RequestMapping(value = "/users/tokens/{token}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserAccountTempTokenResponse getInfoAboutToken(@PathVariable("token") String token) {
-        return userAccountCreationService.getInfoAboutUserAccountTempToken(token);
     }
 
     @RequestMapping(value = "/users/reset-request", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

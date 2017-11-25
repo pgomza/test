@@ -2,7 +2,6 @@ package com.horeca.config;
 
 import com.horeca.site.services.StayInfoAsHtmlService;
 import com.horeca.site.services.accounts.PasswordResetPendingService;
-import com.horeca.site.services.accounts.UserAccountTempTokenService;
 import com.horeca.site.services.cubilis.CubilisReservationService;
 import com.horeca.site.websocket.WebSocketTokenService;
 import com.openhtmltopdf.util.XRLog;
@@ -17,9 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class StartupRunner {
-
-    @Autowired
-    private UserAccountTempTokenService userAccountTempTokenService;
 
     @Autowired
     private PasswordResetPendingService passwordResetPendingService;
@@ -38,7 +34,6 @@ public class StartupRunner {
         // turn off logging for the html-to-pdf conversion library
         XRLog.setLoggingEnabled(false);
 
-        userAccountTempTokenService.deleteInvalidTokens();
         webSocketTokenService.deleteAll();
         cubilisReservationService.deleteOutdated();
         passwordResetPendingService.deleteAllInvalid();

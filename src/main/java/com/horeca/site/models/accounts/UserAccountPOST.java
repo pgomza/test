@@ -1,19 +1,17 @@
 package com.horeca.site.models.accounts;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.constraints.URL;
 
 public class UserAccountPOST extends AccountPOST {
 
     @NotEmpty
-    @URL
-    private String redirectUrl;
+    private Long hotelId;
 
-    public String getRedirectUrl() {
-        return redirectUrl;
+    public Long getHotelId() {
+        return hotelId;
     }
 
-    public void setRedirectUrl(String redirectUrl) {
-        this.redirectUrl = redirectUrl;
+    public void setHotelId(Long hotelId) {
+        this.hotelId = hotelId;
     }
 }
