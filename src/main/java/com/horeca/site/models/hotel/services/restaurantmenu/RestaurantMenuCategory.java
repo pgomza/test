@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.services.restaurantmenu;
 
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -16,9 +17,11 @@ public class RestaurantMenuCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     @NotEmpty
     private String name;
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_menu_category_id")
     @OrderColumn(name = "item_order")

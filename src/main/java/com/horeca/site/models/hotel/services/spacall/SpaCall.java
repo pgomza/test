@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.services.spacall;
 
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -16,6 +17,7 @@ public class SpaCall {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     private String description;
 
     @NotEmpty

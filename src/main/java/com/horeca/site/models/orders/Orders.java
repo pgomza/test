@@ -2,6 +2,7 @@ package com.horeca.site.models.orders;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.horeca.site.models.hotel.translation.Translatable;
 import com.horeca.site.models.orders.bar.BarOrder;
 import com.horeca.site.models.orders.breakfast.BreakfastOrder;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
@@ -45,18 +46,22 @@ public class Orders {
     @JoinColumn(name = "orders_id_spa")
     private Set<SpaOrder> spaOrders = new HashSet<>();
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "orders_id_pet_care")
     private Set<PetCareOrder> petCareOrders = new HashSet<>();
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "orders_id_breakfast")
     private Set<BreakfastOrder> breakfastOrders = new HashSet<>();
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "orders_id_housekeeping")
     private Set<HousekeepingOrder> housekeepingOrders = new HashSet<>();
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "orders_id_room_service")
     private Set<RoomServiceOrder> roomServiceOrders = new HashSet<>();
@@ -65,10 +70,12 @@ public class Orders {
     @JoinColumn(name = "orders_id_tableordering")
     private Set<TableOrderingOrder> tableOrderingOrders = new HashSet<>();
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "orders_id_bar")
     private Set<BarOrder> barOrders = new HashSet<>();
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "orders_id_rental")
     private Set<RentalOrder> rentalOrders = new HashSet<>();

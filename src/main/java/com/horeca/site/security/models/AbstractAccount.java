@@ -6,10 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @MappedSuperclass
 public abstract class AbstractAccount implements UserDetails {
@@ -95,4 +92,8 @@ public abstract class AbstractAccount implements UserDetails {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+
+    public abstract Map<String, String> getProfileData();
+
+    public abstract void setProfileData(Map<String, String> profileData);
 }

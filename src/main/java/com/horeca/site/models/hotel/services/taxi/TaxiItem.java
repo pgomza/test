@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.services.taxi;
 
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ public class TaxiItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     @NotNull
     private String name;
 

@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.roomservice;
 
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -15,12 +16,14 @@ public class RoomService {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     private String description;
 
     @NotNull
     @Embedded
     private Price price;
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "room_service_id")
     private Set<RoomServiceCategory> categories;

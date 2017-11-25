@@ -1,6 +1,7 @@
 package com.horeca.site.models.orders.bar;
 
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.translation.Translatable;
 import com.horeca.site.models.orders.Order;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -20,6 +21,7 @@ public class BarOrder extends Order {
     @NotEmpty
     private String tableNumber;
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "bar_order_id")
     private Set<BarOrderItem> items;

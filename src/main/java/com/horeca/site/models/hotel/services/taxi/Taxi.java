@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.taxi;
 
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -18,6 +19,7 @@ public class Taxi {
     @NotNull
     private Price price;
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "taxi_id")
     private Set<TaxiItem> items;

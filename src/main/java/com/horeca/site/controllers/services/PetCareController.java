@@ -1,5 +1,7 @@
 package com.horeca.site.controllers.services;
 
+import com.horeca.site.handlers.HotelId;
+import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
 import com.horeca.site.services.services.PetCareService;
@@ -19,9 +21,10 @@ public class PetCareController {
     @Autowired
     private PetCareService petCareService;
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/petcare", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public PetCare get(@PathVariable("hotelId") Long hotelId) {
+    public PetCare get(@HotelId @PathVariable("hotelId") Long hotelId) {
         return petCareService.get(hotelId);
     }
 
@@ -31,15 +34,17 @@ public class PetCareController {
         return petCareService.addDefaultPetCare(hotelId);
     }
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/petcare/items", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PetCareItem> getItems(@PathVariable("hotelId") Long hotelId) {
+    public List<PetCareItem> getItems(@HotelId @PathVariable("hotelId") Long hotelId) {
         return petCareService.getItems(hotelId);
     }
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/petcare/items/{itemId}", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public PetCareItem getItem(@PathVariable("hotelId") Long hotelId, @PathVariable("itemId") Long itemId) {
+    public PetCareItem getItem(@HotelId @PathVariable("hotelId") Long hotelId, @PathVariable("itemId") Long itemId) {
         return petCareService.getItem(hotelId, itemId);
     }
 

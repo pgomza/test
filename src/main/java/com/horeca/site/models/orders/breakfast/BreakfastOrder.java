@@ -2,6 +2,7 @@ package com.horeca.site.models.orders.breakfast;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.translation.Translatable;
 import com.horeca.site.models.orders.Order;
 import org.hibernate.envers.Audited;
 import org.joda.time.LocalDateTime;
@@ -22,6 +23,7 @@ public class BreakfastOrder extends Order {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime time;
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "breakfast_order_id")
     private Set<BreakfastOrderItem> items;

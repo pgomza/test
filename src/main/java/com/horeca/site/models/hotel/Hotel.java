@@ -13,6 +13,7 @@ import com.horeca.site.models.hotel.roomdirectory.RoomDirectory;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
 import com.horeca.site.models.hotel.services.AvailableServices;
+import com.horeca.site.models.hotel.translation.Translatable;
 import com.horeca.site.models.notifications.NotificationSettings;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -33,12 +34,15 @@ public class Hotel {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Translatable
 	@NotEmpty
 	private String name;
 
+	@Translatable
 	@Column(columnDefinition = "nvarchar(4000)")
 	public String description;
 
+	@Translatable
 	@NotEmpty
 	@Column(columnDefinition = "nvarchar(4000)")
 	private String address;
@@ -75,10 +79,13 @@ public class Hotel {
 
 	private Float ratingOverall;
 
+	@Translatable
 	private String ratingOverallText;
 
+	@Translatable
 	private String propertyType;
 
+	@Translatable
 	private String chain;
 
 	private Double longitude;
@@ -98,6 +105,7 @@ public class Hotel {
 	@Enumerated(EnumType.STRING)
 	private Currency currency;
 
+	@Translatable
 	@NotNull
 	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(name = "TVChannel", joinColumns = @JoinColumn(name = "hotel_id"))
@@ -105,14 +113,17 @@ public class Hotel {
 	@OrderColumn(name = "name_order")
 	private List<String> tvChannels = new ArrayList<>();
 
+	@Translatable
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn
 	private UsefulInformation usefulInformation;
 
+	@Translatable
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn
 	private RoomDirectory roomDirectory;
 
+	@Translatable
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn
 	private AvailableServices availableServices;

@@ -7,7 +7,9 @@ import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.repositories.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
@@ -29,9 +31,6 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
     private UserAccountRepository repository;
 
     @Autowired
-    private LoginService loginService;
-
-    @Autowired
     private TokenStore tokenStore;
 
     @Override
@@ -40,18 +39,8 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
     }
 
     @Override
-    public boolean exists(String login) {
-        return loginService.exists(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login);
-    }
-
-    @Override
-    public UserAccount get(String login) {
-        return getRepository().findOne(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login);
-    }
-
-    @Override
-    public void delete(String login) {
-        getRepository().delete(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login);
+    protected String loginToUsername(String login) {
+        return AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login;
     }
 
     @PostFilter("@accessChecker.checkForUserAccountFromCollection(authentication, filterObject)")
@@ -65,6 +54,26 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
 
     public Set<UserAccountView> getViews() {
         return getAll().stream().map(UserAccount::toView).collect(Collectors.toSet());
+    }
+
+    public UserAccount getFromAuthentication(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserAccount) {
+            UserAccount userAccount = (UserAccount) principal;
+            // this is necessary because the instance obtained from 'authentication' isn't fully initialized
+            return get(userAccount.getLogin());
+        }
+        else
+            throw new AccessDeniedException("Access denied");
+    }
+
+    public UserAccount create(String login, String plainPassword, Long hotelId) {
+        if (exists(login)) {
+            throw new BusinessRuleViolationException("Such a user already exists");
+        }
+        String hashedPassword = PasswordHashingService.getHashedFromPlain(plainPassword);
+        UserAccount account = new UserAccount(loginToUsername(login), hashedPassword, hotelId);
+        return save(account);
     }
 
     public void verifyAndChangePassword(String login, String currentPassword, String newPassword) {

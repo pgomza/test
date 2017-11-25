@@ -22,9 +22,6 @@ public class GuestAccountService extends AbstractAccountService<GuestAccount> {
     private GuestAccountRepository repository;
 
     @Autowired
-    private LoginService loginService;
-
-    @Autowired
     private TokenStore tokenStore;
 
     @Override
@@ -33,18 +30,8 @@ public class GuestAccountService extends AbstractAccountService<GuestAccount> {
     }
 
     @Override
-    public boolean exists(String login) {
-        return loginService.exists(login);
-    }
-
-    @Override
-    public GuestAccount get(String login) {
-        return getRepository().findOne(AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX + login);
-    }
-
-    @Override
-    public void delete(String login) {
-        getRepository().delete(AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX + login);
+    protected String loginToUsername(String login) {
+        return AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX + login;
     }
 
     public void registerGuest(Stay stay) {

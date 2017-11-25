@@ -2,6 +2,7 @@ package com.horeca.site.models.hotel.services.rental;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 import org.joda.time.LocalTime;
 
@@ -17,6 +18,7 @@ public class Rental {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     private String description;
 
     @NotNull
@@ -29,6 +31,7 @@ public class Rental {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime toHour;
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "rental_id")
     private Set<RentalCategory> categories;

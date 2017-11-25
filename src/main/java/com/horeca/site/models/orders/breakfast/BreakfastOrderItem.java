@@ -1,6 +1,7 @@
 package com.horeca.site.models.orders.breakfast;
 
 import com.horeca.site.models.hotel.services.breakfast.BreakfastItem;
+import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ public class BreakfastOrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Translatable
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private BreakfastItem item;

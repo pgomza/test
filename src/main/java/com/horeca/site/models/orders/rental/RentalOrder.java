@@ -3,6 +3,7 @@ package com.horeca.site.models.orders.rental;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.translation.Translatable;
 import com.horeca.site.models.orders.Order;
 import org.hibernate.envers.Audited;
 import org.joda.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class RentalOrder extends Order {
     @NotNull
     private Price total;
 
+    @Translatable
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "rental_order_id")
     private Set<RentalOrderItem> items;

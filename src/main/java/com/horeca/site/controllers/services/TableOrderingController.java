@@ -1,5 +1,7 @@
 package com.horeca.site.controllers.services;
 
+import com.horeca.site.handlers.HotelId;
+import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.tableordering.TableOrdering;
 import com.horeca.site.services.services.TableOrderingService;
 import io.swagger.annotations.Api;
@@ -18,9 +20,10 @@ public class TableOrderingController {
     @Autowired
     private TableOrderingService service;
 
+    @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/tableordering", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public TableOrdering get(@PathVariable("hotelId") Long hotelId) {
+    public TableOrdering get(@HotelId @PathVariable("hotelId") Long hotelId) {
         return service.get(hotelId);
     }
 
