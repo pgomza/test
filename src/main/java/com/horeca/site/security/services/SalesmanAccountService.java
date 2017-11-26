@@ -50,11 +50,19 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
             throw new AccessDeniedException("Access denied");
     }
 
-    public SalesmanAccount create(String login, String plainPassword) {
+    public SalesmanAccount create(String login, String password, boolean isPasswordAlreadyHashed) {
         if (exists(login)) {
             throw new BusinessRuleViolationException("Such a salesman already exists");
         }
-        String hashedPassword = PasswordHashingService.getHashedFromPlain(plainPassword);
+
+        String hashedPassword;
+        if (isPasswordAlreadyHashed) {
+            hashedPassword = password;
+        }
+        else {
+            hashedPassword = PasswordHashingService.getHashedFromPlain(password);
+        }
+
         SalesmanAccount account = new SalesmanAccount(AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login,
                 hashedPassword, Collections.singletonList(SalesmanAccount.DEFAULT_ROLE));
         return save(account);
