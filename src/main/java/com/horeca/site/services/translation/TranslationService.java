@@ -96,7 +96,7 @@ public class TranslationService {
                 if (fieldType == String.class) {
                     String toTranslate = (String) field.get(object);
                     if (isStringEligible(toTranslate)) {
-                        String translated = translateString(toTranslate, translations);
+                        String translated = translateString(toTranslate.trim(), translations);
                         field.set(object, translated);
                     }
                 }
@@ -141,7 +141,7 @@ public class TranslationService {
                 for (Object element : collection) {
                     String toTranslate = (String) element;
                     if (isStringEligible(toTranslate)) {
-                        String translated = translateString(toTranslate, translations);
+                        String translated = translateString(toTranslate.trim(), translations);
                         translatedCopy.add((T) translated);
                     }
                 }
@@ -196,7 +196,7 @@ public class TranslationService {
                 if (fieldType == String.class) {
                     String text = (String) field.get(object);
                     if (isStringEligible(text)) {
-                        results.add(text);
+                        results.add(text.trim());
                     }
                 }
                 else if (Collection.class.isAssignableFrom(fieldType)) {
@@ -230,7 +230,7 @@ public class TranslationService {
                 for (Object element : collection) {
                     String text = (String) element;
                     if (isStringEligible(text)) {
-                        results.add(text);
+                        results.add(text.trim());
                     }
                 }
             }
