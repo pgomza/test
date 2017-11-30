@@ -15,6 +15,7 @@ import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.translation.Translatable;
 import com.horeca.site.models.notifications.NotificationSettings;
+import com.horeca.site.security.models.NonPatchable;
 import com.horeca.site.security.models.PermissionToPatch;
 import com.horeca.site.security.models.UserAccount;
 import org.hibernate.envers.Audited;
@@ -107,7 +108,7 @@ public class Hotel {
 	@NotNull
 	private Boolean isTestHotel;
 
-	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
+	@NonPatchable
 	@JsonIgnore
 	@NotNull
 	private Boolean isMarkedAsDeleted;
@@ -144,7 +145,7 @@ public class Hotel {
 	@JoinColumn
 	private AvailableServices availableServices;
 
-	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
+	@NonPatchable
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "hotel_id")
 	@OrderColumn(name = "filelink_order")
@@ -156,25 +157,25 @@ public class Hotel {
 	@OrderColumn(name = "link_order")
 	private List<Link> links = new ArrayList<>();
 
-	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
+	@NonPatchable
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "Hotel_id")
 	private Set<Guest> guests;
 
-	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
+	@NonPatchable
 	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "notificationSettings_id")
 	private NotificationSettings notificationSettings;
 
-	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
+	@NonPatchable
 	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "cubilisSettings_id")
 	private CubilisSettings cubilisSettings;
 
-	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
+	@NonPatchable
 	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "cubilisConnectionStatus_id")
