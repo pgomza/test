@@ -16,7 +16,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Api(value = "hotels")
 @RestController
@@ -66,6 +68,11 @@ public class HotelController {
 	public ResponseEntity<Hotel> update(@PathVariable("id") Long id, @RequestBody Hotel hotel) {
         Hotel changed = hotelService.updateFromController(id, hotel);
 		return new ResponseEntity<>(changed, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Hotel patch(@PathVariable("id") Long id, @RequestBody Map<String, Object> updates) throws IOException, IllegalAccessException {
+		return hotelService.patch(id, updates);
 	}
 
 	@RequestMapping(value = "/{id}/tv-channels", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
