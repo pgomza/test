@@ -15,6 +15,8 @@ import com.horeca.site.models.hotel.services.AvailableServiceViewSimplified;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.translation.Translatable;
 import com.horeca.site.models.notifications.NotificationSettings;
+import com.horeca.site.security.models.PermissionToPatch;
+import com.horeca.site.security.models.UserAccount;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
@@ -53,21 +55,27 @@ public class Hotel {
 
 	private String phone;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@URL
 	private String bookingUrl;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@URL
 	private String shopsUrl;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@URL
 	private String restaurantsUrl;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@URL
 	private String interestingPlacesUrl;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@URL
 	private String eventsUrl;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@URL
 	private String meteoUrl;
 
@@ -92,19 +100,24 @@ public class Hotel {
 
 	private Double latitude;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	private Boolean isThrodiPartner;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@NotNull
 	private Boolean isTestHotel;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@JsonIgnore
 	@NotNull
 	private Boolean isMarkedAsDeleted;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Currency currency;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@Translatable
 	@NotNull
 	@ElementCollection(fetch = FetchType.LAZY)
@@ -113,46 +126,55 @@ public class Hotel {
 	@OrderColumn(name = "name_order")
 	private List<String> tvChannels = new ArrayList<>();
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@Translatable
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn
 	private UsefulInformation usefulInformation;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@Translatable
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn
 	private RoomDirectory roomDirectory;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@Translatable
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn
 	private AvailableServices availableServices;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "hotel_id")
 	@OrderColumn(name = "filelink_order")
 	private List<FileLink> images;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "hotel_id")
 	@OrderColumn(name = "link_order")
 	private List<Link> links = new ArrayList<>();
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "Hotel_id")
 	private Set<Guest> guests;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "notificationSettings_id")
 	private NotificationSettings notificationSettings;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "cubilisSettings_id")
 	private CubilisSettings cubilisSettings;
 
+	@PermissionToPatch(UserAccount.ROLE_HOTEL_FULL)
 	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JoinColumn(name = "cubilisConnectionStatus_id")
