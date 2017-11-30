@@ -1,6 +1,7 @@
 package com.horeca.site.services.patchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.horeca.site.security.models.NonPatchable;
 import com.horeca.site.security.models.PermissionToPatch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,11 @@ public class HotelPatcherService extends GenericPatchService {
             IllegalAccessException {
         field.setAccessible(true);
         Class<?> fieldClass = field.getType();
+
+        if (field.isAnnotationPresent(NonPatchable.class)) {
+            throw new RuntimeException("Field " + field.getName() + " mustn't be patched");
+        }
+
         Object update = deserializeFromEntryValue(entryValue, fieldClass);
 
         PermissionToPatch permission = field.getAnnotation(PermissionToPatch.class);
