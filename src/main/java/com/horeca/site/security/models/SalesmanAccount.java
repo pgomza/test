@@ -6,7 +6,10 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @Audited
@@ -31,7 +34,8 @@ public class SalesmanAccount extends AbstractAccount {
     }
 
     public SalesmanAccount(String username, String password) {
-        this(username, password, Collections.singletonList(ROLE_DEFAULT), new HashMap<>());
+        this(username, password, Arrays.asList(ROLE_DEFAULT, UserAccount.ROLE_HOTEL_BASIC, UserAccount.ROLE_HOTEL_FULL),
+                new HashMap<>());
     }
 
     public SalesmanAccount(String username, String password, List<String> roles) {

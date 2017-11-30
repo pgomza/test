@@ -6,7 +6,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class UserAccount extends AbstractAccount {
     }
 
     public UserAccount(String username, String password, Long hotelId) {
-        this(username, password, hotelId, Collections.singletonList(ROLE_DEFAULT), new HashMap<>());
+        this(username, password, hotelId, Arrays.asList(ROLE_DEFAULT, ROLE_HOTEL_BASIC), new HashMap<>());
     }
 
     public UserAccount(String username, String password, Long hotelId, List<String> roles) {
@@ -46,7 +46,7 @@ public class UserAccount extends AbstractAccount {
     }
 
     public UserAccount(String username, String password, Long hotelId, Map<String, String> profileData) {
-        this(username, password, hotelId, Collections.singletonList(ROLE_DEFAULT), profileData);
+        this(username, password, hotelId, Arrays.asList(ROLE_DEFAULT, ROLE_HOTEL_BASIC), profileData);
     }
 
     public UserAccount(String username, String password, Long hotelId, List<String> roles, Map<String, String> profileData) {
