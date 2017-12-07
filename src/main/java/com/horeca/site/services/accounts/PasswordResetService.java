@@ -5,6 +5,7 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.accounts.PasswordResetConfirmation;
 import com.horeca.site.models.accounts.PasswordResetPending;
 import com.horeca.site.models.accounts.PasswordResetRequest;
+import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.EmailSenderService;
@@ -80,12 +81,16 @@ public class PasswordResetService {
 
         if (passwordResetPendingService.isValid(pending)) {
             String newPassword = confirmation.getNewPassword();
-            userAccountService.changePassword(pending.getUsername(), newPassword);
+
+            String username = pending.getUsername();
+            String login = username.substring(AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX.length());
+
+            userAccountService.changePassword(login, newPassword);
             passwordResetPendingService.delete(pending);
 
             // delete all the OAuth2 tokens associated with this account
             Collection<OAuth2AccessToken> tokens = tokenStore.
-                    findTokensByClientIdAndUserName(PANEL_CLIENT_ID, pending.getUsername());
+                    findTokensByClientIdAndUserName(PANEL_CLIENT_ID, username);
             tokens.forEach(tokenStore::removeAccessToken);
         }
         else {
