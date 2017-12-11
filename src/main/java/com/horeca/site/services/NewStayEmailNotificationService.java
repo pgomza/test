@@ -94,6 +94,9 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
         String arrival = stay.getFromDate().toString("dd-MM-yyyy");
         String departure = stay.getToDate().toString("dd-MM-yyyy");
 
+        String pin = stay.getPin();
+        String imageLink = qrCodeService.getLinkForPin(pin);
+
         Map<String, String> vars = new HashMap<>();
         vars.put("HOTELLINK", hotelLink);
         vars.put("HOTELNAME", hotelName);
@@ -112,7 +115,8 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
         vars.put("IOSIMGLINK", appImgAppStore);
         vars.put("ANDROIDIMGLINK", appImgPlayStore);
 
-        vars.put("PIN", stay.getPin());
+        vars.put("PIN", pin);
+        vars.put("QRCODELINK", imageLink);
 
         emailSenderService.sendTemplate(EMAIL_SUBJECT, guestMail, vars);
     }
