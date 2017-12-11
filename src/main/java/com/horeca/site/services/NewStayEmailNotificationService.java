@@ -41,6 +41,9 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
     @Autowired
     private EmailSenderService emailSenderService;
 
+    @Autowired
+    private QRCodeService qrCodeService;
+
     @Override
     public void onApplicationEvent(NewStayEvent event) {
         Stay stay = event.getStay();
@@ -91,6 +94,9 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
         String arrival = stay.getFromDate().toString("dd-MM-yyyy");
         String departure = stay.getToDate().toString("dd-MM-yyyy");
 
+        String pin = stay.getPin();
+        String imageLink = qrCodeService.getLinkForPin(pin);
+
         Map<String, String> vars = new HashMap<>();
         vars.put("HOTELLINK", hotelLink);
         vars.put("HOTELNAME", hotelName);
@@ -109,7 +115,8 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
         vars.put("IOSIMGLINK", appImgAppStore);
         vars.put("ANDROIDIMGLINK", appImgPlayStore);
 
-        vars.put("PIN", stay.getPin());
+        vars.put("PIN", pin);
+        vars.put("QRCODELINK", imageLink);
 
         emailSenderService.sendTemplate(EMAIL_SUBJECT, guestMail, vars);
     }
@@ -123,6 +130,7 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
         String guestName = guest.getFirstName() + " " + guest.getLastName();
         String hotelName = hotel.getName();
         String pin = stay.getPin();
+        String imageLink = qrCodeService.getLinkForPin(pin);
 
         boolean hotelNameBeginsWithHotel = false;
         if (hotelName.length() >= 5 && hotelName.substring(0, 5).toLowerCase().equals("hotel"))
@@ -147,7 +155,11 @@ public class NewStayEmailNotificationService implements ApplicationListener<NewS
                         "<br/><br/>" +
                         "Your personal check-in code to start using the Throdi application is:" +
                         "<br/><br/>" +
-                        "<b>" + pin + "</b>" +
+                        "<div style=\"font-size:20px\"><b>" + pin + "</b></div>" +
+                        "<div style=\"padding-top: 10px; padding-right: 10px; width: 260px; height: 160px\">PIN QR " +
+                        "Code: <img style=\"vertical-align:middle\" " +
+                        "src=\"" + imageLink + "\" align=\"right\" alt=\"PIN QR Code\" height=\"160\" width=\"160\" " +
+                        "/></div>" +
                         "<br/><br/>" +
                         "Enjoy your stay." +
                         "<br/><br/>" +
