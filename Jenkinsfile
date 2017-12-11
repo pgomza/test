@@ -28,6 +28,7 @@ pipeline {
           #!/bin/sh
 
           az webapp stop --resource-group Throdi --name ThrodiBackend --slot staging
+          sleep 30
 
           if [ ${BRANCH_NAME} != "master" ]; then
               az webapp config appsettings set --resource-group Throdi --name ThrodiBackend --slot staging --settings JAVA_OPTS=-Dspring.profiles.active=development
@@ -57,6 +58,7 @@ pipeline {
           fi
 
           az webapp start --resource-group Throdi --name ThrodiBackend --slot staging
+          sleep 30
 
           lftp -c "open -u ThrodiBackend__staging\\\\\\$ThrodiBackend__staging,cQjl0F3nKw9k4Lmiho5YHZTxSkauRHt0EKe4Qo6ZfRZhxfdlgeBfMoFwGjqS ftp://waws-prod-am2-121.ftp.azurewebsites.windows.net/site/wwwroot;
               put ${WORKSPACE}/target/ROOT.war -o webapps/ROOT.war"
