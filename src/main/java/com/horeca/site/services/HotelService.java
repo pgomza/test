@@ -14,6 +14,7 @@ import com.horeca.site.repositories.HotelRepository;
 import com.horeca.site.security.services.GuestAccountService;
 import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.services.StayService;
+import com.horeca.site.services.translation.HotelTranslationService;
 import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -55,6 +56,9 @@ public class HotelService {
 
     @Autowired
     private GuestAccountService guestAccountService;
+
+    @Autowired
+    private HotelTranslationService translationService;
 
     /*
         Expose these two methods in this service to prevent clients
@@ -283,6 +287,8 @@ public class HotelService {
         }
 
         update(hotelId, hotel);
+
+        translationService.ensureRequiredTranslationsExist(hotelId);
     }
 
     /**
