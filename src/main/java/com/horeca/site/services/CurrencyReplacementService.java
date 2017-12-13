@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +43,12 @@ public class CurrencyReplacementService {
 
     @Autowired
     private DeepCopyService deepCopyService;
+
+    public <T> ResponseEntity<T> replace(ResponseEntity<T> entity, Currency currency) {
+        T body = entity.getBody();
+        T updatedBody = replace(body, currency);
+        return new ResponseEntity<>(updatedBody, entity.getHeaders(), entity.getStatusCode());
+    }
 
     public <T> Page<T> replace(Page<T> page, Currency currency) {
         PageRequest pageRequestCopy = new PageRequest(page.getNumber(), page.getSize());
