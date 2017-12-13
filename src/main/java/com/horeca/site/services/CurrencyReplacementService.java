@@ -47,7 +47,7 @@ public class CurrencyReplacementService {
     private DeepCopyService deepCopyService;
 
     @Autowired
-    private HotelService hotelService;
+    private HotelQueryService hotelQueryService;
 
     public <T> ResponseEntity<T> replace(ResponseEntity<T> entity, Currency currency) {
         T body = entity.getBody();
@@ -86,6 +86,11 @@ public class CurrencyReplacementService {
             // we need to make a fresh copy because 'objectCopy' may have some currencies already replaced
             return deepCopyService.copy(object);
         }
+    }
+
+    public <T> T replace(T object, Long hotelId) {
+        Currency currency = hotelQueryService.getCurrency(hotelId);
+        return replace(object, currency);
     }
 
     public Page<Hotel> replaceHotelPage(Page<Hotel> page) {
