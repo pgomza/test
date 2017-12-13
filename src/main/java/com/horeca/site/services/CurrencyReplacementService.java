@@ -13,10 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 @Service
@@ -49,18 +46,11 @@ public class CurrencyReplacementService {
     public <T> Page<T> replace(Page<T> page, Currency currency) {
         PageRequest pageRequestCopy = new PageRequest(page.getNumber(), page.getSize());
         List<T> content = page.getContent();
-        List<T> contentCopy = deepCopyService.copy(content);
-        try {
-            for (T element : contentCopy) {
-                doReplace(element, currency, new HashSet<>());
-            }
-        } catch (IllegalAccessException ex) {
-            logger.warning("Could not replace the currency in page");
-            // we need to make a fresh copy because 'contentCopy' may have some currencies already replaced
-            List<T> freshCopy = deepCopyService.copy(content);
-            return new PageImpl<>(freshCopy, pageRequestCopy, page.getTotalElements());
+        List<T> updatedContent = new ArrayList<>();
+        for (T element : content) {
+            updatedContent.add(replace(element, currency));
         }
-        return new PageImpl<>(contentCopy, pageRequestCopy, page.getTotalElements());
+        return new PageImpl<>(updatedContent, pageRequestCopy, page.getTotalElements());
     }
 
     public <T> T replace(T object, Currency currency) {
