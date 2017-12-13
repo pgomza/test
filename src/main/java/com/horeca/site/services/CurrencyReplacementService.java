@@ -4,6 +4,7 @@ import com.horeca.site.models.Currency;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,11 +39,18 @@ public class CurrencyReplacementService {
         classesNotIntrospectable.add(BigDecimal.class);
     }
 
-    public void replace(Object object, Currency currency) {
+    @Autowired
+    private DeepCopyService deepCopyService;
+
+    public <T> T replace(T object, Currency currency) {
+        T objectCopy = deepCopyService.copy(object);
         try {
-            doReplace(object, currency, new HashSet<>());
+            doReplace(objectCopy, currency, new HashSet<>());
+            return objectCopy;
         } catch (IllegalAccessException e) {
             logger.warning("Could not replace the currency in object " + object);
+            // we need to make a fresh copy because 'entityCopy' may have some currencies already replaced
+            return deepCopyService.copy(object);
         }
     }
 
