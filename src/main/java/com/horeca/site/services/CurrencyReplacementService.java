@@ -46,11 +46,22 @@ public class CurrencyReplacementService {
     public <T> Page<T> replace(Page<T> page, Currency currency) {
         PageRequest pageRequestCopy = new PageRequest(page.getNumber(), page.getSize());
         List<T> content = page.getContent();
-        List<T> updatedContent = new ArrayList<>();
-        for (T element : content) {
+        Collection<T> updatedContent = replace(content, currency);
+        return new PageImpl<>(new ArrayList<>(updatedContent), pageRequestCopy, page.getTotalElements());
+    }
+
+    public <T> Collection<T> replace(Collection<T> collection, Currency currency) {
+        Collection<T> updatedContent;
+        if (collection instanceof List) {
+            updatedContent = new ArrayList<>();
+        }
+        else {
+            updatedContent = new HashSet<>();
+        }
+        for (T element : collection) {
             updatedContent.add(replace(element, currency));
         }
-        return new PageImpl<>(updatedContent, pageRequestCopy, page.getTotalElements());
+        return updatedContent;
     }
 
     public <T> T replace(T object, Currency currency) {
