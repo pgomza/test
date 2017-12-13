@@ -5,6 +5,9 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +15,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -42,14 +46,31 @@ public class CurrencyReplacementService {
     @Autowired
     private DeepCopyService deepCopyService;
 
+    public <T> Page<T> replace(Page<T> page, Currency currency) {
+        PageRequest pageRequestCopy = new PageRequest(page.getNumber(), page.getSize());
+        List<T> content = page.getContent();
+        List<T> contentCopy = deepCopyService.copy(content);
+        try {
+            for (T element : contentCopy) {
+                doReplace(element, currency, new HashSet<>());
+            }
+        } catch (IllegalAccessException ex) {
+            logger.warning("Could not replace the currency in page");
+            // we need to make a fresh copy because 'contentCopy' may have some currencies already replaced
+            List<T> freshCopy = deepCopyService.copy(content);
+            return new PageImpl<>(freshCopy, pageRequestCopy, page.getTotalElements());
+        }
+        return new PageImpl<>(contentCopy, pageRequestCopy, page.getTotalElements());
+    }
+
     public <T> T replace(T object, Currency currency) {
         T objectCopy = deepCopyService.copy(object);
         try {
             doReplace(objectCopy, currency, new HashSet<>());
             return objectCopy;
         } catch (IllegalAccessException e) {
-            logger.warning("Could not replace the currency in object " + object);
-            // we need to make a fresh copy because 'entityCopy' may have some currencies already replaced
+            logger.warning("Could not replace the currency in object");
+            // we need to make a fresh copy because 'objectCopy' may have some currencies already replaced
             return deepCopyService.copy(object);
         }
     }
