@@ -79,9 +79,7 @@ public class TranslationService {
             throws IllegalAccessException, NoSuchMethodException, InstantiationException, InvocationTargetException {
 
         Class<?> objectClass = object.getClass();
-
         if (!introspected.contains(objectClass)) {
-
             introspected.add(objectClass);
 
             Field[] fields = objectClass.getDeclaredFields();
@@ -114,9 +112,9 @@ public class TranslationService {
                     }
                 }
             }
-        }
 
-        introspected.remove(objectClass);
+            introspected.remove(objectClass);
+        }
     }
 
     private static <T> Collection<T> introspectCollection(Collection<T> collection, HashSet<Class<?>> introspected,
@@ -180,9 +178,7 @@ public class TranslationService {
             throws IllegalAccessException {
 
         Class<?> objectClass = object.getClass();
-
         if (!introspected.contains(objectClass)) {
-
             introspected.add(objectClass);
 
             Field[] fields = objectClass.getDeclaredFields();
@@ -212,9 +208,9 @@ public class TranslationService {
                     }
                 }
             }
-        }
 
-        introspected.remove(objectClass);
+            introspected.remove(objectClass);
+        }
     }
 
     private static void collectPropsFromCollection(Collection<?> collection, HashSet<Class<?>> introspected,
