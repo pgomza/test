@@ -1,6 +1,8 @@
 package com.horeca.site.services;
 
 import com.horeca.site.models.Currency;
+import com.horeca.site.models.hotel.Hotel;
+import com.horeca.site.models.hotel.HotelView;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
@@ -44,6 +46,9 @@ public class CurrencyReplacementService {
     @Autowired
     private DeepCopyService deepCopyService;
 
+    @Autowired
+    private HotelService hotelService;
+
     public <T> ResponseEntity<T> replace(ResponseEntity<T> entity, Currency currency) {
         T body = entity.getBody();
         T updatedBody = replace(body, currency);
@@ -81,6 +86,24 @@ public class CurrencyReplacementService {
             // we need to make a fresh copy because 'objectCopy' may have some currencies already replaced
             return deepCopyService.copy(object);
         }
+    }
+
+    public Page<Hotel> replaceHotelPage(Page<Hotel> page) {
+        PageRequest pageRequest = new PageRequest(page.getNumber(), page.getSize());
+        List<Hotel> hotelsWithUpdatedCurrency = new ArrayList<>();
+        for (Hotel hotel : page.getContent()) {
+            hotelsWithUpdatedCurrency.add(replace(hotel, hotel.getCurrency()));
+        }
+        return new PageImpl<>(hotelsWithUpdatedCurrency, pageRequest, page.getTotalElements());
+    }
+
+    public Page<HotelView> replaceHotelViewPage(Page<HotelView> page) {
+        PageRequest pageRequest = new PageRequest(page.getNumber(), page.getSize());
+        List<HotelView> hotelsWithUpdatedCurrency = new ArrayList<>();
+        for (HotelView view : page.getContent()) {
+            hotelsWithUpdatedCurrency.add(replace(view, view.getCurrency()));
+        }
+        return new PageImpl<>(hotelsWithUpdatedCurrency, pageRequest, page.getTotalElements());
     }
 
     private void doReplace(Object object, Currency newCurrency, HashSet<Class<?>> alreadyIntrospected) throws IllegalAccessException {
