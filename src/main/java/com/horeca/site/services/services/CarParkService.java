@@ -32,7 +32,7 @@ public class CarParkService {
             CarPark carPark = new CarPark();
             carPark.setDescription("");
             Price carParkPrice = new Price();
-            carParkPrice.setCurrency(Currency.EURO);
+            carParkPrice.setCurrency(Currency.EUR);
             carParkPrice.setValue(new BigDecimal(5));
             carPark.setPrice(carParkPrice);
 

@@ -1,21 +1,35 @@
 package com.horeca.site.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Currency {
-    ZLOTY("PLN"),
-    EURO("€"),
-    DOLLAR("$");
+    EUR("Euro", "EUR", "€"),
+    USD("US Dollar", "USD", "$");
 
     private final String name;
+    private final String code;
+    private final String symbol;
 
-    private Currency(String name) {
-        this.name  = name;
+    Currency(String name, String code, String symbol) {
+        this.name = name;
+        this.code = code;
+        this.symbol = symbol;
     }
 
-    @Override
     @JsonValue
-    public String toString() {
-        return this.name;
+    String toValue() {
+        return symbol;
+    }
+
+    @JsonCreator
+    Currency fromValue(String value) {
+        Currency[] currencies = Currency.values();
+        for (Currency currency : currencies) {
+            if (currency.symbol.equals(value)) {
+                return currency;
+            }
+        }
+        throw new IllegalArgumentException("Unsupported currency symbol");
     }
 }

@@ -42,7 +42,7 @@ public class HousekeepingService {
             Housekeeping housekeeping = new Housekeeping();
             housekeeping.setDescription("");
             Price housekeepingPrice = new Price();
-            housekeepingPrice.setCurrency(Currency.EURO);
+            housekeepingPrice.setCurrency(Currency.EUR);
             housekeepingPrice.setValue(new BigDecimal(5));
             housekeeping.setPrice(housekeepingPrice);
 
