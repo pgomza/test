@@ -1,6 +1,7 @@
 package com.horeca.site.controllers.services;
 
 import com.horeca.site.handlers.HotelId;
+import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.carpark.CarPark;
 import com.horeca.site.services.services.CarParkService;
@@ -20,6 +21,7 @@ public class CarParkController {
     @Autowired
     private CarParkService carParkService;
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/carpark", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public CarPark get(@HotelId @PathVariable("hotelId") Long hotelId) {

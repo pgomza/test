@@ -1,6 +1,7 @@
 package com.horeca.site.controllers.services;
 
 import com.horeca.site.handlers.HotelId;
+import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.roomservice.RoomService;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceItemUpdate;
@@ -20,6 +21,7 @@ public class RoomServiceController {
     @Autowired
     private RoomServiceService roomServiceService;
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/roomservice", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public RoomService get(@HotelId @PathVariable("hotelId") Long hotelId) {

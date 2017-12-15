@@ -1,6 +1,7 @@
 package com.horeca.site.controllers.services;
 
 import com.horeca.site.handlers.HotelId;
+import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
 import com.horeca.site.models.hotel.services.housekeeping.HousekeepingItem;
@@ -18,6 +19,7 @@ public class HousekeepingController {
     @Autowired
     private HousekeepingService service;
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/housekeeping", method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     public Housekeeping get(@HotelId @PathVariable("hotelId") Long hotelId) {
@@ -29,6 +31,7 @@ public class HousekeepingController {
         return service.addDefaultHousekeeping(hotelId);
     }
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/housekeeping/items", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Iterable<HousekeepingItem> getItems(@HotelId @PathVariable("hotelId") Long hotelId) {

@@ -1,6 +1,7 @@
 package com.horeca.site.controllers.services;
 
 import com.horeca.site.handlers.HotelId;
+import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
@@ -21,6 +22,7 @@ public class PetCareController {
     @Autowired
     private PetCareService petCareService;
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/petcare", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -34,6 +36,7 @@ public class PetCareController {
         return petCareService.addDefaultPetCare(hotelId);
     }
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/petcare/items", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -41,6 +44,7 @@ public class PetCareController {
         return petCareService.getItems(hotelId);
     }
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/petcare/items/{itemId}", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
