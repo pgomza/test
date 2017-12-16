@@ -68,11 +68,11 @@ pipeline {
     stage('Check if app runs correctly') {
       steps {
         sh '''
-            sleep 180
+            sleep 240
             response=$(curl "https://throdibackend-staging.azurewebsites.net/api/hotels/1" | /var/lib/jenkins/custom/check_app)
             attempts=1
 
-            while (( attempts < 7 && response == 0 )); do
+            while (( attempts < 10 && response == 0 )); do
                 sleep 60
                 echo "Trying for $((attempts + 1)) time"
 
