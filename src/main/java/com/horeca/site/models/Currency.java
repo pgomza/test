@@ -20,4 +20,16 @@ public enum Currency {
     public String toValue() {
         return symbol;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
 }

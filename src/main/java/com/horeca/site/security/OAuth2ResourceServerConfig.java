@@ -53,11 +53,11 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         *******************************************************************************
          */
 
-        // don't secure the websocket endpoints
         http.authorizeRequests().antMatchers("/api/updates/**").permitAll();
         http.authorizeRequests().antMatchers("/api/demo/**").permitAll();
         http.authorizeRequests().antMatchers("/api/timeout").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/languages").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/currencies").permitAll();
 
         // allow everybody but anons to access static translations
         http.authorizeRequests().antMatchers("/api/static-translations/**")
