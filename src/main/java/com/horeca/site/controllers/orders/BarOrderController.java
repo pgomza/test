@@ -1,5 +1,6 @@
 package com.horeca.site.controllers.orders;
 
+import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.StayPin;
 import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.orders.OrderStatusPUT;
@@ -25,12 +26,14 @@ public class BarOrderController {
     @Autowired
     private BarOrderService service;
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{pin}/orders/bar", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<BarOrder> getAll(@StayPin @PathVariable String pin) {
         return service.getAll(pin);
     }
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{pin}/orders/bar/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public BarOrder get(@StayPin @PathVariable String pin, @PathVariable Long id) {

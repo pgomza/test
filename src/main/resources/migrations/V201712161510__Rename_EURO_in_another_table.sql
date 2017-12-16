@@ -1,0 +1,1 @@
+UPDATE RestaurantMenuItem SET currency = 'EUR' where currency like 'EURO';

@@ -45,7 +45,7 @@ public class RoomServiceService {
             RoomService roomService = new RoomService();
             roomService.setDescription("");
             Price carParkPrice = new Price();
-            carParkPrice.setCurrency(Currency.EURO);
+            carParkPrice.setCurrency(Currency.EUR);
             carParkPrice.setValue(new BigDecimal(5));
             roomService.setPrice(carParkPrice);
 
