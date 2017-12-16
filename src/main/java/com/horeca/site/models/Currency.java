@@ -1,6 +1,5 @@
 package com.horeca.site.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Currency {
@@ -18,18 +17,7 @@ public enum Currency {
     }
 
     @JsonValue
-    String toValue() {
+    public String toValue() {
         return symbol;
-    }
-
-    @JsonCreator
-    Currency fromValue(String value) {
-        Currency[] currencies = Currency.values();
-        for (Currency currency : currencies) {
-            if (currency.symbol.equals(value)) {
-                return currency;
-            }
-        }
-        throw new IllegalArgumentException("Unsupported currency symbol");
     }
 }
