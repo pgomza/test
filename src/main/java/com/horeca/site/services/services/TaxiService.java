@@ -38,7 +38,7 @@ public class TaxiService {
         if (services.getTaxi() == null) {
             Taxi taxi = new Taxi();
             Price taxiPrice = new Price();
-            taxiPrice.setCurrency(Currency.EURO);
+            taxiPrice.setCurrency(Currency.EUR);
             taxiPrice.setValue(new BigDecimal(5));
             taxi.setPrice(taxiPrice);
 

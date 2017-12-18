@@ -44,7 +44,7 @@ public class PetCareService {
             PetCare petCare = new PetCare();
             petCare.setDescription("");
             Price petCarePrice = new Price();
-            petCarePrice.setCurrency(Currency.EURO);
+            petCarePrice.setCurrency(Currency.EUR);
             petCarePrice.setValue(new BigDecimal(5));
             petCare.setPrice(petCarePrice);
 

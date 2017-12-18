@@ -62,7 +62,7 @@ public class BarService {
             Bar bar = new Bar();
             bar.setDescription("");
             Price price = new Price();
-            price.setCurrency(Currency.EURO);
+            price.setCurrency(Currency.EUR);
             price.setValue(new BigDecimal(5));
             bar.setPrice(price);
             bar.setFromHour(localTimeFormatter.parseLocalTime("08:00"));

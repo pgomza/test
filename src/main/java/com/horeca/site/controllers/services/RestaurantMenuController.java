@@ -1,6 +1,7 @@
 package com.horeca.site.controllers.services;
 
 import com.horeca.site.handlers.HotelId;
+import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.restaurantmenu.*;
 import com.horeca.site.services.services.RestaurantMenuService;
@@ -19,6 +20,7 @@ public class RestaurantMenuController {
     @Autowired
     private RestaurantMenuService service;
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -44,6 +46,7 @@ public class RestaurantMenuController {
         return service.addDefaultRestaurantMenu(hotelId);
     }
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu/categories", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -57,6 +60,7 @@ public class RestaurantMenuController {
         return service.addCategory(hotelId, category);
     }
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu/categories/{categoryId}", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -88,6 +92,7 @@ public class RestaurantMenuController {
         service.deleteCategory(hotelId, categoryId);
     }
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu/categories/{categoryId}/items",
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -106,6 +111,7 @@ public class RestaurantMenuController {
         return service.addItem(hotelId, categoryId, item);
     }
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu/categories/{categoryId}/items/{itemId}",
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

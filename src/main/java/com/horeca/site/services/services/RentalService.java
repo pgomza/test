@@ -52,7 +52,7 @@ public class RentalService {
             Rental rental = new Rental();
             rental.setDescription("");
             Price price = new Price();
-            price.setCurrency(Currency.EURO);
+            price.setCurrency(Currency.EUR);
             price.setValue(new BigDecimal(5));
             rental.setPrice(price);
             rental.setFromHour(localTimeFormatter.parseLocalTime("08:00"));

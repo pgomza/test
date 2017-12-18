@@ -84,7 +84,7 @@ public class HotelService {
         hotel.setIsMarkedAsDeleted(false);
 
         if (hotel.getCurrency() == null)
-            hotel.setCurrency(Currency.EURO);
+            hotel.setCurrency(Currency.EUR);
 
         repository.save(hotel);
         ensureEnoughInfoAboutHotel(hotel.getId());
@@ -133,7 +133,7 @@ public class HotelService {
         pinsToDelete.forEach(pin -> stayService.delete(pin));
 
         hotel.setIsTestHotel(true);
-        hotel.setCurrency(Currency.EURO);
+        hotel.setCurrency(Currency.EUR);
         hotel.setDescription(null);
         hotel.setEmail(null);
         hotel.setWebsite(null);

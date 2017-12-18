@@ -52,7 +52,7 @@ public class BreakfastService {
             breakfast.setFromHour(localTimeFormatter.parseLocalTime("08:00"));
             breakfast.setToHour(localTimeFormatter.parseLocalTime("11:00"));
             Price breakfastPrice = new Price();
-            breakfastPrice.setCurrency(Currency.EURO);
+            breakfastPrice.setCurrency(Currency.EUR);
             breakfastPrice.setValue(new BigDecimal(5));
             breakfast.setPrice(breakfastPrice);
 
