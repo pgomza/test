@@ -1,12 +1,9 @@
 package com.horeca.site.models.accounts;
 
-import org.hibernate.envers.Audited;
-
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Audited
 public class UserAccountPending extends AccountPending {
 
     @NotNull
