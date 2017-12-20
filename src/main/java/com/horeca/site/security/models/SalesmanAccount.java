@@ -34,7 +34,7 @@ public class SalesmanAccount extends AbstractAccount {
     }
 
     public SalesmanAccount(String username, String password) {
-        this(username, password, Arrays.asList(ROLE_DEFAULT, UserAccount.ROLE_HOTEL_BASIC, UserAccount.ROLE_HOTEL_FULL),
+        this(username, password, Arrays.asList(ROLE_DEFAULT, UserAccount.ROLE_HOTEL_FULL),
                 new HashMap<>());
     }
 
@@ -43,7 +43,7 @@ public class SalesmanAccount extends AbstractAccount {
     }
 
     public SalesmanAccount(String username, String password, Map<String, String> profileData) {
-        this(username, password, Arrays.asList(ROLE_DEFAULT, UserAccount.ROLE_HOTEL_BASIC, UserAccount.ROLE_HOTEL_FULL),
+        this(username, password, Arrays.asList(ROLE_DEFAULT, UserAccount.ROLE_HOTEL_FULL),
                 profileData);
     }
 

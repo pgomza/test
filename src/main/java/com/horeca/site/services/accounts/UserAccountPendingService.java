@@ -64,7 +64,7 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
         Long hotelId = pending.getHotelId();
         Boolean fullAccess = pending.getFullAccess();
 
-        List<String> roles = Arrays.asList(UserAccount.ROLE_DEFAULT, UserAccount.ROLE_HOTEL_BASIC);
+        List<String> roles = Arrays.asList(UserAccount.ROLE_DEFAULT);
         if (fullAccess) {
             roles.add(UserAccount.ROLE_HOTEL_FULL);
         }

@@ -17,7 +17,6 @@ public class UserAccount extends AbstractAccount {
 
     public static final String ROLE_DEFAULT = "ROLE_USER";
     public static final String ROLE_HOTEL_FULL = "ROLE_HOTEL_FULL";
-    public static final String ROLE_HOTEL_BASIC = "ROLE_HOTEL_BASIC";
 
     private Long hotelId;
 
@@ -38,7 +37,7 @@ public class UserAccount extends AbstractAccount {
     }
 
     public UserAccount(String username, String password, Long hotelId) {
-        this(username, password, hotelId, Arrays.asList(ROLE_DEFAULT, ROLE_HOTEL_BASIC), new HashMap<>());
+        this(username, password, hotelId, Arrays.asList(ROLE_DEFAULT), new HashMap<>());
     }
 
     public UserAccount(String username, String password, Long hotelId, List<String> roles) {
@@ -46,7 +45,7 @@ public class UserAccount extends AbstractAccount {
     }
 
     public UserAccount(String username, String password, Long hotelId, Map<String, String> profileData) {
-        this(username, password, hotelId, Arrays.asList(ROLE_DEFAULT, ROLE_HOTEL_BASIC), profileData);
+        this(username, password, hotelId, Arrays.asList(ROLE_DEFAULT), profileData);
     }
 
     public UserAccount(String username, String password, Long hotelId, List<String> roles, Map<String, String> profileData) {

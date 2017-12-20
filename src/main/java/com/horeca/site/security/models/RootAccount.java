@@ -52,7 +52,7 @@ public class RootAccount extends AbstractAccount {
     }
 
     public List<String> getRoles() {
-        return Arrays.asList(ROLE_DEFAULT, SalesmanAccount.ROLE_DEFAULT, UserAccount.ROLE_DEFAULT, UserAccount.ROLE_HOTEL_BASIC,
+        return Arrays.asList(ROLE_DEFAULT, SalesmanAccount.ROLE_DEFAULT, UserAccount.ROLE_DEFAULT,
                 UserAccount.ROLE_HOTEL_FULL);
     }
 
