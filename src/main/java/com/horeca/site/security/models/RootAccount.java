@@ -1,6 +1,7 @@
 package com.horeca.site.security.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.horeca.site.models.accounts.RootAccountView;
 import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
@@ -64,5 +65,9 @@ public class RootAccount extends AbstractAccount {
     @Override
     public void setProfileData(Map<String, String> profileData) {
         this.profileData = profileData;
+    }
+
+    public RootAccountView toView() {
+        return new RootAccountView(getLogin(), getRoles(), isEnabled());
     }
 }
