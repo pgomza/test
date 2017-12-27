@@ -38,17 +38,6 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
         return result;
     }
 
-    public SalesmanAccount getFromAuthentication(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof SalesmanAccount) {
-            SalesmanAccount salesmanAccount = (SalesmanAccount) principal;
-            // this is necessary because the instance obtained from 'authentication' isn't fully initialized
-            return get(salesmanAccount.getLogin());
-        }
-        else
-            throw new AccessDeniedException("Access denied");
-    }
-
     public SalesmanAccount create(String login, String plainPassword) {
         if (exists(login)) {
             throw new BusinessRuleViolationException("Such a salesman already exists");

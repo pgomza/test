@@ -56,15 +56,6 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
         return getAll().stream().map(UserAccount::toView).collect(Collectors.toSet());
     }
 
-    public UserAccount getFromAuthentication(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserAccount) {
-            UserAccount userAccount = (UserAccount) principal;
-            // this is necessary because the instance obtained from 'authentication' isn't fully initialized
-            return get(userAccount.getLogin());
-        }
-        else
-            throw new AccessDeniedException("Access denied");
     }
 
     public UserAccount create(String login, String plainPassword, Long hotelId, List<String> roles) {

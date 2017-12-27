@@ -63,19 +63,19 @@ public class SalesmanAccountController {
 
     @RequestMapping(value = "/salesmen/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public SalesmanAccountView getCurrentView(Authentication authentication) {
-        return accountService.getFromAuthentication(authentication).toView();
+        return accountService.getFromAuthentication(authentication, SalesmanAccount.class).toView();
     }
 
     @RequestMapping(value = "/salesmen/current/profile-data", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> getProfileOfCurrentAccount(Authentication authentication) {
-        SalesmanAccount salesmanAccount = accountService.getFromAuthentication(authentication);
+        SalesmanAccount salesmanAccount = accountService.getFromAuthentication(authentication, SalesmanAccount.class);
         return salesmanAccount.getProfileData();
     }
 
     @RequestMapping(value = "/salesmen/current/profile-data", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> updateProfileDataOfCurrentAccount(Authentication authentication,
                                                                  @RequestBody Map<String, String> profileData) {
-        SalesmanAccount salesmanAccount = accountService.getFromAuthentication(authentication);
+        SalesmanAccount salesmanAccount = accountService.getFromAuthentication(authentication, SalesmanAccount.class);
         return accountService.updateProfileData(salesmanAccount.getLogin(), profileData);
     }
 

@@ -42,26 +42,26 @@ public class UserAccountController {
 
     @RequestMapping(value = "/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserAccountView getCurrentView(Authentication authentication) {
-        return userAccountService.getFromAuthentication(authentication).toView();
+        return userAccountService.getFromAuthentication(authentication, UserAccount.class).toView();
     }
 
     @RequestMapping(value = "/users/current/password", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public void changePasswordOfCurrentAccount(Authentication authentication,
                                                @RequestBody PasswordChangeRequest request) {
-        UserAccount userAccount = userAccountService.getFromAuthentication(authentication);
+        UserAccount userAccount = userAccountService.getFromAuthentication(authentication, UserAccount.class);
         userAccountService.verifyAndChangePassword(userAccount.getLogin(), request.currentPassword, request.newPassword);
     }
 
     @RequestMapping(value = "/users/current/profile-data", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> getProfileOfCurrentAccount(Authentication authentication) {
-        UserAccount userAccount = userAccountService.getFromAuthentication(authentication);
+        UserAccount userAccount = userAccountService.getFromAuthentication(authentication, UserAccount.class);
         return userAccount.getProfileData();
     }
 
     @RequestMapping(value = "/users/current/profile-data", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> updateProfileDataOfCurrentAccount(Authentication authentication,
                                                                  @RequestBody Map<String, String> profileData) {
-        UserAccount userAccount = userAccountService.getFromAuthentication(authentication);
+        UserAccount userAccount = userAccountService.getFromAuthentication(authentication, UserAccount.class);
         return userAccountService.updateProfileData(userAccount.getLogin(), profileData);
     }
 

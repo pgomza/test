@@ -4,6 +4,8 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.security.models.AbstractAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 
 import java.util.Map;
 
@@ -50,6 +52,18 @@ public abstract class AbstractAccountService<T extends AbstractAccount> {
         account.getProfileData().clear();
         account.getProfileData().putAll(updated);
         return save(account).getProfileData();
+    }
+
+    public T getFromAuthentication(Authentication authentication, Class<T> clazz) {
+        Object principal = authentication.getPrincipal();
+        if (clazz.isAssignableFrom(principal.getClass())) {
+            T account = (T) principal;
+            // this is necessary because the instance obtained from 'authentication' isn't fully initialized
+            return get(account.getLogin());
+        }
+        else {
+            throw new AccessDeniedException("Access denied");
+        }
     }
 
     void disable(T account) {
