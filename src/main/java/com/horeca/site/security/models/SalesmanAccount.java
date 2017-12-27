@@ -87,14 +87,6 @@ public class SalesmanAccount extends AbstractAccount {
     }
 
     public SalesmanAccountView toView() {
-        SalesmanAccountView view = new SalesmanAccountView();
-        view.setLogin(getLogin());
-        view.setRoles(getRoles());
-        view.setAccountNonExpired(isAccountNonExpired());
-        view.setAccountNonLocked(isAccountNonLocked());
-        view.setCredentialsNonExpired(isCredentialsNonExpired());
-        view.setEnabled(isEnabled());
-        view.setProfileData(getProfileData());
-        return view;
+        return new SalesmanAccountView(getLogin(), getRoles(), isEnabled());
     }
 }

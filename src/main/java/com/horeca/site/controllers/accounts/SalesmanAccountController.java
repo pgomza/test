@@ -69,7 +69,7 @@ public class SalesmanAccountController {
     @RequestMapping(value = "/salesmen/current/profile-data", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> getProfileOfCurrentAccount(Authentication authentication) {
         SalesmanAccount salesmanAccount = accountService.getFromAuthentication(authentication);
-        return salesmanAccount.toView().getProfileData();
+        return salesmanAccount.getProfileData();
     }
 
     @RequestMapping(value = "/salesmen/current/profile-data", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)

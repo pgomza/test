@@ -55,7 +55,7 @@ public class UserAccountController {
     @RequestMapping(value = "/users/current/profile-data", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> getProfileOfCurrentAccount(Authentication authentication) {
         UserAccount userAccount = userAccountService.getFromAuthentication(authentication);
-        return userAccount.toView().getProfileData();
+        return userAccount.getProfileData();
     }
 
     @RequestMapping(value = "/users/current/profile-data", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)

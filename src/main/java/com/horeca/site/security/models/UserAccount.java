@@ -97,15 +97,6 @@ public class UserAccount extends AbstractAccount {
     }
 
     public UserAccountView toView() {
-        UserAccountView view = new UserAccountView();
-        view.setLogin(getLogin());
-        view.setHotelId(getHotelId());
-        view.setRoles(getRoles());
-        view.setAccountNonExpired(isAccountNonExpired());
-        view.setAccountNonLocked(isAccountNonLocked());
-        view.setCredentialsNonExpired(isCredentialsNonExpired());
-        view.setEnabled(isEnabled());
-        view.setProfileData(getProfileData());
-        return view;
+        return new UserAccountView(getLogin(), getRoles(), isEnabled(), getHotelId());
     }
 }
