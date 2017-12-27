@@ -7,9 +7,10 @@ import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.repositories.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,20 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
         return getAll().stream().map(UserAccount::toView).collect(Collectors.toSet());
     }
 
+    public Page<UserAccountView> getViews(Pageable pageable) {
+        Page<UserAccount> pageOfAccounts = getRepository().findAll(pageable);
+        List<UserAccountView> accountViews = pageOfAccounts.getContent().stream()
+                .map(UserAccount::toView)
+                .collect(Collectors.toList());
+        return new PageImpl<>(accountViews, pageable, getRepository().getTotalCount());
+    }
+
+    public Page<UserAccountView> getViews(Long hotelId, Pageable pageable) {
+        List<UserAccount> byHotelId = getRepository().findAllByHotelId(hotelId);
+        List<UserAccountView> accountViews = byHotelId.stream()
+                .map(UserAccount::toView)
+                .collect(Collectors.toList());
+        return new PageImpl<>(accountViews, pageable, getRepository().getTotalCount());
     }
 
     public UserAccount create(String login, String plainPassword, Long hotelId, List<String> roles) {

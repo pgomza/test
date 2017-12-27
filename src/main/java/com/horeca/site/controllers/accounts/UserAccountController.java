@@ -7,6 +7,9 @@ import com.horeca.site.services.accounts.PasswordResetService;
 import com.horeca.site.services.accounts.UserAccountPendingService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
 import static com.horeca.site.services.accounts.AccountPendingService.ResponseMessage;
 import static com.horeca.site.services.accounts.AccountPendingService.prepareResponseMessage;
@@ -36,8 +39,19 @@ public class UserAccountController {
     private PasswordResetService passwordResetService;
 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<UserAccountView> getViews() {
-        return userAccountService.getViews();
+    public Page<UserAccountView> getViews(Pageable pageable) {
+        return userAccountService.getViews(pageable);
+    }
+
+    @RequestMapping(value = "/users", params = { "hotel-id" }, method = RequestMethod.GET, produces =
+            MediaType.APPLICATION_JSON_VALUE)
+    public Page<UserAccountView> getViews(@RequestParam(value = "hotel-id") Long hotelId, Pageable pageable) {
+        if (hotelId != null) {
+            return userAccountService.getViews(hotelId, pageable);
+        }
+        else {
+            return new PageImpl<>(Collections.emptyList());
+        }
     }
 
     @RequestMapping(value = "/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
