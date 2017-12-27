@@ -60,7 +60,7 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
 
     public UserAccount create(String login, String plainPassword, Long hotelId, List<String> roles) {
         if (exists(login)) {
-            throw new BusinessRuleViolationException("Such a user already exists");
+            throw new BusinessRuleViolationException("Such a user account already exists");
         }
         String hashedPassword = PasswordHashingService.getHashedFromPlain(plainPassword);
         UserAccount account = new UserAccount(loginToUsername(login), hashedPassword, hotelId, roles);

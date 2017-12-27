@@ -5,8 +5,6 @@ import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.repositories.SalesmanAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,10 +38,10 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
 
     public SalesmanAccount create(String login, String plainPassword) {
         if (exists(login)) {
-            throw new BusinessRuleViolationException("Such a salesman already exists");
+            throw new BusinessRuleViolationException("Such a salesman account already exists");
         }
         String hashedPassword = PasswordHashingService.getHashedFromPlain(plainPassword);
-        SalesmanAccount account = new SalesmanAccount(AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login, hashedPassword);
+        SalesmanAccount account = new SalesmanAccount(loginToUsername(login), hashedPassword);
         return save(account);
     }
 }
