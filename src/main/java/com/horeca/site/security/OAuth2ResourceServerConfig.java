@@ -114,6 +114,9 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         *******************************************************************************
          */
 
+        // roots can access their profile
+        http.authorizeRequests().antMatchers("/api/accounts/roots/current/**").hasAuthority(RootAccount.ROLE_DEFAULT);
+
         // salesmen can access their profile
         http.authorizeRequests().antMatchers("/api/accounts/salesmen/current/**").hasAuthority(SalesmanAccount.ROLE_DEFAULT);
         // but only roots can manage salesmen
