@@ -5,6 +5,7 @@ import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.models.stay.StayPOST;
 import com.horeca.site.security.models.GuestAccount;
+import com.horeca.site.security.models.RootAccount;
 import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.services.HotelService;
@@ -62,14 +63,7 @@ public class AccessChecker {
     }
 
     public boolean checkForUserAccountFromCollection(Authentication authentication, UserAccount filterObject) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserAccount) {
-            UserAccount userAccount = (UserAccount) principal;
-            if (userAccount.getHotelId().equals(filterObject.getHotelId()))
-                return true;
-        }
-
-        return false;
+        return checkForHotelHelper(authentication, filterObject.getHotelId());
     }
 
     private boolean checkForStayHelper(Authentication authentication, String pin) {
@@ -78,27 +72,36 @@ public class AccessChecker {
     }
 
     private boolean checkForStayHelper(Authentication authentication, Stay stay) {
+        // given stay can be accessed by the guest, by a user whose hotel
+        // is associated with the stay or by any root
+        // salesmen CANNOT access any stays
         Object principal = authentication.getPrincipal();
 
-        if (principal instanceof GuestAccount) {
+        if (principal instanceof RootAccount) {
+            return true;
+        }
+        else if (principal instanceof GuestAccount) {
             GuestAccount guestAccount = (GuestAccount) principal;
-            if (stay.getPin().equals(guestAccount.getPin()))
+            if (stay.getPin().equals(guestAccount.getPin())) {
                 return true;
+            }
         }
         else if (principal instanceof UserAccount) {
             UserAccount userAccount = (UserAccount) principal;
             Long requestedId = stay.getHotel().getId();
-            if (userAccount.getHotelId().equals(requestedId))
+            if (userAccount.getHotelId().equals(requestedId)) {
                 return true;
+            }
         }
 
         return false;
     }
 
     private boolean checkForHotelHelper(Authentication authentication, Long hotelId) {
+        // roots and salesmen can access all the hotels
+        // users can access only the hotel that they're associated with
         Object principal = authentication.getPrincipal();
-        if (principal instanceof SalesmanAccount) {
-            // allow any salesman to update hotels' data
+        if (principal instanceof RootAccount || principal instanceof SalesmanAccount) {
             return true;
         }
         else if (principal instanceof UserAccount) {
@@ -112,14 +115,21 @@ public class AccessChecker {
     }
 
     private boolean checkForGuestHelper(Authentication authentication, Long guestId) {
+        // roots have access to all the guests
+        // users have access to the guests from their hotel only
         Object principal = authentication.getPrincipal();
-        if (principal instanceof UserAccount) {
+
+        if (principal instanceof RootAccount) {
+            return true;
+        }
+        else if (principal instanceof UserAccount) {
             UserAccount userAccount = (UserAccount) principal;
             Hotel hotel = hotelService.get(userAccount.getHotelId());
             Set<Guest> hotelGuests = hotel.getGuests();
             for (Guest hotelGuest : hotelGuests) {
-                if (hotelGuest.getId().equals(guestId))
+                if (hotelGuest.getId().equals(guestId)) {
                     return true;
+                }
             }
         }
         return false;

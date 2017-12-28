@@ -78,7 +78,6 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/services/**").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/images/**").permitAll();
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/notifications/**").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/tv-channels").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/links").permitAll();
 
@@ -91,13 +90,9 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         *******************************************************************************
          */
 
-
-        // users (and only them) can access the hotel that they're associated with
         http.authorizeRequests().antMatchers("/api/hotels/{\\d+}/**")
                 .access("@accessChecker.checkForHotel(authentication, request)");
 
-        // a specific stay can be accessed either by a guest associated with it or by a user
-        // whose hotel is associated with it; that goes for the check-in/out endpoints as well
         http.authorizeRequests().antMatchers("/api/stays/{pin}/**")
                 .access("@accessChecker.checkForStay(authentication, request)");
         http.authorizeRequests().antMatchers("/api/check-in/{pin}")
