@@ -11,16 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.horeca.site.security.OAuth2AuthorizationServerConfig.PANEL_CLIENT_ID;
@@ -48,19 +45,6 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
     @Override
     protected String getOAuthClientId() {
         return OAuth2AuthorizationServerConfig.PANEL_CLIENT_ID;
-    }
-
-    @PostFilter("@accessChecker.checkForUserAccountFromCollection(authentication, filterObject)")
-    public Set<UserAccount> getAll() {
-        Set<UserAccount> userAccounts = new HashSet<>();
-        for (UserAccount account : repository.findAll()) {
-            userAccounts.add(account);
-        }
-        return userAccounts;
-    }
-
-    public Set<UserAccountView> getViews() {
-        return getAll().stream().map(UserAccount::toView).collect(Collectors.toSet());
     }
 
     public Page<UserAccountView> getViews(Pageable pageable) {
