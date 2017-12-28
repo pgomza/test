@@ -9,6 +9,8 @@ import com.horeca.site.services.accounts.AccountPendingService;
 import com.horeca.site.services.accounts.SalesmanAccountPendingService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Api(value = "hotels")
 @RestController
@@ -33,8 +33,8 @@ public class SalesmanAccountController {
     private SalesmanAccountPendingService pendingService;
 
     @RequestMapping(value = "/salesmen", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<SalesmanAccountView> getAll() {
-        return accountService.getAll().stream().map(SalesmanAccount::toView).collect(Collectors.toList());
+    public Page<SalesmanAccountView> getViews(Pageable pageable) {
+        return accountService.getViews(pageable);
     }
 
     @Transactional
