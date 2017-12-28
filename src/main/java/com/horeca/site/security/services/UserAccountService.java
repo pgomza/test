@@ -76,7 +76,7 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
         List<UserAccountView> accountViews = byHotelId.stream()
                 .map(UserAccount::toView)
                 .collect(Collectors.toList());
-        return new PageImpl<>(accountViews, pageable, getRepository().getTotalCount());
+        return new PageImpl<>(accountViews, pageable, byHotelId.size());
     }
 
     public UserAccount create(String login, String plainPassword, Long hotelId, List<String> roles) {
