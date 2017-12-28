@@ -54,6 +54,12 @@ public class UserAccountController {
         }
     }
 
+    @RequestMapping(value = "/users/{login:.+}", method = RequestMethod.DELETE, produces = MediaType
+            .APPLICATION_JSON_VALUE)
+    public void delete(@PathVariable("login") String login) {
+        userAccountService.delete(login);
+    }
+
     @RequestMapping(value = "/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserAccountView getCurrentView(Authentication authentication) {
         return userAccountService.getFromAuthentication(authentication, UserAccount.class).toView();
