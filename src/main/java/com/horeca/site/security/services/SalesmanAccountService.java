@@ -1,6 +1,7 @@
 package com.horeca.site.security.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
+import com.horeca.site.security.OAuth2AuthorizationServerConfig;
 import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.repositories.SalesmanAccountRepository;
@@ -27,6 +28,11 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
     @Override
     protected String loginToUsername(String login) {
         return AbstractAccount.SALES_CLIENT_USERNAME_PREFIX + login;
+    }
+
+    @Override
+    protected String getOAuthClientId() {
+        return OAuth2AuthorizationServerConfig.SALES_CLIENT_ID;
     }
 
     public List<SalesmanAccount> getAll() {

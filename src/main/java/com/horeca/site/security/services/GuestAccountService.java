@@ -1,6 +1,7 @@
 package com.horeca.site.security.services;
 
 import com.horeca.site.models.stay.Stay;
+import com.horeca.site.security.OAuth2AuthorizationServerConfig;
 import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.repositories.GuestAccountRepository;
@@ -32,6 +33,11 @@ public class GuestAccountService extends AbstractAccountService<GuestAccount> {
     @Override
     protected String loginToUsername(String login) {
         return AbstractAccount.MOBILE_CLIENT_USERNAME_PREFIX + login;
+    }
+
+    @Override
+    protected String getOAuthClientId() {
+        return OAuth2AuthorizationServerConfig.MOBILE_CLIENT_ID;
     }
 
     public void registerGuest(Stay stay) {
