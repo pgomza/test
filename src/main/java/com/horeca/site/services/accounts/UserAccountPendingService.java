@@ -42,6 +42,8 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
         String plainTextPassword = accountPOST.getPassword();
         Long hotelId = accountPOST.getHotelId();
 
+        hotelService.get(hotelId);
+
         String hashedPassword = PasswordHashingService.getHashedFromPlain(plainTextPassword);
         String secret = generateSecret();
         UserAccountPending userAccountPending = new UserAccountPending(email, hashedPassword, secret, hotelId, true);
