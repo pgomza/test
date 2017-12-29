@@ -37,6 +37,18 @@ public class SalesmanAccountController {
         return accountService.getViews(pageable);
     }
 
+    @RequestMapping(value = "/salesmen/{login:.+}", method = RequestMethod.GET, produces = MediaType
+            .APPLICATION_JSON_VALUE)
+    public SalesmanAccountView get(@PathVariable("login") String login) {
+        return accountService.get(login).toView();
+    }
+
+    @RequestMapping(value = "/salesmen/{login:.+}", method = RequestMethod.DELETE, produces = MediaType
+            .APPLICATION_JSON_VALUE)
+    public void delete(@PathVariable("login") String login) {
+        accountService.delete(login);
+    }
+
     @Transactional
     @RequestMapping(value = "/salesmen", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public AccountPendingService.ResponseMessage addPending(@RequestBody @Valid AccountPOST accountPOST) {
@@ -77,15 +89,5 @@ public class SalesmanAccountController {
                                                                  @RequestBody Map<String, String> profileData) {
         SalesmanAccount salesmanAccount = accountService.getFromAuthentication(authentication, SalesmanAccount.class);
         return accountService.updateProfileData(salesmanAccount.getLogin(), profileData);
-    }
-
-    @RequestMapping(value = "/salesmen/{login}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public SalesmanAccountView get(@PathVariable("login") String login) {
-        return accountService.get(login).toView();
-    }
-
-    @RequestMapping(value = "/salesmen/{login}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(@PathVariable("login") String login) {
-        accountService.delete(login);
     }
 }
