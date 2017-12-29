@@ -16,7 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -65,7 +66,7 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
         Long hotelId = pending.getHotelId();
         Boolean fullAccess = pending.getFullAccess();
 
-        List<String> roles = Arrays.asList(UserAccount.ROLE_DEFAULT);
+        List<String> roles = new ArrayList<>(Collections.singletonList(UserAccount.ROLE_DEFAULT));
         if (fullAccess) {
             roles.add(UserAccount.ROLE_HOTEL_FULL);
         }
