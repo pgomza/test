@@ -1,10 +1,10 @@
 package com.horeca.site.models.accounts;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 public class UserAccountPOST extends AccountPOST {
 
-    @NotEmpty
+    @NotNull
     private Long hotelId;
 
     public Long getHotelId() {
