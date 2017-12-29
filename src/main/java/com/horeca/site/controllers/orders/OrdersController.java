@@ -1,5 +1,6 @@
 package com.horeca.site.controllers.orders;
 
+import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.StayPin;
 import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.orders.Orders;
@@ -20,6 +21,7 @@ public class OrdersController {
     @Autowired
     private OrdersService service;
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{pin}/orders", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Orders get(@StayPin @PathVariable("pin") String pin) {

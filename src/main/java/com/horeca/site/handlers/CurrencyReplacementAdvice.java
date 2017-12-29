@@ -1,8 +1,7 @@
 package com.horeca.site.handlers;
 
-import com.horeca.site.models.hotel.translation.LanguageCode;
 import com.horeca.site.repositories.services.StayRepository;
-import com.horeca.site.services.translation.HotelTranslationService;
+import com.horeca.site.services.CurrencyReplacementService;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -17,35 +16,29 @@ import java.util.Optional;
 
 @Aspect
 @Component
-public class TranslationAdvice extends HotelAdvice {
+public class CurrencyReplacementAdvice extends HotelAdvice {
 
     private final Logger logger = Logger.getLogger(getClass().getName());
-    private final HotelTranslationService translationService;
+    private final CurrencyReplacementService service;
 
     @Autowired
-    public TranslationAdvice(StayRepository stayRepository, HotelTranslationService translationService) {
+    public CurrencyReplacementAdvice(StayRepository stayRepository, CurrencyReplacementService service) {
         super(stayRepository);
-        this.translationService = translationService;
+        this.service = service;
     }
 
-    @Around(value = "@annotation(TranslateReturnValue)")
-    public Object translate(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object objectToTranslate = joinPoint.proceed();
+    @Around(value = "@annotation(ReplaceCurrency)")
+    public Object replace(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object originalObject = joinPoint.proceed();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                 .getRequest();
 
         Optional<Long> hotelIdOpt = extractHotelId(joinPoint);
         if (!hotelIdOpt.isPresent()) {
             logger.error("Couldn't extract hotelId when processing " + request.getRequestURI());
-            return objectToTranslate;
+            return originalObject;
         }
 
-        LanguageCode languageCode = LanguageCodeArgumentResolver.resolveFromLocale(request.getLocale());
-        try {
-            return translationService.translate(objectToTranslate, hotelIdOpt.get(), languageCode);
-        } catch (Exception ex) {
-            logger.error("There was a problem when translating " + objectToTranslate, ex);
-            return objectToTranslate;
-        }
+        return service.replace(originalObject, hotelIdOpt.get());
     }
 }

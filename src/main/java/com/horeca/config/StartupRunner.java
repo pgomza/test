@@ -1,6 +1,6 @@
 package com.horeca.config;
 
-import com.horeca.site.services.StayInfoAsHtmlService;
+import com.horeca.site.services.QRCodeService;
 import com.horeca.site.services.accounts.PasswordResetPendingService;
 import com.horeca.site.services.cubilis.CubilisReservationService;
 import com.horeca.site.websocket.WebSocketTokenService;
@@ -27,7 +27,7 @@ public class StartupRunner {
     private CubilisReservationService cubilisReservationService;
 
     @Autowired
-    private StayInfoAsHtmlService stayInfoAsHtmlService;
+    private QRCodeService qrCodeService;
 
     @EventListener(ContextRefreshedEvent.class)
     public void contextRefreshedEvent() {
@@ -37,6 +37,6 @@ public class StartupRunner {
         webSocketTokenService.deleteAll();
         cubilisReservationService.deleteOutdated();
         passwordResetPendingService.deleteAllInvalid();
-        stayInfoAsHtmlService.deleteAllCodeImages();
+        qrCodeService.deleteAllCodeImages();
     }
 }

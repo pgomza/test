@@ -1,6 +1,7 @@
 package com.horeca.site.controllers.services;
 
 import com.horeca.site.handlers.HotelId;
+import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.rental.Rental;
 import com.horeca.site.models.hotel.services.rental.RentalItem;
@@ -21,6 +22,7 @@ public class RentalController {
     @Autowired
     private RentalService service;
 
+    @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/rental", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Rental get(@HotelId @PathVariable("hotelId") Long hotelId) {

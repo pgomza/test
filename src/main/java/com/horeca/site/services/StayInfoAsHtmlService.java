@@ -3,39 +3,16 @@ package com.horeca.site.services;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.services.services.StayService;
-import com.microsoft.azure.storage.StorageException;
-import com.microsoft.azure.storage.blob.BlobContainerPermissions;
-import com.microsoft.azure.storage.blob.BlobContainerPublicAccessType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.io.ByteArrayInputStream;
-import java.net.URISyntaxException;
-import java.util.Optional;
 
 @Service
 public class StayInfoAsHtmlService {
-
-    private static final String QR_CODES_DIRECTORY = "qr-codes";
 
     @Autowired
     private StayService stayService;
     @Autowired
     private QRCodeService qrCodeService;
-    @Autowired
-    private BlobService blobService;
-
-    @Value("${storage.images.containerName}")
-    private String containerName;
-
-    @PostConstruct
-    void registerImagesContainer() throws URISyntaxException, StorageException {
-        BlobContainerPermissions containerPermissions = new BlobContainerPermissions();
-        containerPermissions.setPublicAccess(BlobContainerPublicAccessType.CONTAINER);
-        blobService.registerContainer(containerName, containerPermissions);
-    }
 
     public String generate(String pin) {
         Stay stay = stayService.getWithoutCheckingStatus(pin);
@@ -156,7 +133,7 @@ public class StayInfoAsHtmlService {
     }
 
     private String generatePinPart(String pin) {
-        String imageLink = getLinkForPin(pin);
+        String imageLink = qrCodeService.getLinkForPin(pin);
 
         return "<div class=\"pin\">\n" +
                 "        <div class=\"entry\">\n" +
@@ -168,21 +145,5 @@ public class StayInfoAsHtmlService {
                 "            <img src=\"" + imageLink + "\" alt=\"Mountain View\">\n" +
                 "        </div>\n" +
                 "    </div>";
-    }
-
-    private String getLinkForPin(String pin) {
-        String uniqueFilename = QR_CODES_DIRECTORY + "/" + pin + ".jpg";
-        Optional<String> imageLinkOpt = blobService.getLink(containerName, uniqueFilename);
-        if (imageLinkOpt.isPresent()) {
-            return imageLinkOpt.get();
-        }
-        else {
-            byte[] imageBytes = qrCodeService.generate(pin);
-            return blobService.upload(containerName, uniqueFilename, new ByteArrayInputStream(imageBytes));
-        }
-    }
-
-    public void deleteAllCodeImages() {
-        blobService.deleteAll(containerName, QR_CODES_DIRECTORY);
     }
 }

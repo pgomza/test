@@ -12,6 +12,7 @@ import com.horeca.site.services.DeepCopyService;
 import com.horeca.site.services.HotelService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -41,6 +42,9 @@ public class HotelTranslationService {
 
     @Autowired
     private HotelService hotelService;
+
+    @Value("${translations.required}")
+    private String[] requiredTranslation;
 
     public <T> T translate(T object, Long hotelId, LanguageCode languageCode) {
         T translated = null;
@@ -194,5 +198,15 @@ public class HotelTranslationService {
             throw new ResourceNotFoundException();
         }
         repository.delete(existingTranslationOpt.get());
+    }
+
+    public void ensureRequiredTranslationsExist(Long hotelId) {
+        for (String keyStr : requiredTranslation) {
+            LanguageCode languageCode = LanguageCode.valueOf(keyStr);
+            Optional<HotelTranslation> translation = get(hotelId, languageCode);
+            if (!translation.isPresent()) {
+                update(hotelId, languageCode, new HashSet<>());
+            }
+        }
     }
 }

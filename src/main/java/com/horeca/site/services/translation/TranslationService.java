@@ -3,6 +3,9 @@ package com.horeca.site.services.translation;
 import com.horeca.site.models.hotel.translation.Translatable;
 import com.horeca.site.services.CollectionTypeGuesser;
 import com.horeca.site.services.DeepCopyService;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -11,10 +14,29 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
 public class TranslationService {
+
+    private static final Set<Class> classesNotIntrospectable;
+    static {
+        classesNotIntrospectable = new HashSet<>();
+        classesNotIntrospectable.add(Double.class);
+        classesNotIntrospectable.add(Float.class);
+        classesNotIntrospectable.add(Long.class);
+        classesNotIntrospectable.add(Integer.class);
+        classesNotIntrospectable.add(Short.class);
+        classesNotIntrospectable.add(Character.class);
+        classesNotIntrospectable.add(Byte.class);
+        classesNotIntrospectable.add(Boolean.class);
+
+        classesNotIntrospectable.add(LocalDate.class);
+        classesNotIntrospectable.add(LocalDateTime.class);
+        classesNotIntrospectable.add(LocalTime.class);
+        classesNotIntrospectable.add(BigDecimal.class);
+    }
 
     @Autowired
     private DeepCopyService deepCopyService;
@@ -31,7 +53,7 @@ public class TranslationService {
             Collection<?> translated = translate(collection, translations);
             return new ResponseEntity<>((T) translated, entity.getHeaders(), entity.getStatusCode());
         }
-        else if (!isPrimitiveOrPrimitiveWrapper(bodyClass) && !String.class.isAssignableFrom(bodyClass)) {
+        else if (shouldBeIntrospected(bodyClass) && !String.class.isAssignableFrom(bodyClass)) {
             introspect(entityCopyBody, new HashSet<>(), translations);
         }
         return entityCopy;
@@ -58,7 +80,7 @@ public class TranslationService {
 
         T objectCopy = deepCopyService.copy(object);
         Class<T> objectClass = (Class<T>) objectCopy.getClass();
-        if (!isPrimitiveOrPrimitiveWrapper(objectClass) && !String.class.isAssignableFrom(objectClass)) {
+        if (shouldBeIntrospected(objectClass) && !String.class.isAssignableFrom(objectClass)) {
             introspect(objectCopy, new HashSet<>(), translations);
         }
 
@@ -68,7 +90,7 @@ public class TranslationService {
     public <T> Set<String> extractTranslatableProps(T object) throws IllegalAccessException {
         Class<T> objectClass = (Class<T>) object.getClass();
         Set<String> extractedProps = new HashSet<>();
-        if (!isPrimitiveOrPrimitiveWrapper(objectClass) && !String.class.isAssignableFrom(objectClass)) {
+        if (shouldBeIntrospected(objectClass) && !String.class.isAssignableFrom(objectClass)) {
             T copy = deepCopyService.copy(object);
             collectProps(copy, new HashSet<>(), extractedProps);
         }
@@ -79,9 +101,7 @@ public class TranslationService {
             throws IllegalAccessException, NoSuchMethodException, InstantiationException, InvocationTargetException {
 
         Class<?> objectClass = object.getClass();
-
         if (!introspected.contains(objectClass)) {
-
             introspected.add(objectClass);
 
             Field[] fields = objectClass.getDeclaredFields();
@@ -96,7 +116,7 @@ public class TranslationService {
                 if (fieldType == String.class) {
                     String toTranslate = (String) field.get(object);
                     if (isStringEligible(toTranslate)) {
-                        String translated = translateString(toTranslate, translations);
+                        String translated = translateString(toTranslate.trim(), translations);
                         field.set(object, translated);
                     }
                 }
@@ -107,16 +127,16 @@ public class TranslationService {
                         field.set(object, translated);
                     }
                 }
-                else if (!isPrimitiveOrPrimitiveWrapper(fieldType)) {
+                else if (shouldBeIntrospected(fieldType)) {
                     Object fieldValue = field.get(object);
                     if (fieldValue != null) {
                         introspect(fieldValue, introspected, translations);
                     }
                 }
             }
-        }
 
-        introspected.remove(objectClass);
+            introspected.remove(objectClass);
+        }
     }
 
     private static <T> Collection<T> introspectCollection(Collection<T> collection, HashSet<Class<?>> introspected,
@@ -141,7 +161,7 @@ public class TranslationService {
                 for (Object element : collection) {
                     String toTranslate = (String) element;
                     if (isStringEligible(toTranslate)) {
-                        String translated = translateString(toTranslate, translations);
+                        String translated = translateString(toTranslate.trim(), translations);
                         translatedCopy.add((T) translated);
                     }
                 }
@@ -154,7 +174,7 @@ public class TranslationService {
                     }
                 }
             }
-            else if (!isPrimitiveOrPrimitiveWrapper(elementClass)) {
+            else if (shouldBeIntrospected(elementClass)) {
                 for (Object element : collection) {
                     if (element != null) {
                         introspect(element, introspected, translations);
@@ -180,9 +200,7 @@ public class TranslationService {
             throws IllegalAccessException {
 
         Class<?> objectClass = object.getClass();
-
         if (!introspected.contains(objectClass)) {
-
             introspected.add(objectClass);
 
             Field[] fields = objectClass.getDeclaredFields();
@@ -196,7 +214,7 @@ public class TranslationService {
                 if (fieldType == String.class) {
                     String text = (String) field.get(object);
                     if (isStringEligible(text)) {
-                        results.add(text);
+                        results.add(text.trim());
                     }
                 }
                 else if (Collection.class.isAssignableFrom(fieldType)) {
@@ -205,16 +223,16 @@ public class TranslationService {
                         collectPropsFromCollection(collection, introspected, results);
                     }
                 }
-                else if (!isPrimitiveOrPrimitiveWrapper(fieldType)) {
+                else if (shouldBeIntrospected(fieldType)) {
                     Object fieldValue = field.get(object);
                     if (fieldValue != null) {
                         collectProps(fieldValue, introspected, results);
                     }
                 }
             }
-        }
 
-        introspected.remove(objectClass);
+            introspected.remove(objectClass);
+        }
     }
 
     private static void collectPropsFromCollection(Collection<?> collection, HashSet<Class<?>> introspected,
@@ -230,7 +248,7 @@ public class TranslationService {
                 for (Object element : collection) {
                     String text = (String) element;
                     if (isStringEligible(text)) {
-                        results.add(text);
+                        results.add(text.trim());
                     }
                 }
             }
@@ -242,7 +260,7 @@ public class TranslationService {
                     }
                 }
             }
-            else if (!isPrimitiveOrPrimitiveWrapper(elementClass)) {
+            else if (shouldBeIntrospected(elementClass)) {
                 for (Object element : collection) {
                     if (element != null) {
                         collectProps(element, introspected, results);
@@ -252,10 +270,8 @@ public class TranslationService {
         }
     }
 
-    private static boolean isPrimitiveOrPrimitiveWrapper(Class<?> type) {
-        return type.isPrimitive() || type == Double.class || type == Float.class || type == Long.class ||
-                type == Integer.class || type == Short.class || type == Character.class || type == Byte.class ||
-                type == Boolean.class;
+    private static boolean shouldBeIntrospected(Class<?> type) {
+        return !(type.isPrimitive() || classesNotIntrospectable.contains(type));
     }
 
     private static boolean isStringEligible(String text) {

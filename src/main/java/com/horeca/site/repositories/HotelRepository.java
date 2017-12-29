@@ -1,5 +1,6 @@
 package com.horeca.site.repositories;
 
+import com.horeca.site.models.Currency;
 import com.horeca.site.models.hotel.Hotel;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -29,4 +30,7 @@ public interface HotelRepository extends PagingAndSortingRepository<Hotel, Long>
 
     @Query("select h.id from Hotel h where h.isMarkedAsDeleted = 1")
     List<Long> getAllMarkedAsDeleted();
+
+    @Query("select h.currency from Hotel h where h.id = :id")
+    Currency getCurrency(@Param("id") Long id);
 }

@@ -1,6 +1,7 @@
 package com.horeca.site.services;
 
 import com.horeca.site.exceptions.ResourceNotFoundException;
+import com.horeca.site.models.Currency;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.HotelView;
 import com.horeca.site.repositories.HotelRepository;
@@ -56,6 +57,13 @@ public class HotelQueryService {
         return get(id).getTvChannels();
     }
 
+    public Currency getCurrency(Long id) {
+        Currency currency = repository.getCurrency(id);
+        if (currency == null) {
+            throw new ResourceNotFoundException();
+        }
+        return currency;
+    }
 
     // The following get* methods exclude the hotels that have been marked as deleted
     // The methods aren't to be used from anywhere else than the controllers (for most of them

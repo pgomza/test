@@ -56,7 +56,7 @@ public class SpaService {
             Spa spa = new Spa();
             spa.setDescription("");
             Price spaPrice = new Price();
-            spaPrice.setCurrency(Currency.EURO);
+            spaPrice.setCurrency(Currency.EUR);
             spaPrice.setValue(new BigDecimal(5));
             spa.setPrice(spaPrice);
 

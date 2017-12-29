@@ -28,6 +28,7 @@ pipeline {
           #!/bin/sh
 
           az webapp stop --resource-group Throdi --name ThrodiBackend --slot staging
+          sleep 30
 
           if [ ${BRANCH_NAME} != "master" ]; then
               az webapp config appsettings set --resource-group Throdi --name ThrodiBackend --slot staging --settings JAVA_OPTS=-Dspring.profiles.active=development
@@ -57,6 +58,7 @@ pipeline {
           fi
 
           az webapp start --resource-group Throdi --name ThrodiBackend --slot staging
+          sleep 30
 
           lftp -c "open -u ThrodiBackend__staging\\\\\\$ThrodiBackend__staging,cQjl0F3nKw9k4Lmiho5YHZTxSkauRHt0EKe4Qo6ZfRZhxfdlgeBfMoFwGjqS ftp://waws-prod-am2-121.ftp.azurewebsites.windows.net/site/wwwroot;
               put ${WORKSPACE}/target/ROOT.war -o webapps/ROOT.war"
@@ -66,11 +68,11 @@ pipeline {
     stage('Check if app runs correctly') {
       steps {
         sh '''
-            sleep 180
+            sleep 240
             response=$(curl "https://throdibackend-staging.azurewebsites.net/api/hotels/1" | /var/lib/jenkins/custom/check_app)
             attempts=1
 
-            while (( attempts < 7 && response == 0 )); do
+            while (( attempts < 10 && response == 0 )); do
                 sleep 60
                 echo "Trying for $((attempts + 1)) time"
 
