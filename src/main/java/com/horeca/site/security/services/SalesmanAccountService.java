@@ -40,6 +40,11 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
         return OAuth2AuthorizationServerConfig.SALES_CLIENT_ID;
     }
 
+    @Override
+    public boolean exists(String login) {
+        return "current".equals(login) || super.exists(login);
+    }
+
     public List<SalesmanAccount> getAll() {
         List<SalesmanAccount> result = new ArrayList<>();
         getRepository().findAll().forEach(result::add);

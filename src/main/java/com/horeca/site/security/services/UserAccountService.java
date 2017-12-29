@@ -47,6 +47,11 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
         return OAuth2AuthorizationServerConfig.PANEL_CLIENT_ID;
     }
 
+    @Override
+    public boolean exists(String login) {
+        return "current".equals(login) || super.exists(login);
+    }
+
     public Page<UserAccountView> getViews(Pageable pageable) {
         Page<UserAccount> pageOfAccounts = getRepository().findAll(pageable);
         List<UserAccountView> accountViews = pageOfAccounts.getContent().stream()
