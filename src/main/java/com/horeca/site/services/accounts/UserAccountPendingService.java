@@ -41,11 +41,10 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
         String email = accountPOST.getEmail();
         String plainTextPassword = accountPOST.getPassword();
         Long hotelId = accountPOST.getHotelId();
-        Boolean fullAccess = accountPOST.getFullAccess();
 
         String hashedPassword = PasswordHashingService.getHashedFromPlain(plainTextPassword);
         String secret = generateSecret();
-        UserAccountPending userAccountPending = new UserAccountPending(email, hashedPassword, secret, hotelId, fullAccess);
+        UserAccountPending userAccountPending = new UserAccountPending(email, hashedPassword, secret, hotelId, true);
 
         return repository.save(userAccountPending);
     }
