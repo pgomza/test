@@ -4,7 +4,12 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.security.models.AbstractAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 
+import java.util.Collection;
 import java.util.Map;
 
 public abstract class AbstractAccountService<T extends AbstractAccount> {
@@ -14,9 +19,14 @@ public abstract class AbstractAccountService<T extends AbstractAccount> {
     @Autowired
     private LoginService loginService;
 
+    @Autowired
+    private TokenStore tokenStore;
+
     abstract protected CrudRepository<T, String> getRepository();
 
     abstract protected String loginToUsername(String login);
+
+    abstract protected String getOAuthClientId();
 
     public boolean exists(String login) {
         return loginService.exists(loginToUsername(login));
@@ -30,15 +40,19 @@ public abstract class AbstractAccountService<T extends AbstractAccount> {
         return account;
     }
 
+    public T save(T account) {
+        return getRepository().save(account);
+    }
+
     public void delete(String login) {
         if (!exists(login)) {
             throw new ResourceNotFoundException();
         }
         getRepository().delete(loginToUsername(login));
-    }
-
-    public T save(T account) {
-        return getRepository().save(account);
+        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientIdAndUserName(
+                getOAuthClientId(), loginToUsername(login)
+        );
+        tokens.forEach(tokenStore::removeAccessToken);
     }
 
     public Map<String, String> getProfileData(String login) {
@@ -50,6 +64,18 @@ public abstract class AbstractAccountService<T extends AbstractAccount> {
         account.getProfileData().clear();
         account.getProfileData().putAll(updated);
         return save(account).getProfileData();
+    }
+
+    public T getFromAuthentication(Authentication authentication, Class<T> clazz) {
+        Object principal = authentication.getPrincipal();
+        if (clazz.isAssignableFrom(principal.getClass())) {
+            T account = (T) principal;
+            // this is necessary because the instance obtained from 'authentication' isn't fully initialized
+            return get(account.getLogin());
+        }
+        else {
+            throw new AccessDeniedException("Access denied");
+        }
     }
 
     void disable(T account) {

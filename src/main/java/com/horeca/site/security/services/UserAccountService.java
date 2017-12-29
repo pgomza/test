@@ -3,22 +3,21 @@ package com.horeca.site.security.services;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.UnauthorizedException;
 import com.horeca.site.models.accounts.UserAccountView;
+import com.horeca.site.security.OAuth2AuthorizationServerConfig;
 import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.repositories.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.core.Authentication;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.horeca.site.security.OAuth2AuthorizationServerConfig.PANEL_CLIENT_ID;
@@ -43,33 +42,36 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
         return AbstractAccount.PANEL_CLIENT_USERNAME_PREFIX + login;
     }
 
-    @PostFilter("@accessChecker.checkForUserAccountFromCollection(authentication, filterObject)")
-    public Set<UserAccount> getAll() {
-        Set<UserAccount> userAccounts = new HashSet<>();
-        for (UserAccount account : repository.findAll()) {
-            userAccounts.add(account);
-        }
-        return userAccounts;
+    @Override
+    protected String getOAuthClientId() {
+        return OAuth2AuthorizationServerConfig.PANEL_CLIENT_ID;
     }
 
-    public Set<UserAccountView> getViews() {
-        return getAll().stream().map(UserAccount::toView).collect(Collectors.toSet());
+    @Override
+    public boolean exists(String login) {
+        return "current".equals(login) || super.exists(login);
     }
 
-    public UserAccount getFromAuthentication(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserAccount) {
-            UserAccount userAccount = (UserAccount) principal;
-            // this is necessary because the instance obtained from 'authentication' isn't fully initialized
-            return get(userAccount.getLogin());
-        }
-        else
-            throw new AccessDeniedException("Access denied");
+    public Page<UserAccountView> getViews(Pageable pageable) {
+        Page<UserAccount> pageOfAccounts = getRepository().findAll(pageable);
+        List<UserAccountView> accountViews = pageOfAccounts.getContent().stream()
+                .map(UserAccount::toView)
+                .collect(Collectors.toList());
+        return new PageImpl<>(accountViews, pageable, getRepository().getTotalCount());
     }
 
-    public UserAccount create(String login, String password, boolean isPasswordAlreadyHashed, Long hotelId) {
+    public Page<UserAccountView> getViews(Long hotelId, Pageable pageable) {
+        List<UserAccount> byHotelId = getRepository().findAllByHotelId(hotelId);
+        List<UserAccountView> accountViews = byHotelId.stream()
+                .map(UserAccount::toView)
+                .collect(Collectors.toList());
+        return new PageImpl<>(accountViews, pageable, byHotelId.size());
+    }
+
+    public UserAccount create(String login, String password, boolean isPasswordAlreadyHashed, Long hotelId,
+                              List<String> roles) {
         if (exists(login)) {
-            throw new BusinessRuleViolationException("Such a user already exists");
+            throw new BusinessRuleViolationException("Such a user account already exists");
         }
 
         String hashedPassword;
@@ -80,7 +82,7 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
             hashedPassword = PasswordHashingService.getHashedFromPlain(password);
         }
 
-        UserAccount account = new UserAccount(loginToUsername(login), hashedPassword, hotelId);
+        UserAccount account = new UserAccount(loginToUsername(login), hashedPassword, hotelId, roles);
         return save(account);
     }
 

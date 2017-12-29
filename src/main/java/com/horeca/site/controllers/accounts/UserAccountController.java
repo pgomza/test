@@ -4,10 +4,12 @@ import com.horeca.site.models.accounts.*;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.accounts.PasswordResetService;
-import com.horeca.site.services.accounts.UserAccountCreationService;
 import com.horeca.site.services.accounts.UserAccountPendingService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
 import static com.horeca.site.services.accounts.AccountPendingService.ResponseMessage;
 import static com.horeca.site.services.accounts.AccountPendingService.prepareResponseMessage;
@@ -31,49 +33,62 @@ public class UserAccountController {
     private UserAccountService userAccountService;
 
     @Autowired
-    private UserAccountCreationService userAccountCreationService;
-
-    @Autowired
     private UserAccountPendingService userAccountPendingService;
 
     @Autowired
     private PasswordResetService passwordResetService;
 
     @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<UserAccountView> getViews() {
-        return userAccountService.getViews();
+    public Page<UserAccountView> getViews(Pageable pageable) {
+        return userAccountService.getViews(pageable);
+    }
+
+    @RequestMapping(value = "/users", params = { "hotel-id" }, method = RequestMethod.GET, produces =
+            MediaType.APPLICATION_JSON_VALUE)
+    public Page<UserAccountView> getViews(@RequestParam(value = "hotel-id") Long hotelId, Pageable pageable) {
+        if (hotelId != null) {
+            return userAccountService.getViews(hotelId, pageable);
+        }
+        else {
+            return new PageImpl<>(Collections.emptyList());
+        }
+    }
+
+    @RequestMapping(value = "/users/{login:.+}", method = RequestMethod.DELETE, produces = MediaType
+            .APPLICATION_JSON_VALUE)
+    public void delete(@PathVariable("login") String login) {
+        userAccountService.delete(login);
     }
 
     @RequestMapping(value = "/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public UserAccountView getCurrentView(Authentication authentication) {
-        return userAccountService.getFromAuthentication(authentication).toView();
+        return userAccountService.getFromAuthentication(authentication, UserAccount.class).toView();
     }
 
     @RequestMapping(value = "/users/current/password", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public void changePasswordOfCurrentAccount(Authentication authentication,
                                                @RequestBody PasswordChangeRequest request) {
-        UserAccount userAccount = userAccountService.getFromAuthentication(authentication);
+        UserAccount userAccount = userAccountService.getFromAuthentication(authentication, UserAccount.class);
         userAccountService.verifyAndChangePassword(userAccount.getLogin(), request.currentPassword, request.newPassword);
     }
 
     @RequestMapping(value = "/users/current/profile-data", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> getProfileOfCurrentAccount(Authentication authentication) {
-        UserAccount userAccount = userAccountService.getFromAuthentication(authentication);
-        return userAccount.toView().getProfileData();
+        UserAccount userAccount = userAccountService.getFromAuthentication(authentication, UserAccount.class);
+        return userAccount.getProfileData();
     }
 
     @RequestMapping(value = "/users/current/profile-data", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> updateProfileDataOfCurrentAccount(Authentication authentication,
                                                                  @RequestBody Map<String, String> profileData) {
-        UserAccount userAccount = userAccountService.getFromAuthentication(authentication);
+        UserAccount userAccount = userAccountService.getFromAuthentication(authentication, UserAccount.class);
         return userAccountService.updateProfileData(userAccount.getLogin(), profileData);
     }
 
     @Transactional
     @RequestMapping(value = "/users", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseMessage addPending(@RequestHeader(name = "Temp-Token", required = true) String token,
-                                      @RequestBody @Valid UserAccountPOST userAccountPOST) {
-        AccountPending pending = userAccountPendingService.verifyAndAdd(token, userAccountPOST);
+    public ResponseMessage addPending(@RequestBody @Valid UserAccountPOST userAccountPOST) {
+        AccountPending pending = userAccountPendingService.add(userAccountPOST);
         try {
             userAccountPendingService.sendActivationEmail(pending);
         } catch (UnsupportedEncodingException | MessagingException e) {
@@ -93,16 +108,6 @@ public class UserAccountController {
         }
 
         return userAccountPendingService.prepareRedirectPage(outcome);
-    }
-
-    @RequestMapping(value = "/users/tokens", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserAccountTempTokenResponse getNewTempToken(@RequestBody UserAccountTempTokenRequest request) {
-        return userAccountCreationService.getTempTokenForNewUserAccount(request);
-    }
-
-    @RequestMapping(value = "/users/tokens/{token}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserAccountTempTokenResponse getInfoAboutToken(@PathVariable("token") String token) {
-        return userAccountCreationService.getInfoAboutUserAccountTempToken(token);
     }
 
     @RequestMapping(value = "/users/reset-request", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

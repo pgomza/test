@@ -1,6 +1,7 @@
 package com.horeca.site.security.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.horeca.site.models.accounts.RootAccountView;
 import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.util.Map;
 @Entity
 public class RootAccount extends AbstractAccount {
 
-    public static final String DEFAULT_ROLE = "ROLE_ROOT";
+    public static final String ROLE_DEFAULT = "ROLE_ROOT";
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -52,7 +53,8 @@ public class RootAccount extends AbstractAccount {
     }
 
     public List<String> getRoles() {
-        return Arrays.asList(DEFAULT_ROLE, SalesmanAccount.DEFAULT_ROLE);
+        return Arrays.asList(ROLE_DEFAULT, SalesmanAccount.ROLE_DEFAULT, UserAccount.ROLE_DEFAULT,
+                UserAccount.ROLE_HOTEL_FULL);
     }
 
     @Override
@@ -63,5 +65,9 @@ public class RootAccount extends AbstractAccount {
     @Override
     public void setProfileData(Map<String, String> profileData) {
         this.profileData = profileData;
+    }
+
+    public RootAccountView toView() {
+        return new RootAccountView(getLogin(), getRoles(), isEnabled());
     }
 }

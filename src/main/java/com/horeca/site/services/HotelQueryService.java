@@ -46,8 +46,9 @@ public class HotelQueryService {
 
     public Hotel get(Long id) {
         Hotel hotel = repository.findOne(id);
-        if (hotel == null)
-            throw new ResourceNotFoundException();
+        if (hotel == null) {
+            throw new ResourceNotFoundException("Could not find such a hotel");
+        }
 
         return hotel;
     }

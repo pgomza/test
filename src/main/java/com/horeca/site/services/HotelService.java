@@ -13,6 +13,7 @@ import com.horeca.site.models.notifications.NotificationSettings;
 import com.horeca.site.repositories.HotelRepository;
 import com.horeca.site.security.services.GuestAccountService;
 import com.horeca.site.security.services.UserAccountService;
+import com.horeca.site.services.patchers.HotelPatcherService;
 import com.horeca.site.services.services.StayService;
 import com.horeca.site.services.translation.HotelTranslationService;
 import org.joda.time.LocalTime;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,6 +39,9 @@ public class HotelService {
 
     @Autowired
     private HotelRepository repository;
+
+    @Autowired
+    private HotelPatcherService hotelPatcherService;
 
     @Autowired
     private HotelQueryService hotelQueryService;
@@ -100,6 +105,12 @@ public class HotelService {
         updated.setId(id); // TODO this should have been set by the time this method is invoked
         checkImagesOnUpdate(updated);
         return repository.save(updated);
+    }
+
+    public Hotel patch(Long id, Map<String, Object> updates) throws IOException, IllegalAccessException {
+        Hotel hotel = get(id);
+        hotelPatcherService.patch(hotel, updates);
+        return update(id, hotel);
     }
 
     public Hotel updateFromController(Long id, Hotel newOne) {

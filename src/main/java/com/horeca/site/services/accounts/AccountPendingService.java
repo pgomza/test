@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
+import java.util.UUID;
 
 public abstract class AccountPendingService<T extends AccountPending> {
 
@@ -33,6 +34,10 @@ public abstract class AccountPendingService<T extends AccountPending> {
             throw new ResourceNotFoundException();
         }
         return pending;
+    }
+
+    protected static String generateSecret() {
+        return UUID.randomUUID().toString();
     }
 
     public void sendActivationEmail(AccountPending account) throws UnsupportedEncodingException, MessagingException {

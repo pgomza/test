@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
 @Service
 @Transactional
 public class SalesmanAccountPendingService extends AccountPendingService<SalesmanAccountPending> {
@@ -35,12 +33,12 @@ public class SalesmanAccountPendingService extends AccountPendingService<Salesma
         String email = accountPOST.getEmail();
         String plainTextPassword = accountPOST.getPassword();
 
-        if (accountService.exists(accountPOST.getEmail())) {
-            throw new BusinessRuleViolationException("A salesman with such an email already exists");
+        if (accountService.exists(email)) {
+            throw new BusinessRuleViolationException("Such a salesman account already exists");
         }
 
         String hashedPassword = PasswordHashingService.getHashedFromPlain(plainTextPassword);
-        String secret = UUID.randomUUID().toString();
+        String secret = generateSecret();
 
         SalesmanAccountPending accountPending = new SalesmanAccountPending(email, hashedPassword, secret);
         return repository.save(accountPending);
