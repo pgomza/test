@@ -43,6 +43,9 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
         String plainTextPassword = accountPOST.getPassword();
         Long hotelId = accountPOST.getHotelId();
 
+        if (userAccountService.exists(email)) {
+            throw new BusinessRuleViolationException("Such a user account already exists");
+        }
         hotelService.get(hotelId);
 
         String hashedPassword = PasswordHashingService.getHashedFromPlain(plainTextPassword);
