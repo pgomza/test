@@ -53,7 +53,7 @@ public class SalesmanAccountPendingService extends AccountPendingService<Salesma
             throw new BusinessRuleViolationException("Invalid secret");
         }
 
-        accountService.create(pending.getEmail(), pending.getPassword());
+        accountService.create(pending.getEmail(), pending.getPassword(), true);
         repository.delete(pending.getEmail());
     }
 }

@@ -68,7 +68,7 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
         if (fullAccess) {
             roles.add(UserAccount.ROLE_HOTEL_FULL);
         }
-        userAccountService.create(email, password, hotelId, roles);
+        userAccountService.create(email, password, true, hotelId, roles);
 
         // this may be the first user for this hotel
         // make sure that the hotel contains enough information

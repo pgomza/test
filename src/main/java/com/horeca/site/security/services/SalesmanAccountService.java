@@ -55,11 +55,19 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
         return new PageImpl<>(accountViews, pageable, getRepository().getTotalCount());
     }
 
-    public SalesmanAccount create(String login, String plainPassword) {
+    public SalesmanAccount create(String login, String password, boolean isPasswordAlreadyHashed) {
         if (exists(login)) {
             throw new BusinessRuleViolationException("Such a salesman account already exists");
         }
-        String hashedPassword = PasswordHashingService.getHashedFromPlain(plainPassword);
+
+        String hashedPassword;
+        if (isPasswordAlreadyHashed) {
+            hashedPassword = password;
+        }
+        else {
+            hashedPassword = PasswordHashingService.getHashedFromPlain(password);
+        }
+
         SalesmanAccount account = new SalesmanAccount(loginToUsername(login), hashedPassword);
         return save(account);
     }

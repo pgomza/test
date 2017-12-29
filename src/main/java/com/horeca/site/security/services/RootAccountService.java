@@ -32,11 +32,19 @@ public class RootAccountService extends AbstractAccountService<RootAccount> {
         return OAuth2AuthorizationServerConfig.PANEL_CLIENT_ID;
     }
 
-    public RootAccount create(String login, String plainPassword) {
+    public RootAccount create(String login, String password, boolean isPasswordAlreadyHashed) {
         if (exists(login)) {
             throw new BusinessRuleViolationException("Such a root account already exists");
         }
-        String hashedPassword = PasswordHashingService.getHashedFromPlain(plainPassword);
+
+        String hashedPassword;
+        if (isPasswordAlreadyHashed) {
+            hashedPassword = password;
+        }
+        else {
+            hashedPassword = PasswordHashingService.getHashedFromPlain(password);
+        }
+
         RootAccount account = new RootAccount(loginToUsername(login), hashedPassword);
         return save(account);
     }

@@ -63,11 +63,20 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
         return new PageImpl<>(accountViews, pageable, byHotelId.size());
     }
 
-    public UserAccount create(String login, String plainPassword, Long hotelId, List<String> roles) {
+    public UserAccount create(String login, String password, boolean isPasswordAlreadyHashed, Long hotelId,
+                              List<String> roles) {
         if (exists(login)) {
             throw new BusinessRuleViolationException("Such a user account already exists");
         }
-        String hashedPassword = PasswordHashingService.getHashedFromPlain(plainPassword);
+
+        String hashedPassword;
+        if (isPasswordAlreadyHashed) {
+            hashedPassword = password;
+        }
+        else {
+            hashedPassword = PasswordHashingService.getHashedFromPlain(password);
+        }
+
         UserAccount account = new UserAccount(loginToUsername(login), hashedPassword, hotelId, roles);
         return save(account);
     }
