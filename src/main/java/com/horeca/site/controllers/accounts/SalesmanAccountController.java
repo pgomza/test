@@ -73,11 +73,6 @@ public class SalesmanAccountController {
         return pendingService.prepareRedirectPage(outcome);
     }
 
-    @RequestMapping(value = "/salesmen/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public SalesmanAccountView getCurrentView(Authentication authentication) {
-        return accountService.getFromAuthentication(authentication, SalesmanAccount.class).toView();
-    }
-
     @RequestMapping(value = "/salesmen/current/profile-data", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, String> getProfileOfCurrentAccount(Authentication authentication) {
         SalesmanAccount salesmanAccount = accountService.getFromAuthentication(authentication, SalesmanAccount.class);

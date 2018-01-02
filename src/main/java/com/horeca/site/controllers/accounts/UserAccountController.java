@@ -54,22 +54,23 @@ public class UserAccountController {
         }
     }
 
+    @RequestMapping(value = "/users/{login:.+}", method = RequestMethod.GET, produces = MediaType
+            .APPLICATION_JSON_VALUE)
+    public UserAccountView get(@PathVariable("login") String login) {
+        return userAccountService.get(login).toView();
+    }
+
     @RequestMapping(value = "/users/{login:.+}", method = RequestMethod.DELETE, produces = MediaType
             .APPLICATION_JSON_VALUE)
     public void delete(@PathVariable("login") String login) {
         userAccountService.delete(login);
     }
 
-    @RequestMapping(value = "/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserAccountView getCurrentView(Authentication authentication) {
-        return userAccountService.getFromAuthentication(authentication, UserAccount.class).toView();
-    }
-
-    @RequestMapping(value = "/users/current/password", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void changePasswordOfCurrentAccount(Authentication authentication,
+    @RequestMapping(value = "/users/{login:.+}/password", method = RequestMethod.PUT, produces = MediaType
+            .APPLICATION_JSON_VALUE)
+    public void changePasswordOfCurrentAccount(@PathVariable("login") String login,
                                                @RequestBody PasswordChangeRequest request) {
-        UserAccount userAccount = userAccountService.getFromAuthentication(authentication, UserAccount.class);
-        userAccountService.verifyAndChangePassword(userAccount.getLogin(), request.currentPassword, request.newPassword);
+        userAccountService.verifyAndChangePassword(login, request.currentPassword, request.newPassword);
     }
 
     @RequestMapping(value = "/users/current/profile-data", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
