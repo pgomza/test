@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.horeca.utils.UrlPartExtractors.*;
 
@@ -52,6 +54,64 @@ public class AccessChecker {
         String servletPath = request.getServletPath();
         String pin = extractStayPinFromServletPath(servletPath, checkOutPattern);
         return checkForStayHelper(authentication, pin);
+    }
+
+    public boolean checkForSalesman(Authentication authentication, HttpServletRequest request) {
+        String servletPath = request.getServletPath();
+        Pattern pattern = Pattern.compile("/api/accounts/salesmen/([^/\\s]+)(?:/[\\S\\s]*)?");
+        Matcher matcher = pattern.matcher(servletPath);
+
+        String extractedLogin = null;
+        if (matcher.find() && matcher.groupCount() == 1) {
+            try {
+                extractedLogin = matcher.group(1);
+            }
+            catch (NumberFormatException ex) {
+                throw ex;
+            }
+        }
+
+        if (extractedLogin == null) {
+            return false;
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof SalesmanAccount) {
+            SalesmanAccount currentSalesman = (SalesmanAccount) principal;
+            if (currentSalesman.getLogin().equals(extractedLogin)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkForUser(Authentication authentication, HttpServletRequest request) {
+        String servletPath = request.getServletPath();
+        Pattern pattern = Pattern.compile("/api/accounts/users/([^/\\s]+)(?:/[\\S\\s]*)?");
+        Matcher matcher = pattern.matcher(servletPath);
+
+        String extractedLogin = null;
+        if (matcher.find() && matcher.groupCount() == 1) {
+            try {
+                extractedLogin = matcher.group(1);
+            }
+            catch (NumberFormatException ex) {
+                throw ex;
+            }
+        }
+
+        if (extractedLogin == null) {
+            return false;
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserAccount) {
+            UserAccount currentUser = (UserAccount) principal;
+            if (currentUser.getLogin().equals(extractedLogin)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean checkAddingStay(Authentication authentication, StayPOST stayPOST) {

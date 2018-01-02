@@ -100,6 +100,13 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers("/api/check-out/{pin}")
                 .access("@accessChecker.checkForStayCheckOut(authentication, request)");
 
+        // each salesman has access to their data
+        http.authorizeRequests().antMatchers("/api/accounts/salesmen/{login}/**")
+                .access("@accessChecker.checkForSalesman(authentication, request)");
+
+        // each salesman has access to their data
+        http.authorizeRequests().antMatchers("/api/accounts/users/{login}/**")
+                .access("@accessChecker.checkForUser(authentication, request)");
 
         /*
         *******************************************************************************
@@ -109,16 +116,9 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         *******************************************************************************
          */
 
-        // roots can access their profile
-        http.authorizeRequests().antMatchers("/api/accounts/roots/current/**").hasAuthority(RootAccount.ROLE_DEFAULT);
-
-        // salesmen can access their profile
-        http.authorizeRequests().antMatchers("/api/accounts/salesmen/current/**").hasAuthority(SalesmanAccount.ROLE_DEFAULT);
-        // but only roots can manage salesmen
+        // only roots can manage all the salesmen
         http.authorizeRequests().antMatchers("/api/accounts/salesmen/**").hasAuthority(RootAccount.ROLE_DEFAULT);
 
-        // users can access their profile
-        http.authorizeRequests().antMatchers("/api/accounts/users/current/**").hasAuthority(UserAccount.ROLE_DEFAULT);
         // only accounts with the 'SALESMAN' role can manage all the users
         http.authorizeRequests().antMatchers("/api/accounts/users/**").hasAuthority(SalesmanAccount.ROLE_DEFAULT);
 
