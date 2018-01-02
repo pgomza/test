@@ -3,7 +3,6 @@ package com.horeca.site.controllers.accounts;
 import com.horeca.site.models.accounts.AccountPOST;
 import com.horeca.site.models.accounts.AccountPending;
 import com.horeca.site.models.accounts.SalesmanAccountView;
-import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.services.SalesmanAccountService;
 import com.horeca.site.services.accounts.AccountPendingService;
 import com.horeca.site.services.accounts.SalesmanAccountPendingService;
@@ -12,14 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
-import java.util.Map;
 
 @Api(value = "hotels")
 @RestController
@@ -71,18 +68,5 @@ public class SalesmanAccountController {
         }
 
         return pendingService.prepareRedirectPage(outcome);
-    }
-
-    @RequestMapping(value = "/salesmen/current/profile-data", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, String> getProfileOfCurrentAccount(Authentication authentication) {
-        SalesmanAccount salesmanAccount = accountService.getFromAuthentication(authentication, SalesmanAccount.class);
-        return salesmanAccount.getProfileData();
-    }
-
-    @RequestMapping(value = "/salesmen/current/profile-data", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, String> updateProfileDataOfCurrentAccount(Authentication authentication,
-                                                                 @RequestBody Map<String, String> profileData) {
-        SalesmanAccount salesmanAccount = accountService.getFromAuthentication(authentication, SalesmanAccount.class);
-        return accountService.updateProfileData(salesmanAccount.getLogin(), profileData);
     }
 }

@@ -1,7 +1,6 @@
 package com.horeca.site.controllers.accounts;
 
 import com.horeca.site.models.accounts.*;
-import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.accounts.PasswordResetService;
 import com.horeca.site.services.accounts.UserAccountPendingService;
@@ -11,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +17,6 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
-import java.util.Map;
 
 import static com.horeca.site.services.accounts.AccountPendingService.ResponseMessage;
 import static com.horeca.site.services.accounts.AccountPendingService.prepareResponseMessage;
@@ -71,19 +68,6 @@ public class UserAccountController {
     public void changePasswordOfCurrentAccount(@PathVariable("login") String login,
                                                @RequestBody PasswordChangeRequest request) {
         userAccountService.verifyAndChangePassword(login, request.currentPassword, request.newPassword);
-    }
-
-    @RequestMapping(value = "/users/current/profile-data", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, String> getProfileOfCurrentAccount(Authentication authentication) {
-        UserAccount userAccount = userAccountService.getFromAuthentication(authentication, UserAccount.class);
-        return userAccount.getProfileData();
-    }
-
-    @RequestMapping(value = "/users/current/profile-data", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, String> updateProfileDataOfCurrentAccount(Authentication authentication,
-                                                                 @RequestBody Map<String, String> profileData) {
-        UserAccount userAccount = userAccountService.getFromAuthentication(authentication, UserAccount.class);
-        return userAccountService.updateProfileData(userAccount.getLogin(), profileData);
     }
 
     @Transactional
