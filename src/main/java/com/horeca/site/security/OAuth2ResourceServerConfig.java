@@ -59,6 +59,8 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers("/api/timeout").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/languages").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/currencies").permitAll();
+        // the logging endpoints are secured separately
+        http.authorizeRequests().antMatchers("/api/logs/**").permitAll();
 
         // allow everybody but anons to access static translations
         http.authorizeRequests().antMatchers("/api/static-translations/**")
