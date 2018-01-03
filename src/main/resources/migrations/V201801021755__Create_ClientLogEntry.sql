@@ -1,0 +1,6 @@
+CREATE TABLE ClientLogEntry (
+  id BIGINT IDENTITY PRIMARY KEY,
+  level NVARCHAR(255) NOT NULL,
+  message NVARCHAR(MAX) NOT NULL,
+  createdAt DATETIME2 DEFAULT getdate() NOT NULL
+);
