@@ -81,20 +81,9 @@ public class HotelService {
 
     @PreAuthorize("hasRole('SALESMAN')")
     public Hotel add(Hotel hotel) {
-        // TODO needs refactoring
-        if (hotel.getImages() == null)
-            hotel.setImages(new ArrayList<>());
-
-        hotel.setIsThrodiPartner(false);
-        hotel.setIsMarkedAsDeleted(false);
-
-        if (hotel.getCurrency() == null)
-            hotel.setCurrency(Currency.EUR);
-
-        repository.save(hotel);
-        ensureEnoughInfoAboutHotel(hotel.getId());
-
-        return hotelQueryService.get(hotel.getId());
+        hotel.setId(null);
+        fillInMissingInfoAndSave(hotel);
+        return repository.save(hotel);
     }
 
     public Iterable<Hotel> addAll(Iterable<Hotel> hotels) {
@@ -102,8 +91,7 @@ public class HotelService {
     }
 
     public Hotel update(Long id, Hotel updated) {
-        updated.setId(id); // TODO this should have been set by the time this method is invoked
-        checkImagesOnUpdate(updated);
+        updated.setId(id);
         return repository.save(updated);
     }
 
@@ -122,9 +110,12 @@ public class HotelService {
         newOne.setNotificationSettings(current.getNotificationSettings());
         newOne.setCubilisSettings(current.getCubilisSettings());
         newOne.setCubilisConnectionStatus(current.getCubilisConnectionStatus());
+        newOne.setIsThrodiPartner(current.getIsThrodiPartner());
+        newOne.setIsTestHotel(current.getIsTestHotel());
         newOne.setIsMarkedAsDeleted(current.getIsMarkedAsDeleted());
 
-        return update(id, newOne);
+        fillInMissingInfoAndSave(newOne);
+        return hotelQueryService.get(id);
     }
 
     public List<String> updateTVChannels(Long id, List<String> updated) {
@@ -182,8 +173,8 @@ public class HotelService {
 
         hotel.setNotificationSettings(null);
 
-        update(id, hotel);
-        ensureEnoughInfoAboutHotel(id);
+        // make sure the hotel has a 'fresh' state
+        fillInMissingInfoAndSave(hotel);
     }
 
     @PreAuthorize("hasRole('SALESMAN')")
@@ -221,8 +212,6 @@ public class HotelService {
             guestAccountService.deleteForStay(pin);
         });
 
-
-
         repository.delete(id);
     }
 
@@ -235,19 +224,25 @@ public class HotelService {
     /**
      * Checks whether the hotel contains enough information for clients
      * to process it properly; if not, it adds default data
-     * This method doesn't attempt to add such crucial data as the hotel's
+     * This method doesn't attempt to add crucial data such as the hotel's
      * name in case it hasn't been specified
      */
-    public void ensureEnoughInfoAboutHotel(Long hotelId) {
-        Hotel hotel = hotelQueryService.get(hotelId);
-        if (hotel.getDescription() == null)
+    public void fillInMissingInfoAndSave(Hotel hotel) {
+        if (hotel.getDescription() == null) {
             hotel.setDescription("");
+        }
 
-        if (hotel.getStarRating() == null)
+        if (hotel.getStarRating() == null) {
             hotel.setStarRating(0F);
+        }
 
-        if (hotel.getPropertyType() == null)
+        if (hotel.getPropertyType() == null) {
             hotel.setPropertyType("Hotel");
+        }
+
+        if (hotel.getCurrency() == null) {
+            hotel.setCurrency(Currency.EUR);
+        }
 
         if (hotel.getUsefulInformation() == null) {
             UsefulInformation usefulInformation = new UsefulInformation();
@@ -263,18 +258,8 @@ public class HotelService {
             hotel.setUsefulInformation(usefulInformation);
         }
 
-        if (hotel.getImages() == null)
+        if (hotel.getImages() == null) {
             hotel.setImages(new ArrayList<>());
-
-        if (hotel.getImages().size() == 0) {
-            ClassLoader classLoader = getClass().getClassLoader();
-            File file = new File(classLoader.getResource("other/defaultHotelImage.png").getFile());
-            try {
-                hotelImagesService.save(hotelId, HotelImagesService.DEFAULT_FILENAME, new FileInputStream(file));
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException("There was a problem while trying to set the default image for " +
-                        "hotel " + hotelId, e);
-            }
         }
 
         if (hotel.getNotificationSettings() == null) {
@@ -297,25 +282,62 @@ public class HotelService {
             hotel.setCubilisConnectionStatus(connectionStatus);
         }
 
-        update(hotelId, hotel);
+        if (hotel.getIsThrodiPartner() == null) {
+            hotel.setIsThrodiPartner(false);
+        }
 
-        translationService.ensureRequiredTranslationsExist(hotelId);
+        if (hotel.getIsTestHotel() == null) {
+            hotel.setIsTestHotel(false);
+        }
+
+        if (hotel.getIsMarkedAsDeleted() == null) {
+            hotel.setIsMarkedAsDeleted(false);
+        }
+
+        Hotel saved;
+        if (hotel.getId() != null) {
+            checkImagesOnUpdate(hotel);
+            saved = update(hotel.getId(), hotel);
+        }
+        else {
+            saved = repository.save(hotel);
+        }
+
+        // add the default image if the hotel doesn't contain any
+        if (saved.getImages().size() == 0) {
+            addDefaultImage(saved.getId());
+        }
+
+        translationService.ensureRequiredTranslationsExist(saved.getId());
+    }
+
+    private void addDefaultImage(Long hotelId) {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource("other/defaultHotelImage.png").getFile());
+        try {
+            hotelImagesService.save(hotelId, HotelImagesService.DEFAULT_FILENAME, new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("There was a problem while trying to set the default image for " +
+                    "hotel " + hotelId, e);
+        }
     }
 
     /**
      * Checks what (if anything) has been changed in the hotel's images
      * Only a change in their order is allowed
      */
-    private void checkImagesOnUpdate(Hotel updatedHotel) {
-        Hotel currentHotel = hotelQueryService.get(updatedHotel.getId());
-        if (currentHotel.getImages() != null) {
-            Set<FileLink> currentImages = new HashSet<>(currentHotel.getImages());
+    private void checkImagesOnUpdate(Hotel updated) {
+        Long hotelId = updated.getId();
+        Hotel existing = hotelQueryService.get(hotelId);
+
+        if (existing.getImages() != null) {
+            Set<FileLink> currentImages = new HashSet<>(existing.getImages());
             Set<FileLink> updatedImages = null;
 
             boolean failedRetrieval = false;
             try {
-                updatedImages = updatedHotel.getImages().stream()
-                        .map(image -> hotelImagesService.get(updatedHotel.getId(), image.getFilename()))
+                updatedImages = updated.getImages().stream()
+                        .map(image -> hotelImagesService.get(hotelId, image.getFilename()))
                         .collect(Collectors.toSet());
             } catch (ResourceNotFoundException ex) {
                 failedRetrieval = true;
@@ -327,7 +349,7 @@ public class HotelService {
                     return;
             }
             throw new BusinessRuleViolationException("Only a change in the order of the existing hotel images is allowed. " +
-                    "To add or delete an image use the ~/api/hotels/" + updatedHotel.getId() + "/images endpoint");
+                    "To add or delete an image use the ~/api/hotels/" + hotelId + "/images endpoint");
         }
     }
 }

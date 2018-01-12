@@ -77,9 +77,11 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
 
         // this may be the first user for this hotel
         // make sure that the hotel contains enough information
-        hotelService.ensureEnoughInfoAboutHotel(hotelId);
-
         Hotel hotel = hotelService.get(hotelId);
+        hotelService.fillInMissingInfoAndSave(hotel);
+
+        // and is marked as a throdi partner
+        hotel = hotelService.get(hotelId);
         hotel.setIsThrodiPartner(true);
         hotelService.update(hotel.getId(), hotel);
 
