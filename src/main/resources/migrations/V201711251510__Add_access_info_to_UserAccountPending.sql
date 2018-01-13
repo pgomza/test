@@ -1,0 +1,1 @@
+ALTER TABLE UserAccountPending ADD fullAccess BIT NOT NULL DEFAULT 1;

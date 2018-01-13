@@ -1,0 +1,1 @@
+ALTER TABLE UserAccountPending DROP COLUMN redirectUrl;

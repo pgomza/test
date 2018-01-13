@@ -1,6 +1,7 @@
 package com.horeca.site.security;
 
 import com.horeca.site.handlers.CustomOAuth2ExceptionRenderer;
+import com.horeca.site.security.models.GuestAccount;
 import com.horeca.site.security.models.RootAccount;
 import com.horeca.site.security.models.SalesmanAccount;
 import com.horeca.site.security.models.UserAccount;
@@ -58,16 +59,13 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers("/api/timeout").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/languages").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/currencies").permitAll();
+        // the logging endpoints are secured separately
+        http.authorizeRequests().antMatchers("/api/logs/**").permitAll();
 
         // allow everybody but anons to access static translations
         http.authorizeRequests().antMatchers("/api/static-translations/**")
-                .hasAnyRole("ROOT", "SALESMAN", "ADMIN", "GUEST");
+                .hasAnyRole(UserAccount.ROLE_HOTEL_FULL, GuestAccount.ROLE_DEFAULT);
 
-        // allow anybody who's in possession of a temp token to add a user account
-        // 'anybody' means people that don't have to go through the OAuth2 authentication process
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/accounts/users").permitAll();
-        // allow anybody to get info about a temp token
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/accounts/users/tokens/{token}").permitAll();
         // allow anybody to activate their account
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/accounts/users/activation").permitAll();
         // allow anybody to reset their password
@@ -82,7 +80,6 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/services/**").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/images/**").permitAll();
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/notifications/**").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/tv-channels").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/hotels/{\\d+}/links").permitAll();
 
@@ -95,13 +92,9 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         *******************************************************************************
          */
 
-
-        // users (and only them) can access the hotel that they're associated with
         http.authorizeRequests().antMatchers("/api/hotels/{\\d+}/**")
                 .access("@accessChecker.checkForHotel(authentication, request)");
 
-        // a specific stay can be accessed either by a guest associated with it or by a user
-        // whose hotel is associated with it; that goes for the check-in/out endpoints as well
         http.authorizeRequests().antMatchers("/api/stays/{pin}/**")
                 .access("@accessChecker.checkForStay(authentication, request)");
         http.authorizeRequests().antMatchers("/api/check-in/{pin}")
@@ -109,6 +102,13 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers("/api/check-out/{pin}")
                 .access("@accessChecker.checkForStayCheckOut(authentication, request)");
 
+        // each salesman has access to their data
+        http.authorizeRequests().antMatchers("/api/accounts/salesmen/{login}/**")
+                .access("@accessChecker.checkForSalesman(authentication, request)");
+
+        // each salesman has access to their data
+        http.authorizeRequests().antMatchers("/api/accounts/users/{login}/**")
+                .access("@accessChecker.checkForUser(authentication, request)");
 
         /*
         *******************************************************************************
@@ -118,17 +118,11 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         *******************************************************************************
          */
 
-        http.authorizeRequests().antMatchers("/api/static-translations/**").hasAuthority(RootAccount.DEFAULT_ROLE);
+        // only roots can manage all the salesmen
+        http.authorizeRequests().antMatchers("/api/accounts/salesmen/**").hasAuthority(RootAccount.ROLE_DEFAULT);
 
-        // salesmen can access their profile
-        http.authorizeRequests().antMatchers("/api/accounts/salesmen/current/**").hasAuthority(SalesmanAccount.DEFAULT_ROLE);
-        // but only roots can manage salesmen
-        http.authorizeRequests().antMatchers("/api/accounts/salesmen/**").hasAuthority(RootAccount.DEFAULT_ROLE);
-
-        // users can access their profile
-        http.authorizeRequests().antMatchers("/api/accounts/users/current/**").hasAuthority(UserAccount.DEFAULT_ROLE);
         // only accounts with the 'SALESMAN' role can manage all the users
-        http.authorizeRequests().antMatchers("/api/accounts/users/**").hasAuthority(SalesmanAccount.DEFAULT_ROLE);
+        http.authorizeRequests().antMatchers("/api/accounts/users/**").hasAuthority(SalesmanAccount.ROLE_DEFAULT);
 
 
         /*

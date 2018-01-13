@@ -1,0 +1,1 @@
+UPDATE SalesmanAccount_roles SET roles = 'ROLE_SALESMAN, ROLE_HOTEL_BASIC, ROLE_HOTEL_FULL';

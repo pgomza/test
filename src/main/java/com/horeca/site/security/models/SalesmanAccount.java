@@ -6,7 +6,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.Map;
 @Audited
 public class SalesmanAccount extends AbstractAccount {
 
-    public static final String DEFAULT_ROLE = "ROLE_SALESMAN";
+    public static final String ROLE_DEFAULT = "ROLE_SALESMAN";
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -34,7 +34,8 @@ public class SalesmanAccount extends AbstractAccount {
     }
 
     public SalesmanAccount(String username, String password) {
-        this(username, password, Collections.singletonList(DEFAULT_ROLE), new HashMap<>());
+        this(username, password, Arrays.asList(ROLE_DEFAULT, UserAccount.ROLE_HOTEL_FULL),
+                new HashMap<>());
     }
 
     public SalesmanAccount(String username, String password, List<String> roles) {
@@ -42,7 +43,8 @@ public class SalesmanAccount extends AbstractAccount {
     }
 
     public SalesmanAccount(String username, String password, Map<String, String> profileData) {
-        this(username, password, Collections.singletonList(DEFAULT_ROLE), profileData);
+        this(username, password, Arrays.asList(ROLE_DEFAULT, UserAccount.ROLE_HOTEL_FULL),
+                profileData);
     }
 
     public SalesmanAccount(String username, String password, List<String> roles, Map<String, String> profileData) {
@@ -85,14 +87,6 @@ public class SalesmanAccount extends AbstractAccount {
     }
 
     public SalesmanAccountView toView() {
-        SalesmanAccountView view = new SalesmanAccountView();
-        view.setLogin(getLogin());
-        view.setRoles(getRoles());
-        view.setAccountNonExpired(isAccountNonExpired());
-        view.setAccountNonLocked(isAccountNonLocked());
-        view.setCredentialsNonExpired(isCredentialsNonExpired());
-        view.setEnabled(isEnabled());
-        view.setProfileData(getProfileData());
-        return view;
+        return new SalesmanAccountView(getLogin(), getRoles(), isEnabled());
     }
 }

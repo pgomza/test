@@ -1,27 +1,23 @@
 package com.horeca.site.models.accounts;
 
-import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Audited
 public class UserAccountPending extends AccountPending {
 
     @NotNull
     private Long hotelId;
 
-    @NotEmpty
-    private String redirectUrl;
+    @NotNull
+    private Boolean fullAccess;
 
     UserAccountPending() {}
 
-    public UserAccountPending(String email, String password, Long hotelId, String secret, String redirectUrl) {
+    public UserAccountPending(String email, String password, String secret, Long hotelId, Boolean fullAccess) {
         super(email, password, secret);
         this.hotelId = hotelId;
-        this.redirectUrl = redirectUrl;
+        this.fullAccess = fullAccess;
     }
 
     public Long getHotelId() {
@@ -32,11 +28,11 @@ public class UserAccountPending extends AccountPending {
         this.hotelId = hotelId;
     }
 
-    public String getRedirectUrl() {
-        return redirectUrl;
+    public Boolean getFullAccess() {
+        return fullAccess;
     }
 
-    public void setRedirectUrl(String redirectUrl) {
-        this.redirectUrl = redirectUrl;
+    public void setFullAccess(Boolean fullAccess) {
+        this.fullAccess = fullAccess;
     }
 }

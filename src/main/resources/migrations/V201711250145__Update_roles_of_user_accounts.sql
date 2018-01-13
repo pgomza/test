@@ -1,0 +1,1 @@
+UPDATE UserAccount_roles SET roles = 'ROLE_USER, ROLE_HOTEL_FULL';

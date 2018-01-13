@@ -4,8 +4,8 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 @Audited
 public class GuestAccount extends AbstractAccount {
 
-    public static final String DEFAULT_ROLE = "ROLE_GUEST";
+    public static final String ROLE_DEFAULT = "ROLE_GUEST";
 
     @NotAudited
     @ElementCollection
@@ -50,7 +50,7 @@ public class GuestAccount extends AbstractAccount {
 
     @Override
     public Collection<String> getRoles() {
-        return Arrays.asList(DEFAULT_ROLE);
+        return Collections.singletonList(ROLE_DEFAULT);
     }
 
     @Override
