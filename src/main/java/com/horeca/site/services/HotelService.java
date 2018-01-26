@@ -218,6 +218,7 @@ public class HotelService {
     @Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
     public void deleteMarkedAndOutdated() {
         List<Long> markedAsDeleted = hotelQueryService.getMarkedAndOutdated();
+        markedAsDeleted.stream().forEach(translationService::deleteAll);
         markedAsDeleted.forEach(this::delete);
     }
 
