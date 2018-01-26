@@ -46,6 +46,9 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+        // root can do anything - for 'internal' use only
+        http.authorizeRequests().antMatchers("/api/**").hasAuthority(RootAccount.ROLE_DEFAULT);
+
         /*
         *******************************************************************************
         *******************************************************************************
@@ -106,7 +109,7 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers("/api/accounts/salesmen/{login}/**")
                 .access("@accessChecker.checkForSalesman(authentication, request)");
 
-        // each salesman has access to their data
+        // each user has access to their data
         http.authorizeRequests().antMatchers("/api/accounts/users/{login}/**")
                 .access("@accessChecker.checkForUser(authentication, request)");
 
@@ -118,12 +121,8 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         *******************************************************************************
          */
 
-        // only roots can manage all the salesmen
-        http.authorizeRequests().antMatchers("/api/accounts/salesmen/**").hasAuthority(RootAccount.ROLE_DEFAULT);
-
         // only accounts with the 'SALESMAN' role can manage all the users
         http.authorizeRequests().antMatchers("/api/accounts/users/**").hasAuthority(SalesmanAccount.ROLE_DEFAULT);
-
 
         /*
         *******************************************************************************

@@ -57,6 +57,11 @@ public class AccessChecker {
     }
 
     public boolean checkForSalesman(Authentication authentication, HttpServletRequest request) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof RootAccount) {
+            return true;
+        }
+
         String servletPath = request.getServletPath();
         Pattern pattern = Pattern.compile("/api/accounts/salesmen/([^/\\s]+)(?:/[\\S\\s]*)?");
         Matcher matcher = pattern.matcher(servletPath);
@@ -75,7 +80,6 @@ public class AccessChecker {
             return false;
         }
 
-        Object principal = authentication.getPrincipal();
         if (principal instanceof SalesmanAccount) {
             SalesmanAccount currentSalesman = (SalesmanAccount) principal;
             if (currentSalesman.getLogin().equals(extractedLogin)) {
@@ -86,6 +90,11 @@ public class AccessChecker {
     }
 
     public boolean checkForUser(Authentication authentication, HttpServletRequest request) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof RootAccount || principal instanceof SalesmanAccount) {
+            return true;
+        }
+
         String servletPath = request.getServletPath();
         Pattern pattern = Pattern.compile("/api/accounts/users/([^/\\s]+)(?:/[\\S\\s]*)?");
         Matcher matcher = pattern.matcher(servletPath);
@@ -104,7 +113,6 @@ public class AccessChecker {
             return false;
         }
 
-        Object principal = authentication.getPrincipal();
         if (principal instanceof UserAccount) {
             UserAccount currentUser = (UserAccount) principal;
             if (currentUser.getLogin().equals(extractedLogin)) {
@@ -158,7 +166,7 @@ public class AccessChecker {
     }
 
     private boolean checkForHotelHelper(Authentication authentication, Long hotelId) {
-        // roots and salesmen can access all the hotels
+        // roots and salesmen can access all hotels
         // users can access only the hotel that they're associated with
         Object principal = authentication.getPrincipal();
         if (principal instanceof RootAccount || principal instanceof SalesmanAccount) {
