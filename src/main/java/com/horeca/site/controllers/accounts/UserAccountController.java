@@ -80,10 +80,16 @@ public class UserAccountController {
         }
     }
 
+    @Transactional
     @RequestMapping(value = "/users/{login:.+}", method = RequestMethod.GET, produces = MediaType
             .APPLICATION_JSON_VALUE)
     public UserAccountView get(@PathVariable("login") String login) {
-        return userAccountService.get(login).toView();
+        if (userAccountService.exists(login)) {
+            return userAccountService.get(login).toView();
+        }
+        else {
+            return userAccountPendingService.get(login).toView();
+        }
     }
 
     @RequestMapping(value = "/users/{login:.+}", method = RequestMethod.DELETE, produces = MediaType

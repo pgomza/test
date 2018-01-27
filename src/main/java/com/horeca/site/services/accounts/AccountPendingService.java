@@ -30,6 +30,14 @@ public abstract class AccountPendingService<T extends AccountPending> {
 
     public abstract void activate(String secret);
 
+    public T get(String email) {
+        T pending = repository.findOne(email);
+        if (pending == null) {
+            throw new ResourceNotFoundException();
+        }
+        return pending;
+    }
+
     public List<T> getAll() {
         List<T> result = new ArrayList<>();
         repository.findAll().forEach(result::add);
