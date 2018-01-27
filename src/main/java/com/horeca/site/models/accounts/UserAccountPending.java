@@ -2,6 +2,7 @@ package com.horeca.site.models.accounts;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 
 @Entity
 public class UserAccountPending extends AccountPending {
@@ -34,5 +35,9 @@ public class UserAccountPending extends AccountPending {
 
     public void setFullAccess(Boolean fullAccess) {
         this.fullAccess = fullAccess;
+    }
+
+    public UserAccountView toView() {
+        return new UserAccountView(getEmail(), Collections.emptyList(), false, getHotelId());
     }
 }
