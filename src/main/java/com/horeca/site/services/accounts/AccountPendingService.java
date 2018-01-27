@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public abstract class AccountPendingService<T extends AccountPending> {
@@ -27,6 +29,12 @@ public abstract class AccountPendingService<T extends AccountPending> {
     }
 
     public abstract void activate(String secret);
+
+    public List<T> getAll() {
+        List<T> result = new ArrayList<>();
+        repository.findAll().forEach(result::add);
+        return result;
+    }
 
     protected T getBySecret(String secret) {
         T pending = repository.findBySecret(secret);
