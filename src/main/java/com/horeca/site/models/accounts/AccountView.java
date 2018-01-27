@@ -8,13 +8,13 @@ public abstract class AccountView {
     private Type type;
     private String login;
     private List<String> roles;
-    private boolean enabled;
+    private boolean activated;
 
-    public AccountView(Type type, String login, List<String> roles, boolean enabled) {
+    public AccountView(Type type, String login, List<String> roles, boolean activated) {
         this.type = type;
         this.login = login;
         this.roles = roles;
-        this.enabled = enabled;
+        this.activated = activated;
     }
 
     public Type getType() {
@@ -29,7 +29,7 @@ public abstract class AccountView {
         return roles;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isActivated() {
+        return activated;
     }
 }
