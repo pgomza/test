@@ -4,6 +4,7 @@ import com.horeca.site.models.accounts.*;
 import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.accounts.PasswordResetService;
 import com.horeca.site.services.accounts.UserAccountPendingService;
+import com.horeca.utils.PageableUtils;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,9 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.horeca.site.services.accounts.AccountPendingService.ResponseMessage;
 import static com.horeca.site.services.accounts.AccountPendingService.prepareResponseMessage;
@@ -35,16 +39,41 @@ public class UserAccountController {
     @Autowired
     private PasswordResetService passwordResetService;
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<UserAccountView> getViews(Pageable pageable) {
-        return userAccountService.getViews(pageable);
+    @Transactional
+    @RequestMapping(value = "/users", params = { "activated" }, method = RequestMethod.GET, produces = MediaType
+            .APPLICATION_JSON_VALUE)
+    public Page<UserAccountView> getViews(Pageable pageable, @RequestParam(value = "activated", required = false)
+                                          Boolean activated) {
+        if (activated != null && activated) {
+            return userAccountService.getAllViews(pageable);
+        }
+        else {
+            List<UserAccountView> allActivated = userAccountService.getAllViews();
+            List<UserAccountView> allPending = userAccountPendingService.getAll()
+                    .stream().map(UserAccountPending::toView).collect(Collectors.toList());
+            allActivated.addAll(allPending);
+            return PageableUtils.extractPage(allActivated, pageable);
+        }
     }
 
-    @RequestMapping(value = "/users", params = { "hotel-id" }, method = RequestMethod.GET, produces =
+    @Transactional
+    @RequestMapping(value = "/users", params = { "activated", "hotel-id" }, method = RequestMethod.GET, produces =
             MediaType.APPLICATION_JSON_VALUE)
-    public Page<UserAccountView> getViews(@RequestParam(value = "hotel-id") Long hotelId, Pageable pageable) {
+    public Page<UserAccountView> getViews(Pageable pageable, @RequestParam(value = "hotel-id") Long hotelId,
+                                          @RequestParam(value = "activated", required = false) Boolean activated) {
         if (hotelId != null) {
-            return userAccountService.getViews(hotelId, pageable);
+            if (activated != null && activated) {
+                return userAccountService.getAllViews(hotelId, pageable);
+            }
+            else {
+                List<UserAccountView> allActivated = userAccountService.getAllViews(hotelId);
+                List<UserAccountView> allPending = userAccountPendingService.getAll()
+                        .stream()
+                        .filter(a -> Objects.equals(a.getHotelId(), hotelId))
+                        .map(UserAccountPending::toView).collect(Collectors.toList());
+                allActivated.addAll(allPending);
+                return PageableUtils.extractPage(allActivated, pageable);
+            }
         }
         else {
             return new PageImpl<>(Collections.emptyList());
