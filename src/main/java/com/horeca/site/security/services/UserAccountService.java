@@ -16,7 +16,6 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,21 +53,18 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
     }
 
     public List<UserAccountView> getAllViews() {
-        List<UserAccount> result = new ArrayList<>();
-        getRepository().findAll().forEach(result::add);
-        return result.stream().map(UserAccount::toView).collect(Collectors.toList());
+        return getAll().stream().map(UserAccount::toView).collect(Collectors.toList());
+    }
+
+    public Page<UserAccountView> getAllViews(Pageable pageable) {
+        List<UserAccountView> accountViews = getAll(pageable).getContent().stream()
+                .map(UserAccount::toView)
+                .collect(Collectors.toList());
+        return new PageImpl<>(accountViews, pageable, getRepository().getTotalCount());
     }
 
     public List<UserAccountView> getAllViews(Long hotelId) {
         return getRepository().findAllByHotelId(hotelId).stream().map(UserAccount::toView).collect(Collectors.toList());
-    }
-
-    public Page<UserAccountView> getAllViews(Pageable pageable) {
-        Page<UserAccount> pageOfAccounts = getRepository().findAll(pageable);
-        List<UserAccountView> accountViews = pageOfAccounts.getContent().stream()
-                .map(UserAccount::toView)
-                .collect(Collectors.toList());
-        return new PageImpl<>(accountViews, pageable, getRepository().getTotalCount());
     }
 
     public Page<UserAccountView> getAllViews(Long hotelId, Pageable pageable) {
