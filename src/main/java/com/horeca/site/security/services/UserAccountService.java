@@ -7,6 +7,7 @@ import com.horeca.site.security.OAuth2AuthorizationServerConfig;
 import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.repositories.UserAccountRepository;
+import com.horeca.utils.PageableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -57,10 +58,11 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
     }
 
     public Page<UserAccountView> getAllViews(Pageable pageable) {
-        List<UserAccountView> accountViews = getAll(pageable).getContent().stream()
+        Page<UserAccount> accountPage = getAll(pageable);
+        List<UserAccountView> accountViews = accountPage.getContent().stream()
                 .map(UserAccount::toView)
                 .collect(Collectors.toList());
-        return new PageImpl<>(accountViews, pageable, getRepository().getTotalCount());
+        return new PageImpl<>(accountViews, pageable, accountPage.getTotalElements());
     }
 
     public List<UserAccountView> getAllViews(Long hotelId) {
@@ -72,7 +74,7 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
         List<UserAccountView> accountViews = byHotelId.stream()
                 .map(UserAccount::toView)
                 .collect(Collectors.toList());
-        return new PageImpl<>(accountViews, pageable, byHotelId.size());
+        return PageableUtils.extractPage(accountViews, pageable);
     }
 
     public UserAccount create(String login, String password, boolean isPasswordAlreadyHashed, Long hotelId,

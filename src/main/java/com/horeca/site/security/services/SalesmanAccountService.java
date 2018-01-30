@@ -52,12 +52,12 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
         return result;
     }
 
-    public Page<SalesmanAccountView> getViews(Pageable pageable) {
-        Page<SalesmanAccount> pageOfAccounts = getRepository().findAll(pageable);
+    public Page<SalesmanAccountView> getAllViews(Pageable pageable) {
+        Page<SalesmanAccount> pageOfAccounts = getAll(pageable);
         List<SalesmanAccountView> accountViews = pageOfAccounts.getContent().stream()
                 .map(SalesmanAccount::toView)
                 .collect(Collectors.toList());
-        return new PageImpl<>(accountViews, pageable, getRepository().getTotalCount());
+        return new PageImpl<>(accountViews, pageable, pageOfAccounts.getTotalElements());
     }
 
     public SalesmanAccount create(String login, String password, boolean isPasswordAlreadyHashed) {
