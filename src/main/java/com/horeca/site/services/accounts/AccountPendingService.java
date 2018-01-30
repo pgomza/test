@@ -28,7 +28,7 @@ public abstract class AccountPendingService<T extends AccountPending> {
         this.activationUrl = activationUrl;
     }
 
-    public abstract void activate(String secret);
+    public abstract void activate(String email);
 
     public T get(String email) {
         T pending = repository.findOne(email);

@@ -1,5 +1,6 @@
 package com.horeca.site.controllers.accounts;
 
+import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.accounts.*;
 import com.horeca.site.security.services.UserAccountService;
 import com.horeca.site.services.accounts.PasswordResetService;
@@ -145,15 +146,31 @@ public class UserAccountController {
     }
 
     @RequestMapping(value = "/users/activation", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-    public String activate(@RequestParam(value = "secret") String secret) {
+    public String activateAsAnonymous(@RequestParam(value = "secret") String secret) {
         String outcome = "Activation successful";
         try {
-            pendingService.activate(secret);
+            pendingService.activateAsAnonymous(secret);
         } catch (RuntimeException ex) {
             outcome = "Activation failed";
         }
 
         return pendingService.prepareRedirectPage(outcome);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/users/activation/{login:.+}", method = RequestMethod.POST, produces = MediaType
+            .APPLICATION_JSON_VALUE)
+    public void activate(@PathVariable("login") String login) {
+        if (!accountService.exists(login)) {
+            try {
+                pendingService.activate(login);
+            } catch (RuntimeException ex) {
+                throw new BusinessRuleViolationException("Activation failed: " + ex.getMessage());
+            }
+        }
+        else {
+            throw new BusinessRuleViolationException("Activation failed: this account has already been activated");
+        }
     }
 
     @RequestMapping(value = "/users/reset-request", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
