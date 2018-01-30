@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class PageableUtils {
@@ -17,5 +18,9 @@ public class PageableUtils {
 
         List<T> sublist = source.subList(fromIndex, toIndex);
         return new PageImpl<>(sublist, pageable, totalCount);
+    }
+
+    public static <T> Page<T> emptyPage() {
+        return new PageImpl<>(Collections.emptyList());
     }
 }
