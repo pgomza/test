@@ -2,14 +2,19 @@ package com.horeca.site.security.services;
 
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.security.models.AbstractAccount;
+import com.horeca.utils.PageableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractAccountService<T extends AbstractAccount> {
@@ -22,7 +27,7 @@ public abstract class AbstractAccountService<T extends AbstractAccount> {
     @Autowired
     private TokenStore tokenStore;
 
-    abstract protected CrudRepository<T, String> getRepository();
+    abstract protected PagingAndSortingRepository<T, String> getRepository();
 
     abstract protected String loginToUsername(String login);
 
@@ -30,6 +35,17 @@ public abstract class AbstractAccountService<T extends AbstractAccount> {
 
     public boolean exists(String login) {
         return loginService.exists(loginToUsername(login));
+    }
+
+    public List<T> getAll() {
+        List<T> result = new ArrayList<>();
+        getRepository().findAll().forEach(result::add);
+        return result;
+    }
+
+    public Page<T> getAll(Pageable pageable) {
+        // TODO make the repository of each subclass implement a method that returns the total count
+        return PageableUtils.extractPage(getAll(), pageable);
     }
 
     public T get(String login) {

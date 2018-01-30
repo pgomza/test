@@ -55,8 +55,7 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
         return repository.save(userAccountPending);
     }
 
-    @Override
-    public void activate(String secret) {
+    public void activateAsAnonymous(String secret) {
         UserAccountPending pending;
         try {
             pending = getBySecret(secret);
@@ -64,7 +63,12 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
             throw new BusinessRuleViolationException("Invalid secret");
         }
 
-        String email = pending.getEmail();
+        activate(pending.getEmail());
+    }
+
+    public void activate(String email) {
+        UserAccountPending pending = get(email);
+
         String password = pending.getPassword();
         Long hotelId = pending.getHotelId();
         Boolean fullAccess = pending.getFullAccess();

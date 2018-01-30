@@ -13,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,19 +43,16 @@ public class SalesmanAccountService extends AbstractAccountService<SalesmanAccou
         return "current".equals(login) || super.exists(login);
     }
 
-    public List<SalesmanAccount> getAll() {
-        List<SalesmanAccount> result = new ArrayList<>();
-        getRepository().findAll().forEach(result::add);
-        result.sort(Comparator.comparing(AbstractAccount::getUsername));
-        return result;
+    public List<SalesmanAccountView> getAllViews() {
+        return getAll().stream().map(SalesmanAccount::toView).collect(Collectors.toList());
     }
 
-    public Page<SalesmanAccountView> getViews(Pageable pageable) {
-        Page<SalesmanAccount> pageOfAccounts = getRepository().findAll(pageable);
+    public Page<SalesmanAccountView> getAllViews(Pageable pageable) {
+        Page<SalesmanAccount> pageOfAccounts = getAll(pageable);
         List<SalesmanAccountView> accountViews = pageOfAccounts.getContent().stream()
                 .map(SalesmanAccount::toView)
                 .collect(Collectors.toList());
-        return new PageImpl<>(accountViews, pageable, getRepository().getTotalCount());
+        return new PageImpl<>(accountViews, pageable, pageOfAccounts.getTotalElements());
     }
 
     public SalesmanAccount create(String login, String password, boolean isPasswordAlreadyHashed) {

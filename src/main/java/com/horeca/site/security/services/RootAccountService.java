@@ -6,7 +6,6 @@ import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.RootAccount;
 import com.horeca.site.security.repositories.RootAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +17,7 @@ public class RootAccountService extends AbstractAccountService<RootAccount> {
     private RootAccountRepository repository;
 
     @Override
-    protected CrudRepository<RootAccount, String> getRepository() {
+    protected RootAccountRepository getRepository() {
         return repository;
     }
 

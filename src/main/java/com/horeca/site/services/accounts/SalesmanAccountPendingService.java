@@ -44,14 +44,20 @@ public class SalesmanAccountPendingService extends AccountPendingService<Salesma
         return repository.save(accountPending);
     }
 
-    @Override
-    public void activate(String secret) {
+    public void activateAsAnonymous(String secret) {
         AccountPending pending;
         try {
             pending = getBySecret(secret);
         } catch (ResourceNotFoundException ex) {
             throw new BusinessRuleViolationException("Invalid secret");
         }
+
+        activate(pending.getEmail());
+    }
+
+    @Override
+    public void activate(String email) {
+        AccountPending pending = get(email);
 
         accountService.create(pending.getEmail(), pending.getPassword(), true);
         repository.delete(pending.getEmail());

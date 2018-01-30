@@ -7,6 +7,7 @@ import com.horeca.site.security.OAuth2AuthorizationServerConfig;
 import com.horeca.site.security.models.AbstractAccount;
 import com.horeca.site.security.models.UserAccount;
 import com.horeca.site.security.repositories.UserAccountRepository;
+import com.horeca.utils.PageableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -52,20 +53,28 @@ public class UserAccountService extends AbstractAccountService<UserAccount> {
         return "current".equals(login) || super.exists(login);
     }
 
-    public Page<UserAccountView> getViews(Pageable pageable) {
-        Page<UserAccount> pageOfAccounts = getRepository().findAll(pageable);
-        List<UserAccountView> accountViews = pageOfAccounts.getContent().stream()
-                .map(UserAccount::toView)
-                .collect(Collectors.toList());
-        return new PageImpl<>(accountViews, pageable, getRepository().getTotalCount());
+    public List<UserAccountView> getAllViews() {
+        return getAll().stream().map(UserAccount::toView).collect(Collectors.toList());
     }
 
-    public Page<UserAccountView> getViews(Long hotelId, Pageable pageable) {
+    public Page<UserAccountView> getAllViews(Pageable pageable) {
+        Page<UserAccount> accountPage = getAll(pageable);
+        List<UserAccountView> accountViews = accountPage.getContent().stream()
+                .map(UserAccount::toView)
+                .collect(Collectors.toList());
+        return new PageImpl<>(accountViews, pageable, accountPage.getTotalElements());
+    }
+
+    public List<UserAccountView> getAllViews(Long hotelId) {
+        return getRepository().findAllByHotelId(hotelId).stream().map(UserAccount::toView).collect(Collectors.toList());
+    }
+
+    public Page<UserAccountView> getAllViews(Long hotelId, Pageable pageable) {
         List<UserAccount> byHotelId = getRepository().findAllByHotelId(hotelId);
         List<UserAccountView> accountViews = byHotelId.stream()
                 .map(UserAccount::toView)
                 .collect(Collectors.toList());
-        return new PageImpl<>(accountViews, pageable, byHotelId.size());
+        return PageableUtils.extractPage(accountViews, pageable);
     }
 
     public UserAccount create(String login, String password, boolean isPasswordAlreadyHashed, Long hotelId,
