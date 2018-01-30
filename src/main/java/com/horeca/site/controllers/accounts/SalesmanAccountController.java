@@ -2,10 +2,12 @@ package com.horeca.site.controllers.accounts;
 
 import com.horeca.site.models.accounts.AccountPOST;
 import com.horeca.site.models.accounts.AccountPending;
+import com.horeca.site.models.accounts.SalesmanAccountPending;
 import com.horeca.site.models.accounts.SalesmanAccountView;
 import com.horeca.site.security.services.SalesmanAccountService;
 import com.horeca.site.services.accounts.AccountPendingService;
 import com.horeca.site.services.accounts.SalesmanAccountPendingService;
+import com.horeca.utils.PageableUtils;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(value = "hotels")
 @RestController
@@ -29,15 +33,46 @@ public class SalesmanAccountController {
     @Autowired
     private SalesmanAccountPendingService pendingService;
 
+    @Transactional
     @RequestMapping(value = "/salesmen", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<SalesmanAccountView> getViews(Pageable pageable) {
-        return accountService.getViews(pageable);
+        List<SalesmanAccountView> allActivated = accountService.getAllViews();
+        List<SalesmanAccountView> allPending = pendingService.getAll().stream()
+                .map(SalesmanAccountPending::toView)
+                .collect(Collectors.toList());
+        allActivated.addAll(allPending);
+        return PageableUtils.extractPage(allActivated, pageable);
     }
 
+    @RequestMapping(value = "/salesmen", params = { "activated" }, method = RequestMethod.GET, produces = MediaType
+            .APPLICATION_JSON_VALUE)
+    public Page<SalesmanAccountView> getViewsByActivated(Pageable pageable, @RequestParam(value = "activated") Boolean activated) {
+        if (activated != null) {
+            if (activated) {
+                return accountService.getAllViews(pageable);
+            }
+            else {
+                List<SalesmanAccountView> allPending = pendingService.getAll().stream()
+                        .map(SalesmanAccountPending::toView)
+                        .collect(Collectors.toList());
+                return PageableUtils.extractPage(allPending, pageable);
+            }
+        }
+        else {
+            return PageableUtils.emptyPage();
+        }
+    }
+
+    @Transactional
     @RequestMapping(value = "/salesmen/{login:.+}", method = RequestMethod.GET, produces = MediaType
             .APPLICATION_JSON_VALUE)
     public SalesmanAccountView get(@PathVariable("login") String login) {
-        return accountService.get(login).toView();
+        if (accountService.exists(login)) {
+            return accountService.get(login).toView();
+        }
+        else {
+            return pendingService.get(login).toView();
+        }
     }
 
     @RequestMapping(value = "/salesmen/{login:.+}", method = RequestMethod.DELETE, produces = MediaType
