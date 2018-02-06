@@ -118,6 +118,9 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         *******************************************************************************
          */
 
+        // only the ones that have the 'SALESMAN' role can add hotels through the standard endpoint
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/hotels").hasAuthority(SalesmanAccount.ROLE_DEFAULT);
+
         // only roots can manage all salesmen
         http.authorizeRequests().antMatchers("/api/accounts/salesmen/**").hasAuthority(RootAccount.ROLE_DEFAULT);
 
