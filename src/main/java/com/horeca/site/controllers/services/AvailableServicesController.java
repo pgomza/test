@@ -26,6 +26,12 @@ public class AvailableServicesController {
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public AvailableServices getAll(@HotelId @PathVariable("hotelId") Long hotelId, LanguageCode languageCode) {
-        return service.get(hotelId);
+        AvailableServices availableServices = service.get(hotelId);
+        if (availableServices == null) {
+            return new AvailableServices();
+        }
+        else {
+            return availableServices;
+        }
     }
 }
