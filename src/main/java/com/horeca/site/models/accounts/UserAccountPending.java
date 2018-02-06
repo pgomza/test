@@ -7,19 +7,14 @@ import java.util.Collections;
 @Entity
 public class UserAccountPending extends AccountPending {
 
-    @NotNull
     private Long hotelId;
+
+    private String hotelName;
+
+    private String hotelAddress;
 
     @NotNull
     private Boolean fullAccess;
-
-    UserAccountPending() {}
-
-    public UserAccountPending(String email, String password, String secret, Long hotelId, Boolean fullAccess) {
-        super(email, password, secret);
-        this.hotelId = hotelId;
-        this.fullAccess = fullAccess;
-    }
 
     public Long getHotelId() {
         return hotelId;
@@ -27,6 +22,22 @@ public class UserAccountPending extends AccountPending {
 
     public void setHotelId(Long hotelId) {
         this.hotelId = hotelId;
+    }
+
+    public String getHotelName() {
+        return hotelName;
+    }
+
+    public void setHotelName(String hotelName) {
+        this.hotelName = hotelName;
+    }
+
+    public String getHotelAddress() {
+        return hotelAddress;
+    }
+
+    public void setHotelAddress(String hotelAddress) {
+        this.hotelAddress = hotelAddress;
     }
 
     public Boolean getFullAccess() {

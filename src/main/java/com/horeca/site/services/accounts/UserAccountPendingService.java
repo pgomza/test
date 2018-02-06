@@ -3,6 +3,7 @@ package com.horeca.site.services.accounts;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.accounts.AccountPending;
+import com.horeca.site.models.accounts.UserAccountNewHotelPOST;
 import com.horeca.site.models.accounts.UserAccountPOST;
 import com.horeca.site.models.accounts.UserAccountPending;
 import com.horeca.site.models.hotel.Hotel;
@@ -50,9 +51,37 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
 
         String hashedPassword = PasswordHashingService.getHashedFromPlain(plainTextPassword);
         String secret = generateSecret();
-        UserAccountPending userAccountPending = new UserAccountPending(email, hashedPassword, secret, hotelId, true);
+        UserAccountPending pending = new UserAccountPending();
+        pending.setEmail(email);
+        pending.setPassword(hashedPassword);
+        pending.setSecret(secret);
+        pending.setHotelId(hotelId);
+        pending.setFullAccess(true);
 
-        return repository.save(userAccountPending);
+        return repository.save(pending);
+    }
+
+    public AccountPending add(UserAccountNewHotelPOST accountPOST) {
+        String email = accountPOST.getEmail();
+        String plainTextPassword = accountPOST.getPassword();
+        String hotelName = accountPOST.getHotel().getName();
+        String hotelAddress = accountPOST.getHotel().getAddress();
+
+        if (userAccountService.exists(email)) {
+            throw new BusinessRuleViolationException("Such a user account already exists");
+        }
+
+        String hashedPassword = PasswordHashingService.getHashedFromPlain(plainTextPassword);
+        String secret = generateSecret();
+        UserAccountPending pending = new UserAccountPending();
+        pending.setEmail(email);
+        pending.setPassword(hashedPassword);
+        pending.setSecret(secret);
+        pending.setFullAccess(true);
+        pending.setHotelName(hotelName);
+        pending.setHotelAddress(hotelAddress);
+
+        return repository.save(pending);
     }
 
     public void activateAsAnonymous(String secret) {
@@ -70,8 +99,17 @@ public class UserAccountPendingService extends AccountPendingService<UserAccount
         UserAccountPending pending = get(email);
 
         String password = pending.getPassword();
-        Long hotelId = pending.getHotelId();
         Boolean fullAccess = pending.getFullAccess();
+
+        Long hotelId = pending.getHotelId();
+        if (hotelId == null) {
+            Hotel hotel = new Hotel();
+            hotel.setName(pending.getHotelName());
+            hotel.setAddress(pending.getHotelAddress());
+            hotel.setIsThrodiPartner(true);
+            Hotel added = hotelService.add(hotel);
+            hotelId = added.getId();
+        }
 
         List<String> roles = new ArrayList<>(Collections.singletonList(UserAccount.ROLE_DEFAULT));
         if (fullAccess) {
