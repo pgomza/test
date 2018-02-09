@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.subscription;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -13,15 +14,22 @@ public class SubscriptionEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    private Integer level;
+
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdAt;
 
     @NotNull
-    private Integer level;
-
-    @NotNull
     private Integer validityPeriod;
+
+    /*
+        the moment of expiration isn't necessarily createdAt + validityPeriod
+        it's stored so that the entire history doesn't have to be replayed to calculate this value
+     */
+    @JsonIgnore
+    private Timestamp expiresAt;
 
     public Long getId() {
         return id;
@@ -29,14 +37,6 @@ public class SubscriptionEvent {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
     }
 
     public Integer getLevel() {
@@ -47,11 +47,27 @@ public class SubscriptionEvent {
         this.level = level;
     }
 
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public Integer getValidityPeriod() {
         return validityPeriod;
     }
 
     public void setValidityPeriod(Integer validityPeriod) {
         this.validityPeriod = validityPeriod;
+    }
+
+    public Timestamp getExpiresAt() {
+        return expiresAt;
+    }
+
+    public void setExpiresAt(Timestamp expiresAt) {
+        this.expiresAt = expiresAt;
     }
 }
