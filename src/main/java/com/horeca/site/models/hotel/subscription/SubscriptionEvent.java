@@ -31,6 +31,14 @@ public class SubscriptionEvent {
     @JsonIgnore
     private Timestamp expiresAt;
 
+    SubscriptionEvent() {}
+
+    public SubscriptionEvent(Integer level, Integer validityPeriod, Timestamp expiresAt) {
+        this.level = level;
+        this.validityPeriod = validityPeriod;
+        this.expiresAt = expiresAt;
+    }
+
     public Long getId() {
         return id;
     }

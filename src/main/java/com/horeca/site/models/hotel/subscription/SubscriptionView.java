@@ -13,6 +13,14 @@ public class SubscriptionView {
     @NotNull
     private Boolean trialEligible;
 
+    SubscriptionView() {}
+
+    public SubscriptionView(Integer currentLevel, Timestamp expiresAt, Boolean trialEligible) {
+        this.currentLevel = currentLevel;
+        this.expiresAt = expiresAt;
+        this.trialEligible = trialEligible;
+    }
+
     public Integer getCurrentLevel() {
         return currentLevel;
     }
