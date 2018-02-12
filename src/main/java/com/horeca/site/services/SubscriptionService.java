@@ -4,8 +4,11 @@ import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.subscription.*;
 import com.horeca.site.repositories.SubscriptionRepository;
+import com.horeca.utils.PageableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,11 +52,22 @@ public class SubscriptionService {
         return new SubscriptionView(currentLevel, trialEligible);
     }
 
-    public List<SubscriptionEventView> getHistoryView(Long hotelId) {
+    public Page<SubscriptionEventView> getHistoryView(Long hotelId, Pageable pageable) {
         Subscription subscription = createIfDoesntExistAndGet(hotelId);
-        return subscription.getHistory().stream()
+        List<SubscriptionEvent> events = subscription.getHistory();
+        // sort the entries by expiration time (in descending order)
+        events.sort((a, b) -> {
+            if (a.getExpiresAt().after(b.getExpiresAt())) {
+                return -1;
+            }
+            else {
+                return 1;
+            }
+        });
+        List<SubscriptionEventView> eventViews = events.stream()
                 .map(SubscriptionEvent::toView)
                 .collect(Collectors.toList());
+        return PageableUtils.extractPage(eventViews, pageable);
     }
 
     public SubscriptionEvent addPremiumEvent(Long hotelId, Integer level) {

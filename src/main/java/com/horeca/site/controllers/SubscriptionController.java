@@ -6,10 +6,10 @@ import com.horeca.site.models.hotel.subscription.SubscriptionView;
 import com.horeca.site.services.SubscriptionService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Api(value = "hotels")
 @RestController
@@ -32,8 +32,8 @@ public class SubscriptionController {
 
     @RequestMapping(value = "/{hotelId}/subscription/events", method = RequestMethod.GET, produces = MediaType
             .APPLICATION_JSON_VALUE)
-    public List<SubscriptionEventView> getHistory(@PathVariable("hotelId") Long hotelId) {
-        return service.getHistoryView(hotelId);
+    public Page<SubscriptionEventView> getHistory(Pageable pageable, @PathVariable("hotelId") Long hotelId) {
+        return service.getHistoryView(hotelId, pageable);
     }
 
     /*
