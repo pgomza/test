@@ -4,6 +4,7 @@ import com.horeca.site.models.hotel.Hotel;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,7 +24,15 @@ public class Subscription {
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "subscription_id")
-    private List<SubscriptionEvent> history;
+    private List<SubscriptionEvent> history = new ArrayList<>();
+
+    Subscription() {}
+
+    public Subscription(Hotel hotel, Boolean trialEligible, List<SubscriptionEvent> history) {
+        this.hotel = hotel;
+        this.trialEligible = trialEligible;
+        this.history = history;
+    }
 
     public Long getId() {
         return id;
