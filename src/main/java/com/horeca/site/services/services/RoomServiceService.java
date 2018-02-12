@@ -40,7 +40,7 @@ public class RoomServiceService {
     }
 
     public RoomService addDefaultRoomService(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        AvailableServices services = availableServicesService.get(hotelId);
         if (services.getRoomService() == null) {
             RoomService roomService = new RoomService();
             roomService.setDescription("");

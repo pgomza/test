@@ -9,6 +9,7 @@ import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.information.UsefulInformationHourItem;
+import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.notifications.NotificationSettings;
 import com.horeca.site.repositories.HotelRepository;
 import com.horeca.site.security.services.GuestAccountService;
@@ -242,6 +243,10 @@ public class HotelService {
 
         if (hotel.getCurrency() == null) {
             hotel.setCurrency(Currency.EUR);
+        }
+
+        if (hotel.getAvailableServices() == null) {
+            hotel.setAvailableServices(new AvailableServices());
         }
 
         if (hotel.getUsefulInformation() == null) {

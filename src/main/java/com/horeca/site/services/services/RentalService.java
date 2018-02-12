@@ -47,7 +47,7 @@ public class RentalService {
     }
 
     public Rental addDefaultRental(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        AvailableServices services = availableServicesService.get(hotelId);
         if (services.getRental() == null) {
             Rental rental = new Rental();
             rental.setDescription("");

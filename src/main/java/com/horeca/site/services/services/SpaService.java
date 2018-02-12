@@ -51,7 +51,7 @@ public class SpaService {
     }
 
     public Spa addDefaultSpa(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        AvailableServices services = availableServicesService.get(hotelId);
         if (services.getSpa() == null) {
             Spa spa = new Spa();
             spa.setDescription("");

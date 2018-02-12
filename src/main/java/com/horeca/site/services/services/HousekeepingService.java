@@ -37,7 +37,7 @@ public class HousekeepingService {
     }
 
     public Housekeeping addDefaultHousekeeping(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        AvailableServices services = availableServicesService.get(hotelId);
         if (services.getHousekeeping() == null) {
             Housekeeping housekeeping = new Housekeeping();
             housekeeping.setDescription("");

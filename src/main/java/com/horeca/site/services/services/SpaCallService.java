@@ -24,7 +24,7 @@ public class SpaCallService {
     }
 
     public SpaCall addDefaultSpaCall(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        AvailableServices services = availableServicesService.get(hotelId);
         if (services.getSpaCall() == null) {
             SpaCall spaCall = new SpaCall();
             spaCall.setDescription("");

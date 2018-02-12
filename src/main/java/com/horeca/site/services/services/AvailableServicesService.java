@@ -26,16 +26,4 @@ public class AvailableServicesService {
     public AvailableServices update(AvailableServices services) {
         return repository.save(services);
     }
-
-    public AvailableServices addIfDoesntExistAndGet(Long hotelId) {
-        AvailableServices services = get(hotelId);
-        if (services == null) {
-            services = new AvailableServices();
-            repository.save(services);
-            Hotel hotel = hotelService.get(hotelId);
-            hotel.setAvailableServices(services);
-            hotelService.update(hotel.getId(), hotel);
-        }
-        return services;
-    }
 }

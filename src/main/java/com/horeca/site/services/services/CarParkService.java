@@ -27,7 +27,7 @@ public class CarParkService {
     }
 
     public CarPark addDefaultCarPark(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        AvailableServices services = availableServicesService.get(hotelId);
         if (services.getCarPark() == null) {
             CarPark carPark = new CarPark();
             carPark.setDescription("");

@@ -45,7 +45,7 @@ public class BreakfastService {
     }
 
     public Breakfast addDefaultBreakfast(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        AvailableServices services = availableServicesService.get(hotelId);
         if (services.getBreakfast() == null) {
             Breakfast breakfast = new Breakfast();
             breakfast.setDescription("");

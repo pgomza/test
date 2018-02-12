@@ -34,7 +34,7 @@ public class TaxiService {
     }
 
     public Taxi addDefaultTaxi(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        AvailableServices services = availableServicesService.get(hotelId);
         if (services.getTaxi() == null) {
             Taxi taxi = new Taxi();
             Price taxiPrice = new Price();

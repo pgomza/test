@@ -24,7 +24,7 @@ public class HairDresserService {
     }
 
     public HairDresser addDefaultHairDresser(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        AvailableServices services = availableServicesService.get(hotelId);
         if (services.getHairDresser() == null) {
             HairDresser hairDresser = new HairDresser();
             hairDresser.setDescription("");

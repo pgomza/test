@@ -57,7 +57,7 @@ public class BarService {
     }
 
     public Bar addDefaultBar(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        AvailableServices services = availableServicesService.get(hotelId);
         if (services.getBar() == null) {
             Bar bar = new Bar();
             bar.setDescription("");

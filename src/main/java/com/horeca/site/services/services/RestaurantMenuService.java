@@ -53,7 +53,7 @@ public class RestaurantMenuService {
     }
 
     public RestaurantMenu addDefaultRestaurantMenu(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        AvailableServices services = availableServicesService.get(hotelId);
         if (services.getRestaurantMenu() == null) {
             RestaurantMenu menu = new RestaurantMenu();
             menu.setDescription("");

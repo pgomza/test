@@ -24,7 +24,7 @@ public class TableOrderingService {
     }
 
     public TableOrdering addDefaultTableOrdering(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        AvailableServices services = availableServicesService.get(hotelId);
         if (services.getTableOrdering() == null) {
             TableOrdering tableOrdering = new TableOrdering("");
             services.setTableOrdering(tableOrdering);

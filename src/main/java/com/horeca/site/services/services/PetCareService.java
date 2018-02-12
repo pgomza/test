@@ -39,7 +39,7 @@ public class PetCareService {
     }
 
     public PetCare addDefaultPetCare(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
+        AvailableServices services = availableServicesService.get(hotelId);
         if (services.getPetCare() == null) {
             PetCare petCare = new PetCare();
             petCare.setDescription("");
