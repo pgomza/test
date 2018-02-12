@@ -2,10 +2,7 @@ package com.horeca.site.services;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.hotel.Hotel;
-import com.horeca.site.models.hotel.subscription.Subscription;
-import com.horeca.site.models.hotel.subscription.SubscriptionEvent;
-import com.horeca.site.models.hotel.subscription.SubscriptionLevel;
-import com.horeca.site.models.hotel.subscription.SubscriptionView;
+import com.horeca.site.models.hotel.subscription.*;
 import com.horeca.site.repositories.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,6 +47,13 @@ public class SubscriptionService {
             currentLevel = SubscriptionLevel.BASIC.getNumber();
         }
         return new SubscriptionView(currentLevel, trialEligible);
+    }
+
+    public List<SubscriptionEventView> getHistoryView(Long hotelId) {
+        Subscription subscription = createIfDoesntExistAndGet(hotelId);
+        return subscription.getHistory().stream()
+                .map(SubscriptionEvent::toView)
+                .collect(Collectors.toList());
     }
 
     public SubscriptionEvent addPremiumEvent(Long hotelId, Integer level) {

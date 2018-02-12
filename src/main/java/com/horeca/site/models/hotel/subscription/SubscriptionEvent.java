@@ -39,6 +39,12 @@ public class SubscriptionEvent {
         this.expiresAt = expiresAt;
     }
 
+    public SubscriptionEventView toView() {
+        return new SubscriptionEventView(
+                getLevel(), getCreatedAt().toString(), getValidityPeriod(), getExpiresAt().toString()
+        );
+    }
+
     public Long getId() {
         return id;
     }

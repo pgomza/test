@@ -1,12 +1,15 @@
 package com.horeca.site.controllers;
 
 import com.horeca.site.models.hotel.subscription.SubscriptionEvent;
+import com.horeca.site.models.hotel.subscription.SubscriptionEventView;
 import com.horeca.site.models.hotel.subscription.SubscriptionView;
 import com.horeca.site.services.SubscriptionService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(value = "hotels")
 @RestController
@@ -25,6 +28,12 @@ public class SubscriptionController {
             .APPLICATION_JSON_VALUE)
     public SubscriptionEvent enableTrial(@PathVariable("hotelId") Long hotelId) {
         return service.enableTrial(hotelId);
+    }
+
+    @RequestMapping(value = "/{hotelId}/subscription/events", method = RequestMethod.GET, produces = MediaType
+            .APPLICATION_JSON_VALUE)
+    public List<SubscriptionEventView> getHistory(@PathVariable("hotelId") Long hotelId) {
+        return service.getHistoryView(hotelId);
     }
 
     /*
