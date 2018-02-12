@@ -44,15 +44,12 @@ public class SubscriptionService {
     public SubscriptionView getView(Long hotelId) {
         Subscription subscription = createIfDoesntExistAndGet(hotelId);
         Boolean trialEligible = subscription.getTrialEligible();
-        List<SubscriptionEvent> history = subscription.getHistory();
+        Integer currentLevel = repository.getCurrentLevel(hotelId);
 
-        if (!history.isEmpty()) {
-            SubscriptionEvent lastEvent = history.get(history.size() - 1);
-            if (lastEvent.getExpiresAt().after(new Date())) {
-                return new SubscriptionView(lastEvent.getLevel(), lastEvent.getExpiresAt(), trialEligible);
-            }
+        if (currentLevel == null) {
+            currentLevel = SubscriptionLevel.BASIC.getNumber();
         }
-        return new SubscriptionView(SubscriptionLevel.BASIC.getNumber(), null, trialEligible);
+        return new SubscriptionView(currentLevel, trialEligible);
     }
 
     public SubscriptionEvent addPremiumEvent(Long hotelId, Integer level) {
