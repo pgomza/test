@@ -32,6 +32,14 @@ public class SubscriptionService {
     @Autowired
     private HotelQueryService hotelQueryService;
 
+    public int getCurrentLevel(Long hotelId) {
+        Integer currentLevel = repository.getCurrentLevel(hotelId);
+        if (currentLevel == null) {
+            currentLevel = SubscriptionLevel.BASIC.getNumber();
+        }
+        return currentLevel;
+    }
+
     private Subscription createIfDoesntExistAndGet(Long hotelId) {
         Subscription subscription = repository.findByHotelId(hotelId);
         if (subscription == null) {
@@ -44,11 +52,7 @@ public class SubscriptionService {
     public SubscriptionView getView(Long hotelId) {
         Subscription subscription = createIfDoesntExistAndGet(hotelId);
         Boolean trialEligible = subscription.getTrialEligible();
-        Integer currentLevel = repository.getCurrentLevel(hotelId);
-
-        if (currentLevel == null) {
-            currentLevel = SubscriptionLevel.BASIC.getNumber();
-        }
+        Integer currentLevel = getCurrentLevel(hotelId);
         return new SubscriptionView(currentLevel, trialEligible);
     }
 
