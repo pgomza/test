@@ -12,6 +12,7 @@ import com.horeca.site.models.hotel.services.bar.BarItem;
 import com.horeca.site.models.hotel.services.bar.BarItemUpdate;
 import com.horeca.site.repositories.services.BarCategoryRepository;
 import com.horeca.site.repositories.services.BarItemRepository;
+import com.horeca.site.repositories.services.BarRepository;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class BarService {
 
     @Autowired
     private AvailableServicesService availableServicesService;
+
+    @Autowired
+    private BarRepository barRepository;
 
     @Autowired
     private BarCategoryRepository barCategoryRepository;
@@ -69,6 +73,13 @@ public class BarService {
             existingBar = updatedServices.getBar();
         }
         return existingBar;
+    }
+
+    @MinSubscriptionLevel(2)
+    public Bar updateAvailability(@HotelId Long hotelId, boolean available) {
+        Bar bar = createIfDoesntExistAndGet(hotelId);
+        bar.setAvailable(available);
+        return barRepository.save(bar);
     }
 
     @MinSubscriptionLevel(2)
