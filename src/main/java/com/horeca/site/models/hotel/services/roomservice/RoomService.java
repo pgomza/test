@@ -28,6 +28,9 @@ public class RoomService {
     @JoinColumn(name = "room_service_id")
     private Set<RoomServiceCategory> categories;
 
+    @NotNull
+    private Boolean available;
+
     public Long getId() {
         return id;
     }
@@ -58,5 +61,13 @@ public class RoomService {
 
     public void setCategories(Set<RoomServiceCategory> categories) {
         this.categories = categories;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
     }
 }

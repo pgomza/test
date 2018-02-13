@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Audited
@@ -18,6 +19,9 @@ public class TableOrdering {
 
     @Translatable
     private String description;
+
+    @NotNull
+    private Boolean available;
 
     TableOrdering() {
     }
@@ -40,5 +44,13 @@ public class TableOrdering {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
     }
 }

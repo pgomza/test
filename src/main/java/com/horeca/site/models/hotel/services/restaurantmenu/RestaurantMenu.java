@@ -4,6 +4,7 @@ import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,9 @@ public class RestaurantMenu {
     @JoinColumn(name = "restaurant_menu_id")
     @OrderColumn(name = "category_order")
     private List<RestaurantMenuCategory> categories = new ArrayList<>();
+
+    @NotNull
+    private Boolean available;
 
     public Long getId() {
         return id;
@@ -46,5 +50,13 @@ public class RestaurantMenu {
 
     public void setCategories(List<RestaurantMenuCategory> categories) {
         this.categories = categories;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
     }
 }

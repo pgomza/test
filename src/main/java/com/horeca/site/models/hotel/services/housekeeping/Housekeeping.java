@@ -27,6 +27,9 @@ public class Housekeeping {
     @JoinColumn(name = "housekeeping_id")
     private Set<HousekeepingItem> items;
 
+    @NotNull
+    private Boolean available;
+
     public Long getId() {
         return id;
     }
@@ -57,5 +60,13 @@ public class Housekeeping {
 
     public void setItems(Set<HousekeepingItem> items) {
         this.items = items;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
     }
 }

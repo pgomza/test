@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Audited
@@ -22,6 +23,9 @@ public class HairDresser {
 
     @NotEmpty
     private String number;
+
+    @NotNull
+    private Boolean available;
 
     public Long getId() {
         return id;
@@ -45,5 +49,13 @@ public class HairDresser {
 
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
     }
 }

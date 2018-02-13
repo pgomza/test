@@ -24,6 +24,9 @@ public class Taxi {
     @JoinColumn(name = "taxi_id")
     private Set<TaxiItem> items;
 
+    @NotNull
+    private Boolean available;
+
     public Long getId() {
         return id;
     }
@@ -46,5 +49,13 @@ public class Taxi {
 
     public void setItems(Set<TaxiItem> items) {
         this.items = items;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
     }
 }
