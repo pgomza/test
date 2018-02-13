@@ -26,12 +26,7 @@ public class BarController {
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/bar", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Bar get(@HotelId @PathVariable("hotelId") Long hotelId) {
-        return service.get(hotelId);
-    }
-
-    @RequestMapping(value = "/{hotelId}/services/bar", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Bar addDefault(@PathVariable("hotelId") Long hotelId) {
-        return service.addDefaultBar(hotelId);
+        return service.createIfDoesntExistAndGet(hotelId);
     }
 
     @RequestMapping(value = "/{hotelId}/services/bar/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
