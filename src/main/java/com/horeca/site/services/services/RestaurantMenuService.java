@@ -33,10 +33,6 @@ public class RestaurantMenuService {
 
     public RestaurantMenu get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
-        if (services == null || services.getRestaurantMenu() == null) {
-            throw new ResourceNotFoundException();
-        }
-
         return services.getRestaurantMenu();
     }
 

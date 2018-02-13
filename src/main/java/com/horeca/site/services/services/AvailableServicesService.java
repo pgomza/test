@@ -118,6 +118,8 @@ public class AvailableServicesService {
         categories.add(drinkCategory);
         breakfast.setCategories(categories);
 
+        breakfast.setAvailable(false);
+
         return breakfast;
     }
 
@@ -128,6 +130,7 @@ public class AvailableServicesService {
         carParkPrice.setCurrency(Currency.EUR);
         carParkPrice.setValue(new BigDecimal(5));
         carPark.setPrice(carParkPrice);
+        carPark.setAvailable(false);
         return carPark;
     }
 
@@ -138,6 +141,7 @@ public class AvailableServicesService {
         housekeepingPrice.setCurrency(Currency.EUR);
         housekeepingPrice.setValue(new BigDecimal(5));
         housekeeping.setPrice(housekeepingPrice);
+        housekeeping.setAvailable(false);
         return housekeeping;
     }
 
@@ -148,6 +152,7 @@ public class AvailableServicesService {
         spaPrice.setCurrency(Currency.EUR);
         spaPrice.setValue(new BigDecimal(5));
         spa.setPrice(spaPrice);
+        spa.setAvailable(false);
         return spa;
     }
 
@@ -158,6 +163,7 @@ public class AvailableServicesService {
         petCarePrice.setCurrency(Currency.EUR);
         petCarePrice.setValue(new BigDecimal(5));
         petCare.setPrice(petCarePrice);
+        petCare.setAvailable(false);
         return petCare;
     }
 
@@ -167,6 +173,7 @@ public class AvailableServicesService {
         taxiPrice.setCurrency(Currency.EUR);
         taxiPrice.setValue(new BigDecimal(5));
         taxi.setPrice(taxiPrice);
+        taxi.setAvailable(false);
         return taxi;
     }
 
@@ -187,11 +194,15 @@ public class AvailableServicesService {
         categories.add(drinkCategory);
         roomService.setCategories(categories);
 
+        roomService.setAvailable(false);
+
         return roomService;
     }
 
     private TableOrdering getDefaultTableOrdering() {
-        return new TableOrdering("");
+        TableOrdering tableOrdering = new TableOrdering("");
+        tableOrdering.setAvailable(false);
+        return tableOrdering;
     }
 
     private Bar getDefaultBar() {
@@ -213,6 +224,7 @@ public class AvailableServicesService {
                 .collect(Collectors.toList());
 
         bar.setCategories(barCategories);
+
         bar.setAvailable(false);
 
         return bar;
@@ -222,6 +234,7 @@ public class AvailableServicesService {
         SpaCall spaCall = new SpaCall();
         spaCall.setDescription("");
         spaCall.setNumber("+12 345 678 901");
+        spaCall.setAvailable(false);
         return spaCall;
     }
 
@@ -229,12 +242,14 @@ public class AvailableServicesService {
         HairDresser hairDresser = new HairDresser();
         hairDresser.setDescription("");
         hairDresser.setNumber("+12 345 678 901");
+        hairDresser.setAvailable(false);
         return hairDresser;
     }
 
     private RestaurantMenu getDefaultRestaurantMenu() {
         RestaurantMenu menu = new RestaurantMenu();
         menu.setDescription("");
+        menu.setAvailable(false);
         return menu;
     }
 
@@ -257,6 +272,8 @@ public class AvailableServicesService {
                 .collect(Collectors.toSet());
 
         rental.setCategories(rentalCategories);
+
+        rental.setAvailable(false);
 
         return rental;
     }

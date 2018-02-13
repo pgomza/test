@@ -30,9 +30,6 @@ public class BreakfastService {
 
     public Breakfast get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
-        if (services == null || services.getBreakfast() == null)
-            throw new ResourceNotFoundException();
-
         return services.getBreakfast();
     }
 

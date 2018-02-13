@@ -1,6 +1,5 @@
 package com.horeca.site.services.services;
 
-import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.carpark.CarPark;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +15,6 @@ public class CarParkService {
 
     public CarPark get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
-        if (services == null || services.getCarPark() == null)
-            throw new ResourceNotFoundException();
         return services.getCarPark();
     }
 }

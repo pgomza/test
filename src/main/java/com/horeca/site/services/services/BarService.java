@@ -3,8 +3,6 @@ package com.horeca.site.services.services;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.handlers.HotelId;
 import com.horeca.site.handlers.MinSubscriptionLevel;
-import com.horeca.site.models.Currency;
-import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.bar.Bar;
 import com.horeca.site.models.hotel.services.bar.BarCategory;
@@ -13,25 +11,18 @@ import com.horeca.site.models.hotel.services.bar.BarItemUpdate;
 import com.horeca.site.repositories.services.BarCategoryRepository;
 import com.horeca.site.repositories.services.BarItemRepository;
 import com.horeca.site.repositories.services.BarRepository;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
 public class BarService {
-
-    private static final DateTimeFormatter localTimeFormatter = DateTimeFormat.forPattern("HH:mm");
 
     @Autowired
     private AvailableServicesService availableServicesService;
@@ -45,39 +36,14 @@ public class BarService {
     @Autowired
     private BarItemRepository barItemRepository;
 
-    public Bar createIfDoesntExistAndGet(Long hotelId) {
+    public Bar get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
-        Bar existingBar = services.getBar();
-        if (existingBar == null) {
-            Bar bar = new Bar();
-            bar.setDescription("");
-            Price price = new Price();
-            price.setCurrency(Currency.EUR);
-            price.setValue(new BigDecimal(5));
-            bar.setPrice(price);
-            bar.setFromHour(localTimeFormatter.parseLocalTime("08:00"));
-            bar.setToHour(localTimeFormatter.parseLocalTime("11:00"));
-
-            List<BarCategory> barCategories = Stream.of(BarCategory.Category.values())
-                    .map(categoryName -> {
-                        BarCategory category = new BarCategory();
-                        category.setCategory(categoryName);
-                        return category;
-                    })
-                    .collect(Collectors.toList());
-
-            bar.setCategories(barCategories);
-            services.setBar(bar);
-
-            AvailableServices updatedServices = availableServicesService.update(services);
-            existingBar = updatedServices.getBar();
-        }
-        return existingBar;
+        return services.getBar();
     }
 
     @MinSubscriptionLevel(2)
     public Bar updateAvailability(@HotelId Long hotelId, boolean available) {
-        Bar bar = createIfDoesntExistAndGet(hotelId);
+        Bar bar = get(hotelId);
         bar.setAvailable(available);
         return barRepository.save(bar);
     }
@@ -92,7 +58,7 @@ public class BarService {
     }
 
     public BarCategory getCategory(Long hotelId, BarCategory.Category categoryName) {
-        return createIfDoesntExistAndGet(hotelId).getCategories().stream()
+        return get(hotelId).getCategories().stream()
                 .filter(category -> category.getCategory() == categoryName)
                 .findFirst()
                 .orElse(null);
@@ -106,7 +72,7 @@ public class BarService {
                 .findAny()
                 .orElseThrow(() -> new ResourceNotFoundException("There is no such category"));
 
-        Bar bar = createIfDoesntExistAndGet(hotelId);
+        Bar bar = get(hotelId);
         BarCategory newCategory = new BarCategory();
         newCategory.setCategory(matchingCategory);
         newCategory.setItems(new HashSet<>());
@@ -135,7 +101,7 @@ public class BarService {
 
     @MinSubscriptionLevel(2)
     public BarItem updateItem(Long hotelId, BarItemUpdate itemSent) {
-        Bar bar = createIfDoesntExistAndGet(hotelId);
+        Bar bar = get(hotelId);
         List<BarCategory> categories = bar.getCategories();
 
         BarItem found = null;
@@ -171,7 +137,7 @@ public class BarService {
 
     @MinSubscriptionLevel(2)
     public void deleteItem(Long hotelId, Long idToDelete) {
-        Bar bar = createIfDoesntExistAndGet(hotelId);
+        Bar bar = get(hotelId);
         List<BarCategory> categories = bar.getCategories();
 
         boolean found = false;

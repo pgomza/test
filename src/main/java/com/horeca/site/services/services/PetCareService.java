@@ -29,8 +29,6 @@ public class PetCareService {
 
     public PetCare get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
-        if (services == null || services.getPetCare() == null)
-            throw new ResourceNotFoundException();
         return services.getPetCare();
     }
 

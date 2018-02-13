@@ -27,8 +27,6 @@ public class HousekeepingService {
 
     public Housekeeping get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
-        if (services == null || services.getHousekeeping() == null)
-            throw new ResourceNotFoundException();
         return services.getHousekeeping();
     }
 

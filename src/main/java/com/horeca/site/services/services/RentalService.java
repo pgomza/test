@@ -34,9 +34,6 @@ public class RentalService {
 
     public Rental get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
-        if (services == null || services.getRental() == null)
-            throw new ResourceNotFoundException();
-
         return services.getRental();
     }
 

@@ -27,7 +27,7 @@ public class BarController {
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/bar", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Bar get(@HotelId @PathVariable("hotelId") Long hotelId) {
-        return service.createIfDoesntExistAndGet(hotelId);
+        return service.get(hotelId);
     }
 
     @RequestMapping(value = "/{hotelId}/services/bar/availability", method = RequestMethod.PUT, produces = MediaType

@@ -47,7 +47,7 @@ public class BarOrderService extends GenericOrderServiceAltered<BarOrder> {
     @Override
     protected void ensureCanModifyOrders(String pin) throws BusinessRuleViolationException {
         Long hotelId = pinToHotelId(pin);
-        Bar bar = barService.createIfDoesntExistAndGet(hotelId);
+        Bar bar = barService.get(hotelId);
         if (!bar.getAvailable()) {
             throw new BusinessRuleViolationException("The service is not available");
         }
