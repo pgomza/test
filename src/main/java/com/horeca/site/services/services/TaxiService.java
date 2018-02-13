@@ -1,9 +1,6 @@
 package com.horeca.site.services.services;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.models.Currency;
-import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.taxi.Taxi;
 import com.horeca.site.models.hotel.services.taxi.TaxiItem;
@@ -12,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,24 +27,6 @@ public class TaxiService {
         if (services == null || services.getTaxi() == null)
             throw new ResourceNotFoundException();
         return services.getTaxi();
-    }
-
-    public Taxi addDefaultTaxi(Long hotelId) {
-        AvailableServices services = availableServicesService.get(hotelId);
-        if (services.getTaxi() == null) {
-            Taxi taxi = new Taxi();
-            Price taxiPrice = new Price();
-            taxiPrice.setCurrency(Currency.EUR);
-            taxiPrice.setValue(new BigDecimal(5));
-            taxi.setPrice(taxiPrice);
-
-            services.setTaxi(taxi);
-            AvailableServices updatedServices = availableServicesService.update(services);
-            return updatedServices.getTaxi();
-        }
-        else {
-            throw new BusinessRuleViolationException("A taxi service has already been added");
-        }
     }
 
     public Taxi addItem(Long hotelId, TaxiItem item) {

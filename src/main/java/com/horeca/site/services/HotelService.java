@@ -14,6 +14,7 @@ import com.horeca.site.models.notifications.NotificationSettings;
 import com.horeca.site.repositories.HotelRepository;
 import com.horeca.site.security.services.GuestAccountService;
 import com.horeca.site.security.services.UserAccountService;
+import com.horeca.site.services.services.AvailableServicesService;
 import com.horeca.site.services.services.StayService;
 import com.horeca.site.services.translation.HotelTranslationService;
 import org.joda.time.LocalTime;
@@ -60,6 +61,10 @@ public class HotelService {
 
     @Autowired
     private HotelTranslationService translationService;
+
+    @Autowired
+    @Lazy
+    private AvailableServicesService availableServices;
 
     /*
         Expose these two methods in this service to prevent clients
@@ -230,10 +235,6 @@ public class HotelService {
             hotel.setCurrency(Currency.EUR);
         }
 
-        if (hotel.getAvailableServices() == null) {
-            hotel.setAvailableServices(new AvailableServices());
-        }
-
         if (hotel.getUsefulInformation() == null) {
             UsefulInformation usefulInformation = new UsefulInformation();
 
@@ -283,6 +284,12 @@ public class HotelService {
         if (hotel.getIsMarkedAsDeleted() == null) {
             hotel.setIsMarkedAsDeleted(false);
         }
+
+        AvailableServices services = hotel.getAvailableServices();
+        if (services == null) {
+            services = new AvailableServices();
+        }
+        availableServices.ensureFullyInitialized(services);
 
         Hotel saved;
         if (hotel.getId() != null) {

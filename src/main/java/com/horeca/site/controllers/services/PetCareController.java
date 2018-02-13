@@ -30,12 +30,6 @@ public class PetCareController {
         return petCareService.get(hotelId);
     }
 
-    @RequestMapping(value = "/{hotelId}/services/petcare", method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public PetCare addDefault(@PathVariable("hotelId") Long hotelId) {
-        return petCareService.addDefaultPetCare(hotelId);
-    }
-
     @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/petcare/items", method = RequestMethod.GET,

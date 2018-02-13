@@ -52,21 +52,6 @@ public class RestaurantMenuService {
         return repository.save(menu);
     }
 
-    public RestaurantMenu addDefaultRestaurantMenu(Long hotelId) {
-        AvailableServices services = availableServicesService.get(hotelId);
-        if (services.getRestaurantMenu() == null) {
-            RestaurantMenu menu = new RestaurantMenu();
-            menu.setDescription("");
-            services.setRestaurantMenu(menu);
-
-            AvailableServices updatedServices = availableServicesService.update(services);
-            return updatedServices.getRestaurantMenu();
-        }
-        else {
-            throw new BusinessRuleViolationException("A restaurant menu service has already been added");
-        }
-    }
-
     public List<RestaurantMenuCategory> getCategories(Long hotelId) {
         return get(hotelId).getCategories();
     }

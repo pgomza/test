@@ -1,9 +1,6 @@
 package com.horeca.site.services.services;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.models.Currency;
-import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.spa.Spa;
@@ -20,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -48,25 +44,6 @@ public class SpaService {
         if (services == null || services.getSpa() == null)
             throw new ResourceNotFoundException();
         return services.getSpa();
-    }
-
-    public Spa addDefaultSpa(Long hotelId) {
-        AvailableServices services = availableServicesService.get(hotelId);
-        if (services.getSpa() == null) {
-            Spa spa = new Spa();
-            spa.setDescription("");
-            Price spaPrice = new Price();
-            spaPrice.setCurrency(Currency.EUR);
-            spaPrice.setValue(new BigDecimal(5));
-            spa.setPrice(spaPrice);
-
-            services.setSpa(spa);
-            AvailableServices updatedServices = availableServicesService.update(services);
-            return updatedServices.getSpa();
-        }
-        else {
-            throw new BusinessRuleViolationException("A spa service has already been added");
-        }
     }
 
     public Set<SpaCalendarHour> getCalendarHours(Long hotelId, Long itemId, String date) {

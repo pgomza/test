@@ -26,11 +26,6 @@ public class HousekeepingController {
         return service.get(hotelId);
     }
 
-    @RequestMapping(value = "/{hotelId}/services/housekeeping", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Housekeeping addDefault(@PathVariable("hotelId") Long hotelId) {
-        return service.addDefaultHousekeeping(hotelId);
-    }
-
     @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/housekeeping/items", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

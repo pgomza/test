@@ -25,9 +25,4 @@ public class HairDresserController {
     public HairDresser get(@HotelId @PathVariable("hotelId") Long hotelId) {
         return service.get(hotelId);
     }
-
-    @RequestMapping(value = "/{hotelId}/services/hairdresser", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public HairDresser addDefault(@PathVariable("hotelId") Long hotelId) {
-        return service.addDefaultHairDresser(hotelId);
-    }
 }

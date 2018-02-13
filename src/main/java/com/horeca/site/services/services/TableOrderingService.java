@@ -1,6 +1,5 @@
 package com.horeca.site.services.services;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.tableordering.TableOrdering;
@@ -21,18 +20,5 @@ public class TableOrderingService {
         if (services == null || services.getTableOrdering() == null)
             throw new ResourceNotFoundException();
         return services.getTableOrdering();
-    }
-
-    public TableOrdering addDefaultTableOrdering(Long hotelId) {
-        AvailableServices services = availableServicesService.get(hotelId);
-        if (services.getTableOrdering() == null) {
-            TableOrdering tableOrdering = new TableOrdering("");
-            services.setTableOrdering(tableOrdering);
-            AvailableServices updatedServices = availableServicesService.update(services);
-            return updatedServices.getTableOrdering();
-        }
-        else {
-            throw new BusinessRuleViolationException("A table ordering service has already been added");
-        }
     }
 }

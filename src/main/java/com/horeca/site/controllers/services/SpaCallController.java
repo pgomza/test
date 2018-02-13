@@ -25,9 +25,4 @@ public class SpaCallController {
     public SpaCall get(@HotelId @PathVariable("hotelId") Long hotelId) {
         return service.get(hotelId);
     }
-
-    @RequestMapping(value = "/{hotelId}/services/spacall", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public SpaCall addDefault(@PathVariable("hotelId") Long hotelId) {
-        return service.addDefaultSpaCall(hotelId);
-    }
 }

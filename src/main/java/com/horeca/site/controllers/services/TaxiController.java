@@ -28,11 +28,6 @@ public class TaxiController {
         return taxiService.get(hotelId);
     }
 
-    @RequestMapping(value = "/{hotelId}/services/taxi", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Taxi addDefault(@PathVariable("hotelId") Long hotelId) {
-        return taxiService.addDefaultTaxi(hotelId);
-    }
-
     @RequestMapping(value = "/{hotelId}/services/taxi/items", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Iterable<TaxiItem> addItem(@PathVariable("hotelId") Long hotelId) {
         return taxiService.getItems(hotelId);

@@ -40,12 +40,6 @@ public class RestaurantMenuController {
         return service.patch(hotelId, patch);
     }
 
-    @RequestMapping(value = "/{hotelId}/services/restaurantmenu", method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestaurantMenu add(@PathVariable("hotelId") Long hotelId) {
-        return service.addDefaultRestaurantMenu(hotelId);
-    }
-
     @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu/categories", method = RequestMethod.GET,

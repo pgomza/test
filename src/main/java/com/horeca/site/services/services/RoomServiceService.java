@@ -1,9 +1,6 @@
 package com.horeca.site.services.services;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.models.Currency;
-import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.roomservice.RoomService;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceCategory;
@@ -15,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,34 +33,6 @@ public class RoomServiceService {
         if (services == null || services.getRoomService() == null)
             throw new ResourceNotFoundException();
         return services.getRoomService();
-    }
-
-    public RoomService addDefaultRoomService(Long hotelId) {
-        AvailableServices services = availableServicesService.get(hotelId);
-        if (services.getRoomService() == null) {
-            RoomService roomService = new RoomService();
-            roomService.setDescription("");
-            Price carParkPrice = new Price();
-            carParkPrice.setCurrency(Currency.EUR);
-            carParkPrice.setValue(new BigDecimal(5));
-            roomService.setPrice(carParkPrice);
-
-            RoomServiceCategory snackCategory = new RoomServiceCategory();
-            snackCategory.setCategory(RoomServiceCategory.Category.SNACK);
-            RoomServiceCategory drinkCategory = new RoomServiceCategory();
-            drinkCategory.setCategory(RoomServiceCategory.Category.DRINK);
-            Set<RoomServiceCategory> categories = new HashSet<>();
-            categories.add(snackCategory);
-            categories.add(drinkCategory);
-            roomService.setCategories(categories);
-
-            services.setRoomService(roomService);
-            AvailableServices updatedServices = availableServicesService.update(services);
-            return updatedServices.getRoomService();
-        }
-        else {
-            throw new BusinessRuleViolationException("A roomservice service has already been added");
-        }
     }
 
     private RoomServiceCategory getCategory(Long hotelId, RoomServiceCategory.Category category) {

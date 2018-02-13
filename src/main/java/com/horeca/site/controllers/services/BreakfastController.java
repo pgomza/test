@@ -28,11 +28,6 @@ public class BreakfastController {
         return breakfastService.get(hotelId);
     }
 
-    @RequestMapping(value = "/{hotelId}/services/breakfast", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Breakfast addDefault(@PathVariable("hotelId") Long hotelId) {
-        return breakfastService.addDefaultBreakfast(hotelId);
-    }
-
     @RequestMapping(value = "/{hotelId}/services/breakfast/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void addItem(@PathVariable("hotelId") Long hotelId,
                                  @Valid @RequestBody BreakfastItemUpdate item) {

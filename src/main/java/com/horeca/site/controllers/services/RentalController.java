@@ -29,11 +29,6 @@ public class RentalController {
         return service.get(hotelId);
     }
 
-    @RequestMapping(value = "/{hotelId}/services/rental", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Rental addDefault(@PathVariable("hotelId") Long hotelId) {
-        return service.addDefaultRental(hotelId);
-    }
-
     @RequestMapping(value = "/{hotelId}/services/rental/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void addItem(@PathVariable("hotelId") Long hotelId,
                         @Valid @RequestBody RentalItemUpdate item) {
