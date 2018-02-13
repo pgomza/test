@@ -288,6 +288,7 @@ public class HotelService {
         AvailableServices services = hotel.getAvailableServices();
         if (services == null) {
             services = new AvailableServices();
+            hotel.setAvailableServices(services);
         }
         availableServices.ensureFullyInitialized(services);
 
