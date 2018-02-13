@@ -291,14 +291,11 @@ public class HotelService {
         }
         availableServices.ensureFullyInitialized(services);
 
-        Hotel saved;
         if (hotel.getId() != null) {
             checkImagesOnUpdate(hotel);
-            saved = update(hotel.getId(), hotel);
         }
-        else {
-            saved = repository.save(hotel);
-        }
+
+        Hotel saved = repository.save(hotel);
 
         // add the default image if the hotel doesn't contain any
         if (saved.getImages().size() == 0) {
