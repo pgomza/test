@@ -501,49 +501,49 @@ public class Hotel {
 
 		if (availableServices != null) {
 			List<AvailableServiceViewSimplified> simplifiedList = new ArrayList<>();
-			if (availableServices.getBreakfast() != null) {
+			if (availableServices.getBreakfast().getAvailable()) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.BREAKFAST);
 				simplified.setPrice(availableServices.getBreakfast().getPrice());
 				simplifiedList.add(simplified);
 			}
 
-			if (availableServices.getCarPark() != null) {
+			if (availableServices.getCarPark().getAvailable()) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.CARPARK);
 				simplified.setPrice(availableServices.getCarPark().getPrice());
 				simplifiedList.add(simplified);
 			}
 
-			if (availableServices.getPetCare() != null) {
+			if (availableServices.getPetCare().getAvailable()) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.PETCARE);
 				simplified.setPrice(availableServices.getPetCare().getPrice());
 				simplifiedList.add(simplified);
 			}
 
-			if (availableServices.getTaxi() != null) {
+			if (availableServices.getTaxi().getAvailable()) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.TAXI);
 				simplified.setPrice(availableServices.getTaxi().getPrice());
 				simplifiedList.add(simplified);
 			}
 
-			if (availableServices.getHousekeeping() != null) {
+			if (availableServices.getHousekeeping().getAvailable()) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.HOUSEKEEPING);
 				simplified.setPrice(availableServices.getHousekeeping().getPrice());
 				simplifiedList.add(simplified);
 			}
 
-			if (availableServices.getRoomService() != null) {
+			if (availableServices.getRoomService().getAvailable()) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.ROOMSERVICE);
 				simplified.setPrice(availableServices.getRoomService().getPrice());
 				simplifiedList.add(simplified);
 			}
 
-			if (availableServices.getTableOrdering() != null) {
+			if (availableServices.getTableOrdering().getAvailable()) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.TABLEORDERING);
 				Price price = new Price();
@@ -552,14 +552,14 @@ public class Hotel {
 				simplifiedList.add(simplified);
 			}
 
-			if (availableServices.getBar() != null) {
+			if (availableServices.getBar().getAvailable()) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.BAR);
 				simplified.setPrice(availableServices.getBar().getPrice());
 				simplifiedList.add(simplified);
 			}
 
-			if (availableServices.getSpaCall() != null) {
+			if (availableServices.getSpaCall().getAvailable()) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.SPACALL);
 				Price price = new Price();
@@ -568,7 +568,7 @@ public class Hotel {
 				simplifiedList.add(simplified);
 			}
 
-			if (availableServices.getHairDresser() != null) {
+			if (availableServices.getHairDresser().getAvailable()) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.HAIRDRESSER);
 				Price price = new Price();
@@ -577,14 +577,14 @@ public class Hotel {
 				simplifiedList.add(simplified);
 			}
 
-			if (availableServices.getRental() != null) {
+			if (availableServices.getRental().getAvailable()) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.RENTAL);
 				simplified.setPrice(availableServices.getRental().getPrice());
 				simplifiedList.add(simplified);
 			}
 
-			if (availableServices.getRestaurantMenu() != null) {
+			if (availableServices.getRestaurantMenu().getAvailable()) {
 				AvailableServiceViewSimplified simplified = new AvailableServiceViewSimplified();
 				simplified.setType(AvailableServiceType.RESTAURANTMENU);
 				Price price = new Price();
