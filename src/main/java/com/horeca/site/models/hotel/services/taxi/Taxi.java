@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.taxi;
 
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.services.HotelServiceModel;
 import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
@@ -10,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Audited
-public class Taxi {
+public class Taxi implements HotelServiceModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +27,11 @@ public class Taxi {
 
     @NotNull
     private Boolean available;
+
+    @Override
+    public Boolean getAvailable() {
+        return available;
+    }
 
     public Long getId() {
         return id;
@@ -49,10 +55,6 @@ public class Taxi {
 
     public void setItems(Set<TaxiItem> items) {
         this.items = items;
-    }
-
-    public Boolean getAvailable() {
-        return available;
     }
 
     public void setAvailable(Boolean available) {

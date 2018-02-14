@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.roomservice;
 
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.services.HotelServiceModel;
 import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
@@ -10,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Audited
-public class RoomService {
+public class RoomService implements HotelServiceModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +31,11 @@ public class RoomService {
 
     @NotNull
     private Boolean available;
+
+    @Override
+    public Boolean getAvailable() {
+        return available;
+    }
 
     public Long getId() {
         return id;
@@ -61,10 +67,6 @@ public class RoomService {
 
     public void setCategories(Set<RoomServiceCategory> categories) {
         this.categories = categories;
-    }
-
-    public Boolean getAvailable() {
-        return available;
     }
 
     public void setAvailable(Boolean available) {

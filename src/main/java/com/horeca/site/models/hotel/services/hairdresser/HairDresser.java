@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.services.hairdresser;
 
+import com.horeca.site.models.hotel.services.HotelServiceModel;
 import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -12,7 +13,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Audited
-public class HairDresser {
+public class HairDresser implements HotelServiceModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +27,11 @@ public class HairDresser {
 
     @NotNull
     private Boolean available;
+
+    @Override
+    public Boolean getAvailable() {
+        return available;
+    }
 
     public Long getId() {
         return id;
@@ -49,10 +55,6 @@ public class HairDresser {
 
     public void setNumber(String number) {
         this.number = number;
-    }
-
-    public Boolean getAvailable() {
-        return available;
     }
 
     public void setAvailable(Boolean available) {

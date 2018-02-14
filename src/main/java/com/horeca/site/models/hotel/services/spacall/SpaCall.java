@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.services.spacall;
 
+import com.horeca.site.models.hotel.services.HotelServiceModel;
 import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -12,7 +13,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Audited
-public class SpaCall {
+public class SpaCall implements HotelServiceModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +27,11 @@ public class SpaCall {
 
     @NotNull
     private Boolean available;
+
+    @Override
+    public Boolean getAvailable() {
+        return available;
+    }
 
     public Long getId() {
         return id;
@@ -49,10 +55,6 @@ public class SpaCall {
 
     public void setNumber(String number) {
         this.number = number;
-    }
-
-    public Boolean getAvailable() {
-        return available;
     }
 
     public void setAvailable(Boolean available) {

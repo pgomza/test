@@ -1,5 +1,6 @@
 package com.horeca.site.models.hotel.services.tableordering;
 
+import com.horeca.site.models.hotel.services.HotelServiceModel;
 import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Audited
-public class TableOrdering {
+public class TableOrdering implements HotelServiceModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +24,9 @@ public class TableOrdering {
     @NotNull
     private Boolean available;
 
-    TableOrdering() {
+    @Override
+    public Boolean getAvailable() {
+        return available;
     }
 
     public TableOrdering(String description) {
@@ -44,10 +47,6 @@ public class TableOrdering {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Boolean getAvailable() {
-        return available;
     }
 
     public void setAvailable(Boolean available) {
