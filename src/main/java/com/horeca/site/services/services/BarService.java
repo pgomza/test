@@ -48,7 +48,6 @@ public class BarService {
         return barRepository.save(bar);
     }
 
-    @MinSubscriptionLevel(2)
     public Bar update(@HotelId Long hotelId, Bar updated) {
         AvailableServices services = availableServicesService.get(hotelId);
         updated.setId(services.getBar().getId());
@@ -64,7 +63,6 @@ public class BarService {
                 .orElse(null);
     }
 
-    @MinSubscriptionLevel(2)
     public BarCategory addCategory(Long hotelId, BarCategory.Category categoryName) {
         // check if such a category is permitted
         BarCategory.Category matchingCategory = Arrays.stream(BarCategory.Category.values())
@@ -84,7 +82,6 @@ public class BarService {
         return savedCategory;
     }
 
-    @MinSubscriptionLevel(2)
     public void addItem(Long hotelId, BarItemUpdate item) {
         BarCategory category = getCategory(hotelId, item.getType());
         if (category == null) {
@@ -99,7 +96,6 @@ public class BarService {
         barCategoryRepository.save(category);
     }
 
-    @MinSubscriptionLevel(2)
     public BarItem updateItem(Long hotelId, BarItemUpdate itemSent) {
         Bar bar = get(hotelId);
         List<BarCategory> categories = bar.getCategories();
@@ -135,7 +131,6 @@ public class BarService {
         return savedItem;
     }
 
-    @MinSubscriptionLevel(2)
     public void deleteItem(Long hotelId, Long idToDelete) {
         Bar bar = get(hotelId);
         List<BarCategory> categories = bar.getCategories();
