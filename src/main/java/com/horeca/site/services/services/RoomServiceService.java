@@ -8,6 +8,7 @@ import com.horeca.site.models.hotel.services.roomservice.RoomServiceItem;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceItemUpdate;
 import com.horeca.site.repositories.services.RoomServiceCategoryRepository;
 import com.horeca.site.repositories.services.RoomServiceItemRepository;
+import com.horeca.site.repositories.services.RoomServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +18,22 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class RoomServiceService {
+public class RoomServiceService extends GenericHotelService<RoomService> {
 
-    @Autowired
     private AvailableServicesService availableServicesService;
-
-    @Autowired
     private RoomServiceCategoryRepository roomServiceCategoryRepository;
+    private RoomServiceItemRepository breakfastItemRepository;
 
     @Autowired
-    private RoomServiceItemRepository breakfastItemRepository;
+    public RoomServiceService(RoomServiceRepository repository,
+                              AvailableServicesService availableServicesService,
+                              RoomServiceCategoryRepository roomServiceCategoryRepository,
+                              RoomServiceItemRepository breakfastItemRepository) {
+        super(repository);
+        this.availableServicesService = availableServicesService;
+        this.roomServiceCategoryRepository = roomServiceCategoryRepository;
+        this.breakfastItemRepository = breakfastItemRepository;
+    }
 
     public RoomService get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);

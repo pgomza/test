@@ -16,16 +16,19 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class PetCareService {
+public class PetCareService extends GenericHotelService<PetCare> {
 
-    @Autowired
     private AvailableServicesService availableServicesService;
-
-    @Autowired
-    private PetCareRepository repository;
-
-    @Autowired
     private PetCareItemRepository itemRepository;
+
+    @Autowired
+    public PetCareService(PetCareRepository repository,
+                          AvailableServicesService availableServicesService,
+                          PetCareItemRepository itemRepository) {
+        super(repository);
+        this.availableServicesService = availableServicesService;
+        this.itemRepository = itemRepository;
+    }
 
     public PetCare get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);

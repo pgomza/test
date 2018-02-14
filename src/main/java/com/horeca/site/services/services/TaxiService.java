@@ -13,13 +13,19 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class TaxiService {
+public class TaxiService extends GenericHotelService<Taxi> {
 
-    @Autowired
     private AvailableServicesService availableServicesService;
+    private TaxiRepository repository;
 
     @Autowired
-    private TaxiRepository repository;
+    public TaxiService(TaxiRepository repository,
+                       AvailableServicesService availableServicesService,
+                       TaxiRepository repository1) {
+        super(repository);
+        this.availableServicesService = availableServicesService;
+        this.repository = repository1;
+    }
 
     public Taxi get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);

@@ -8,8 +8,7 @@ import com.horeca.site.models.hotel.services.rental.RentalItem;
 import com.horeca.site.models.hotel.services.rental.RentalItemUpdate;
 import com.horeca.site.repositories.services.RentalCategoryRepository;
 import com.horeca.site.repositories.services.RentalItemRepository;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import com.horeca.site.repositories.services.RentalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,18 +18,22 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class RentalService {
+public class RentalService extends GenericHotelService<Rental> {
 
-    private static final DateTimeFormatter localTimeFormatter = DateTimeFormat.forPattern("HH:mm");
-
-    @Autowired
     private AvailableServicesService availableServicesService;
-
-    @Autowired
     private RentalCategoryRepository rentalCategoryRepository;
+    private RentalItemRepository rentalItemRepository;
 
     @Autowired
-    private RentalItemRepository rentalItemRepository;
+    public RentalService(RentalRepository repository,
+                         AvailableServicesService availableServicesService,
+                         RentalCategoryRepository rentalCategoryRepository,
+                         RentalItemRepository rentalItemRepository) {
+        super(repository);
+        this.availableServicesService = availableServicesService;
+        this.rentalCategoryRepository = rentalCategoryRepository;
+        this.rentalItemRepository = rentalItemRepository;
+    }
 
     public Rental get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);

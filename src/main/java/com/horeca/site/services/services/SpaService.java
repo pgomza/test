@@ -21,23 +21,26 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class SpaService {
-
-    @Autowired
-    private HotelService hotelService;
-
-    @Autowired
-    private AvailableServicesService availableServicesService;
-
-    @Autowired
-    private SpaRepository repository;
-
-    @Autowired
-    private SpaCalendarHourRepository calendarHourRepository;
+public class SpaService extends GenericHotelService<Spa> {
 
     //TODO ultimately it won't be needed because the sent date will be already resolved to the LocalDate type
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy");
-    
+
+    private HotelService hotelService;
+    private AvailableServicesService availableServicesService;
+    private SpaCalendarHourRepository calendarHourRepository;
+
+    @Autowired
+    public SpaService(SpaRepository repository,
+                      HotelService hotelService,
+                      AvailableServicesService availableServicesService,
+                      SpaCalendarHourRepository calendarHourRepository) {
+        super(repository);
+        this.hotelService = hotelService;
+        this.availableServicesService = availableServicesService;
+        this.calendarHourRepository = calendarHourRepository;
+    }
+
     public Spa get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
         return services.getSpa();

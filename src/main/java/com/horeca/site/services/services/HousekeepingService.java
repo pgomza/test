@@ -14,16 +14,19 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class HousekeepingService {
+public class HousekeepingService extends GenericHotelService<Housekeeping> {
 
-    @Autowired
     private AvailableServicesService availableServicesService;
-
-    @Autowired
-    private HousekeepingRepository repository;
-
-    @Autowired
     private HousekeepingItemRepository itemRepository;
+
+    @Autowired
+    public HousekeepingService(HousekeepingRepository repository,
+                               AvailableServicesService availableServicesService,
+                               HousekeepingItemRepository itemRepository) {
+        super(repository);
+        this.availableServicesService = availableServicesService;
+        this.itemRepository = itemRepository;
+    }
 
     public Housekeeping get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);

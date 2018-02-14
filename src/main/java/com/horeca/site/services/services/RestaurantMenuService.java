@@ -17,19 +17,22 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class RestaurantMenuService {
+public class RestaurantMenuService extends GenericHotelService<RestaurantMenu> {
 
-    @Autowired
     private AvailableServicesService availableServicesService;
-
-    @Autowired
-    private RestaurantMenuRepository repository;
-
-    @Autowired
     private RestaurantMenuCategoryRepository categoryRepository;
+    private RestaurantMenuItemRepository itemRepository;
 
     @Autowired
-    private RestaurantMenuItemRepository itemRepository;
+    public RestaurantMenuService(RestaurantMenuRepository repository,
+                                 AvailableServicesService availableServicesService,
+                                 RestaurantMenuCategoryRepository categoryRepository,
+                                 RestaurantMenuItemRepository itemRepository) {
+        super(repository);
+        this.availableServicesService = availableServicesService;
+        this.categoryRepository = categoryRepository;
+        this.itemRepository = itemRepository;
+    }
 
     public RestaurantMenu get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);

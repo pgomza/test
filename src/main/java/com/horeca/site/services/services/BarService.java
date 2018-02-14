@@ -1,8 +1,6 @@
 package com.horeca.site.services.services;
 
 import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.handlers.HotelId;
-import com.horeca.site.handlers.MinSubscriptionLevel;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.bar.Bar;
 import com.horeca.site.models.hotel.services.bar.BarCategory;
@@ -10,8 +8,8 @@ import com.horeca.site.models.hotel.services.bar.BarItem;
 import com.horeca.site.models.hotel.services.bar.BarItemUpdate;
 import com.horeca.site.repositories.services.BarCategoryRepository;
 import com.horeca.site.repositories.services.BarItemRepository;
-import com.horeca.site.repositories.services.BarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,33 +20,30 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class BarService {
+public class BarService extends GenericHotelService<Bar> {
 
-    @Autowired
     private AvailableServicesService availableServicesService;
-
-    @Autowired
-    private BarRepository barRepository;
-
-    @Autowired
     private BarCategoryRepository barCategoryRepository;
-
-    @Autowired
     private BarItemRepository barItemRepository;
 
+    @Autowired
+    public BarService(CrudRepository<Bar, Long> repository,
+                      AvailableServicesService availableServicesService,
+                      BarCategoryRepository barCategoryRepository,
+                      BarItemRepository barItemRepository) {
+        super(repository);
+        this.availableServicesService = availableServicesService;
+        this.barCategoryRepository = barCategoryRepository;
+        this.barItemRepository = barItemRepository;
+    }
+
+    @Override
     public Bar get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
         return services.getBar();
     }
 
-    @MinSubscriptionLevel(2)
-    public Bar updateAvailability(@HotelId Long hotelId, boolean available) {
-        Bar bar = get(hotelId);
-        bar.setAvailable(available);
-        return barRepository.save(bar);
-    }
-
-    public Bar update(@HotelId Long hotelId, Bar updated) {
+    public Bar update(Long hotelId, Bar updated) {
         AvailableServices services = availableServicesService.get(hotelId);
         updated.setId(services.getBar().getId());
         services.setBar(updated);
