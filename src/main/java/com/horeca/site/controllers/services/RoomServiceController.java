@@ -3,6 +3,7 @@ package com.horeca.site.controllers.services;
 import com.horeca.site.handlers.HotelId;
 import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
+import com.horeca.site.models.hotel.services.ServiceAvailability;
 import com.horeca.site.models.hotel.services.roomservice.RoomService;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceItemUpdate;
 import com.horeca.site.services.services.RoomServiceService;
@@ -19,19 +20,26 @@ import javax.validation.Valid;
 public class RoomServiceController {
 
     @Autowired
-    private RoomServiceService roomServiceService;
+    private RoomServiceService service;
 
     @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/roomservice", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public RoomService get(@HotelId @PathVariable("hotelId") Long hotelId) {
-        return roomServiceService.get(hotelId);
+        return service.get(hotelId);
+    }
+
+    @RequestMapping(value = "/{hotelId}/services/roomservice/availability", method = RequestMethod.PUT, produces =
+            MediaType.APPLICATION_JSON_VALUE)
+    public RoomService updateAvailability(@HotelId @PathVariable("hotelId") Long hotelId,
+                                             @RequestBody ServiceAvailability availability) {
+        return service.updateAvailability(hotelId, availability.getAvailable());
     }
 
     @RequestMapping(value = "/{hotelId}/services/roomservice/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void addItem(@PathVariable("hotelId") Long hotelId,
                         @Valid @RequestBody RoomServiceItemUpdate item) {
-        roomServiceService.addItem(hotelId, item);
+        service.addItem(hotelId, item);
     }
 
     //TODO path variables should not be empty
@@ -40,13 +48,13 @@ public class RoomServiceController {
                            @PathVariable("itemId") Long itemId,
                            @Valid @RequestBody RoomServiceItemUpdate item) {
         item.setId(itemId);
-        roomServiceService.updateItem(hotelId, item);
+        service.updateItem(hotelId, item);
     }
 
     //TODO path variables should not be empty
     @RequestMapping(value = "/{hotelId}/services/roomservice/items/{itemId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteItem(@PathVariable("hotelId") Long hotelId,
                            @PathVariable("itemId") Long itemId) {
-        roomServiceService.deleteItem(itemId);
+        service.deleteItem(itemId);
     }
 }

@@ -1,5 +1,7 @@
 package com.horeca.site.controllers.services;
 
+import com.horeca.site.handlers.HotelId;
+import com.horeca.site.models.hotel.services.ServiceAvailability;
 import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
 import com.horeca.site.services.services.SpaService;
@@ -17,18 +19,18 @@ import java.util.Set;
 public class SpaController {
 
     @Autowired
-    private SpaService spaService;
+    private SpaService service;
 
     @RequestMapping(value = "/{hotelId}/services/spa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Spa get(@PathVariable("hotelId") Long hotelId) {
-        return spaService.get(hotelId);
+        return service.get(hotelId);
     }
 
     @RequestMapping(value = "/{hotelId}/services/spa/items/{itemId}/calendar",
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<SpaCalendarHour> getHoursOld(@PathVariable("hotelId") Long hotelId,
-                                         @PathVariable("itemId") Long itemId,
-                                         @RequestParam("date") String date) { //TODO change the type to LocalDate
+    public Set<SpaCalendarHour> getHoursDeprecated(@PathVariable("hotelId") Long hotelId,
+                                                   @PathVariable("itemId") Long itemId,
+                                                   @RequestParam("date") String date) { //TODO change the type to LocalDate
         return this.getHours(hotelId, itemId, date);
     }
 
@@ -37,7 +39,14 @@ public class SpaController {
     public Set<SpaCalendarHour> getHours(@PathVariable("hotelId") Long hotelId,
                                          @PathVariable("itemId") Long itemId,
                                          @PathVariable("date") String date) { //TODO change the type to LocalDate
-        return spaService.getCalendarHours(hotelId, itemId, date);
+        return service.getCalendarHours(hotelId, itemId, date);
+    }
+
+    @RequestMapping(value = "/{hotelId}/services/spa/availability", method = RequestMethod.PUT, produces =
+            MediaType.APPLICATION_JSON_VALUE)
+    public Spa updateAvailability(@HotelId @PathVariable("hotelId") Long hotelId,
+                                             @RequestBody ServiceAvailability availability) {
+        return service.updateAvailability(hotelId, availability.getAvailable());
     }
 
     @RequestMapping(value = "/{hotelId}/services/spa/items/{itemId}/calendar/{date}",
@@ -46,7 +55,7 @@ public class SpaController {
                                             @PathVariable("itemId") Long itemId,
                                             @PathVariable("date") String date,
                                             @Valid @RequestBody Set<SpaCalendarHour> hours) { //TODO change the type to LocalDate
-        return spaService.updateCalendarHours(hotelId, itemId, date, hours);
+        return service.updateCalendarHours(hotelId, itemId, date, hours);
     }
 
 }
