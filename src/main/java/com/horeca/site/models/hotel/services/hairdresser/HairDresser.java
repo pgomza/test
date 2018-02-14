@@ -33,6 +33,11 @@ public class HairDresser implements HotelServiceModel {
         return available;
     }
 
+    @Override
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
+
     public Long getId() {
         return id;
     }
@@ -55,9 +60,5 @@ public class HairDresser implements HotelServiceModel {
 
     public void setNumber(String number) {
         this.number = number;
-    }
-
-    public void setAvailable(Boolean available) {
-        this.available = available;
     }
 }

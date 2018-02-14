@@ -31,6 +31,11 @@ public class CarPark implements HotelServiceModel {
         return available;
     }
 
+    @Override
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
+
     public Long getId() {
         return id;
     }
@@ -53,9 +58,5 @@ public class CarPark implements HotelServiceModel {
 
     public void setPrice(Price price) {
         this.price = price;
-    }
-
-    public void setAvailable(Boolean available) {
-        this.available = available;
     }
 }

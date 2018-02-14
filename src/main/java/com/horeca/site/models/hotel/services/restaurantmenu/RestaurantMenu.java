@@ -34,6 +34,11 @@ public class RestaurantMenu implements HotelServiceModel {
         return available;
     }
 
+    @Override
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
+
     public Long getId() {
         return id;
     }
@@ -56,9 +61,5 @@ public class RestaurantMenu implements HotelServiceModel {
 
     public void setCategories(List<RestaurantMenuCategory> categories) {
         this.categories = categories;
-    }
-
-    public void setAvailable(Boolean available) {
-        this.available = available;
     }
 }

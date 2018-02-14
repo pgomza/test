@@ -45,6 +45,11 @@ public class Breakfast implements HotelServiceModel {
         return available;
     }
 
+    @Override
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
+
     public Long getId() {
         return id;
     }
@@ -91,9 +96,5 @@ public class Breakfast implements HotelServiceModel {
 
     public void setCategories(Set<BreakfastCategory> categories) {
         this.categories = categories;
-    }
-
-    public void setAvailable(Boolean available) {
-        this.available = available;
     }
 }

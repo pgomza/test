@@ -33,6 +33,11 @@ public class Taxi implements HotelServiceModel {
         return available;
     }
 
+    @Override
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
+
     public Long getId() {
         return id;
     }
@@ -55,9 +60,5 @@ public class Taxi implements HotelServiceModel {
 
     public void setItems(Set<TaxiItem> items) {
         this.items = items;
-    }
-
-    public void setAvailable(Boolean available) {
-        this.available = available;
     }
 }

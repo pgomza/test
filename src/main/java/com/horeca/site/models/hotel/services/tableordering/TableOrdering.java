@@ -24,13 +24,20 @@ public class TableOrdering implements HotelServiceModel {
     @NotNull
     private Boolean available;
 
+    TableOrdering() {}
+
+    public TableOrdering(String description) {
+        this.description = description;
+    }
+
     @Override
     public Boolean getAvailable() {
         return available;
     }
 
-    public TableOrdering(String description) {
-        this.description = description;
+    @Override
+    public void setAvailable(Boolean available) {
+        this.available = available;
     }
 
     public Long getId() {
@@ -47,9 +54,5 @@ public class TableOrdering implements HotelServiceModel {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public void setAvailable(Boolean available) {
-        this.available = available;
     }
 }

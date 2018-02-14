@@ -46,6 +46,11 @@ public class Bar implements HotelServiceModel {
         return available;
     }
 
+    @Override
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
+
     public Long getId() {
         return id;
     }
@@ -92,9 +97,5 @@ public class Bar implements HotelServiceModel {
 
     public void setCategories(List<BarCategory> categories) {
         this.categories = categories;
-    }
-
-    public void setAvailable(Boolean available) {
-        this.available = available;
     }
 }
