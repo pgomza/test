@@ -1,6 +1,5 @@
 package com.horeca.site.services.orders;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.notifications.NewOrderEvent;
@@ -29,8 +28,6 @@ public abstract class GenericOrderServiceAltered<T extends Order> {
         this.stayService = stayService;
     }
 
-    protected abstract void ensureCanModifyOrders(String pin) throws BusinessRuleViolationException;
-
     public abstract Set<T> getAll(String stayPin);
 
     public T get(String stayPin, Long id) {
@@ -39,7 +36,6 @@ public abstract class GenericOrderServiceAltered<T extends Order> {
     }
 
     public T update(String pin, Long id, T updated) {
-        ensureCanModifyOrders(pin);
         T order = get(pin, id);
         updated.setId(order.getId());
         return repository.save(updated);
@@ -53,7 +49,6 @@ public abstract class GenericOrderServiceAltered<T extends Order> {
     }
 
     public OrderStatusPUT updateStatus(String pin, Long id, OrderStatusPUT newStatus) {
-        ensureCanModifyOrders(pin);
         T order = get(pin, id);
         order.setStatus(newStatus.getStatus());
         update(pin, order.getId(), order);

@@ -44,12 +44,11 @@ public class BarOrderService extends GenericOrderServiceAltered<BarOrder> {
         this.ordersService = ordersService;
     }
 
-    @Override
-    protected void ensureCanModifyOrders(String pin) throws BusinessRuleViolationException {
+    private void ensureCanAddOrders(String pin) {
         Long hotelId = pinToHotelId(pin);
         Bar bar = barService.get(hotelId);
         if (!bar.getAvailable()) {
-            throw new BusinessRuleViolationException("The service is not available");
+            throw new BusinessRuleViolationException("The service is unavailable");
         }
     }
 
@@ -59,7 +58,7 @@ public class BarOrderService extends GenericOrderServiceAltered<BarOrder> {
     }
 
     public BarOrder add(String pin, BarOrderPOST entity) {
-        ensureCanModifyOrders(pin);
+        ensureCanAddOrders(pin);
 
         BarOrder barOrder = new BarOrder();
 
@@ -86,7 +85,7 @@ public class BarOrderService extends GenericOrderServiceAltered<BarOrder> {
     }
 
     public BarOrder addAndNotify(String pin, BarOrderPOST entity) {
-        ensureCanModifyOrders(pin);
+        ensureCanAddOrders(pin);
 
         BarOrder added = add(pin, entity);
         notifyAboutNewOrder(pin, AvailableServiceType.BAR);
