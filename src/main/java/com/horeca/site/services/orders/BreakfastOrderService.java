@@ -19,7 +19,7 @@ import com.horeca.site.services.services.StayService;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,20 +31,17 @@ import java.util.Set;
 @Transactional
 public class BreakfastOrderService extends GenericOrderService<BreakfastOrder> {
 
-    @Autowired
+    private final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
+
     private OrdersService ordersService;
 
     @Autowired
-    private StayService stayService;
-
-    @Autowired
-    private BreakfastOrderRepository repository;
-
-    private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
-
-    @Override
-    protected CrudRepository<BreakfastOrder, Long> getRepository() {
-        return repository;
+    public BreakfastOrderService(ApplicationEventPublisher eventPublisher,
+                                 BreakfastOrderRepository repository,
+                                 StayService stayService,
+                                 OrdersService ordersService) {
+        super(eventPublisher, repository, stayService);
+        this.ordersService = ordersService;
     }
 
     public Set<BreakfastOrder> getAll(String stayPin) {

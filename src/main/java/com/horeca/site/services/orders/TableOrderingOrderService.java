@@ -8,7 +8,7 @@ import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.TableOrderingOrderRepository;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,18 +18,15 @@ import java.util.Set;
 @Transactional
 public class TableOrderingOrderService extends GenericOrderService<TableOrderingOrder> {
 
-    @Autowired
     private OrdersService ordersService;
 
     @Autowired
-    private StayService stayService;
-
-    @Autowired
-    private TableOrderingOrderRepository repository;
-
-    @Override
-    protected CrudRepository<TableOrderingOrder, Long> getRepository() {
-        return repository;
+    public TableOrderingOrderService(ApplicationEventPublisher eventPublisher,
+                                     TableOrderingOrderRepository repository,
+                                     StayService stayService,
+                                     OrdersService ordersService) {
+        super(eventPublisher, repository, stayService);
+        this.ordersService = ordersService;
     }
 
     public Set<TableOrderingOrder> getAll(String stayPin) {

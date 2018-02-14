@@ -6,12 +6,12 @@ import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.taxi.TaxiOrder;
 import com.horeca.site.models.orders.taxi.TaxiOrderPOST;
 import com.horeca.site.models.stay.Stay;
-import com.horeca.site.repositories.orders.TaxiOrderRepository;
 import com.horeca.site.services.services.StayService;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,20 +22,17 @@ import java.util.Set;
 @Transactional
 public class TaxiOrderService extends GenericOrderService<TaxiOrder> {
 
-    @Autowired
+    private final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
+
     private OrdersService ordersService;
 
     @Autowired
-    private StayService stayService;
-
-    @Autowired
-    private TaxiOrderRepository repository;
-
-    private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
-
-    @Override
-    protected CrudRepository<TaxiOrder, Long> getRepository() {
-        return repository;
+    public TaxiOrderService(ApplicationEventPublisher eventPublisher,
+                            CrudRepository<TaxiOrder, Long> repository,
+                            StayService stayService,
+                            OrdersService ordersService) {
+        super(eventPublisher, repository, stayService);
+        this.ordersService = ordersService;
     }
 
     public Set<TaxiOrder> getAll(String stayPin) {

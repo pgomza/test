@@ -19,7 +19,7 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,23 +29,20 @@ import java.util.Set;
 @Transactional
 public class SpaOrderService extends GenericOrderService<SpaOrder> {
 
-    @Autowired
+    private final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
+
     private OrdersService ordersService;
-
-    @Autowired
-    private StayService stayService;
-
-    @Autowired
     private SpaService spaService;
 
     @Autowired
-    private SpaOrderRepository repository;
-
-    private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
-
-    @Override
-    protected CrudRepository<SpaOrder, Long> getRepository() {
-        return repository;
+    public SpaOrderService(ApplicationEventPublisher eventPublisher,
+                           SpaOrderRepository repository,
+                           StayService stayService,
+                           OrdersService ordersService,
+                           SpaService spaService) {
+        super(eventPublisher, repository, stayService);
+        this.ordersService = ordersService;
+        this.spaService = spaService;
     }
 
     public Set<SpaOrder> getAll(String stayPin) {

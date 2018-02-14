@@ -28,7 +28,7 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class BarOrderService extends GenericOrderServiceAltered<BarOrder> {
+public class BarOrderService extends GenericOrderService<BarOrder> {
 
     private BarService barService;
     private OrdersService ordersService;
