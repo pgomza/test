@@ -66,7 +66,16 @@ public class SubscriptionControlService {
 
             CubilisSettings cubilisSettings = targetVersion.getCubilisSettings();
             if (cubilisSettings.isEnabled()) {
-                throw new BusinessRuleViolationException("The free subscription forbids setting the PMS to 'enabled'");
+                throwExceptionForCubilis();
+            }
+        }
+    }
+
+    public void ensureCubilisSettingsCanBeUpdated(Long hotelId, CubilisSettings targetSettings) {
+        int currentLevel = subscriptionService.getCurrentLevel(hotelId);
+        if (currentLevel == SubscriptionLevel.BASIC.getNumber()) {
+            if (targetSettings.isEnabled()) {
+                throwExceptionForCubilis();
             }
         }
     }
@@ -75,5 +84,9 @@ public class SubscriptionControlService {
         throw new BusinessRuleViolationException(
                 "The free subscription forbids setting the " + serviceName + " service to 'available'"
         );
+    }
+
+    private void throwExceptionForCubilis() {
+        throw new BusinessRuleViolationException("The free subscription forbids setting the PMS to 'enabled'");
     }
 }

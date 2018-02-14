@@ -10,9 +10,9 @@ import com.horeca.site.models.updates.ChangeInHotelEvent;
 import com.horeca.site.repositories.cubilis.CubilisConnectionStatusRepository;
 import com.horeca.site.repositories.cubilis.CubilisSettingsRepository;
 import com.horeca.site.services.HotelQueryService;
+import com.horeca.site.services.subscription.SubscriptionControlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,12 +45,17 @@ public class CubilisService {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    private SubscriptionControlService subscriptionControlService;
+
     public CubilisSettings getSettings(Long hotelId) {
         Hotel hotel = hotelQueryService.get(hotelId);
         return hotel.getCubilisSettings();
     }
 
     public CubilisSettings updateSettings(Long hotelId, CubilisSettings updated) {
+        subscriptionControlService.ensureCubilisSettingsCanBeUpdated(hotelId, updated);
+
         CubilisSettings current = getSettings(hotelId);
         updated.setId(current.getId());
         CubilisSettings savedSettings = settingsRepository.save(updated);
@@ -66,9 +71,9 @@ public class CubilisService {
     }
 
     @Transactional(timeout = 20) // seconds
-    CubilisConnectionStatus updateConnectionStatus(Long hoteldId) {
-        CubilisSettings settings = getSettings(hoteldId);
-        CubilisConnectionStatus currentStatus = getConnectionStatus(hoteldId);
+    CubilisConnectionStatus updateConnectionStatus(Long hotelId) {
+        CubilisSettings settings = getSettings(hotelId);
+        CubilisConnectionStatus currentStatus = getConnectionStatus(hotelId);
 
         if (!settings.isEnabled()) {
             currentStatus.setStatus(CubilisConnectionStatus.Status.DISABLED);
@@ -92,7 +97,7 @@ public class CubilisService {
         }
     }
 
-    @Scheduled(fixedDelay = 5 * 60 * 1000)
+//    @Scheduled(fixedDelay = 5 * 60 * 1000)
     public void fetchAndUpdateReservations() {
         List<Long> hotelIds = hotelQueryService.getIdsOfCubilisEligible();
         Map<Long, CubilisSettings> hotelIdToSettings = hotelIds.stream()
