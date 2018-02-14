@@ -1,9 +1,10 @@
-package com.horeca.site.services;
+package com.horeca.site.services.subscription;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.subscription.*;
 import com.horeca.site.repositories.SubscriptionRepository;
+import com.horeca.site.services.HotelQueryService;
 import com.horeca.utils.PageableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

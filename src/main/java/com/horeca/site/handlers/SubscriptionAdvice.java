@@ -2,7 +2,7 @@ package com.horeca.site.handlers;
 
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.repositories.services.StayRepository;
-import com.horeca.site.services.SubscriptionService;
+import com.horeca.site.services.subscription.SubscriptionService;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;

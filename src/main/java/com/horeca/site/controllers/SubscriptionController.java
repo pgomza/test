@@ -3,7 +3,7 @@ package com.horeca.site.controllers;
 import com.horeca.site.models.hotel.subscription.SubscriptionEvent;
 import com.horeca.site.models.hotel.subscription.SubscriptionEventView;
 import com.horeca.site.models.hotel.subscription.SubscriptionView;
-import com.horeca.site.services.SubscriptionService;
+import com.horeca.site.services.subscription.SubscriptionService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
