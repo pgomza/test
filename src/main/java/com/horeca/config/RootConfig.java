@@ -20,6 +20,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -63,6 +64,13 @@ public class RootConfig extends WebMvcConfigurerAdapter
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         return objectMapper;
+    }
+
+    @Bean
+    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setPoolSize(3);
+        return scheduler;
     }
 
     @Override
