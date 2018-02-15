@@ -10,7 +10,6 @@ import com.horeca.site.models.hotel.subscription.SubscriptionLevel;
 import com.horeca.site.models.hotel.subscription.SubscriptionScheduling;
 import com.horeca.site.repositories.SubscriptionSchedulingRepository;
 import com.horeca.site.services.HotelService;
-import com.horeca.site.services.TaskSchedulingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,9 +25,6 @@ public class SubscriptionControlService {
 
     @Autowired
     private SubscriptionService subscriptionService;
-
-    @Autowired
-    private TaskSchedulingService taskSchedulingService;
 
     @Autowired
     private SubscriptionSchedulingRepository subscriptionSchedulingRepository;
@@ -112,12 +108,6 @@ public class SubscriptionControlService {
 
     @Scheduled(fixedDelay = 5 * 60 * 1000)
     public void checkSubscriptionsValidity() {
-        /*
-            actually we only need to cancel 'our' tasks, but since there are no other
-            types of tasks scheduled (for now at least), we can get away with cancelling all of them
-         */
-        taskSchedulingService.cancelAllNotRunningTasks();
-
         SubscriptionScheduling schedulingInfo = subscriptionSchedulingRepository.findOne(1L);
         Timestamp lastTimestampChecked = schedulingInfo.getLastTimestampChecked();
         Set<Subscription> withNewerEventsThanNow = subscriptionService.getWithEventsNewerThan(lastTimestampChecked);
@@ -132,10 +122,6 @@ public class SubscriptionControlService {
                     disableServicesInHotel(subscription.getHotel().getId());
                     schedulingInfo.setLastTimestampChecked(now);
                     subscriptionSchedulingRepository.save(schedulingInfo);
-                }
-                else {
-                    // schedule the disablement
-                    taskSchedulingService.executeAtTimestamp(this::checkSubscriptionsValidity, lastEvent.getExpiresAt());
                 }
             }
         }
