@@ -75,6 +75,10 @@ public class SubscriptionService {
         return PageableUtils.extractPage(eventViews, pageable);
     }
 
+    public Set<Subscription> getWithEventsNewerThan(Timestamp timestamp) {
+        return repository.getWithEventsNewerThan(timestamp);
+    }
+
     public SubscriptionEvent addPremiumEvent(Long hotelId, Integer level) {
         if (!isLevelSupported(level)) {
             throw new BusinessRuleViolationException("Unsupported level of a premium subscription");

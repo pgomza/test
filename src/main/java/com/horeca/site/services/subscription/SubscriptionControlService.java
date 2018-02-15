@@ -4,10 +4,21 @@ import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.AvailableServices;
+import com.horeca.site.models.hotel.subscription.Subscription;
+import com.horeca.site.models.hotel.subscription.SubscriptionEvent;
 import com.horeca.site.models.hotel.subscription.SubscriptionLevel;
+import com.horeca.site.models.hotel.subscription.SubscriptionScheduling;
+import com.horeca.site.repositories.SubscriptionSchedulingRepository;
+import com.horeca.site.services.HotelService;
+import com.horeca.site.services.TaskSchedulingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -15,6 +26,15 @@ public class SubscriptionControlService {
 
     @Autowired
     private SubscriptionService subscriptionService;
+
+    @Autowired
+    private TaskSchedulingService taskSchedulingService;
+
+    @Autowired
+    private SubscriptionSchedulingRepository subscriptionSchedulingRepository;
+
+    @Autowired
+    private HotelService hotelService;
 
     public void ensureHotelCanBeUpdated(Long hotelId, Hotel targetVersion) {
         int currentLevel = subscriptionService.getCurrentLevel(hotelId);
@@ -88,5 +108,60 @@ public class SubscriptionControlService {
 
     private void throwExceptionForCubilis() {
         throw new BusinessRuleViolationException("The free subscription forbids setting the PMS to 'enabled'");
+    }
+
+    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    public void checkSubscriptionsValidity() {
+        /*
+            actually we only need to cancel 'our' tasks, but since there are no other
+            types of tasks scheduled (for now at least), we can get away with cancelling all of them
+         */
+        taskSchedulingService.cancelAllNotRunningTasks();
+
+        SubscriptionScheduling schedulingInfo = subscriptionSchedulingRepository.findOne(1L);
+        Timestamp lastTimestampChecked = schedulingInfo.getLastTimestampChecked();
+        Set<Subscription> withNewerEventsThanNow = subscriptionService.getWithEventsNewerThan(lastTimestampChecked);
+
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        for (Subscription subscription : withNewerEventsThanNow) {
+            List<SubscriptionEvent> history = subscription.getHistory();
+            if (!history.isEmpty()) {
+                // for the time being ignore the subscription levels
+                SubscriptionEvent lastEvent = history.get(history.size() - 1);
+                if (lastEvent.getExpiresAt().before(now)) {
+                    disableServicesInHotel(subscription.getHotel().getId());
+                    schedulingInfo.setLastTimestampChecked(now);
+                    subscriptionSchedulingRepository.save(schedulingInfo);
+                }
+                else {
+                    // schedule the disablement
+                    taskSchedulingService.executeAtTimestamp(this::checkSubscriptionsValidity, lastEvent.getExpiresAt());
+                }
+            }
+        }
+
+
+    }
+
+    private void disableServicesInHotel(Long hotelId) {
+        Hotel hotel = hotelService.get(hotelId);
+
+        AvailableServices services = hotel.getAvailableServices();
+        services.getBreakfast().setAvailable(false);
+        services.getCarPark().setAvailable(false);
+        services.getSpa().setAvailable(false);
+        services.getPetCare().setAvailable(false);
+        services.getTaxi().setAvailable(false);
+        services.getRoomService().setAvailable(false);
+        services.getTableOrdering().setAvailable(false);
+        services.getBar().setAvailable(false);
+        services.getSpaCall().setAvailable(false);
+        services.getHairDresser().setAvailable(false);
+        services.getRental().setAvailable(false);
+        services.getRestaurantMenu().setAvailable(false);
+
+        hotel.getCubilisSettings().setEnabled(false);
+
+        hotelService.update(hotelId, hotel);
     }
 }

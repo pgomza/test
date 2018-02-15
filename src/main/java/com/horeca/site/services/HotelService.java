@@ -69,6 +69,7 @@ public class HotelService {
     private AvailableServicesService availableServices;
 
     @Autowired
+    @Lazy
     private SubscriptionControlService subscriptionControlService;
 
     /*
