@@ -15,6 +15,7 @@ import com.horeca.site.models.orders.rental.RentalOrderItemPOST;
 import com.horeca.site.models.orders.rental.RentalOrderPOST;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.RentalOrderRepository;
+import com.horeca.site.services.services.RentalService;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -29,15 +30,26 @@ import java.util.Set;
 @Transactional
 public class RentalOrderService extends GenericOrderService<RentalOrder> {
 
+    private RentalService rentalService;
     private OrdersService ordersService;
 
     @Autowired
     public RentalOrderService(ApplicationEventPublisher eventPublisher,
                               RentalOrderRepository repository,
                               StayService stayService,
+                              RentalService rentalService,
                               OrdersService ordersService) {
         super(eventPublisher, repository, stayService);
+        this.rentalService = rentalService;
         this.ordersService = ordersService;
+    }
+
+    private void ensureCanAddOrders(String pin) {
+        Long hotelId = pinToHotelId(pin);
+        Rental rental = rentalService.get(hotelId);
+        if (!rental.getAvailable()) {
+            throw new BusinessRuleViolationException("The service is unavailable");
+        }
     }
 
     public Set<RentalOrder> getAll(String stayPin) {
@@ -45,13 +57,15 @@ public class RentalOrderService extends GenericOrderService<RentalOrder> {
         return orders.getRentalOrders();
     }
 
-    public RentalOrder add(String stayPin, RentalOrderPOST entity) {
+    public RentalOrder add(String pin, RentalOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
         RentalOrder order = new RentalOrder();
 
         Set<RentalOrderItem> entries = new HashSet<>();
         for (RentalOrderItemPOST entryPOST : entity.getItems()) {
             RentalOrderItem entry = new RentalOrderItem();
-            RentalItem item = resolveItemIdToEntity(stayPin, entryPOST.getItemId());
+            RentalItem item = resolveItemIdToEntity(pin, entryPOST.getItemId());
             entry.setItem(item);
             entry.setCount(entryPOST.getCount());
             entries.add(entry);
@@ -62,17 +76,19 @@ public class RentalOrderService extends GenericOrderService<RentalOrder> {
         order.setStatus(OrderStatus.NEW);
         RentalOrder savedOrder = repository.save(order);
 
-        Stay stay = stayService.get(stayPin);
+        Stay stay = stayService.get(pin);
         Set<RentalOrder> orders = stay.getOrders().getRentalOrders();
         orders.add(savedOrder);
-        stayService.update(stayPin, stay);
+        stayService.update(pin, stay);
 
         return savedOrder;
     }
 
-    public RentalOrder addAndNotify(String stayPin, RentalOrderPOST entity) {
-        RentalOrder added = add(stayPin, entity);
-        notifyAboutNewOrder(stayPin, AvailableServiceType.RENTAL);
+    public RentalOrder addAndNotify(String pin, RentalOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
+        RentalOrder added = add(pin, entity);
+        notifyAboutNewOrder(pin, AvailableServiceType.RENTAL);
 
         return added;
     }

@@ -15,6 +15,7 @@ import com.horeca.site.models.orders.roomservice.RoomServiceOrderItemPOST;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrderPOST;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.RoomServiceOrderRepository;
+import com.horeca.site.services.services.RoomServiceService;
 import com.horeca.site.services.services.StayService;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -33,15 +34,26 @@ public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrde
 
     private final DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
 
+    private RoomServiceService roomServiceService;
     private OrdersService ordersService;
 
     @Autowired
     public RoomServiceOrderService(ApplicationEventPublisher eventPublisher,
                                    RoomServiceOrderRepository repository,
                                    StayService stayService,
+                                   RoomServiceService roomServiceService,
                                    OrdersService ordersService) {
         super(eventPublisher, repository, stayService);
+        this.roomServiceService = roomServiceService;
         this.ordersService = ordersService;
+    }
+
+    private void ensureCanAddOrders(String pin) {
+        Long hotelId = pinToHotelId(pin);
+        RoomService roomService = roomServiceService.get(hotelId);
+        if (!roomService.getAvailable()) {
+            throw new BusinessRuleViolationException("The service is unavailable");
+        }
     }
 
     @Override
@@ -50,13 +62,15 @@ public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrde
         return orders.getRoomServiceOrders();
     }
 
-    public RoomServiceOrder add(String stayPin, RoomServiceOrderPOST entity) {
+    public RoomServiceOrder add(String pin, RoomServiceOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
         RoomServiceOrder roomServiceOrder = new RoomServiceOrder();
 
         Set<RoomServiceOrderItem> entries = new HashSet<>();
         for (RoomServiceOrderItemPOST entryPOST : entity.getItems()) {
             RoomServiceOrderItem entry = new RoomServiceOrderItem();
-            RoomServiceItem item = resolveItemIdToEntity(stayPin, entryPOST.getItemId());
+            RoomServiceItem item = resolveItemIdToEntity(pin, entryPOST.getItemId());
             entry.setItem(item);
             entry.setCount(entryPOST.getCount());
             entries.add(entry);
@@ -67,17 +81,19 @@ public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrde
         roomServiceOrder.setStatus(OrderStatus.NEW);
         RoomServiceOrder savedOrder = repository.save(roomServiceOrder);
 
-        Stay stay = stayService.get(stayPin);
+        Stay stay = stayService.get(pin);
         Set<RoomServiceOrder> roomServiceOrders = stay.getOrders().getRoomServiceOrders();
         roomServiceOrders.add(savedOrder);
-        stayService.update(stayPin, stay);
+        stayService.update(pin, stay);
 
         return savedOrder;
     }
 
-    public RoomServiceOrder addAndNotify(String stayPin, RoomServiceOrderPOST entity) {
-        RoomServiceOrder added = add(stayPin, entity);
-        notifyAboutNewOrder(stayPin, AvailableServiceType.ROOMSERVICE);
+    public RoomServiceOrder addAndNotify(String pin, RoomServiceOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
+        RoomServiceOrder added = add(pin, entity);
+        notifyAboutNewOrder(pin, AvailableServiceType.ROOMSERVICE);
 
         return added;
     }

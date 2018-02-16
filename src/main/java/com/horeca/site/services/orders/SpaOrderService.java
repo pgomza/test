@@ -45,15 +45,25 @@ public class SpaOrderService extends GenericOrderService<SpaOrder> {
         this.spaService = spaService;
     }
 
+    private void ensureCanAddOrders(String pin) {
+        Long hotelId = pinToHotelId(pin);
+        Spa spa = spaService.get(hotelId);
+        if (!spa.getAvailable()) {
+            throw new BusinessRuleViolationException("The service is unavailable");
+        }
+    }
+
     public Set<SpaOrder> getAll(String stayPin) {
         Orders orders = ordersService.get(stayPin);
         return orders.getSpaOrders();
     }
 
-    public SpaOrder add(String stayPin, SpaOrderPOST entity) {
+    public SpaOrder add(String pin, SpaOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
         SpaOrder newOrder = new SpaOrder();
 
-        SpaItem resolvedItem = resolveItemIdToEntity(stayPin, entity.getItemId());
+        SpaItem resolvedItem = resolveItemIdToEntity(pin, entity.getItemId());
         LocalDateTime reservationTime = formatter.parseLocalDateTime(entity.getTime());
         makeReservation(resolvedItem, reservationTime);
 
@@ -62,17 +72,19 @@ public class SpaOrderService extends GenericOrderService<SpaOrder> {
         newOrder.setItem(resolvedItem);
         SpaOrder savedOrder = repository.save(newOrder);
 
-        Stay stay = stayService.get(stayPin);
+        Stay stay = stayService.get(pin);
         Set<SpaOrder> spaOrders = stay.getOrders().getSpaOrders();
         spaOrders.add(savedOrder);
-        stayService.update(stayPin, stay);
+        stayService.update(pin, stay);
 
         return savedOrder;
     }
 
-    public SpaOrder addAndNotify(String stayPin, SpaOrderPOST entity) {
-        SpaOrder added = add(stayPin, entity);
-        notifyAboutNewOrder(stayPin, AvailableServiceType.SPA);
+    public SpaOrder addAndNotify(String pin, SpaOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
+        SpaOrder added = add(pin, entity);
+        notifyAboutNewOrder(pin, AvailableServiceType.SPA);
 
         return added;
     }

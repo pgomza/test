@@ -15,6 +15,7 @@ import com.horeca.site.models.orders.breakfast.BreakfastOrderItemPOST;
 import com.horeca.site.models.orders.breakfast.BreakfastOrderPOST;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.BreakfastOrderRepository;
+import com.horeca.site.services.services.BreakfastService;
 import com.horeca.site.services.services.StayService;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -33,15 +34,26 @@ public class BreakfastOrderService extends GenericOrderService<BreakfastOrder> {
 
     private final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
 
+    private BreakfastService breakfastService;
     private OrdersService ordersService;
 
     @Autowired
     public BreakfastOrderService(ApplicationEventPublisher eventPublisher,
                                  BreakfastOrderRepository repository,
+                                 BreakfastService breakfastService,
                                  StayService stayService,
                                  OrdersService ordersService) {
         super(eventPublisher, repository, stayService);
+        this.breakfastService = breakfastService;
         this.ordersService = ordersService;
+    }
+
+    private void ensureCanAddOrders(String pin) {
+        Long hotelId = pinToHotelId(pin);
+        Breakfast breakfast = breakfastService.get(hotelId);
+        if (!breakfast.getAvailable()) {
+            throw new BusinessRuleViolationException("The service is unavailable");
+        }
     }
 
     public Set<BreakfastOrder> getAll(String stayPin) {
@@ -49,13 +61,15 @@ public class BreakfastOrderService extends GenericOrderService<BreakfastOrder> {
         return orders.getBreakfastOrders();
     }
 
-    public BreakfastOrder add(String stayPin, BreakfastOrderPOST entity) {
+    public BreakfastOrder add(String pin, BreakfastOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
         BreakfastOrder breakfastOrder = new BreakfastOrder();
 
         Set<BreakfastOrderItem> entries = new HashSet<>();
         for (BreakfastOrderItemPOST entryPOST : entity.getItems()) {
             BreakfastOrderItem entry = new BreakfastOrderItem();
-            BreakfastItem item = resolveItemIdToEntity(stayPin, entryPOST.getItemId());
+            BreakfastItem item = resolveItemIdToEntity(pin, entryPOST.getItemId());
             entry.setItem(item);
             entry.setCount(entryPOST.getCount());
             entries.add(entry);
@@ -66,17 +80,19 @@ public class BreakfastOrderService extends GenericOrderService<BreakfastOrder> {
         breakfastOrder.setStatus(OrderStatus.NEW);
         BreakfastOrder savedOrder = repository.save(breakfastOrder);
 
-        Stay stay = stayService.get(stayPin);
+        Stay stay = stayService.get(pin);
         Set<BreakfastOrder> breakfastOrders = stay.getOrders().getBreakfastOrders();
         breakfastOrders.add(savedOrder);
-        stayService.update(stayPin, stay);
+        stayService.update(pin, stay);
 
         return savedOrder;
     }
 
-    public BreakfastOrder addAndNotify(String stayPin, BreakfastOrderPOST entity) {
-        BreakfastOrder added = add(stayPin, entity);
-        notifyAboutNewOrder(stayPin, AvailableServiceType.BREAKFAST);
+    public BreakfastOrder addAndNotify(String pin, BreakfastOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
+        BreakfastOrder added = add(pin, entity);
+        notifyAboutNewOrder(pin, AvailableServiceType.BREAKFAST);
 
         return added;
     }
