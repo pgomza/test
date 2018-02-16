@@ -1,6 +1,5 @@
 package com.horeca.site.services.orders;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.tableordering.TableOrdering;
 import com.horeca.site.models.orders.Orders;
@@ -12,6 +11,7 @@ import com.horeca.site.services.services.StayService;
 import com.horeca.site.services.services.TableOrderingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +39,7 @@ public class TableOrderingOrderService extends GenericOrderService<TableOrdering
         Long hotelId = pinToHotelId(pin);
         TableOrdering tableOrdering = tableOrderingService.get(hotelId);
         if (!tableOrdering.getAvailable()) {
-            throw new BusinessRuleViolationException("The service is unavailable");
+            throw new AccessDeniedException("The service is unavailable");
         }
     }
 

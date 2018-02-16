@@ -1,6 +1,5 @@
 package com.horeca.site.services.subscription;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.cubilis.CubilisSettings;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.AvailableServices;
@@ -12,6 +11,7 @@ import com.horeca.site.repositories.SubscriptionSchedulingRepository;
 import com.horeca.site.services.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,13 +97,13 @@ public class SubscriptionControlService {
     }
 
     private void throwExceptionForService(String serviceName) {
-        throw new BusinessRuleViolationException(
+        throw new AccessDeniedException(
                 "The free subscription forbids setting the " + serviceName + " service to 'available'"
         );
     }
 
     private void throwExceptionForCubilis() {
-        throw new BusinessRuleViolationException("The free subscription forbids setting the PMS to 'enabled'");
+        throw new AccessDeniedException("The free subscription forbids setting the PMS to 'enabled'");
     }
 
     @Scheduled(fixedDelay = 5 * 60 * 1000)

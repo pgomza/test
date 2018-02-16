@@ -1,6 +1,5 @@
 package com.horeca.site.services.orders;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.carpark.CarPark;
 import com.horeca.site.models.orders.OrderStatus;
@@ -15,6 +14,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +44,7 @@ public class CarParkOrderService extends GenericOrderService<CarParkOrder> {
         Long hotelId = pinToHotelId(pin);
         CarPark carPark = carParkService.get(hotelId);
         if (!carPark.getAvailable()) {
-            throw new BusinessRuleViolationException("The service is unavailable");
+            throw new AccessDeniedException("The service is unavailable");
         }
     }
 

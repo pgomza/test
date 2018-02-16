@@ -1,6 +1,5 @@
 package com.horeca.site.handlers;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.repositories.services.StayRepository;
 import com.horeca.site.services.subscription.SubscriptionService;
 import org.apache.log4j.Logger;
@@ -9,6 +8,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +43,7 @@ public class SubscriptionAdvice extends HotelAdvice {
         int minRequiredLevel = annotation.value();
         int actualLevel = subscriptionService.getCurrentLevel(hotelIdOpt.get());
         if (actualLevel < minRequiredLevel) {
-            throw new BusinessRuleViolationException("Insufficient subscription level");
+            throw new AccessDeniedException("Insufficient subscription level");
         }
     }
 }

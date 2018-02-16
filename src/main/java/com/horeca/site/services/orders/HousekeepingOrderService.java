@@ -15,6 +15,7 @@ import com.horeca.site.services.services.HousekeepingService;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +44,7 @@ public class HousekeepingOrderService extends GenericOrderService<HousekeepingOr
         Long hotelId = pinToHotelId(pin);
         Housekeeping housekeeping = housekeepingService.get(hotelId);
         if (!housekeeping.getAvailable()) {
-            throw new BusinessRuleViolationException("The service is unavailable");
+            throw new AccessDeniedException("The service is unavailable");
         }
     }
 

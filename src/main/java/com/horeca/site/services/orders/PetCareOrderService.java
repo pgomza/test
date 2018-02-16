@@ -1,6 +1,5 @@
 package com.horeca.site.services.orders;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
@@ -15,6 +14,7 @@ import com.horeca.site.services.services.PetCareService;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +42,7 @@ public class PetCareOrderService extends GenericOrderService<PetCareOrder> {
         Long hotelId = pinToHotelId(pin);
         PetCare petCare = petCareService.get(hotelId);
         if (!petCare.getAvailable()) {
-            throw new BusinessRuleViolationException("The service is unavailable");
+            throw new AccessDeniedException("The service is unavailable");
         }
     }
 

@@ -1,6 +1,5 @@
 package com.horeca.site.services.orders;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.taxi.Taxi;
 import com.horeca.site.models.orders.OrderStatus;
@@ -16,6 +15,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +45,7 @@ public class TaxiOrderService extends GenericOrderService<TaxiOrder> {
         Long hotelId = pinToHotelId(pin);
         Taxi taxi = taxiService.get(hotelId);
         if (!taxi.getAvailable()) {
-            throw new BusinessRuleViolationException("The service is unavailable");
+            throw new AccessDeniedException("The service is unavailable");
         }
     }
 
