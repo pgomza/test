@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 @Aspect
 @Component
+@Transactional
 public class TranslationAdvice extends HotelAdvice {
 
     private final Logger logger = Logger.getLogger(getClass().getName());

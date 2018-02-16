@@ -19,7 +19,8 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,23 +30,28 @@ import java.util.Set;
 @Transactional
 public class SpaOrderService extends GenericOrderService<SpaOrder> {
 
-    @Autowired
+    private final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
+
     private OrdersService ordersService;
-
-    @Autowired
-    private StayService stayService;
-
-    @Autowired
     private SpaService spaService;
 
     @Autowired
-    private SpaOrderRepository repository;
+    public SpaOrderService(ApplicationEventPublisher eventPublisher,
+                           SpaOrderRepository repository,
+                           StayService stayService,
+                           OrdersService ordersService,
+                           SpaService spaService) {
+        super(eventPublisher, repository, stayService);
+        this.ordersService = ordersService;
+        this.spaService = spaService;
+    }
 
-    private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
-
-    @Override
-    protected CrudRepository<SpaOrder, Long> getRepository() {
-        return repository;
+    private void ensureCanAddOrders(String pin) {
+        Long hotelId = pinToHotelId(pin);
+        Spa spa = spaService.get(hotelId);
+        if (!spa.getAvailable()) {
+            throw new AccessDeniedException("The service is unavailable");
+        }
     }
 
     public Set<SpaOrder> getAll(String stayPin) {
@@ -53,10 +59,12 @@ public class SpaOrderService extends GenericOrderService<SpaOrder> {
         return orders.getSpaOrders();
     }
 
-    public SpaOrder add(String stayPin, SpaOrderPOST entity) {
+    public SpaOrder add(String pin, SpaOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
         SpaOrder newOrder = new SpaOrder();
 
-        SpaItem resolvedItem = resolveItemIdToEntity(stayPin, entity.getItemId());
+        SpaItem resolvedItem = resolveItemIdToEntity(pin, entity.getItemId());
         LocalDateTime reservationTime = formatter.parseLocalDateTime(entity.getTime());
         makeReservation(resolvedItem, reservationTime);
 
@@ -65,17 +73,19 @@ public class SpaOrderService extends GenericOrderService<SpaOrder> {
         newOrder.setItem(resolvedItem);
         SpaOrder savedOrder = repository.save(newOrder);
 
-        Stay stay = stayService.get(stayPin);
+        Stay stay = stayService.get(pin);
         Set<SpaOrder> spaOrders = stay.getOrders().getSpaOrders();
         spaOrders.add(savedOrder);
-        stayService.update(stayPin, stay);
+        stayService.update(pin, stay);
 
         return savedOrder;
     }
 
-    public SpaOrder addAndNotify(String stayPin, SpaOrderPOST entity) {
-        SpaOrder added = add(stayPin, entity);
-        notifyAboutNewOrder(stayPin, AvailableServiceType.SPA);
+    public SpaOrder addAndNotify(String pin, SpaOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
+        SpaOrder added = add(pin, entity);
+        notifyAboutNewOrder(pin, AvailableServiceType.SPA);
 
         return added;
     }

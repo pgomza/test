@@ -1,7 +1,7 @@
 package com.horeca.site.handlers;
 
 import com.horeca.site.repositories.services.StayRepository;
-import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import java.lang.reflect.Method;
@@ -16,7 +16,7 @@ public abstract class HotelAdvice {
         this.stayRepository = stayRepository;
     }
 
-    public Optional<Long> extractHotelId(ProceedingJoinPoint joinPoint) {
+    public Optional<Long> extractHotelId(JoinPoint joinPoint) {
         Object[] methodArgs = joinPoint.getArgs();
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         Parameter[] parameters = method.getParameters();

@@ -3,6 +3,7 @@ package com.horeca.site.controllers.services;
 import com.horeca.site.handlers.HotelId;
 import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
+import com.horeca.site.models.hotel.services.ServiceAvailability;
 import com.horeca.site.models.hotel.services.restaurantmenu.*;
 import com.horeca.site.services.services.RestaurantMenuService;
 import io.swagger.annotations.Api;
@@ -28,6 +29,13 @@ public class RestaurantMenuController {
         return service.get(hotelId);
     }
 
+    @RequestMapping(value = "/{hotelId}/services/restaurantmenu/availability", method = RequestMethod.PUT, produces =
+            MediaType.APPLICATION_JSON_VALUE)
+    public RestaurantMenu updateAvailability(@HotelId @PathVariable("hotelId") Long hotelId,
+                                             @RequestBody ServiceAvailability availability) {
+        return service.updateAvailability(hotelId, availability.getAvailable());
+    }
+
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public RestaurantMenu update(@PathVariable("hotelId") Long hotelId, @RequestBody RestaurantMenu menu) {
@@ -38,12 +46,6 @@ public class RestaurantMenuController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public RestaurantMenu update(@PathVariable("hotelId") Long hotelId, @RequestBody RestaurantMenuPATCH patch) {
         return service.patch(hotelId, patch);
-    }
-
-    @RequestMapping(value = "/{hotelId}/services/restaurantmenu", method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestaurantMenu add(@PathVariable("hotelId") Long hotelId) {
-        return service.addDefaultRestaurantMenu(hotelId);
     }
 
     @ReplaceCurrency

@@ -2,6 +2,7 @@ package com.horeca.site.models.hotel.services.bar;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.services.HotelServiceModel;
 import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 import org.joda.time.LocalTime;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Entity
 @Audited
-public class Bar {
+public class Bar implements HotelServiceModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +37,19 @@ public class Bar {
     @JoinColumn(name = "bar_id")
     @OrderColumn(name = "category_order")
     private List<BarCategory> categories;
+
+    @NotNull
+    private Boolean available;
+
+    @Override
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    @Override
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
 
     public Long getId() {
         return id;

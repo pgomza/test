@@ -1,15 +1,17 @@
 package com.horeca.site.models.hotel.services.restaurantmenu;
 
+import com.horeca.site.models.hotel.services.HotelServiceModel;
 import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Audited
-public class RestaurantMenu {
+public class RestaurantMenu implements HotelServiceModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +25,19 @@ public class RestaurantMenu {
     @JoinColumn(name = "restaurant_menu_id")
     @OrderColumn(name = "category_order")
     private List<RestaurantMenuCategory> categories = new ArrayList<>();
+
+    @NotNull
+    private Boolean available;
+
+    @Override
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    @Override
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
 
     public Long getId() {
         return id;

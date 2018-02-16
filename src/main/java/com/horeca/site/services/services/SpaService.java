@@ -1,9 +1,5 @@
 package com.horeca.site.services.services;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
-import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.models.Currency;
-import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.spa.Spa;
@@ -20,53 +16,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
 @Transactional
-public class SpaService {
-
-    @Autowired
-    private HotelService hotelService;
-
-    @Autowired
-    private AvailableServicesService availableServicesService;
-
-    @Autowired
-    private SpaRepository repository;
-
-    @Autowired
-    private SpaCalendarHourRepository calendarHourRepository;
+public class SpaService extends GenericHotelService<Spa> {
 
     //TODO ultimately it won't be needed because the sent date will be already resolved to the LocalDate type
     private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy");
-    
-    public Spa get(Long hotelId) {
-        AvailableServices services = availableServicesService.get(hotelId);
-        if (services == null || services.getSpa() == null)
-            throw new ResourceNotFoundException();
-        return services.getSpa();
+
+    private HotelService hotelService;
+    private AvailableServicesService availableServicesService;
+    private SpaCalendarHourRepository calendarHourRepository;
+
+    @Autowired
+    public SpaService(SpaRepository repository,
+                      HotelService hotelService,
+                      AvailableServicesService availableServicesService,
+                      SpaCalendarHourRepository calendarHourRepository) {
+        super(repository);
+        this.hotelService = hotelService;
+        this.availableServicesService = availableServicesService;
+        this.calendarHourRepository = calendarHourRepository;
     }
 
-    public Spa addDefaultSpa(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
-        if (services.getSpa() == null) {
-            Spa spa = new Spa();
-            spa.setDescription("");
-            Price spaPrice = new Price();
-            spaPrice.setCurrency(Currency.EUR);
-            spaPrice.setValue(new BigDecimal(5));
-            spa.setPrice(spaPrice);
-
-            services.setSpa(spa);
-            AvailableServices updatedServices = availableServicesService.update(services);
-            return updatedServices.getSpa();
-        }
-        else {
-            throw new BusinessRuleViolationException("A spa service has already been added");
-        }
+    public Spa get(Long hotelId) {
+        AvailableServices services = availableServicesService.get(hotelId);
+        return services.getSpa();
     }
 
     public Set<SpaCalendarHour> getCalendarHours(Long hotelId, Long itemId, String date) {

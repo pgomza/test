@@ -3,6 +3,7 @@ package com.horeca.site.controllers.services;
 import com.horeca.site.handlers.HotelId;
 import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
+import com.horeca.site.models.hotel.services.ServiceAvailability;
 import com.horeca.site.models.hotel.services.taxi.Taxi;
 import com.horeca.site.models.hotel.services.taxi.TaxiItem;
 import com.horeca.site.services.services.TaxiService;
@@ -19,29 +20,31 @@ import javax.validation.Valid;
 public class TaxiController {
 
     @Autowired
-    private TaxiService taxiService;
+    private TaxiService service;
 
     @ReplaceCurrency
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/taxi", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Taxi get(@HotelId @PathVariable("hotelId") Long hotelId) {
-        return taxiService.get(hotelId);
+        return service.get(hotelId);
     }
 
-    @RequestMapping(value = "/{hotelId}/services/taxi", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Taxi addDefault(@PathVariable("hotelId") Long hotelId) {
-        return taxiService.addDefaultTaxi(hotelId);
+    @RequestMapping(value = "/{hotelId}/services/taxi/availability", method = RequestMethod.PUT, produces =
+            MediaType.APPLICATION_JSON_VALUE)
+    public Taxi updateAvailability(@HotelId @PathVariable("hotelId") Long hotelId,
+                                             @RequestBody ServiceAvailability availability) {
+        return service.updateAvailability(hotelId, availability.getAvailable());
     }
 
     @RequestMapping(value = "/{hotelId}/services/taxi/items", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Iterable<TaxiItem> addItem(@PathVariable("hotelId") Long hotelId) {
-        return taxiService.getItems(hotelId);
+        return service.getItems(hotelId);
     }
 
     // TODO should return TaxiItem instead of Taxi
     @RequestMapping(value = "/{hotelId}/services/taxi/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Taxi addItem(@PathVariable("hotelId") Long hotelId, @Valid @RequestBody TaxiItem item) {
-        return taxiService.addItem(hotelId, item);
+        return service.addItem(hotelId, item);
     }
 
     // TODO should return TaxiItem instead of Taxi
@@ -50,12 +53,12 @@ public class TaxiController {
                         @PathVariable("itemId") Long itemId,
                         @Valid @RequestBody TaxiItem item) {
         item.setId(itemId);
-        return taxiService.updateItem(hotelId, item);
+        return service.updateItem(hotelId, item);
     }
 
     @RequestMapping(value = "/{hotelId}/services/taxi/items/{itemId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteItem(@PathVariable("hotelId") Long hotelId,
                            @PathVariable("itemId") Long itemId) {
-        taxiService.deleteItem(hotelId, itemId);
+        service.deleteItem(hotelId, itemId);
     }
 }

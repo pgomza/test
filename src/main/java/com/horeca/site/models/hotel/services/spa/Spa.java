@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.spa;
 
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.services.HotelServiceModel;
 import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
@@ -10,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Audited
-public class Spa {
+public class Spa implements HotelServiceModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +26,19 @@ public class Spa {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "spa_id")
     private Set<SpaItem> items;
+
+    @NotNull
+    private Boolean available;
+
+    @Override
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    @Override
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
 
     public Long getId() {
         return id;

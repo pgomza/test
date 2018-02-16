@@ -17,26 +17,25 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class RestaurantMenuService {
+public class RestaurantMenuService extends GenericHotelService<RestaurantMenu> {
 
-    @Autowired
     private AvailableServicesService availableServicesService;
-
-    @Autowired
-    private RestaurantMenuRepository repository;
-
-    @Autowired
     private RestaurantMenuCategoryRepository categoryRepository;
+    private RestaurantMenuItemRepository itemRepository;
 
     @Autowired
-    private RestaurantMenuItemRepository itemRepository;
+    public RestaurantMenuService(RestaurantMenuRepository repository,
+                                 AvailableServicesService availableServicesService,
+                                 RestaurantMenuCategoryRepository categoryRepository,
+                                 RestaurantMenuItemRepository itemRepository) {
+        super(repository);
+        this.availableServicesService = availableServicesService;
+        this.categoryRepository = categoryRepository;
+        this.itemRepository = itemRepository;
+    }
 
     public RestaurantMenu get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
-        if (services == null || services.getRestaurantMenu() == null) {
-            throw new ResourceNotFoundException();
-        }
-
         return services.getRestaurantMenu();
     }
 
@@ -50,21 +49,6 @@ public class RestaurantMenuService {
         RestaurantMenu menu = get(hotelId);
         menu.setDescription(patch.getDescription());
         return repository.save(menu);
-    }
-
-    public RestaurantMenu addDefaultRestaurantMenu(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
-        if (services.getRestaurantMenu() == null) {
-            RestaurantMenu menu = new RestaurantMenu();
-            menu.setDescription("");
-            services.setRestaurantMenu(menu);
-
-            AvailableServices updatedServices = availableServicesService.update(services);
-            return updatedServices.getRestaurantMenu();
-        }
-        else {
-            throw new BusinessRuleViolationException("A restaurant menu service has already been added");
-        }
     }
 
     public List<RestaurantMenuCategory> getCategories(Long hotelId) {

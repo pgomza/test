@@ -1,6 +1,7 @@
 package com.horeca.site.models.hotel.services.carpark;
 
 import com.horeca.site.models.Price;
+import com.horeca.site.models.hotel.services.HotelServiceModel;
 import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
@@ -9,7 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Audited
-public class CarPark {
+public class CarPark implements HotelServiceModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +22,19 @@ public class CarPark {
     @NotNull
     @Embedded
     private Price price;
+
+    @NotNull
+    private Boolean available;
+
+    @Override
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    @Override
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
 
     public Long getId() {
         return id;

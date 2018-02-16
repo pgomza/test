@@ -6,7 +6,8 @@ import com.horeca.site.models.notifications.NewOrderEvent;
 import com.horeca.site.models.orders.Order;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.OrderStatusPUT;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.horeca.site.models.stay.Stay;
+import com.horeca.site.services.services.StayService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.repository.CrudRepository;
 
@@ -15,10 +16,17 @@ import java.util.Set;
 
 public abstract class GenericOrderService<T extends Order> {
 
-    @Autowired
     private ApplicationEventPublisher eventPublisher;
+    protected CrudRepository<T, Long> repository;
+    protected StayService stayService;
 
-    protected abstract CrudRepository<T, Long> getRepository();
+    protected GenericOrderService(ApplicationEventPublisher eventPublisher,
+                                  CrudRepository<T, Long> repository,
+                                  StayService stayService) {
+        this.eventPublisher = eventPublisher;
+        this.repository = repository;
+        this.stayService = stayService;
+    }
 
     public abstract Set<T> getAll(String stayPin);
 
@@ -27,10 +35,10 @@ public abstract class GenericOrderService<T extends Order> {
         return orderOptional.orElseThrow(ResourceNotFoundException::new);
     }
 
-    public T update(String stayPin, Long id, T updated) {
-        T order = get(stayPin, id);
+    public T update(String pin, Long id, T updated) {
+        T order = get(pin, id);
         updated.setId(order.getId());
-        return getRepository().save(updated);
+        return repository.save(updated);
     }
 
     public OrderStatusPUT getStatus(String pin, Long id) {
@@ -40,14 +48,19 @@ public abstract class GenericOrderService<T extends Order> {
         return statusPUT;
     }
 
-    public OrderStatusPUT updateStatus(String stayPin, Long id, OrderStatusPUT newStatus) {
-        T order = get(stayPin, id);
+    public OrderStatusPUT updateStatus(String pin, Long id, OrderStatusPUT newStatus) {
+        T order = get(pin, id);
         order.setStatus(newStatus.getStatus());
-        update(stayPin, order.getId(), order);
+        update(pin, order.getId(), order);
         return newStatus;
     }
 
-    protected void notifyAboutNewOrder(String stayPin, AvailableServiceType serviceType) {
-        eventPublisher.publishEvent(new NewOrderEvent(this, serviceType, stayPin));
+    protected void notifyAboutNewOrder(String pin, AvailableServiceType serviceType) {
+        eventPublisher.publishEvent(new NewOrderEvent(this, serviceType, pin));
+    }
+
+    protected Long pinToHotelId(String pin) {
+        Stay stay = stayService.get(pin);
+        return stay.getHotel().getId();
     }
 }

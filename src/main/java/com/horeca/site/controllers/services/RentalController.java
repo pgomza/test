@@ -3,6 +3,7 @@ package com.horeca.site.controllers.services;
 import com.horeca.site.handlers.HotelId;
 import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
+import com.horeca.site.models.hotel.services.ServiceAvailability;
 import com.horeca.site.models.hotel.services.rental.Rental;
 import com.horeca.site.models.hotel.services.rental.RentalItem;
 import com.horeca.site.models.hotel.services.rental.RentalItemUpdate;
@@ -29,9 +30,11 @@ public class RentalController {
         return service.get(hotelId);
     }
 
-    @RequestMapping(value = "/{hotelId}/services/rental", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Rental addDefault(@PathVariable("hotelId") Long hotelId) {
-        return service.addDefaultRental(hotelId);
+    @RequestMapping(value = "/{hotelId}/services/rental/availability", method = RequestMethod.PUT, produces = MediaType
+            .APPLICATION_JSON_VALUE)
+    public Rental updateAvailability(@HotelId @PathVariable("hotelId") Long hotelId,
+                                     @RequestBody ServiceAvailability availability) {
+        return service.updateAvailability(hotelId, availability.getAvailable());
     }
 
     @RequestMapping(value = "/{hotelId}/services/rental/items", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

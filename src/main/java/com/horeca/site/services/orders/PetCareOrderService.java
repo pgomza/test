@@ -10,9 +10,11 @@ import com.horeca.site.models.orders.petcare.PetCareOrder;
 import com.horeca.site.models.orders.petcare.PetCareOrderPOST;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.PetCareOrderRepository;
+import com.horeca.site.services.services.PetCareService;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,18 +24,26 @@ import java.util.Set;
 @Transactional
 public class PetCareOrderService extends GenericOrderService<PetCareOrder> {
 
-    @Autowired
+    private PetCareService petCareService;
     private OrdersService ordersService;
 
     @Autowired
-    private StayService stayService;
+    public PetCareOrderService(ApplicationEventPublisher eventPublisher,
+                               PetCareOrderRepository repository,
+                               StayService stayService,
+                               PetCareService petCareService,
+                               OrdersService ordersService) {
+        super(eventPublisher, repository, stayService);
+        this.petCareService = petCareService;
+        this.ordersService = ordersService;
+    }
 
-    @Autowired
-    private PetCareOrderRepository repository;
-
-    @Override
-    protected CrudRepository<PetCareOrder, Long> getRepository() {
-        return repository;
+    private void ensureCanAddOrders(String pin) {
+        Long hotelId = pinToHotelId(pin);
+        PetCare petCare = petCareService.get(hotelId);
+        if (!petCare.getAvailable()) {
+            throw new AccessDeniedException("The service is unavailable");
+        }
     }
 
     public Set<PetCareOrder> getAll(String stayPin) {
@@ -41,27 +51,31 @@ public class PetCareOrderService extends GenericOrderService<PetCareOrder> {
         return orders.getPetCareOrders();
     }
 
-    public PetCareOrder add(String stayPin, PetCareOrderPOST entity) {
+    public PetCareOrder add(String pin, PetCareOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
         PetCareOrder newOrder = new PetCareOrder();
 
-        PetCareItem resolvedItem = resolveItemIdToEntity(stayPin, entity.getItemId());
+        PetCareItem resolvedItem = resolveItemIdToEntity(pin, entity.getItemId());
 
         newOrder.setStatus(OrderStatus.NEW);
         newOrder.setDate(entity.getDate());
         newOrder.setItem(resolvedItem);
         PetCareOrder savedOrder = repository.save(newOrder);
 
-        Stay stay = stayService.get(stayPin);
+        Stay stay = stayService.get(pin);
         Set<PetCareOrder> petCareOrders = stay.getOrders().getPetCareOrders();
         petCareOrders.add(savedOrder);
-        stayService.update(stayPin, stay);
+        stayService.update(pin, stay);
 
         return savedOrder;
     }
 
-    public PetCareOrder addAndNotify(String stayPin, PetCareOrderPOST entity) {
-        PetCareOrder added = add(stayPin, entity);
-        notifyAboutNewOrder(stayPin, AvailableServiceType.PETCARE);
+    public PetCareOrder addAndNotify(String pin, PetCareOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
+        PetCareOrder added = add(pin, entity);
+        notifyAboutNewOrder(pin, AvailableServiceType.PETCARE);
 
         return added;
     }

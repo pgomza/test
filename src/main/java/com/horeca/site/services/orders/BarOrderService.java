@@ -15,9 +15,11 @@ import com.horeca.site.models.orders.bar.BarOrderItemPOST;
 import com.horeca.site.models.orders.bar.BarOrderPOST;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.BarOrderRepository;
+import com.horeca.site.services.services.BarService;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,18 +31,26 @@ import java.util.Set;
 @Transactional
 public class BarOrderService extends GenericOrderService<BarOrder> {
 
-    @Autowired
+    private BarService barService;
     private OrdersService ordersService;
 
     @Autowired
-    private StayService stayService;
+    public BarOrderService(ApplicationEventPublisher eventPublisher,
+                           BarOrderRepository repository,
+                           StayService stayService,
+                           BarService barService,
+                           OrdersService ordersService) {
+        super(eventPublisher, repository, stayService);
+        this.barService = barService;
+        this.ordersService = ordersService;
+    }
 
-    @Autowired
-    private BarOrderRepository repository;
-
-    @Override
-    protected CrudRepository<BarOrder, Long> getRepository() {
-        return repository;
+    private void ensureCanAddOrders(String pin) {
+        Long hotelId = pinToHotelId(pin);
+        Bar bar = barService.get(hotelId);
+        if (!bar.getAvailable()) {
+            throw new AccessDeniedException("The service is unavailable");
+        }
     }
 
     public Set<BarOrder> getAll(String stayPin) {
@@ -48,13 +58,15 @@ public class BarOrderService extends GenericOrderService<BarOrder> {
         return orders.getBarOrders();
     }
 
-    public BarOrder add(String stayPin, BarOrderPOST entity) {
+    public BarOrder add(String pin, BarOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
         BarOrder barOrder = new BarOrder();
 
         Set<BarOrderItem> entries = new HashSet<>();
         for (BarOrderItemPOST entryPOST : entity.getItems()) {
             BarOrderItem entry = new BarOrderItem();
-            BarItem item = resolveItemIdToEntity(stayPin, entryPOST.getItemId());
+            BarItem item = resolveItemIdToEntity(pin, entryPOST.getItemId());
             entry.setItem(item);
             entry.setCount(entryPOST.getCount());
             entries.add(entry);
@@ -65,17 +77,19 @@ public class BarOrderService extends GenericOrderService<BarOrder> {
         barOrder.setStatus(OrderStatus.NEW);
         BarOrder savedOrder = repository.save(barOrder);
 
-        Stay stay = stayService.get(stayPin);
+        Stay stay = stayService.get(pin);
         Set<BarOrder> barOrders = stay.getOrders().getBarOrders();
         barOrders.add(savedOrder);
-        stayService.update(stayPin, stay);
+        stayService.update(pin, stay);
 
         return savedOrder;
     }
 
-    public BarOrder addAndNotify(String stayPin, BarOrderPOST entity) {
-        BarOrder added = add(stayPin, entity);
-        notifyAboutNewOrder(stayPin, AvailableServiceType.BAR);
+    public BarOrder addAndNotify(String pin, BarOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
+        BarOrder added = add(pin, entity);
+        notifyAboutNewOrder(pin, AvailableServiceType.BAR);
 
         return added;
     }

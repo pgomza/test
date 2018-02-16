@@ -1,9 +1,6 @@
 package com.horeca.site.services.services;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.models.Currency;
-import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.rental.Rental;
 import com.horeca.site.models.hotel.services.rental.RentalCategory;
@@ -11,70 +8,36 @@ import com.horeca.site.models.hotel.services.rental.RentalItem;
 import com.horeca.site.models.hotel.services.rental.RentalItemUpdate;
 import com.horeca.site.repositories.services.RentalCategoryRepository;
 import com.horeca.site.repositories.services.RentalItemRepository;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import com.horeca.site.repositories.services.RentalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
-public class RentalService {
+public class RentalService extends GenericHotelService<Rental> {
 
-    private static final DateTimeFormatter localTimeFormatter = DateTimeFormat.forPattern("HH:mm");
-
-    @Autowired
     private AvailableServicesService availableServicesService;
-
-    @Autowired
     private RentalCategoryRepository rentalCategoryRepository;
+    private RentalItemRepository rentalItemRepository;
 
     @Autowired
-    private RentalItemRepository rentalItemRepository;
+    public RentalService(RentalRepository repository,
+                         AvailableServicesService availableServicesService,
+                         RentalCategoryRepository rentalCategoryRepository,
+                         RentalItemRepository rentalItemRepository) {
+        super(repository);
+        this.availableServicesService = availableServicesService;
+        this.rentalCategoryRepository = rentalCategoryRepository;
+        this.rentalItemRepository = rentalItemRepository;
+    }
 
     public Rental get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
-        if (services == null || services.getRental() == null)
-            throw new ResourceNotFoundException();
-
         return services.getRental();
-    }
-
-    public Rental addDefaultRental(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
-        if (services.getRental() == null) {
-            Rental rental = new Rental();
-            rental.setDescription("");
-            Price price = new Price();
-            price.setCurrency(Currency.EUR);
-            price.setValue(new BigDecimal(5));
-            rental.setPrice(price);
-            rental.setFromHour(localTimeFormatter.parseLocalTime("08:00"));
-            rental.setToHour(localTimeFormatter.parseLocalTime("11:00"));
-
-            Set<RentalCategory> rentalCategories = Stream.of(RentalCategory.Category.values())
-                    .map(categoryName -> {
-                        RentalCategory category = new RentalCategory();
-                        category.setCategory(categoryName);
-                        return category;
-                    })
-                    .collect(Collectors.toSet());
-
-            rental.setCategories(rentalCategories);
-            services.setRental(rental);
-
-            AvailableServices updatedServices = availableServicesService.update(services);
-            return updatedServices.getRental();
-        }
-        else {
-            throw new BusinessRuleViolationException("A rental service has already been added");
-        }
     }
 
     public RentalCategory getCategory(Long hotelId, RentalCategory.Category categoryName) {

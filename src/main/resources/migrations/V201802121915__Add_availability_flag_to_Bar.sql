@@ -1,0 +1,2 @@
+ALTER TABLE Bar ADD available BIT NOT NULL DEFAULT 1;
+ALTER TABLE audit.Bar_AUD ADD available BIT;

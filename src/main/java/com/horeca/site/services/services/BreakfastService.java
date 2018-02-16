@@ -1,9 +1,6 @@
 package com.horeca.site.services.services;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
-import com.horeca.site.models.Currency;
-import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastCategory;
@@ -11,67 +8,36 @@ import com.horeca.site.models.hotel.services.breakfast.BreakfastItem;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastItemUpdate;
 import com.horeca.site.repositories.services.BreakfastCategoryRepository;
 import com.horeca.site.repositories.services.BreakfastItemRepository;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import com.horeca.site.repositories.services.BreakfastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
 @Transactional
-public class BreakfastService {
+public class BreakfastService extends GenericHotelService<Breakfast> {
 
-    private static final DateTimeFormatter localTimeFormatter = DateTimeFormat.forPattern("HH:mm");
-
-    @Autowired
     private AvailableServicesService availableServicesService;
-
-    @Autowired
     private BreakfastCategoryRepository breakfastCategoryRepository;
+    private BreakfastItemRepository breakfastItemRepository;
 
     @Autowired
-    private BreakfastItemRepository breakfastItemRepository;
+    public BreakfastService(BreakfastRepository repository,
+                            AvailableServicesService availableServicesService,
+                            BreakfastCategoryRepository breakfastCategoryRepository,
+                            BreakfastItemRepository breakfastItemRepository) {
+        super(repository);
+        this.availableServicesService = availableServicesService;
+        this.breakfastCategoryRepository = breakfastCategoryRepository;
+        this.breakfastItemRepository = breakfastItemRepository;
+    }
 
     public Breakfast get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
-        if (services == null || services.getBreakfast() == null)
-            throw new ResourceNotFoundException();
-
         return services.getBreakfast();
-    }
-
-    public Breakfast addDefaultBreakfast(Long hotelId) {
-        AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
-        if (services.getBreakfast() == null) {
-            Breakfast breakfast = new Breakfast();
-            breakfast.setDescription("");
-            breakfast.setFromHour(localTimeFormatter.parseLocalTime("08:00"));
-            breakfast.setToHour(localTimeFormatter.parseLocalTime("11:00"));
-            Price breakfastPrice = new Price();
-            breakfastPrice.setCurrency(Currency.EUR);
-            breakfastPrice.setValue(new BigDecimal(5));
-            breakfast.setPrice(breakfastPrice);
-
-            BreakfastCategory dishCategory = new BreakfastCategory();
-            dishCategory.setCategory(BreakfastCategory.Category.DISH);
-            BreakfastCategory drinkCategory = new BreakfastCategory();
-            drinkCategory.setCategory(BreakfastCategory.Category.DRINK);
-            Set<BreakfastCategory> categories = new HashSet<>();
-            categories.add(dishCategory);
-            categories.add(drinkCategory);
-            breakfast.setCategories(categories);
-
-            services.setBreakfast(breakfast);
-            AvailableServices updatedServices = availableServicesService.update(services);
-            return updatedServices.getBreakfast();
-        }
-        else {
-            throw new BusinessRuleViolationException("A breakfast service has already been added");
-        }
     }
 
     public BreakfastCategory getCategory(Long hotelId, BreakfastCategory.Category category) {

@@ -1,17 +1,20 @@
 package com.horeca.site.services.orders;
 
 import com.horeca.site.models.hotel.services.AvailableServiceType;
+import com.horeca.site.models.hotel.services.carpark.CarPark;
 import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
 import com.horeca.site.models.orders.carpark.CarParkOrderPOST;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.CarParkOrderRepository;
+import com.horeca.site.services.services.CarParkService;
 import com.horeca.site.services.services.StayService;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,20 +24,28 @@ import java.util.Set;
 @Transactional
 public class CarParkOrderService extends GenericOrderService<CarParkOrder> {
 
-    @Autowired
+    private final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
+
+    private CarParkService carParkService;
     private OrdersService ordersService;
 
     @Autowired
-    private StayService stayService;
+    public CarParkOrderService(ApplicationEventPublisher eventPublisher,
+                               CarParkOrderRepository repository,
+                               StayService stayService,
+                               CarParkService carParkService,
+                               OrdersService ordersService) {
+        super(eventPublisher, repository, stayService);
+        this.carParkService = carParkService;
+        this.ordersService = ordersService;
+    }
 
-    @Autowired
-    private CarParkOrderRepository repository;
-
-    private DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy HH:mm");
-
-    @Override
-    protected CrudRepository<CarParkOrder, Long> getRepository() {
-        return repository;
+    private void ensureCanAddOrders(String pin) {
+        Long hotelId = pinToHotelId(pin);
+        CarPark carPark = carParkService.get(hotelId);
+        if (!carPark.getAvailable()) {
+            throw new AccessDeniedException("The service is unavailable");
+        }
     }
 
     public Set<CarParkOrder> getAll(String stayPin) {
@@ -42,7 +53,9 @@ public class CarParkOrderService extends GenericOrderService<CarParkOrder> {
         return orders.getCarParkOrders();
     }
 
-    public CarParkOrder add(String stayPin, CarParkOrderPOST entity) {
+    public CarParkOrder add(String pin, CarParkOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
         CarParkOrder newOrder = new CarParkOrder();
         newOrder.setLicenseNumber(entity.getLicenseNumber());
         newOrder.setFromDate(formatter.parseLocalDateTime(entity.getFromDate()));
@@ -50,17 +63,19 @@ public class CarParkOrderService extends GenericOrderService<CarParkOrder> {
         newOrder.setStatus(OrderStatus.NEW);
         CarParkOrder savedOrder = repository.save(newOrder);
 
-        Stay stay = stayService.get(stayPin);
+        Stay stay = stayService.get(pin);
         Set<CarParkOrder> carParkOrders = stay.getOrders().getCarParkOrders();
         carParkOrders.add(savedOrder);
-        stayService.update(stayPin, stay);
+        stayService.update(pin, stay);
 
         return savedOrder;
     }
 
-    public CarParkOrder addAndNotify(String stayPin, CarParkOrderPOST entity) {
-        CarParkOrder added = add(stayPin, entity);
-        notifyAboutNewOrder(stayPin, AvailableServiceType.CARPARK);
+    public CarParkOrder addAndNotify(String pin, CarParkOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
+        CarParkOrder added = add(pin, entity);
+        notifyAboutNewOrder(pin, AvailableServiceType.CARPARK);
 
         return added;
     }

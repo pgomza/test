@@ -11,9 +11,11 @@ import com.horeca.site.models.orders.housekeeping.HousekeepingOrder;
 import com.horeca.site.models.orders.housekeeping.HousekeepingOrderPOST;
 import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.HousekeepingOrderRepository;
+import com.horeca.site.services.services.HousekeepingService;
 import com.horeca.site.services.services.StayService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,18 +26,26 @@ import java.util.Set;
 @Transactional
 public class HousekeepingOrderService extends GenericOrderService<HousekeepingOrder> {
 
-    @Autowired
+    private HousekeepingService housekeepingService;
     private OrdersService ordersService;
 
     @Autowired
-    private StayService stayService;
+    public HousekeepingOrderService(ApplicationEventPublisher eventPublisher,
+                                    HousekeepingOrderRepository repository,
+                                    StayService stayService,
+                                    HousekeepingService housekeepingService,
+                                    OrdersService ordersService) {
+        super(eventPublisher, repository, stayService);
+        this.housekeepingService = housekeepingService;
+        this.ordersService = ordersService;
+    }
 
-    @Autowired
-    private HousekeepingOrderRepository repository;
-
-    @Override
-    protected CrudRepository<HousekeepingOrder, Long> getRepository() {
-        return repository;
+    private void ensureCanAddOrders(String pin) {
+        Long hotelId = pinToHotelId(pin);
+        Housekeeping housekeeping = housekeepingService.get(hotelId);
+        if (!housekeeping.getAvailable()) {
+            throw new AccessDeniedException("The service is unavailable");
+        }
     }
 
     public Set<HousekeepingOrder> getAll(String stayPin) {
@@ -43,12 +53,14 @@ public class HousekeepingOrderService extends GenericOrderService<HousekeepingOr
         return orders.getHousekeepingOrders();
     }
 
-    public HousekeepingOrder add(String stayPin, HousekeepingOrderPOST entity) {
+    public HousekeepingOrder add(String pin, HousekeepingOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
         HousekeepingOrder housekeepingOrder = new HousekeepingOrder();
 
         Set<HousekeepingItem> orderedItems = new HashSet<>();
         for (Long itemId : entity.getItemIds()) {
-            HousekeepingItem housekeepingItem = resolveItemIdToEntity(stayPin, itemId);
+            HousekeepingItem housekeepingItem = resolveItemIdToEntity(pin, itemId);
             orderedItems.add(housekeepingItem);
         }
 
@@ -57,17 +69,19 @@ public class HousekeepingOrderService extends GenericOrderService<HousekeepingOr
         housekeepingOrder.setStatus(OrderStatus.NEW);
         HousekeepingOrder savedOrder = repository.save(housekeepingOrder);
 
-        Stay stay = stayService.get(stayPin);
+        Stay stay = stayService.get(pin);
         Set<HousekeepingOrder> housekeepingOrders = stay.getOrders().getHousekeepingOrders();
         housekeepingOrders.add(savedOrder);
-        stayService.update(stayPin, stay);
+        stayService.update(pin, stay);
 
         return savedOrder;
     }
 
-    public HousekeepingOrder addAndNotify(String stayPin, HousekeepingOrderPOST entity) {
-        HousekeepingOrder added = add(stayPin, entity);
-        notifyAboutNewOrder(stayPin, AvailableServiceType.HOUSEKEEPING);
+    public HousekeepingOrder addAndNotify(String pin, HousekeepingOrderPOST entity) {
+        ensureCanAddOrders(pin);
+
+        HousekeepingOrder added = add(pin, entity);
+        notifyAboutNewOrder(pin, AvailableServiceType.HOUSEKEEPING);
 
         return added;
     }

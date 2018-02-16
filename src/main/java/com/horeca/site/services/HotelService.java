@@ -9,12 +9,15 @@ import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.images.FileLink;
 import com.horeca.site.models.hotel.information.UsefulInformation;
 import com.horeca.site.models.hotel.information.UsefulInformationHourItem;
+import com.horeca.site.models.hotel.services.AvailableServices;
+import com.horeca.site.models.hotel.subscription.SubscriptionLevel;
 import com.horeca.site.models.notifications.NotificationSettings;
 import com.horeca.site.repositories.HotelRepository;
 import com.horeca.site.security.services.GuestAccountService;
 import com.horeca.site.security.services.UserAccountService;
-import com.horeca.site.services.patchers.HotelPatcherService;
+import com.horeca.site.services.services.AvailableServicesService;
 import com.horeca.site.services.services.StayService;
+import com.horeca.site.services.subscription.SubscriptionControlService;
 import com.horeca.site.services.translation.HotelTranslationService;
 import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,9 +41,6 @@ public class HotelService {
 
     @Autowired
     private HotelRepository repository;
-
-    @Autowired
-    private HotelPatcherService hotelPatcherService;
 
     @Autowired
     private HotelQueryService hotelQueryService;
@@ -65,6 +64,14 @@ public class HotelService {
     @Autowired
     private HotelTranslationService translationService;
 
+    @Autowired
+    @Lazy
+    private AvailableServicesService availableServices;
+
+    @Autowired
+    @Lazy
+    private SubscriptionControlService subscriptionControlService;
+
     /*
         Expose these two methods in this service to prevent clients
         from autowiring the query service just to use them; the 'get' method
@@ -79,39 +86,38 @@ public class HotelService {
     }
 
 
-    public Hotel add(Hotel hotel) {
-        hotel.setId(null);
-        fillInMissingInfoAndSave(hotel);
-        return repository.save(hotel);
-    }
+    public Hotel add(Hotel newHotel) {
+        newHotel.setId(null);
 
-    public Iterable<Hotel> addAll(Iterable<Hotel> hotels) {
-        return repository.save(hotels); // don't return a populated List due to performance reasons
+        subscriptionControlService.ensureHotelCanBeUpdated(SubscriptionLevel.BASIC.getNumber(), newHotel);
+
+        fillInMissingInfoAndSave(newHotel);
+        return repository.save(newHotel);
     }
 
     public Hotel update(Long id, Hotel updated) {
         updated.setId(id);
-        return repository.save(updated);
-    }
 
-    public Hotel patch(Long id, Map<String, Object> updates) throws IOException, IllegalAccessException {
-        Hotel hotel = get(id);
-        hotelPatcherService.patch(hotel, updates);
-        return update(id, hotel);
+        subscriptionControlService.ensureHotelCanBeUpdated(id, updated);
+
+        return repository.save(updated);
     }
 
     public Hotel updateFromController(Long id, Hotel newOne) {
         Hotel current = hotelQueryService.get(id);
+
         // don't let this update overwrite info about the guests - ignore whatever has been set in newOne as 'guests'
         // there's a different endpoint specifically intended for managing the guests
         newOne.setGuests(current.getGuests());
-        // the same applies for a few other fields
+        // the same applies to a few other fields
         newOne.setNotificationSettings(current.getNotificationSettings());
         newOne.setCubilisSettings(current.getCubilisSettings());
         newOne.setCubilisConnectionStatus(current.getCubilisConnectionStatus());
         newOne.setIsThrodiPartner(current.getIsThrodiPartner());
         newOne.setIsTestHotel(current.getIsTestHotel());
         newOne.setIsMarkedAsDeleted(current.getIsMarkedAsDeleted());
+
+        subscriptionControlService.ensureHotelCanBeUpdated(id, newOne);
 
         fillInMissingInfoAndSave(newOne);
         return hotelQueryService.get(id);
@@ -294,14 +300,18 @@ public class HotelService {
             hotel.setIsMarkedAsDeleted(false);
         }
 
-        Hotel saved;
+        AvailableServices services = hotel.getAvailableServices();
+        if (services == null) {
+            services = new AvailableServices();
+            hotel.setAvailableServices(services);
+        }
+        availableServices.ensureFullyInitialized(services);
+
         if (hotel.getId() != null) {
             checkImagesOnUpdate(hotel);
-            saved = update(hotel.getId(), hotel);
         }
-        else {
-            saved = repository.save(hotel);
-        }
+
+        Hotel saved = repository.save(hotel);
 
         // add the default image if the hotel doesn't contain any
         if (saved.getImages().size() == 0) {
