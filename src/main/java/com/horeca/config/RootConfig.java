@@ -1,8 +1,6 @@
 package com.horeca.config;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.horeca.site.handlers.CustomGlobalExceptionHandler;
@@ -59,9 +57,6 @@ public class RootConfig extends WebMvcConfigurerAdapter
         objectMapper.registerModule(hibernate5Module);
 
         objectMapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss"));
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
         return objectMapper;
     }
 

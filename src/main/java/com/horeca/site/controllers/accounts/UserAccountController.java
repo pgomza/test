@@ -145,6 +145,20 @@ public class UserAccountController {
         return prepareResponseMessage(pending.getEmail());
     }
 
+    @Transactional
+    @RequestMapping(value = "/users-new-hotel", method = RequestMethod.POST, produces = MediaType
+            .APPLICATION_JSON_VALUE)
+    public ResponseMessage addPendingWithNewHotel(@RequestBody @Valid UserAccountNewHotelPOST userAccountNewHotelPOST) {
+        AccountPending pending = pendingService.add(userAccountNewHotelPOST);
+        try {
+            pendingService.sendActivationEmail(pending);
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            throw new RuntimeException("There was a problem while trying to send an email to " + pending.getEmail(), e);
+        }
+
+        return prepareResponseMessage(pending.getEmail());
+    }
+
     @RequestMapping(value = "/users/activation", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String activateAsAnonymous(@RequestParam(value = "secret") String secret) {
         String outcome = "Activation successful";

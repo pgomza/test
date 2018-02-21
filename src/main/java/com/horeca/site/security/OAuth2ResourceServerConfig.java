@@ -66,6 +66,8 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         http.authorizeRequests().antMatchers("/api/static-translations/**")
                 .hasAnyRole(UserAccount.ROLE_HOTEL_FULL, GuestAccount.ROLE_DEFAULT);
 
+        // allow anybody to create a user account (but only with a new hotel)
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/accounts/users-new-hotel").permitAll();
         // allow anybody to activate their account
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/accounts/users/activation").permitAll();
         // allow anybody to reset their password
@@ -117,6 +119,9 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         *******************************************************************************
         *******************************************************************************
          */
+
+        // only the ones that have the 'SALESMAN' role can add hotels through the standard endpoint
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/hotels").hasAuthority(SalesmanAccount.ROLE_DEFAULT);
 
         // only roots can manage all salesmen
         http.authorizeRequests().antMatchers("/api/accounts/salesmen/**").hasAuthority(RootAccount.ROLE_DEFAULT);

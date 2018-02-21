@@ -1,0 +1,1 @@
+ALTER TABLE UserAccountPending ALTER COLUMN hotelId BIGINT NULL;

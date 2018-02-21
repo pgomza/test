@@ -26,7 +26,9 @@ public abstract class AccountPending {
     @LastModifiedDate
     private Long lastModifiedAt;
 
-    AccountPending() {}
+    AccountPending() {
+        this.lastModifiedAt = Instant.now().getMillis();
+    }
 
     public AccountPending(String email, String password, String secret) {
         this.email = email;

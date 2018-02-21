@@ -79,7 +79,6 @@ public class HotelService {
     }
 
 
-    @PreAuthorize("hasRole('SALESMAN')")
     public Hotel add(Hotel hotel) {
         hotel.setId(null);
         fillInMissingInfoAndSave(hotel);
