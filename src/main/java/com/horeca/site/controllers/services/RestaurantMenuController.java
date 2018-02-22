@@ -4,7 +4,12 @@ import com.horeca.site.handlers.HotelId;
 import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
 import com.horeca.site.models.hotel.services.ServiceAvailability;
-import com.horeca.site.models.hotel.services.restaurantmenu.*;
+import com.horeca.site.models.hotel.services.StandardServiceCategoryModel;
+import com.horeca.site.models.hotel.services.StandardServiceCategoryModelPatch;
+import com.horeca.site.models.hotel.services.StandardServiceModelPatch;
+import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenu;
+import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenuCategory;
+import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenuItem;
 import com.horeca.site.services.services.RestaurantMenuService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +49,7 @@ public class RestaurantMenuController {
 
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu", method = RequestMethod.PATCH,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestaurantMenu update(@PathVariable("hotelId") Long hotelId, @RequestBody RestaurantMenuPATCH patch) {
+    public RestaurantMenu patch(@PathVariable("hotelId") Long hotelId, @RequestBody StandardServiceModelPatch patch) {
         return service.patch(hotelId, patch);
     }
 
@@ -58,7 +63,7 @@ public class RestaurantMenuController {
 
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu/categories", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestaurantMenuCategory addCategory(@PathVariable("hotelId") Long hotelId, @RequestBody RestaurantMenuCategory category) {
+    public StandardServiceCategoryModel addCategory(@PathVariable("hotelId") Long hotelId, @RequestBody RestaurantMenuCategory category) {
         return service.addCategory(hotelId, category);
     }
 
@@ -66,8 +71,8 @@ public class RestaurantMenuController {
     @TranslateReturnValue
     @RequestMapping(value = "/{hotelId}/services/restaurantmenu/categories/{categoryId}", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public RestaurantMenuCategory getCategory(@HotelId @PathVariable("hotelId") Long hotelId,
-                                                @PathVariable("categoryId") Long categoryId) {
+    public StandardServiceCategoryModel getCategory(@HotelId @PathVariable("hotelId") Long hotelId,
+                                                    @PathVariable("categoryId") Long categoryId) {
         return service.getCategory(hotelId, categoryId);
     }
 
@@ -83,7 +88,7 @@ public class RestaurantMenuController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public RestaurantMenuCategory patchCategory(@PathVariable("hotelId") Long hotelId,
                                                  @PathVariable("categoryId") Long categoryId,
-                                                 @RequestBody RestaurantMenuCategoryPATCH patch) {
+                                                 @RequestBody StandardServiceCategoryModelPatch patch) {
         return service.patchCategory(hotelId, categoryId, patch);
     }
 

@@ -1,65 +1,11 @@
 package com.horeca.site.models.hotel.services.restaurantmenu;
 
-import com.horeca.site.models.hotel.services.HotelServiceModel;
-import com.horeca.site.models.hotel.translation.Translatable;
+import com.horeca.site.models.hotel.services.StandardServiceModel;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Entity;
 
 @Entity
 @Audited
-public class RestaurantMenu implements HotelServiceModel {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Translatable
-    private String description;
-
-    @Translatable
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurant_menu_id")
-    @OrderColumn(name = "category_order")
-    private List<RestaurantMenuCategory> categories = new ArrayList<>();
-
-    @NotNull
-    private Boolean available;
-
-    @Override
-    public Boolean getAvailable() {
-        return available;
-    }
-
-    @Override
-    public void setAvailable(Boolean available) {
-        this.available = available;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<RestaurantMenuCategory> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<RestaurantMenuCategory> categories) {
-        this.categories = categories;
-    }
+public class RestaurantMenu extends StandardServiceModel<RestaurantMenuCategory> {
 }
