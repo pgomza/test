@@ -3,7 +3,9 @@ package com.horeca.site.services.services;
 import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServices;
-import com.horeca.site.models.hotel.services.restaurantmenu.*;
+import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenu;
+import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenuCategory;
+import com.horeca.site.models.hotel.services.restaurantmenu.RestaurantMenuItem;
 import com.horeca.site.repositories.services.RestaurantMenuCategoryRepository;
 import com.horeca.site.repositories.services.RestaurantMenuItemRepository;
 import com.horeca.site.repositories.services.RestaurantMenuRepository;
@@ -12,24 +14,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class RestaurantMenuService {
+public class RestaurantMenuService extends StandardHotelService<RestaurantMenu, RestaurantMenuCategory> {
+
+    private final AvailableServicesService availableServicesService;
+    private final RestaurantMenuItemRepository itemRepository;
 
     @Autowired
-    private AvailableServicesService availableServicesService;
-
-    @Autowired
-    private RestaurantMenuRepository repository;
-
-    @Autowired
-    private RestaurantMenuCategoryRepository categoryRepository;
-
-    @Autowired
-    private RestaurantMenuItemRepository itemRepository;
+    public RestaurantMenuService(RestaurantMenuRepository repository,
+                                 RestaurantMenuCategoryRepository categoryRepository,
+                                 AvailableServicesService availableServicesService,
+                                 RestaurantMenuItemRepository itemRepository) {
+        super(repository, categoryRepository);
+        this.availableServicesService = availableServicesService;
+        this.itemRepository = itemRepository;
+    }
 
     public RestaurantMenu get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
@@ -38,18 +41,6 @@ public class RestaurantMenuService {
         }
 
         return services.getRestaurantMenu();
-    }
-
-    public RestaurantMenu update(Long hotelId, RestaurantMenu updated) {
-        RestaurantMenu menu = get(hotelId);
-        updated.setId(menu.getId());
-        return repository.save(updated);
-    }
-
-    public RestaurantMenu patch(Long hotelId, RestaurantMenuPATCH patch) {
-        RestaurantMenu menu = get(hotelId);
-        menu.setDescription(patch.getDescription());
-        return repository.save(menu);
     }
 
     public RestaurantMenu addDefaultRestaurantMenu(Long hotelId) {
@@ -65,55 +56,6 @@ public class RestaurantMenuService {
         else {
             throw new BusinessRuleViolationException("A restaurant menu service has already been added");
         }
-    }
-
-    public List<RestaurantMenuCategory> getCategories(Long hotelId) {
-        return get(hotelId).getCategories();
-    }
-
-    public RestaurantMenuCategory getCategory(Long hotelId, Long categoryId) {
-        return get(hotelId).getCategories().stream()
-                .filter(c -> c.getId().equals(categoryId))
-                .findFirst()
-                .orElseThrow(ResourceNotFoundException::new);
-    }
-
-    public RestaurantMenuCategory addCategory(Long hotelId, RestaurantMenuCategory category) {
-        RestaurantMenu restaurantMenu = get(hotelId);
-        Optional<RestaurantMenuCategory> matchingCategory = restaurantMenu.getCategories().stream()
-                .filter(c -> c.getName().equalsIgnoreCase(category.getName()))
-                .findAny();
-
-        if (matchingCategory.isPresent())
-            throw new BusinessRuleViolationException("A category with such a name already exists");
-
-        restaurantMenu.getCategories().add(category);
-        update(hotelId, restaurantMenu);
-        return restaurantMenu.getCategories().stream()
-                .filter(c -> c.getName().equalsIgnoreCase(category.getName()))
-                .findFirst()
-                .get();
-    }
-
-    public RestaurantMenuCategory updateCategory(Long hotelId, Long categoryId, RestaurantMenuCategory updated) {
-        getCategory(hotelId, categoryId);
-        updated.setId(categoryId);
-        return categoryRepository.save(updated);
-    }
-
-    public RestaurantMenuCategory patchCategory(Long hotelId, Long categoryId, RestaurantMenuCategoryPATCH patch) {
-        RestaurantMenuCategory category = getCategory(hotelId, categoryId);
-        category.setName(patch.getName());
-        return categoryRepository.save(category);
-    }
-
-    public void deleteCategory(Long hotelId, Long categoryId) {
-        RestaurantMenu menu = get(hotelId);
-        List<RestaurantMenuCategory> remainingCategories = menu.getCategories().stream()
-                .filter(c -> c.getId() != categoryId)
-                .collect(Collectors.toList());
-        menu.setCategories(remainingCategories);
-        update(hotelId, menu);
     }
 
     public List<RestaurantMenuItem> getItems(Long hotelId, Long categoryId) {
@@ -144,7 +86,7 @@ public class RestaurantMenuService {
     public void deleteItem(Long hotelId, Long categoryId, Long itemId) {
         RestaurantMenuCategory category = getCategory(hotelId, categoryId);
         List<RestaurantMenuItem> remainingItems = category.getItems().stream()
-                .filter(i -> i.getId() != itemId)
+                .filter(i -> !Objects.equals(i.getId(), itemId))
                 .collect(Collectors.toList());
         category.setItems(remainingItems);
         updateCategory(hotelId, categoryId, category);

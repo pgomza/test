@@ -1,0 +1,2 @@
+EXEC sp_RENAME 'audit.RestaurantMenuCategory_RestaurantMenuItem_AUD.restaurant_menu_category_id' , 'category_id', 'COLUMN'
+EXEC sp_RENAME 'audit.RestaurantMenu_RestaurantMenuCategory_AUD.restaurant_menu_id' , 'service_id', 'COLUMN'
