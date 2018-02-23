@@ -8,9 +8,10 @@ import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastCategory;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastItem;
-import com.horeca.site.models.hotel.services.breakfast.BreakfastItemUpdate;
 import com.horeca.site.repositories.services.BreakfastCategoryRepository;
 import com.horeca.site.repositories.services.BreakfastItemRepository;
+import com.horeca.site.repositories.services.BreakfastRepository;
+import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,28 +19,35 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class BreakfastService {
+public class BreakfastService extends StandardHotelService<Breakfast, BreakfastCategory> {
 
     private static final DateTimeFormatter localTimeFormatter = DateTimeFormat.forPattern("HH:mm");
 
-    @Autowired
-    private AvailableServicesService availableServicesService;
+    private final AvailableServicesService availableServicesService;
+    private final BreakfastItemRepository itemRepository;
 
     @Autowired
-    private BreakfastCategoryRepository breakfastCategoryRepository;
-
-    @Autowired
-    private BreakfastItemRepository breakfastItemRepository;
+    public BreakfastService(BreakfastRepository repository,
+                      BreakfastCategoryRepository categoryRepository,
+                      AvailableServicesService availableServicesService,
+                      BreakfastItemRepository itemRepository) {
+        super(repository, categoryRepository);
+        this.availableServicesService = availableServicesService;
+        this.itemRepository = itemRepository;
+    }
 
     public Breakfast get(Long hotelId) {
         AvailableServices services = availableServicesService.get(hotelId);
-        if (services == null || services.getBreakfast() == null)
+        if (services == null || services.getBreakfast() == null) {
             throw new ResourceNotFoundException();
+        }
 
         return services.getBreakfast();
     }
@@ -47,23 +55,12 @@ public class BreakfastService {
     public Breakfast addDefaultBreakfast(Long hotelId) {
         AvailableServices services = availableServicesService.addIfDoesntExistAndGet(hotelId);
         if (services.getBreakfast() == null) {
-            Breakfast breakfast = new Breakfast();
-            breakfast.setDescription("");
-            breakfast.setFromHour(localTimeFormatter.parseLocalTime("08:00"));
-            breakfast.setToHour(localTimeFormatter.parseLocalTime("11:00"));
-            Price breakfastPrice = new Price();
-            breakfastPrice.setCurrency(Currency.EUR);
-            breakfastPrice.setValue(new BigDecimal(5));
-            breakfast.setPrice(breakfastPrice);
-
-            BreakfastCategory dishCategory = new BreakfastCategory();
-            dishCategory.setCategory(BreakfastCategory.Category.DISH);
-            BreakfastCategory drinkCategory = new BreakfastCategory();
-            drinkCategory.setCategory(BreakfastCategory.Category.DRINK);
-            Set<BreakfastCategory> categories = new HashSet<>();
-            categories.add(dishCategory);
-            categories.add(drinkCategory);
-            breakfast.setCategories(categories);
+            Price price = new Price();
+            price.setCurrency(Currency.EUR);
+            price.setValue(new BigDecimal(5));
+            LocalTime fromHour = localTimeFormatter.parseLocalTime("08:00");
+            LocalTime toHour = localTimeFormatter.parseLocalTime("11:00");
+            Breakfast breakfast = new Breakfast("", new ArrayList<>(), price, fromHour, toHour);
 
             services.setBreakfast(breakfast);
             AvailableServices updatedServices = availableServicesService.update(services);
@@ -74,64 +71,37 @@ public class BreakfastService {
         }
     }
 
-    public BreakfastCategory getCategory(Long hotelId, BreakfastCategory.Category category) {
-        Breakfast breakfast = get(hotelId);
-        Set<BreakfastCategory> categories = breakfast.getCategories();
-        for (BreakfastCategory breakfastCategory : categories) {
-            if (breakfastCategory.getCategory() == category)
-                return breakfastCategory;
-        }
-        throw new ResourceNotFoundException("There is no such category");
+    public List<BreakfastItem> getItems(Long hotelId, Long categoryId) {
+        return getCategory(hotelId, categoryId).getItems();
     }
 
-    public void addItem(Long hotelId, BreakfastItemUpdate item) {
-        BreakfastCategory category = getCategory(hotelId, item.getType());
-        if (category != null) {
-            BreakfastItem itemNew = new BreakfastItem();
-            itemNew.setPrice(item.getPrice());
-            itemNew.setAvailable(item.isAvailable());
-            itemNew.setName(item.getName());
-            category.getItems().add(itemNew);
-            breakfastCategoryRepository.save(category);
-        }
-        else
-            throw new ResourceNotFoundException("There is no such category");
+    public BreakfastItem getItem(Long hotelId, Long categoryId, Long itemId) {
+        BreakfastCategory category = getCategory(hotelId, categoryId);
+        return category.getItems().stream()
+                .filter(i -> i.getId().equals(itemId))
+                .findAny()
+                .orElseThrow(ResourceNotFoundException::new);
     }
 
-    public void updateItem(Long hotelId, BreakfastItemUpdate item) {
-        Breakfast breakfast = get(hotelId);
-        Set<BreakfastCategory> categories = breakfast.getCategories();
-
-        BreakfastItem foundItem = null;
-        for (BreakfastCategory category : categories) {
-            Set<BreakfastItem> items = category.getItems();
-
-            Set<BreakfastItem> remaining = new HashSet<>();
-            for (BreakfastItem breakfastItem : items) {
-                if (!breakfastItem.getId().equals(item.getId()))
-                    remaining.add(breakfastItem);
-                else
-                    foundItem = breakfastItem;
-            }
-
-            category.setItems(remaining);
-            breakfastCategoryRepository.save(category);
-        }
-
-        BreakfastCategory category = getCategory(hotelId, item.getType());
-        foundItem.setPrice(item.getPrice());
-        foundItem.setAvailable(item.isAvailable());
-        foundItem.setName(item.getName());
-        category.getItems().add(foundItem);
-        breakfastCategoryRepository.save(category);
+    public BreakfastItem addItem(Long hotelId, Long categoryId, BreakfastItem item) {
+        BreakfastCategory category = getCategory(hotelId, categoryId);
+        BreakfastItem saved = itemRepository.save(item);
+        category.getItems().add(saved);
+        updateCategory(hotelId, categoryId, category);
+        return saved;
     }
 
-    public void deleteItem(Long itemId) {
-        BreakfastItem existingItem = breakfastItemRepository.findOne(itemId);
-        if (existingItem != null) {
-            breakfastItemRepository.delete(itemId);
-        }
-        else
-            throw new ResourceNotFoundException("Could not find an item with such an id");
+    public BreakfastItem updateItem(Long hotelId, Long categoryId, BreakfastItem itemSent) {
+        getItem(hotelId, categoryId, itemSent.getId());
+        return itemRepository.save(itemSent);
+    }
+
+    public void deleteItem(Long hotelId, Long categoryId, Long itemId) {
+        BreakfastCategory category = getCategory(hotelId, categoryId);
+        List<BreakfastItem> remainingItems = category.getItems().stream()
+                .filter(i -> !Objects.equals(i.getId(), itemId))
+                .collect(Collectors.toList());
+        category.setItems(remainingItems);
+        updateCategory(hotelId, categoryId, category);
     }
 }
