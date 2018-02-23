@@ -7,6 +7,12 @@ public class StandardServiceCategoryModelPatch {
     @NotEmpty
     private String name;
 
+    StandardServiceCategoryModelPatch() {}
+
+    public StandardServiceCategoryModelPatch(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

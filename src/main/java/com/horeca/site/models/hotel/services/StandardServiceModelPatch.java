@@ -4,6 +4,12 @@ public class StandardServiceModelPatch {
 
     private String description;
 
+    StandardServiceModelPatch() {}
+
+    public StandardServiceModelPatch(String description) {
+        this.description = description;
+    }
+
     public String getDescription() {
         return description;
     }
