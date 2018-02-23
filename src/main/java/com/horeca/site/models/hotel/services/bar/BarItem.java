@@ -9,7 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(indexes = @Index(name = "bar_category_id", columnList = "bar_category_id"))
+@Table(indexes = @Index(name = "bar_category_id", columnList = "category_id"))
 @Audited
 public class BarItem {
 
