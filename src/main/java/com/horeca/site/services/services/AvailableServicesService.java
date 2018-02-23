@@ -102,24 +102,13 @@ public class AvailableServicesService {
     }
 
     private Breakfast getDefaultBreakfast() {
-        Breakfast breakfast = new Breakfast();
-        breakfast.setDescription("");
-        breakfast.setFromHour(localTimeFormatter.parseLocalTime("08:00"));
-        breakfast.setToHour(localTimeFormatter.parseLocalTime("11:00"));
-        Price breakfastPrice = new Price();
-        breakfastPrice.setCurrency(Currency.EUR);
-        breakfastPrice.setValue(new BigDecimal(5));
-        breakfast.setPrice(breakfastPrice);
+        Price price = new Price();
+        price.setCurrency(Currency.EUR);
+        price.setValue(new BigDecimal(5));
+        LocalTime fromHour = localTimeFormatter.parseLocalTime("08:00");
+        LocalTime toHour = localTimeFormatter.parseLocalTime("11:00");
 
-        BreakfastCategory dishCategory = new BreakfastCategory();
-        dishCategory.setCategory(BreakfastCategory.Category.DISH);
-        BreakfastCategory drinkCategory = new BreakfastCategory();
-        drinkCategory.setCategory(BreakfastCategory.Category.DRINK);
-        Set<BreakfastCategory> categories = new HashSet<>();
-        categories.add(dishCategory);
-        categories.add(drinkCategory);
-        breakfast.setCategories(categories);
-
+        Breakfast breakfast = new Breakfast("", new ArrayList<>(), price, fromHour, toHour);
         breakfast.setAvailable(false);
 
         return breakfast;
