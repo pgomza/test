@@ -2,24 +2,18 @@ package com.horeca.site.models.hotel.services.breakfast;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Price;
-import com.horeca.site.models.hotel.translation.Translatable;
+import com.horeca.site.models.hotel.services.StandardServiceModel;
 import org.hibernate.envers.Audited;
 import org.joda.time.LocalTime;
 
-import javax.persistence.*;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Audited
-public class Breakfast {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Translatable
-    private String description;
+public class Breakfast extends StandardServiceModel<BreakfastCategory> {
 
     @NotNull
     @Embedded
@@ -31,25 +25,13 @@ public class Breakfast {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime toHour;
 
-    @Translatable
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "breakfast_id")
-    private Set<BreakfastCategory> categories;
+    Breakfast() {}
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public Breakfast(String description, List<BreakfastCategory> categories, Price price, LocalTime fromHour, LocalTime toHour) {
+        super(description, categories);
+        this.price = price;
+        this.fromHour = fromHour;
+        this.toHour = toHour;
     }
 
     public Price getPrice() {
@@ -74,13 +56,5 @@ public class Breakfast {
 
     public void setToHour(LocalTime toHour) {
         this.toHour = toHour;
-    }
-
-    public Set<BreakfastCategory> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(Set<BreakfastCategory> categories) {
-        this.categories = categories;
     }
 }
