@@ -23,6 +23,7 @@ import com.horeca.site.models.hotel.services.tableordering.TableOrdering;
 import com.horeca.site.models.hotel.services.taxi.Taxi;
 import com.horeca.site.repositories.services.AvailableServicesRepository;
 import com.horeca.site.services.HotelService;
+import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -206,25 +208,13 @@ public class AvailableServicesService {
     }
 
     private Bar getDefaultBar() {
-        Bar bar = new Bar();
-        bar.setDescription("");
         Price price = new Price();
         price.setCurrency(Currency.EUR);
         price.setValue(new BigDecimal(5));
-        bar.setPrice(price);
-        bar.setFromHour(localTimeFormatter.parseLocalTime("08:00"));
-        bar.setToHour(localTimeFormatter.parseLocalTime("11:00"));
+        LocalTime fromHour = localTimeFormatter.parseLocalTime("08:00");
+        LocalTime toHour = localTimeFormatter.parseLocalTime("11:00");
 
-        List<BarCategory> barCategories = Stream.of(BarCategory.Category.values())
-                .map(categoryName -> {
-                    BarCategory category = new BarCategory();
-                    category.setCategory(categoryName);
-                    return category;
-                })
-                .collect(Collectors.toList());
-
-        bar.setCategories(barCategories);
-
+        Bar bar = new Bar("", new ArrayList<>(), price, fromHour, toHour);
         bar.setAvailable(false);
 
         return bar;

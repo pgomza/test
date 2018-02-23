@@ -1,0 +1,1 @@
+ALTER TABLE audit.BarCategory_BarItem_AUD ADD item_order INT DEFAULT NULL;

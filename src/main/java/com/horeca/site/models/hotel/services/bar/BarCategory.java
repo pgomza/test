@@ -1,57 +1,28 @@
 package com.horeca.site.models.hotel.services.bar;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.horeca.site.models.hotel.translation.Translatable;
+import com.horeca.site.models.hotel.services.StandardServiceCategoryModel;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.*;
-import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
 @Entity
-@Table(indexes = @Index(name = "bar_id", columnList = "bar_id"))
+@Table(indexes = @Index(name = "bar_id", columnList = "service_id"))
 @Audited
-public class BarCategory {
+public class BarCategory extends StandardServiceCategoryModel<BarItem> {
 
-    public enum Category {
-        @JsonProperty("DRINK")
-        DRINK,
-        @JsonProperty("SNACK")
-        SNACK
+    @JsonProperty("category") // to preserve the backward compatibility
+    @Override
+    public String getName() {
+        return super.getName();
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Enumerated(EnumType.STRING)
-    private Category category;
-
-    @Translatable
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "bar_category_id")
-    private Set<BarItem> items;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public Set<BarItem> getItems() {
-        return items;
-    }
-
-    public void setItems(Set<BarItem> items) {
-        this.items = items;
+    @JsonProperty("category") // to preserve the backward compatibility
+    @Override
+    public void setName(String name) {
+        super.setName(name);
     }
 }
+
