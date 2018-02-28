@@ -1,6 +1,6 @@
 package com.horeca.site.models.hotel.services.spacall;
 
-import com.horeca.site.models.hotel.services.HotelServiceModel;
+import com.horeca.site.models.hotel.services.ServiceAvailability;
 import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Audited
-public class SpaCall implements HotelServiceModel {
+public class SpaCall implements ServiceAvailability {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

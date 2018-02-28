@@ -1,6 +1,6 @@
 package com.horeca.site.models.hotel.services;
 
-public interface HotelServiceModel {
+public interface ServiceAvailability {
 
     Boolean getAvailable();
 

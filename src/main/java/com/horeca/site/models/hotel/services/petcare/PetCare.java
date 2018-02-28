@@ -1,7 +1,7 @@
 package com.horeca.site.models.hotel.services.petcare;
 
 import com.horeca.site.models.Price;
-import com.horeca.site.models.hotel.services.HotelServiceModel;
+import com.horeca.site.models.hotel.services.ServiceAvailability;
 import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Audited
-public class PetCare implements HotelServiceModel {
+public class PetCare implements ServiceAvailability {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

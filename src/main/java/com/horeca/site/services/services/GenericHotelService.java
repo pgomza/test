@@ -2,10 +2,10 @@ package com.horeca.site.services.services;
 
 import com.horeca.site.handlers.HotelId;
 import com.horeca.site.handlers.MinSubscriptionLevel;
-import com.horeca.site.models.hotel.services.HotelServiceModel;
+import com.horeca.site.models.hotel.services.ServiceAvailability;
 import org.springframework.data.repository.CrudRepository;
 
-public abstract class GenericHotelService<T extends HotelServiceModel> {
+public abstract class GenericHotelService<T extends ServiceAvailability> {
 
     protected CrudRepository<T, Long> repository;
 

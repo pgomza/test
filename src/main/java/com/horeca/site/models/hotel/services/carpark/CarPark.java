@@ -1,7 +1,7 @@
 package com.horeca.site.models.hotel.services.carpark;
 
 import com.horeca.site.models.Price;
-import com.horeca.site.models.hotel.services.HotelServiceModel;
+import com.horeca.site.models.hotel.services.ServiceAvailability;
 import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 
@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Audited
-public class CarPark implements HotelServiceModel {
+public class CarPark implements ServiceAvailability {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

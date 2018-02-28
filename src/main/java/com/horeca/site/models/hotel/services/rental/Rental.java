@@ -2,7 +2,7 @@ package com.horeca.site.models.hotel.services.rental;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.horeca.site.models.Price;
-import com.horeca.site.models.hotel.services.HotelServiceModel;
+import com.horeca.site.models.hotel.services.ServiceAvailability;
 import com.horeca.site.models.hotel.translation.Translatable;
 import org.hibernate.envers.Audited;
 import org.joda.time.LocalTime;
@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Entity
 @Audited
-public class Rental implements HotelServiceModel {
+public class Rental implements ServiceAvailability {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

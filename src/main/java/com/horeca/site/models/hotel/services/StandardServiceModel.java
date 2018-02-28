@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @MappedSuperclass
-public abstract class StandardServiceModel<T extends StandardServiceCategoryModel> implements HotelServiceModel {
+public abstract class StandardServiceModel<T extends StandardServiceCategoryModel> implements ServiceAvailability {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
