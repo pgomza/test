@@ -2,7 +2,7 @@ package com.horeca.site.models.hotel.services;
 
 import javax.validation.constraints.NotNull;
 
-public class ServiceAvailability {
+public class ServiceAvailabilityImpl {
 
     @NotNull
     private Boolean available;

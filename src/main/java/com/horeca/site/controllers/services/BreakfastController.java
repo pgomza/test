@@ -3,7 +3,7 @@ package com.horeca.site.controllers.services;
 import com.horeca.site.handlers.HotelId;
 import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
-import com.horeca.site.models.hotel.services.ServiceAvailability;
+import com.horeca.site.models.hotel.services.ServiceAvailabilityImpl;
 import com.horeca.site.models.hotel.services.StandardServiceCategoryModelPatch;
 import com.horeca.site.models.hotel.services.StandardServiceModelPatch;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
@@ -36,7 +36,7 @@ public class BreakfastController {
 
     @RequestMapping(value = "/{hotelId}/services/breakfast/availability", method = RequestMethod.PUT, produces = MediaType
             .APPLICATION_JSON_VALUE)
-    public Breakfast updateAvailability(@HotelId @PathVariable("hotelId") Long hotelId, @RequestBody ServiceAvailability availability) {
+    public Breakfast updateAvailability(@HotelId @PathVariable("hotelId") Long hotelId, @RequestBody ServiceAvailabilityImpl availability) {
         return service.updateAvailability(hotelId, availability.getAvailable());
     }
 

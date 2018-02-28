@@ -1,7 +1,7 @@
 package com.horeca.site.controllers.services;
 
 import com.horeca.site.handlers.HotelId;
-import com.horeca.site.models.hotel.services.ServiceAvailability;
+import com.horeca.site.models.hotel.services.ServiceAvailabilityImpl;
 import com.horeca.site.models.hotel.services.spa.Spa;
 import com.horeca.site.models.hotel.services.spa.calendar.SpaCalendarHour;
 import com.horeca.site.services.services.SpaService;
@@ -45,7 +45,7 @@ public class SpaController {
     @RequestMapping(value = "/{hotelId}/services/spa/availability", method = RequestMethod.PUT, produces =
             MediaType.APPLICATION_JSON_VALUE)
     public Spa updateAvailability(@HotelId @PathVariable("hotelId") Long hotelId,
-                                             @RequestBody ServiceAvailability availability) {
+                                             @RequestBody ServiceAvailabilityImpl availability) {
         return service.updateAvailability(hotelId, availability.getAvailable());
     }
 

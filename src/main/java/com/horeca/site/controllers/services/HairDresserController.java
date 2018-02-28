@@ -2,7 +2,7 @@ package com.horeca.site.controllers.services;
 
 import com.horeca.site.handlers.HotelId;
 import com.horeca.site.handlers.TranslateReturnValue;
-import com.horeca.site.models.hotel.services.ServiceAvailability;
+import com.horeca.site.models.hotel.services.ServiceAvailabilityImpl;
 import com.horeca.site.models.hotel.services.hairdresser.HairDresser;
 import com.horeca.site.services.services.HairDresserService;
 import io.swagger.annotations.Api;
@@ -27,7 +27,7 @@ public class HairDresserController {
     @RequestMapping(value = "/{hotelId}/services/hairdresser/availability", method = RequestMethod.PUT, produces =
             MediaType.APPLICATION_JSON_VALUE)
     public HairDresser updateAvailability(@HotelId @PathVariable("hotelId") Long hotelId,
-                                          @RequestBody ServiceAvailability availability) {
+                                          @RequestBody ServiceAvailabilityImpl availability) {
         return service.updateAvailability(hotelId, availability.getAvailable());
     }
 

@@ -3,7 +3,7 @@ package com.horeca.site.controllers.services;
 import com.horeca.site.handlers.HotelId;
 import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
-import com.horeca.site.models.hotel.services.ServiceAvailability;
+import com.horeca.site.models.hotel.services.ServiceAvailabilityImpl;
 import com.horeca.site.models.hotel.services.carpark.CarPark;
 import com.horeca.site.services.services.CarParkService;
 import io.swagger.annotations.Api;
@@ -28,7 +28,7 @@ public class CarParkController {
 
     @RequestMapping(value = "/{hotelId}/services/carpark/availability", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public CarPark updateAvailability(@HotelId @PathVariable("hotelId") Long hotelId,
-                                      @RequestBody ServiceAvailability availability) {
+                                      @RequestBody ServiceAvailabilityImpl availability) {
         return service.updateAvailability(hotelId, availability.getAvailable());
     }
 

@@ -3,7 +3,7 @@ package com.horeca.site.controllers.services;
 import com.horeca.site.handlers.HotelId;
 import com.horeca.site.handlers.ReplaceCurrency;
 import com.horeca.site.handlers.TranslateReturnValue;
-import com.horeca.site.models.hotel.services.ServiceAvailability;
+import com.horeca.site.models.hotel.services.ServiceAvailabilityImpl;
 import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
 import com.horeca.site.models.hotel.services.housekeeping.HousekeepingItem;
 import com.horeca.site.services.services.HousekeepingService;
@@ -37,7 +37,7 @@ public class HousekeepingController {
     @RequestMapping(value = "/{hotelId}/services/housekeeping/availability", method = RequestMethod.PUT, produces =
             MediaType.APPLICATION_JSON_VALUE)
     public Housekeeping updateAvailability(@HotelId @PathVariable("hotelId") Long hotelId,
-                                           @RequestBody ServiceAvailability availability) {
+                                           @RequestBody ServiceAvailabilityImpl availability) {
         return service.updateAvailability(hotelId, availability.getAvailable());
     }
 
