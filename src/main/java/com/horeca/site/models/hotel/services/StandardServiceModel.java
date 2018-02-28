@@ -18,7 +18,7 @@ public abstract class StandardServiceModel<T extends StandardServiceCategoryMode
     private String description;
 
     @Translatable
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "service_id")
     @OrderColumn(name = "category_order")
     private List<T> categories = new ArrayList<>();

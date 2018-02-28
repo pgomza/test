@@ -19,7 +19,7 @@ public abstract class StandardServiceCategoryModel<T> {
     private String name;
 
     @Translatable
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "category_id")
     @OrderColumn(name = "item_order")
     private List<T> items = new ArrayList<>();
