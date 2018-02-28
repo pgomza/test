@@ -13,6 +13,7 @@ import com.horeca.site.services.HotelQueryService;
 import com.horeca.site.services.subscription.SubscriptionControlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,7 +98,7 @@ public class CubilisService {
         }
     }
 
-//    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    @Scheduled(fixedDelay = 5 * 60 * 1000)
     public void fetchAndUpdateReservations() {
         List<Long> hotelIds = hotelQueryService.getIdsOfCubilisEligible();
         Map<Long, CubilisSettings> hotelIdToSettings = hotelIds.stream()
