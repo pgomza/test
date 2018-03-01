@@ -29,6 +29,14 @@ public class RentalOrder extends Order {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDateTime time;
 
+    RentalOrder() {}
+
+    public RentalOrder(Price total, Set<RentalOrderItem> items, LocalDateTime time) {
+        this.total = total;
+        this.items = items;
+        this.time = time;
+    }
+
     public Price getTotal() {
         return total;
     }
