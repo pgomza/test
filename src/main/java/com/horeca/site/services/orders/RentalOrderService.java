@@ -1,14 +1,13 @@
 package com.horeca.site.services.orders;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.rental.Rental;
 import com.horeca.site.models.hotel.services.rental.RentalCategory;
 import com.horeca.site.models.hotel.services.rental.RentalItem;
-import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
+import com.horeca.site.models.orders.ServiceItemDataWithPrice;
 import com.horeca.site.models.orders.rental.RentalOrder;
 import com.horeca.site.models.orders.rental.RentalOrderItem;
 import com.horeca.site.models.orders.rental.RentalOrderItemPOST;
@@ -49,20 +48,16 @@ public class RentalOrderService extends GenericOrderService<RentalOrder> {
     }
 
     public RentalOrder add(String stayPin, RentalOrderPOST entity) {
-        RentalOrder order = new RentalOrder();
-
-        Set<RentalOrderItem> entries = new HashSet<>();
+        Set<RentalOrderItem> orderItemSet = new HashSet<>();
         for (RentalOrderItemPOST entryPOST : entity.getItems()) {
-            RentalOrderItem entry = new RentalOrderItem();
-            RentalItem item = resolveItemIdToEntity(stayPin, entryPOST.getItemId());
-            entry.setItem(item);
-            entry.setCount(entryPOST.getCount());
-            entries.add(entry);
+            RentalItem serviceItem = resolveItemIdToEntity(stayPin, entryPOST.getItemId());
+            // copy the data from item
+            ServiceItemDataWithPrice itemData = new ServiceItemDataWithPrice(serviceItem.getName(), serviceItem.getPrice());
+            RentalOrderItem orderItem = new RentalOrderItem(itemData, entryPOST.getCount());
+            orderItemSet.add(orderItem);
         }
-        order.setItems(entries);
-        order.setTime(entity.getTime());
-        order.setTotal(computeTotal(entries));
-        order.setStatus(OrderStatus.NEW);
+        Price totalPrice = computeTotal(orderItemSet);
+        RentalOrder order = new RentalOrder(totalPrice, orderItemSet, entity.getTime());
         RentalOrder savedOrder = repository.save(order);
 
         Stay stay = stayService.get(stayPin);
@@ -85,11 +80,7 @@ public class RentalOrderService extends GenericOrderService<RentalOrder> {
         for (RentalCategory category : rental.getCategories()) {
             for (RentalItem item : category.getItems()) {
                 if (item.getId().equals(id)) {
-                    // check if an order for this item can be placed
-                    if (item.isAvailable())
-                        return item;
-                    else
-                        throw new BusinessRuleViolationException("Item id == " + id + " is no longer available");
+                    return item;
                 }
             }
         }
@@ -101,7 +92,7 @@ public class RentalOrderService extends GenericOrderService<RentalOrder> {
         BigDecimal totalValue = BigDecimal.ZERO;
 
         for (RentalOrderItem entry : entries) {
-            RentalItem item = entry.getItem();
+            ServiceItemDataWithPrice item = entry.getItem();
 
             if (totalPrice.getCurrency() == null)
                 totalPrice.setCurrency(item.getPrice().getCurrency());
