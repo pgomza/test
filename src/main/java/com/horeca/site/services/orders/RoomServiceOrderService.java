@@ -1,14 +1,13 @@
 package com.horeca.site.services.orders;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.roomservice.RoomService;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceCategory;
 import com.horeca.site.models.hotel.services.roomservice.RoomServiceItem;
-import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
+import com.horeca.site.models.orders.ServiceItemDataWithPrice;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrder;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrderItem;
 import com.horeca.site.models.orders.roomservice.RoomServiceOrderItemPOST;
@@ -17,6 +16,7 @@ import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.RoomServiceOrderRepository;
 import com.horeca.site.services.services.RoomServiceService;
 import com.horeca.site.services.services.StayService;
+import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,24 +63,21 @@ public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrde
         return orders.getRoomServiceOrders();
     }
 
-    public RoomServiceOrder add(String pin, RoomServiceOrderPOST entity) {
+    public RoomServiceOrder add(String pin, RoomServiceOrderPOST orderPOST) {
         ensureCanAddOrders(pin);
 
-        RoomServiceOrder roomServiceOrder = new RoomServiceOrder();
-
-        Set<RoomServiceOrderItem> entries = new HashSet<>();
-        for (RoomServiceOrderItemPOST entryPOST : entity.getItems()) {
-            RoomServiceOrderItem entry = new RoomServiceOrderItem();
-            RoomServiceItem item = resolveItemIdToEntity(pin, entryPOST.getItemId());
-            entry.setItem(item);
-            entry.setCount(entryPOST.getCount());
-            entries.add(entry);
+        Set<RoomServiceOrderItem> orderItemSet = new HashSet<>();
+        for (RoomServiceOrderItemPOST entryPOST : orderPOST.getItems()) {
+            RoomServiceItem serviceItem = resolveItemIdToEntity(pin, entryPOST.getItemId());
+            // copy the data from item
+            ServiceItemDataWithPrice itemData = new ServiceItemDataWithPrice(serviceItem.getName(), serviceItem.getPrice());
+            RoomServiceOrderItem orderItem = new RoomServiceOrderItem(itemData, entryPOST.getCount());
+            orderItemSet.add(orderItem);
         }
-        roomServiceOrder.setItems(entries);
-        roomServiceOrder.setTime(formatter.parseLocalTime(entity.getTime()));
-        roomServiceOrder.setTotal(computeTotal(entries));
-        roomServiceOrder.setStatus(OrderStatus.NEW);
-        RoomServiceOrder savedOrder = repository.save(roomServiceOrder);
+        LocalTime orderTime = formatter.parseLocalTime(orderPOST.getTime());
+        Price totalPrice = computeTotal(orderItemSet);
+        RoomServiceOrder order = new RoomServiceOrder(totalPrice, orderTime, orderItemSet);
+        RoomServiceOrder savedOrder = repository.save(order);
 
         Stay stay = stayService.get(pin);
         Set<RoomServiceOrder> roomServiceOrders = stay.getOrders().getRoomServiceOrders();
@@ -104,11 +101,7 @@ public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrde
         for (RoomServiceCategory category : roomService.getCategories()) {
             for (RoomServiceItem item : category.getItems()) {
                 if (item.getId().equals(id)) {
-                    // check if an order for this item can be placed
-                    if (item.isAvailable())
-                        return item;
-                    else
-                        throw new BusinessRuleViolationException("Item id == " + id + " is no longer available");
+                    return item;
                 }
             }
         }
@@ -120,7 +113,7 @@ public class RoomServiceOrderService extends GenericOrderService<RoomServiceOrde
         BigDecimal totalValue = BigDecimal.ZERO;
 
         for (RoomServiceOrderItem entry : entries) {
-            RoomServiceItem item = entry.getItem();
+            ServiceItemDataWithPrice item = entry.getItem();
 
             if (totalPrice.getCurrency() == null)
                 totalPrice.setCurrency(item.getPrice().getCurrency());

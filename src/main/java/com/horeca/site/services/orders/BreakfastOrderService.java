@@ -1,14 +1,13 @@
 package com.horeca.site.services.orders;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastCategory;
 import com.horeca.site.models.hotel.services.breakfast.BreakfastItem;
-import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
+import com.horeca.site.models.orders.ServiceItemDataWithPrice;
 import com.horeca.site.models.orders.breakfast.BreakfastOrder;
 import com.horeca.site.models.orders.breakfast.BreakfastOrderItem;
 import com.horeca.site.models.orders.breakfast.BreakfastOrderItemPOST;
@@ -17,6 +16,7 @@ import com.horeca.site.models.stay.Stay;
 import com.horeca.site.repositories.orders.BreakfastOrderRepository;
 import com.horeca.site.services.services.BreakfastService;
 import com.horeca.site.services.services.StayService;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,28 +62,25 @@ public class BreakfastOrderService extends GenericOrderService<BreakfastOrder> {
         return orders.getBreakfastOrders();
     }
 
-    public BreakfastOrder add(String pin, BreakfastOrderPOST entity) {
+    public BreakfastOrder add(String pin, BreakfastOrderPOST orderPOST) {
         ensureCanAddOrders(pin);
 
-        BreakfastOrder breakfastOrder = new BreakfastOrder();
-
-        Set<BreakfastOrderItem> entries = new HashSet<>();
-        for (BreakfastOrderItemPOST entryPOST : entity.getItems()) {
-            BreakfastOrderItem entry = new BreakfastOrderItem();
-            BreakfastItem item = resolveItemIdToEntity(pin, entryPOST.getItemId());
-            entry.setItem(item);
-            entry.setCount(entryPOST.getCount());
-            entries.add(entry);
+        Set<BreakfastOrderItem> orderItemSet = new HashSet<>();
+        for (BreakfastOrderItemPOST entryPOST : orderPOST.getItems()) {
+            BreakfastItem serviceItem = resolveItemIdToEntity(pin, entryPOST.getItemId());
+            // copy the data from item
+            ServiceItemDataWithPrice itemData = new ServiceItemDataWithPrice(serviceItem.getName(), serviceItem.getPrice());
+            BreakfastOrderItem orderItem = new BreakfastOrderItem(itemData, entryPOST.getCount());
+            orderItemSet.add(orderItem);
         }
-        breakfastOrder.setItems(entries);
-        breakfastOrder.setTotal(computeTotal(entries));
-        breakfastOrder.setTime(formatter.parseLocalDateTime(entity.getTime()));
-        breakfastOrder.setStatus(OrderStatus.NEW);
-        BreakfastOrder savedOrder = repository.save(breakfastOrder);
+        LocalDateTime orderTime = formatter.parseLocalDateTime(orderPOST.getTime());
+        Price totalPrice = computeTotal(orderItemSet);
+        BreakfastOrder order = new BreakfastOrder(totalPrice, orderTime, orderItemSet);
+        BreakfastOrder savedOrder = repository.save(order);
 
         Stay stay = stayService.get(pin);
-        Set<BreakfastOrder> breakfastOrders = stay.getOrders().getBreakfastOrders();
-        breakfastOrders.add(savedOrder);
+        Set<BreakfastOrder> roomServiceOrders = stay.getOrders().getBreakfastOrders();
+        roomServiceOrders.add(savedOrder);
         stayService.update(pin, stay);
 
         return savedOrder;
@@ -103,11 +100,7 @@ public class BreakfastOrderService extends GenericOrderService<BreakfastOrder> {
         for (BreakfastCategory category : breakfast.getCategories()) {
             for (BreakfastItem item : category.getItems()) {
                 if (item.getId().equals(id)) {
-                    // check if an order for this item can be placed
-                    if (item.isAvailable())
                         return item;
-                    else
-                        throw new BusinessRuleViolationException("Item id == " + id + " is no longer available");
                 }
             }
         }
@@ -119,7 +112,7 @@ public class BreakfastOrderService extends GenericOrderService<BreakfastOrder> {
         BigDecimal totalValue = BigDecimal.ZERO;
 
         for (BreakfastOrderItem entry : entries) {
-            BreakfastItem item = entry.getItem();
+            ServiceItemDataWithPrice item = entry.getItem();
 
             if (totalPrice.getCurrency() == null)
                 totalPrice.setCurrency(item.getPrice().getCurrency());

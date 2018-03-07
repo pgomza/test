@@ -26,6 +26,14 @@ public class BarOrder extends Order {
     @JoinColumn(name = "bar_order_id")
     private Set<BarOrderItem> items;
 
+    BarOrder() {}
+
+    public BarOrder(Price total, String tableNumber, Set<BarOrderItem> items) {
+        this.total = total;
+        this.tableNumber = tableNumber;
+        this.items = items;
+    }
+
     public Price getTotal() {
         return total;
     }

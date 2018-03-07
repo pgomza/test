@@ -1,14 +1,13 @@
 package com.horeca.site.services.orders;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.bar.Bar;
 import com.horeca.site.models.hotel.services.bar.BarCategory;
 import com.horeca.site.models.hotel.services.bar.BarItem;
-import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
+import com.horeca.site.models.orders.ServiceItemDataWithPrice;
 import com.horeca.site.models.orders.bar.BarOrder;
 import com.horeca.site.models.orders.bar.BarOrderItem;
 import com.horeca.site.models.orders.bar.BarOrderItemPOST;
@@ -58,28 +57,24 @@ public class BarOrderService extends GenericOrderService<BarOrder> {
         return orders.getBarOrders();
     }
 
-    public BarOrder add(String pin, BarOrderPOST entity) {
+    public BarOrder add(String pin, BarOrderPOST orderPOST) {
         ensureCanAddOrders(pin);
 
-        BarOrder barOrder = new BarOrder();
-
-        Set<BarOrderItem> entries = new HashSet<>();
-        for (BarOrderItemPOST entryPOST : entity.getItems()) {
-            BarOrderItem entry = new BarOrderItem();
-            BarItem item = resolveItemIdToEntity(pin, entryPOST.getItemId());
-            entry.setItem(item);
-            entry.setCount(entryPOST.getCount());
-            entries.add(entry);
+        Set<BarOrderItem> orderItemSet = new HashSet<>();
+        for (BarOrderItemPOST entryPOST : orderPOST.getItems()) {
+            BarItem serviceItem = resolveItemIdToEntity(pin, entryPOST.getItemId());
+            // copy the data from item
+            ServiceItemDataWithPrice itemData = new ServiceItemDataWithPrice(serviceItem.getName(), serviceItem.getPrice());
+            BarOrderItem orderItem = new BarOrderItem(itemData, entryPOST.getCount());
+            orderItemSet.add(orderItem);
         }
-        barOrder.setTableNumber(entity.getTableNumber());
-        barOrder.setItems(entries);
-        barOrder.setTotal(computeTotal(entries));
-        barOrder.setStatus(OrderStatus.NEW);
-        BarOrder savedOrder = repository.save(barOrder);
+        Price totalPrice = computeTotal(orderItemSet);
+        BarOrder order = new BarOrder(totalPrice, orderPOST.getTableNumber(), orderItemSet);
+        BarOrder savedOrder = repository.save(order);
 
         Stay stay = stayService.get(pin);
-        Set<BarOrder> barOrders = stay.getOrders().getBarOrders();
-        barOrders.add(savedOrder);
+        Set<BarOrder> roomServiceOrders = stay.getOrders().getBarOrders();
+        roomServiceOrders.add(savedOrder);
         stayService.update(pin, stay);
 
         return savedOrder;
@@ -99,11 +94,7 @@ public class BarOrderService extends GenericOrderService<BarOrder> {
         for (BarCategory category : bar.getCategories()) {
             for (BarItem item : category.getItems()) {
                 if (item.getId().equals(id)) {
-                    // check if an order for this item can be placed
-                    if (item.isAvailable())
-                        return item;
-                    else
-                        throw new BusinessRuleViolationException("Item id == " + id + " is no longer available");
+                    return item;
                 }
             }
         }
@@ -115,7 +106,7 @@ public class BarOrderService extends GenericOrderService<BarOrder> {
         BigDecimal totalValue = BigDecimal.ZERO;
 
         for (BarOrderItem entry : entries) {
-            BarItem item = entry.getItem();
+            ServiceItemDataWithPrice item = entry.getItem();
 
             if (totalPrice.getCurrency() == null)
                 totalPrice.setCurrency(item.getPrice().getCurrency());
