@@ -28,6 +28,14 @@ public class BreakfastOrder extends Order {
     @JoinColumn(name = "breakfast_order_id")
     private Set<BreakfastOrderItem> items;
 
+    BreakfastOrder() {}
+
+    public BreakfastOrder(Price total, LocalDateTime time, Set<BreakfastOrderItem> items) {
+        this.total = total;
+        this.time = time;
+        this.items = items;
+    }
+
     public Price getTotal() {
         return total;
     }

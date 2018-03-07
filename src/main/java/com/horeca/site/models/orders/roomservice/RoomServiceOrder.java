@@ -28,6 +28,14 @@ public class RoomServiceOrder extends Order {
     @JoinColumn(name = "room_service_order_id")
     private Set<RoomServiceOrderItem> items;
 
+    RoomServiceOrder() {}
+
+    public RoomServiceOrder(Price total, LocalTime time, Set<RoomServiceOrderItem> items) {
+        this.total = total;
+        this.time = time;
+        this.items = items;
+    }
+
     public Price getTotal() {
         return total;
     }
