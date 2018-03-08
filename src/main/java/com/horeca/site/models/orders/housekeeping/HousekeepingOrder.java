@@ -1,6 +1,5 @@
 package com.horeca.site.models.orders.housekeeping;
 
-import com.horeca.site.models.hotel.services.housekeeping.HousekeepingItem;
 import com.horeca.site.models.hotel.translation.Translatable;
 import com.horeca.site.models.orders.Order;
 import org.hibernate.envers.Audited;
@@ -15,11 +14,16 @@ public class HousekeepingOrder extends Order {
     private String message;
 
     @Translatable
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="housekeeping_order_housekeeping_item",
-            joinColumns=@JoinColumn(name="housekeeping_order_id"),
-            inverseJoinColumns=@JoinColumn(name="housekeeping_item_id"))
-    private Set<HousekeepingItem> items;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "housekeeping_order_id")
+    private Set<HousekeepingItemData> items;
+
+    HousekeepingOrder() {}
+
+    public HousekeepingOrder(String message, Set<HousekeepingItemData> items) {
+        this.message = message;
+        this.items = items;
+    }
 
     public String getMessage() {
         return message;
@@ -29,11 +33,11 @@ public class HousekeepingOrder extends Order {
         this.message = message;
     }
 
-    public Set<HousekeepingItem> getItems() {
+    public Set<HousekeepingItemData> getItems() {
         return items;
     }
 
-    public void setItems(Set<HousekeepingItem> items) {
+    public void setItems(Set<HousekeepingItemData> items) {
         this.items = items;
     }
 }
