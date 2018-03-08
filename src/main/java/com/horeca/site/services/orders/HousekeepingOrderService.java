@@ -1,12 +1,11 @@
 package com.horeca.site.services.orders;
 
-import com.horeca.site.exceptions.BusinessRuleViolationException;
 import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
 import com.horeca.site.models.hotel.services.housekeeping.HousekeepingItem;
-import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
+import com.horeca.site.models.orders.housekeeping.HousekeepingItemData;
 import com.horeca.site.models.orders.housekeeping.HousekeepingOrder;
 import com.horeca.site.models.orders.housekeeping.HousekeepingOrderPOST;
 import com.horeca.site.models.stay.Stay;
@@ -53,21 +52,18 @@ public class HousekeepingOrderService extends GenericOrderService<HousekeepingOr
         return orders.getHousekeepingOrders();
     }
 
-    public HousekeepingOrder add(String pin, HousekeepingOrderPOST entity) {
+    public HousekeepingOrder add(String pin, HousekeepingOrderPOST orderPOST) {
         ensureCanAddOrders(pin);
 
-        HousekeepingOrder housekeepingOrder = new HousekeepingOrder();
-
-        Set<HousekeepingItem> orderedItems = new HashSet<>();
-        for (Long itemId : entity.getItemIds()) {
+        Set<HousekeepingItemData> dataItems = new HashSet<>();
+        for (Long itemId : orderPOST.getItemIds()) {
             HousekeepingItem housekeepingItem = resolveItemIdToEntity(pin, itemId);
-            orderedItems.add(housekeepingItem);
+            HousekeepingItemData itemData = new HousekeepingItemData(housekeepingItem.getName());
+            dataItems.add(itemData);
         }
 
-        housekeepingOrder.setItems(orderedItems);
-        housekeepingOrder.setMessage(entity.getMessage());
-        housekeepingOrder.setStatus(OrderStatus.NEW);
-        HousekeepingOrder savedOrder = repository.save(housekeepingOrder);
+        HousekeepingOrder order = new HousekeepingOrder(orderPOST.getMessage(), dataItems);
+        HousekeepingOrder savedOrder = repository.save(order);
 
         Stay stay = stayService.get(pin);
         Set<HousekeepingOrder> housekeepingOrders = stay.getOrders().getHousekeepingOrders();
@@ -91,10 +87,7 @@ public class HousekeepingOrderService extends GenericOrderService<HousekeepingOr
 
         for (HousekeepingItem item : housekeeping.getItems()) {
             if (item.getId().equals(id)) {
-                if (item.isAvailable())
                     return item;
-                else
-                    throw new BusinessRuleViolationException("Item id == " + id + " is no longer available");
             }
         }
         throw new ResourceNotFoundException("Could not find an item with such an id");
