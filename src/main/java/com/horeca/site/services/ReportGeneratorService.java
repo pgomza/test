@@ -4,13 +4,13 @@ import com.horeca.site.models.Price;
 import com.horeca.site.models.guest.Guest;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.carpark.CarPark;
-import com.horeca.site.models.hotel.services.petcare.PetCareItem;
 import com.horeca.site.models.orders.Orders;
 import com.horeca.site.models.orders.bar.BarOrder;
 import com.horeca.site.models.orders.bar.BarOrderItem;
 import com.horeca.site.models.orders.breakfast.BreakfastOrder;
 import com.horeca.site.models.orders.breakfast.BreakfastOrderItem;
 import com.horeca.site.models.orders.carpark.CarParkOrder;
+import com.horeca.site.models.orders.petcare.PetCareItemData;
 import com.horeca.site.models.orders.petcare.PetCareOrder;
 import com.horeca.site.models.orders.rental.RentalOrder;
 import com.horeca.site.models.orders.rental.RentalOrderItem;
@@ -232,7 +232,7 @@ public class ReportGeneratorService {
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (PetCareOrder order : orders) {
-            PetCareItem item = order.getItem();
+            PetCareItemData item = order.getItem();
             String description = item.getName();
             String amount = priceToValue(item.getPrice()) + " " + hotelCurrency;
 

@@ -4,8 +4,8 @@ import com.horeca.site.exceptions.ResourceNotFoundException;
 import com.horeca.site.models.hotel.services.AvailableServiceType;
 import com.horeca.site.models.hotel.services.petcare.PetCare;
 import com.horeca.site.models.hotel.services.petcare.PetCareItem;
-import com.horeca.site.models.orders.OrderStatus;
 import com.horeca.site.models.orders.Orders;
+import com.horeca.site.models.orders.petcare.PetCareItemData;
 import com.horeca.site.models.orders.petcare.PetCareOrder;
 import com.horeca.site.models.orders.petcare.PetCareOrderPOST;
 import com.horeca.site.models.stay.Stay;
@@ -41,15 +41,13 @@ public class PetCareOrderService extends GenericOrderService<PetCareOrder> {
         return orders.getPetCareOrders();
     }
 
-    public PetCareOrder add(String stayPin, PetCareOrderPOST entity) {
-        PetCareOrder newOrder = new PetCareOrder();
-
-        PetCareItem resolvedItem = resolveItemIdToEntity(stayPin, entity.getItemId());
-
-        newOrder.setStatus(OrderStatus.NEW);
-        newOrder.setDate(entity.getDate());
-        newOrder.setItem(resolvedItem);
-        PetCareOrder savedOrder = repository.save(newOrder);
+    public PetCareOrder add(String stayPin, PetCareOrderPOST orderPOST) {
+        PetCareItem serviceItem = resolveItemIdToEntity(stayPin, orderPOST.getItemId());
+        PetCareItemData itemData = new PetCareItemData(
+                serviceItem.getName(), serviceItem.getPrice(), serviceItem.getDescription()
+        );
+        PetCareOrder order = new PetCareOrder(itemData, orderPOST.getDate());
+        PetCareOrder savedOrder = repository.save(order);
 
         Stay stay = stayService.get(stayPin);
         Set<PetCareOrder> petCareOrders = stay.getOrders().getPetCareOrders();
