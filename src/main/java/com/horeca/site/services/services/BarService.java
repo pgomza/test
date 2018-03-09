@@ -13,9 +13,9 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -67,10 +67,20 @@ public class BarService extends StandardHotelService<Bar, BarCategory> {
 
     public void deleteItem(Long hotelId, Long categoryId, Long itemId) {
         BarCategory category = getCategory(hotelId, categoryId);
-        List<BarItem> remainingItems = category.getItems().stream()
-                .filter(i -> !Objects.equals(i.getId(), itemId))
-                .collect(Collectors.toList());
-        category.setItems(remainingItems);
+        Iterator<BarItem> iterator = category.getItems().iterator();
+        boolean isRemoved = false;
+        while (iterator.hasNext() && !isRemoved) {
+            BarItem item = iterator.next();
+            if (Objects.equals(item.getId(), itemId)) {
+                category.getItems().remove(item);
+                isRemoved = true;
+            }
+        }
+
+        if (!isRemoved) {
+            throw new ResourceNotFoundException();
+        }
+
         updateCategory(hotelId, categoryId, category);
     }
 }
