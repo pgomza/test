@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional
@@ -26,13 +24,24 @@ public class DeepCopyService {
         JavaType javaType = null;
         if (Collection.class.isAssignableFrom(sourceClass)) {
             Collection<?> collection = (Collection<?>) realSource;
-            Class<?> elementType = CollectionTypeGuesser.guessElementType(collection);
 
             if (List.class.isAssignableFrom(sourceClass)) {
-                javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, elementType);
+                if (collection.isEmpty()) {
+                    return (T) new ArrayList<>();
+                }
+                else {
+                    Class<?> elementType = CollectionTypeGuesser.guessElementType(collection);
+                    javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, elementType);
+                }
             }
             else if (Set.class.isAssignableFrom(sourceClass)) {
-                javaType = objectMapper.getTypeFactory().constructCollectionType(Set.class, elementType);
+                if (collection.isEmpty()) {
+                    return (T) new HashSet<>();
+                }
+                else {
+                    Class<?> elementType = CollectionTypeGuesser.guessElementType(collection);
+                    javaType = objectMapper.getTypeFactory().constructCollectionType(Set.class, elementType);
+                }
             }
             else {
                 throw new RuntimeException("Unsupported type of collection");
