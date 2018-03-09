@@ -8,10 +8,10 @@ import com.horeca.site.models.hotel.services.StandardServiceModel;
 import com.horeca.site.models.hotel.services.StandardServiceModelPatch;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public abstract class StandardHotelService<T extends StandardServiceModel<S>, S extends StandardServiceCategoryModel>
     extends GenericHotelService<T> {
@@ -81,10 +81,21 @@ public abstract class StandardHotelService<T extends StandardServiceModel<S>, S 
 
     public void deleteCategory(Long hotelId, Long categoryId) {
         T service = get(hotelId);
-        List<S> remainingCategories = service.getCategories().stream()
-                .filter(c -> !Objects.equals(c.getId(), categoryId))
-                .collect(Collectors.toList());
-        service.setCategories(remainingCategories);
+        Iterator<S> iterator = service.getCategories().iterator();
+
+        boolean isRemoved = false;
+        while (iterator.hasNext() && !isRemoved) {
+            S category = iterator.next();
+            if (Objects.equals(category.getId(), categoryId)) {
+                service.getCategories().remove(category);
+                isRemoved = true;
+            }
+        }
+
+        if (!isRemoved) {
+            throw new ResourceNotFoundException();
+        }
+
         update(hotelId, service);
     }
 }
