@@ -7,7 +7,6 @@ public class RentalItemUpdate {
     private Long id;
     private String name;
     private Price price;
-    private boolean available;
     private RentalCategory.Category type;
 
     public Long getId() {
@@ -32,14 +31,6 @@ public class RentalItemUpdate {
 
     public void setPrice(Price price) {
         this.price = price;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
     }
 
     public RentalCategory.Category getType() {

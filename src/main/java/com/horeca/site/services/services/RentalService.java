@@ -52,7 +52,6 @@ public class RentalService extends GenericHotelService<Rental> {
         if (category != null) {
             RentalItem itemNew = new RentalItem();
             itemNew.setPrice(item.getPrice());
-            itemNew.setAvailable(item.isAvailable());
             itemNew.setName(item.getName());
             category.getItems().add(itemNew);
             rentalCategoryRepository.save(category);
@@ -79,11 +78,11 @@ public class RentalService extends GenericHotelService<Rental> {
             }
         }
 
-        if (found == null)
+        if (found == null) {
             throw new ResourceNotFoundException("Could not find an item with such an id");
+        }
 
         found.setPrice(itemSent.getPrice());
-        found.setAvailable(itemSent.isAvailable());
         found.setName(itemSent.getName());
         RentalItem savedItem = rentalItemRepository.save(found);
 

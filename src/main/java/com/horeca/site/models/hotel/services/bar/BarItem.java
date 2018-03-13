@@ -24,9 +24,6 @@ public class BarItem {
     @NotNull
     private Price price;
 
-    @NotNull
-    private boolean available = true;
-
     public Long getId() {
         return id;
     }
@@ -49,13 +46,5 @@ public class BarItem {
 
     public void setPrice(Price price) {
         this.price = price;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
     }
 }

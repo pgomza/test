@@ -55,13 +55,13 @@ public class RoomServiceService extends GenericHotelService<RoomService> {
         if (category != null) {
             RoomServiceItem itemNew = new RoomServiceItem();
             itemNew.setPrice(item.getPrice());
-            itemNew.setAvailable(item.isAvailable());
             itemNew.setName(item.getName());
             category.getItems().add(itemNew);
             roomServiceCategoryRepository.save(category);
         }
-        else
+        else {
             throw new ResourceNotFoundException("There is no such category");
+        }
     }
 
     public void updateItem(Long hotelId, RoomServiceItemUpdate item) {
@@ -86,7 +86,6 @@ public class RoomServiceService extends GenericHotelService<RoomService> {
 
         RoomServiceCategory category = getCategory(hotelId, item.getType());
         foundItem.setPrice(item.getPrice());
-        foundItem.setAvailable(item.isAvailable());
         foundItem.setName(item.getName());
         category.getItems().add(foundItem);
         roomServiceCategoryRepository.save(category);

@@ -5,7 +5,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(indexes = @Index(name = "housekeeping_id", columnList = "housekeeping_id"))
@@ -19,9 +18,6 @@ public class HousekeepingItem {
     @Translatable
     @NotEmpty
     private String name;
-
-    @NotNull
-    private boolean available = true;
 
     public Long getId() {
         return id;
@@ -37,13 +33,5 @@ public class HousekeepingItem {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
     }
 }
