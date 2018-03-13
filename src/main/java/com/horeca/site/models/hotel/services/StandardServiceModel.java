@@ -28,9 +28,10 @@ public abstract class StandardServiceModel<T extends StandardServiceCategoryMode
 
     protected StandardServiceModel() {}
 
-    public StandardServiceModel(String description, List<T> categories) {
+    public StandardServiceModel(String description, List<T> categories, Boolean available) {
         this.description = description;
         this.categories = categories;
+        this.available = available;
     }
 
     @Override

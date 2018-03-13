@@ -5,9 +5,7 @@ import com.horeca.site.models.Price;
 import com.horeca.site.models.hotel.Hotel;
 import com.horeca.site.models.hotel.services.AvailableServices;
 import com.horeca.site.models.hotel.services.bar.Bar;
-import com.horeca.site.models.hotel.services.bar.BarCategory;
 import com.horeca.site.models.hotel.services.breakfast.Breakfast;
-import com.horeca.site.models.hotel.services.breakfast.BreakfastCategory;
 import com.horeca.site.models.hotel.services.carpark.CarPark;
 import com.horeca.site.models.hotel.services.hairdresser.HairDresser;
 import com.horeca.site.models.hotel.services.housekeeping.Housekeeping;
@@ -33,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -108,10 +105,7 @@ public class AvailableServicesService {
         LocalTime fromHour = localTimeFormatter.parseLocalTime("08:00");
         LocalTime toHour = localTimeFormatter.parseLocalTime("11:00");
 
-        Breakfast breakfast = new Breakfast("", new ArrayList<>(), price, fromHour, toHour);
-        breakfast.setAvailable(false);
-
-        return breakfast;
+        return new Breakfast("", new ArrayList<>(), false, price, fromHour, toHour);
     }
 
     private CarPark getDefaultCarPark() {
@@ -203,10 +197,7 @@ public class AvailableServicesService {
         LocalTime fromHour = localTimeFormatter.parseLocalTime("08:00");
         LocalTime toHour = localTimeFormatter.parseLocalTime("11:00");
 
-        Bar bar = new Bar("", new ArrayList<>(), price, fromHour, toHour);
-        bar.setAvailable(false);
-
-        return bar;
+        return new Bar("", new ArrayList<>(), false, price, fromHour, toHour);
     }
 
     private SpaCall getDefaultSpaCall() {

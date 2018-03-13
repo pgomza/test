@@ -27,8 +27,9 @@ public class Breakfast extends StandardServiceModel<BreakfastCategory> {
 
     Breakfast() {}
 
-    public Breakfast(String description, List<BreakfastCategory> categories, Price price, LocalTime fromHour, LocalTime toHour) {
-        super(description, categories);
+    public Breakfast(String description, List<BreakfastCategory> categories, Boolean available, Price price,
+                     LocalTime fromHour, LocalTime toHour) {
+        super(description, categories, available);
         this.price = price;
         this.fromHour = fromHour;
         this.toHour = toHour;

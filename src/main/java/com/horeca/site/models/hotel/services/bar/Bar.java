@@ -27,8 +27,8 @@ public class Bar extends StandardServiceModel<BarCategory> {
 
     Bar() {}
 
-    public Bar(String description, List<BarCategory> categories, Price price, LocalTime fromHour, LocalTime toHour) {
-        super(description, categories);
+    public Bar(String description, List<BarCategory> categories, Boolean available, Price price, LocalTime fromHour, LocalTime toHour) {
+        super(description, categories, available);
         this.price = price;
         this.fromHour = fromHour;
         this.toHour = toHour;
